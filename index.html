@@ -400,11 +400,15 @@
 
       <div class="quick-users">
         <strong>Acceso rápido para pruebas (clic para autocompletar):</strong><br/>
-        <span onclick="autocompletarLogin('wgarcia', 'Centroxpert2026*')">👑 Wilson (Coord.)</span>
-        <span onclick="autocompletarLogin('jbarranco', 'Omegatech123')">📋 Julio (Sup.)</span>
-        <span onclick="autocompletarLogin('wreyes', 'Clave#44')">🔧 Wilfredo (Técnico)</span>
-        <span onclick="autocompletarLogin('bodalis', 'Tec2026#')">🔧 Bernardo (Técnico)</span>
-        <span onclick="autocompletarLogin('jsanchez', 'Jose2026')">🔧 José Sánchez (Técnico)</span>
+        <span onclick="autocompletarLogin('wgarcia', 'Centroxpert2026*')">👑 Wilson</span>
+        <span onclick="autocompletarLogin('ovasquez', 'Orlanda2026')">📋 Orlanda (Coord.)</span>
+        <span onclick="autocompletarLogin('cadames', 'Cristal2026')">📋 Cristal (Coord.)</span>
+        <span onclick="autocompletarLogin('amarizan', 'Adrian2026')">🔧 Adrián (Tec. A)</span>
+        <span onclick="autocompletarLogin('yrodriguez', 'Yerison2026')">🔧 Yerison (Tec. A)</span>
+        <span onclick="autocompletarLogin('wpolanco', 'Wander2026')">🔧 Wander (Tec. A)</span>
+        <span onclick="autocompletarLogin('jpacheco', 'Juan2026')">🔧 Juan (Tec. A)</span>
+        <span onclick="autocompletarLogin('aezequiel', 'Anferny2026')">🔧 Anferny (Tec. A)</span>
+        <span onclick="autocompletarLogin('ematos', 'Enmanuel2026')">🔧 Enmanuel (Tec. A)</span>
       </div>
     </div>
   </div>
@@ -937,8 +941,14 @@
     let usuarios = [
       { nombre: "Wilson García Beltré", username: "wgarcia", rol: "Coordinador General", clave: "Centroxpert2026*", estado: "Activo" },
       { nombre: "Julio Barranco", username: "jbarranco", rol: "Supervisor Técnico", clave: "Omegatech123", estado: "Activo" },
-      { nombre: "Wilfredo Reyes", username: "wreyes", rol: "Técnico de Campo", clave: "Clave#44", estado: "Activo" },
-      { nombre: "Bernardo Odalis", username: "bodalis", rol: "Técnico de Campo", clave: "Tec2026#", estado: "Activo" },
+      { nombre: "Orlanda Vásquez", username: "ovasquez", rol: "Coordinador", clave: "Orlanda2026", estado: "Activo" },
+      { nombre: "Cristal Adames", username: "cadames", rol: "Coordinador", clave: "Cristal2026", estado: "Activo" },
+      { nombre: "Adrián Marizán", username: "amarizan", rol: "Técnico Especialista A", clave: "Adrian2026", estado: "Activo" },
+      { nombre: "Yerison Rodríguez", username: "yrodriguez", rol: "Técnico Especialista A", clave: "Yerison2026", estado: "Activo" },
+      { nombre: "Wander Polanco", username: "wpolanco", rol: "Técnico Especialista A", clave: "Wander2026", estado: "Activo" },
+      { nombre: "Juan Pacheco", username: "jpacheco", rol: "Técnico Especialista A", clave: "Juan2026", estado: "Activo" },
+      { nombre: "Anferny Ezequiel", username: "aezequiel", rol: "Técnico Especialista A", clave: "Anferny2026", estado: "Activo" },
+      { nombre: "Enmanuel Matos", username: "ematos", rol: "Técnico Especialista A", clave: "Enmanuel2026", estado: "Activo" },
       { nombre: "José Sánchez", username: "jsanchez", rol: "Técnico de Campo", clave: "Jose2026", estado: "Activo" }
     ];
 
@@ -971,8 +981,14 @@
       const usuariosPorDefecto = [
         { nombre: "Wilson García Beltré", username: "wgarcia", rol: "Coordinador General", clave: "Centroxpert2026*", estado: "Activo" },
         { nombre: "Julio Barranco", username: "jbarranco", rol: "Supervisor Técnico", clave: "Omegatech123", estado: "Activo" },
-        { nombre: "Wilfredo Reyes", username: "wreyes", rol: "Técnico de Campo", clave: "Clave#44", estado: "Activo" },
-        { nombre: "Bernardo Odalis", username: "bodalis", rol: "Técnico de Campo", clave: "Tec2026#", estado: "Activo" },
+        { nombre: "Orlanda Vásquez", username: "ovasquez", rol: "Coordinador", clave: "Orlanda2026", estado: "Activo" },
+        { nombre: "Cristal Adames", username: "cadames", rol: "Coordinador", clave: "Cristal2026", estado: "Activo" },
+        { nombre: "Adrián Marizán", username: "amarizan", rol: "Técnico Especialista A", clave: "Adrian2026", estado: "Activo" },
+        { nombre: "Yerison Rodríguez", username: "yrodriguez", rol: "Técnico Especialista A", clave: "Yerison2026", estado: "Activo" },
+        { nombre: "Wander Polanco", username: "wpolanco", rol: "Técnico Especialista A", clave: "Wander2026", estado: "Activo" },
+        { nombre: "Juan Pacheco", username: "jpacheco", rol: "Técnico Especialista A", clave: "Juan2026", estado: "Activo" },
+        { nombre: "Anferny Ezequiel", username: "aezequiel", rol: "Técnico Especialista A", clave: "Anferny2026", estado: "Activo" },
+        { nombre: "Enmanuel Matos", username: "ematos", rol: "Técnico Especialista A", clave: "Enmanuel2026", estado: "Activo" },
         { nombre: "José Sánchez", username: "jsanchez", rol: "Técnico de Campo", clave: "Jose2026", estado: "Activo" }
       ];
       if (!Array.isArray(usuarios) || usuarios.length === 0) {
