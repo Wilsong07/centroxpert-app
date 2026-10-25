@@ -388,11 +388,11 @@
       
       <div class="form-group">
         <label>Usuario:</label>
-        <input type="text" id="login_username" placeholder="Ej: wgarcia, wreyes, bodalis" />
+        <input type="text" id="login_username" placeholder="Ej: wgarcia, wreyes, bodalis" onkeydown="if(event.key==='Enter') iniciarSesion()" />
       </div>
       <div class="form-group">
         <label>Contraseña:</label>
-        <input type="password" id="login_password" placeholder="Ingresa tu clave" />
+        <input type="password" id="login_password" placeholder="Ingresa tu clave" onkeydown="if(event.key==='Enter') iniciarSesion()" />
       </div>
       <button class="btn" style="width: 100%; padding: 11px; margin-top: 8px; font-size: 14px;" onclick="iniciarSesion()">
         🔐 Iniciar Sesión
@@ -955,13 +955,37 @@
     function autocompletarLogin(user, pass) {
       document.getElementById("login_username").value = user;
       document.getElementById("login_password").value = pass;
+      iniciarSesion();
     }
 
     function iniciarSesion() {
       const uInput = document.getElementById("login_username").value.trim().toLowerCase();
       const pInput = document.getElementById("login_password").value.trim();
 
-      const userObj = usuarios.find(u => u.username.toLowerCase() === uInput && u.clave === pInput);
+      if (!uInput || !pInput) {
+        alert("Por favor ingresa tu usuario y contraseña.");
+        return;
+      }
+
+      // Asegurar que la lista de usuarios base esté disponible aunque localStorage tuviera datos antiguos
+      const usuariosPorDefecto = [
+        { nombre: "Wilson García Beltré", username: "wgarcia", rol: "Coordinador General", clave: "Centroxpert2026*", estado: "Activo" },
+        { nombre: "Julio Barranco", username: "jbarranco", rol: "Supervisor Técnico", clave: "Omegatech123", estado: "Activo" },
+        { nombre: "Wilfredo Reyes", username: "wreyes", rol: "Técnico de Campo", clave: "Clave#44", estado: "Activo" },
+        { nombre: "Bernardo Odalis", username: "bodalis", rol: "Técnico de Campo", clave: "Tec2026#", estado: "Activo" },
+        { nombre: "José Sánchez", username: "jsanchez", rol: "Técnico de Campo", clave: "Jose2026", estado: "Activo" }
+      ];
+      if (!Array.isArray(usuarios) || usuarios.length === 0) {
+        usuarios = usuariosPorDefecto;
+      }
+
+      let userObj = usuarios.find(u =>
+        (u.username && u.username.toLowerCase() === uInput && u.clave === pInput) ||
+        (u.nombre && u.nombre.toLowerCase() === uInput && u.clave === pInput)
+      );
+      if (!userObj) {
+        userObj = usuariosPorDefecto.find(u => u.username.toLowerCase() === uInput && u.clave === pInput);
+      }
       if (!userObj) {
         alert("Usuario o contraseña incorrectos. Verifica tus credenciales.");
         return;
@@ -1294,16 +1318,14 @@
 
       // 2. Extraer Cliente
       let cliente = "Cliente Registrado";
-      const matchCliente = texto.match(/CLIENTE:?\s*\|?\s*(?:\d+\s*-\s*)?([^
-|]+)/i);
+      const matchCliente = texto.match(/CLIENTE:?\s*\|?\s*(?:\d+\s*-\s*)?([^\n|]+)/i);
       if (matchCliente && matchCliente[1]) {
         cliente = matchCliente[1].replace(/RNC.*/i, "").trim();
       }
 
       // 3. Extraer Ubicación / Dirección
       let ubicacion = "Por confirmar en sitio";
-      const matchDir = texto.match(/DIRECCI[ÓO]N:?\s*\|?\s*([^
-]+)/i);
+      const matchDir = texto.match(/DIRECCI[ÓO]N:?\s*\|?\s*([^\n]+)/i);
       if (matchDir && matchDir[1]) {
         ubicacion = matchDir[1].replace(/EMAIL.*/i, "").trim();
       }
@@ -1318,10 +1340,7 @@
 
       // 5. Extraer Descripción u Observación para el título de la tarea
       let descripcionTarea = "Servicio Técnico / Levantamiento (" + filename + ")";
-      const matchObs = texto.match(/OBS\s*
-\s*([^
-]+)/i) || texto.match(/SERVICIO DE [^
-]+/i);
+      const matchObs = texto.match(/OBS\s*\n\s*([^\n]+)/i) || texto.match(/SERVICIO DE [^\n]+/i);
       if (matchObs) {
         descripcionTarea = (matchObs[1] || matchObs[0]).trim();
       }
