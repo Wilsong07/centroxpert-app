@@ -11,8 +11,10 @@
   <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
-  <!-- SheetJS para Importar y Exportar Excel -->
+  <!-- SheetJS para Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Mammoth.js para leer archivos Word (.docx) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <!-- Tesseract.js para OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
@@ -24,14 +26,13 @@
     .bg-wine-brand { background-color: #8b1524; }
     .border-wine-brand { border-color: #8b1524; }
     
-    /* Estilos para impresión / exportación limpia a PDF */
     @media print {
       body { background-color: #ffffff !important; color: #000000 !important; }
       header, .no-print, button, nav { display: none !important; }
       .print-area { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
       .bg-slate-900, .bg-slate-950, .bg-slate-800 { background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #000 !important; }
       .text-white, .text-slate-200, .text-slate-300 { color: #0f172a !important; }
-      .shadow-lg, .shadow-2xl { shadow: none !important; }
+      .shadow-lg, .shadow-2xl { box-shadow: none !important; }
     }
   </style>
 </head>
@@ -112,12 +113,10 @@
         </button>
       </div>
 
-      <!-- Form Técnico -->
       <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Asignado</label>
           <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
-            <!-- Cargado por JS -->
           </select>
         </div>
         <div>
@@ -129,7 +128,6 @@
         </button>
       </form>
 
-      <!-- Form Coordinador -->
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinación (admin123)</label>
@@ -169,9 +167,9 @@
     </div>
   </div>
 
-  <!-- Modal Levantamiento Técnico (Foto, PDF o Excel) -->
+  <!-- Modal Levantamiento Técnico (Imagen, PDF, Word, OCR, Dibujo de Planos) -->
   <div id="surveyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl my-8">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
         <div>
           <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-clipboard-list mr-2 text-rose-400"></i>Cargar Levantamiento Técnico de Campo</h3>
@@ -180,26 +178,31 @@
         <button onclick="closeModal('surveyModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- CARGA DE ARCHIVO MULTIFORMATO: FOTO, PDF, EXCEL -->
+      <!-- SECCIÓN MULTI-ARCHIVO + OCR DIGITALIZADOR (IMAGEN, PDF, WORD .DOCX) -->
       <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 mb-4">
-        <div class="flex items-center justify-between mb-2">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider text-rose-400">
-            <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i>Adjuntar Evidencia (Foto, PDF o Planilla Excel)
+            <i class="fa-solid fa-brain mr-1.5"></i>Carga & Digitalización OCR (Imagen, PDF o Word)
           </span>
-          <span class="text-[10px] text-slate-400">Soporta JPG, PNG, PDF, XLSX, XLS</span>
+          <span id="ocrStatusBadge" class="text-[11px] text-slate-400 italic">Listo para procesar</span>
         </div>
         
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-center">
           <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2.5 rounded-xl cursor-pointer border border-slate-700 font-medium text-center flex items-center justify-center gap-2">
-            <i class="fa-solid fa-paperclip text-rose-400 text-sm"></i> Seleccionar Archivo
-            <input type="file" id="surveyFileInput" accept="image/*,application/pdf,.xlsx,.xls,.csv" class="hidden" onchange="handleSurveyFileUpload(event)">
+            <i class="fa-solid fa-file-arrow-up text-rose-400 text-sm"></i> Subir Archivo (JPG, PDF, DOCX)
+            <input type="file" id="surveyFileInput" accept="image/*,application/pdf,.docx,.doc,.xlsx,.xls" class="hidden" onchange="handleSurveyFileSelect(event)">
           </label>
+
+          <button type="button" onclick="openPlanCanvasModal()" class="bg-blue-950/70 border border-blue-800 hover:bg-blue-900 text-blue-300 text-xs px-3 py-2.5 rounded-xl font-bold flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-compass-drafting text-blue-400"></i> Dibujar Plano / Croquis
+          </button>
+
           <button type="button" onclick="simulateSurveyFileDemo()" class="bg-rose-950/60 border border-rose-800 hover:bg-rose-900 text-rose-300 text-xs px-3 py-2.5 rounded-xl font-medium">
-            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Cargar Muestra Simulada
+            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Cargar Muestra Digitalizada
           </button>
         </div>
 
-        <!-- Archivo adjunto actual -->
+        <!-- Archivo adjunto o plano guardado -->
         <div id="surveyAttachedFileCard" class="mt-3 hidden bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center justify-between text-xs">
           <div class="flex items-center gap-2 truncate">
             <i id="surveyFileIcon" class="fa-solid fa-file text-rose-400 text-base"></i>
@@ -208,7 +211,10 @@
               <div id="surveyFileType" class="text-[10px] text-slate-400">Tipo de archivo</div>
             </div>
           </div>
-          <button type="button" onclick="removeSurveyFile()" class="text-rose-400 hover:text-white p-1" title="Eliminar archivo"><i class="fa-solid fa-trash-can"></i></button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="previewCurrentSurveyFile()" class="text-xs text-blue-400 hover:underline">Vista Previa</button>
+            <button type="button" onclick="removeSurveyFile()" class="text-rose-400 hover:text-white p-1" title="Eliminar archivo"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
         </div>
       </div>
 
@@ -243,8 +249,8 @@
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas en Sitio</label>
-          <textarea id="surveyNotes" rows="3" placeholder="Detalles de pasos de muro, puntos de cámara o red, dificultades encontradas..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas en Sitio / Texto Extraído por OCR</label>
+          <textarea id="surveyNotes" rows="3" placeholder="Detalles de pasos de muro, puntos de cámara o red, dificultades encontradas o texto del OCR..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
         </div>
 
         <!-- CONSULTA DIRECTA TIENDA.OMEGA.COM.DO -->
@@ -253,7 +259,7 @@
             <span class="text-xs font-bold uppercase tracking-wider text-blue-400">
               <i class="fa-solid fa-store mr-1.5"></i>Catálogo tienda.omega.com.do
             </span>
-            <span class="text-[10px] text-slate-400">Sugerir equipos y materiales del inventario</span>
+            <span class="text-[10px] text-slate-400">Buscar equipos y materiales</span>
           </div>
 
           <div class="flex gap-2 mb-3">
@@ -261,21 +267,28 @@
             <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold">Buscar</button>
           </div>
 
-          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
-            <!-- Cargado por JS -->
+          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1">
           </div>
         </div>
 
-        <!-- ITEMS AGREGADOS AL LEVANTAMIENTO -->
+        <!-- ITEMS AGREGADOS AL LEVANTAMIENTO CON CANTIDAD, EDICIÓN Y ELIMINACIÓN -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <h4 class="text-xs font-bold text-rose-400 uppercase mb-2"><i class="fa-solid fa-video mr-1"></i>Equipos Activos Sugeridos</h4>
-            <div id="surveyEquipList" class="space-y-1.5 text-xs text-slate-300 min-h-[50px]"></div>
+          <!-- EQUIPOS -->
+          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-center mb-2">
+              <h4 class="text-xs font-bold text-rose-400 uppercase"><i class="fa-solid fa-video mr-1"></i>Equipos Activos</h4>
+              <button type="button" onclick="promptAddManualItem('equip')" class="text-[11px] bg-rose-950 text-rose-300 px-2 py-0.5 rounded border border-rose-800 hover:bg-rose-900">+ Manual</button>
+            </div>
+            <div id="surveyEquipList" class="space-y-2 text-xs min-h-[60px]"></div>
           </div>
 
-          <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <h4 class="text-xs font-bold text-amber-400 uppercase mb-2"><i class="fa-solid fa-boxes-stacked mr-1"></i>Materiales e Insumos</h4>
-            <div id="surveyMaterialList" class="space-y-1.5 text-xs text-slate-300 min-h-[50px]"></div>
+          <!-- MATERIALES -->
+          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-center mb-2">
+              <h4 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-boxes-stacked mr-1"></i>Materiales e Insumos</h4>
+              <button type="button" onclick="promptAddManualItem('mat')" class="text-[11px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded border border-amber-800 hover:bg-amber-900">+ Manual</button>
+            </div>
+            <div id="surveyMaterialList" class="space-y-2 text-xs min-h-[60px]"></div>
           </div>
         </div>
 
@@ -286,6 +299,76 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL DIBUJAR PLANOS Y CROQUIS (CANVAS TÉCNICO) -->
+  <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+        <div>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis y Planos en Sitio</h3>
+          <p class="text-xs text-slate-400">Dibuja muros, canalizaciones, cámaras, puntos de red o distancias.</p>
+        </div>
+        <button onclick="closeModal('planCanvasModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <!-- Barra de herramientas del lienzo -->
+      <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 mb-3 text-xs">
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="setCanvasTool('pen')" id="toolBtn_pen" class="bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow">
+            <i class="fa-solid fa-pencil"></i> Lápiz
+          </button>
+          <button type="button" onclick="setCanvasTool('line')" id="toolBtn_line" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg flex items-center gap-1 hover:text-white">
+            <i class="fa-solid fa-slash"></i> Línea
+          </button>
+          <button type="button" onclick="setCanvasTool('rect')" id="toolBtn_rect" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg flex items-center gap-1 hover:text-white">
+            <i class="fa-regular fa-square"></i> Cuadro
+          </button>
+          <button type="button" onclick="setCanvasTool('camera')" id="toolBtn_camera" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg flex items-center gap-1 hover:text-white">
+            <i class="fa-solid fa-video text-rose-400"></i> Cámara
+          </button>
+          <button type="button" onclick="setCanvasTool('text')" id="toolBtn_text" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg flex items-center gap-1 hover:text-white">
+            <i class="fa-solid fa-font"></i> Texto
+          </button>
+          <button type="button" onclick="setCanvasTool('eraser')" id="toolBtn_eraser" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg flex items-center gap-1 hover:text-white">
+            <i class="fa-solid fa-eraser"></i> Borrador
+          </button>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400">Color:</span>
+            <input type="color" id="canvasColor" value="#8b1524" class="w-7 h-7 rounded border border-slate-700 bg-transparent cursor-pointer">
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-slate-400">Grosor:</span>
+            <select id="canvasLineWidth" class="bg-slate-800 text-white rounded px-2 py-1 text-xs border border-slate-700">
+              <option value="2">Fino (2px)</option>
+              <option value="4" selected>Medio (4px)</option>
+              <option value="8">Grueso (8px)</option>
+            </select>
+          </div>
+          <button type="button" onclick="clearPlanCanvas()" class="bg-slate-800 hover:bg-red-950 text-red-300 px-2.5 py-1.5 rounded-lg border border-slate-700">
+            <i class="fa-solid fa-trash-can mr-1"></i> Limpiar
+          </button>
+        </div>
+      </div>
+
+      <!-- Lienzo de dibujo HTML5 -->
+      <div class="relative w-full bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center">
+        <canvas id="planCanvas" width="850" height="480" class="cursor-crosshair bg-slate-950 touch-none max-w-full h-auto"></canvas>
+      </div>
+
+      <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-800">
+        <span class="text-[11px] text-slate-400">Al guardar, el plano se convertirá en imagen adjunta al levantamiento.</span>
+        <div class="flex gap-2">
+          <button type="button" onclick="closeModal('planCanvasModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cerrar</button>
+          <button type="button" onclick="savePlanDrawing()" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">
+            <i class="fa-solid fa-floppy-disk mr-1"></i> Adjuntar Plano al Levantamiento
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -403,7 +486,6 @@
           <input type="text" id="editProjectAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
         </div>
 
-        <!-- REASIGNACIÓN DE PERSONAL: LÍDER Y CUADRILLA -->
         <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl space-y-3">
           <div class="text-xs font-bold text-rose-400 uppercase tracking-wider">
             <i class="fa-solid fa-users mr-1"></i> Asignación de Personal Técnico
@@ -412,14 +494,12 @@
             <div>
               <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Líder Responsable</label>
               <select id="editProjectTechLeader" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-bold text-rose-400">
-                <!-- Cargado por JS -->
               </select>
               <p class="text-[10px] text-slate-400 mt-1">Al cambiar el líder, el proyecto solo se mostrará en la sesión del nuevo técnico.</p>
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Cuadrilla / Acompañante</label>
               <select id="editProjectTechCrew" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-                <!-- Cargado por JS -->
               </select>
             </div>
           </div>
@@ -473,7 +553,6 @@
         <div>
           <label class="block text-xs text-slate-300 mb-1">Técnico Custodio Asignado</label>
           <select id="vehicleAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-            <!-- Cargado por JS -->
           </select>
         </div>
 
@@ -516,7 +595,6 @@
         <div>
           <label class="block text-xs text-slate-300 mb-1">Técnico Custodio</label>
           <select id="toolAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-            <!-- JS -->
           </select>
         </div>
 
@@ -528,7 +606,7 @@
     </div>
   </div>
 
-  <!-- Modal Visor de Archivo del Levantamiento (Foto, PDF, Excel) -->
+  <!-- Modal Visor de Archivo del Levantamiento (Foto, PDF, Word, Excel) -->
   <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
@@ -543,8 +621,7 @@
           <button onclick="closeModal('fileViewerModal')" class="text-slate-400 hover:text-white p-1 text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
       </div>
-      <div id="viewerBody" class="flex-1 overflow-auto bg-slate-950 rounded-xl p-3 flex items-center justify-center">
-        <!-- Contenido renderizado: Img, iframe PDF o preview Excel -->
+      <div id="viewerBody" class="flex-1 overflow-auto bg-slate-950 rounded-xl p-3 flex items-center justify-center text-slate-300 text-xs">
       </div>
     </div>
   </div>
@@ -580,10 +657,10 @@
     /* ===================================================================
        ESTADO CENTRAL DE LA APLICACIÓN
        =================================================================== */
-    const STORAGE_KEY = 'centroxpert_data_v2';
+    const STORAGE_KEY = 'centroxpert_data_v3';
 
     const defaultData = {
-      currentUser: { role: 'admin', name: 'Coordinador General' }, // 'admin' o 'tech'
+      currentUser: { role: 'admin', name: 'Coordinador General' },
       technicians: [
         { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Av. Las Palmas #45, Herrera', vehiclePlate: 'L428901', pin: '1234' },
         { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'C/ Duarte #12, Los Alcarrizos', vehiclePlate: 'L389104', pin: '1234' },
@@ -627,13 +704,20 @@
             meters: 160,
             structure: 'Ductería EMT Existente',
             power: '110V Regulada con UPS',
-            notes: 'Paso por ducto principal del ascensor requiere llave de mantenimiento técnico. Señal estable.',
-            equipment: ['NVR 16 Canales 4K', 'Cámaras IP Antivandálicas 4MP (x4)'],
-            materials: ['2x Rollos UTP Cat6 100% Cobre', 'Cajas de paso 4x4', 'Conectores RJ45'],
+            notes: 'Paso por ducto principal del ascensor requiere llave técnica. Cámaras en piso 1, 2 y sótano.',
+            itemsEquip: [
+              { name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', qty: 1, sku: 'NVR-HIK-16CH', price: 18500 },
+              { name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', qty: 4, sku: 'CAM-HIK-4MP', price: 5200 }
+            ],
+            itemsMat: [
+              { name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', qty: 2, sku: 'CAB-UTP-CAT6', price: 7900 },
+              { name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', qty: 1, sku: 'CON-RJ45-50P', price: 850 },
+              { name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', qty: 6, sku: 'CAJ-PASO-44', price: 290 }
+            ],
             file: {
               name: 'Levantamiento_Torre_Washington.pdf',
               type: 'application/pdf',
-              data: null, // Si es demo o subido
+              data: null,
               isDemo: true
             }
           },
@@ -655,7 +739,7 @@
             materials: [
               { desc: 'NVR 16 CH 4K AcuSense', qtyEst: 1, qtyReal: 1, unitCost: 18500, subtotal: 18500 },
               { desc: 'Cámara IP Domo 4MP Antivandálica Hikvision', qtyEst: 4, qtyReal: 4, unitCost: 5200, subtotal: 20800 },
-              { desc: 'Bobina UTP Cat6 305m 100% Cobre Exterior', qtyEst: 1, qtyReal: 1, unitCost: 7900, subtotal: 7900 },
+              { desc: 'Bobina UTP Cat6 305m 100% Cobre Exterior', qtyEst: 2, qtyReal: 2, unitCost: 7900, subtotal: 15800 },
               { desc: 'Conectores RJ45 Blindados (Funda 50 Und)', qtyEst: 1, qtyReal: 1, unitCost: 850, subtotal: 850 }
             ]
           },
@@ -698,10 +782,9 @@
       { sku: 'CAJ-PASO-44', name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', category: 'Materiales', priceRD: 290, priceUS: 4.8 }
     ];
 
-    /* Control de Vistas y Pestañas */
-    let currentNavTab = 'projects'; // 'projects' o 'logistics'
-    let currentLogisticsSubtab = 'vehicles'; // 'vehicles', 'tools', 'fuel', 'staff'
-    let currentTechTab = 'my_tasks'; // 'my_tasks' o 'my_assets'
+    let currentNavTab = 'projects';
+    let currentLogisticsSubtab = 'vehicles';
+    let currentTechTab = 'my_tasks';
 
     function goHome() {
       render();
@@ -844,7 +927,6 @@
        =================================================================== */
     function renderTechView() {
       const myTechName = appData.currentUser.name;
-      // Solo proyectos donde sea líder o parte de la cuadrilla
       const myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
       const myVehicle = appData.vehicles.find(v => v.assignedTo === myTechName);
       const myTools = appData.tools.filter(t => t.assignedTo === myTechName);
@@ -879,7 +961,6 @@
                     <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
                   </div>
 
-                  <!-- Ubicación y contactos -->
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
                     <div>
                       <div class="text-slate-400 font-medium"><i class="fa-solid fa-location-dot mr-1.5 text-rose-500"></i>Ubicación:</div>
@@ -891,7 +972,6 @@
                     </div>
                   </div>
 
-                  <!-- Botones de Acción Inmediata: Mapa & Marcajes GPS -->
                   <div class="flex flex-wrap gap-2 pt-1">
                     <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}" target="_blank" class="flex-1 min-w-[140px] bg-emerald-800/80 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-xl text-xs text-center border border-emerald-700/50 flex items-center justify-center gap-1.5 shadow">
                       <i class="fa-solid fa-diamond-turn-right"></i> Ir con Mapa GPS
@@ -906,11 +986,10 @@
                     </button>
 
                     <button onclick="openSurveyModal('${p.id}')" class="flex-1 min-w-[140px] bg-rose-800 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-rose-700 shadow">
-                      <i class="fa-solid fa-file-arrow-up"></i> Cargar Levantamiento (Foto/PDF/Excel)
+                      <i class="fa-solid fa-file-pen"></i> Levantamiento & Planos
                     </button>
                   </div>
 
-                  <!-- Historial de Marcajes y Archivos Adjuntos -->
                   <div class="text-[11px] text-slate-400 bg-slate-800/40 p-2.5 rounded-lg flex flex-wrap items-center justify-between gap-2 border border-slate-700">
                     <div>
                       <span class="text-emerald-400 font-bold">Llegada:</span> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'Pendiente'}
@@ -919,7 +998,7 @@
                     </div>
                     ${p.survey && p.survey.file ? `
                       <button onclick="viewSurveyFile('${p.id}')" class="text-rose-400 hover:text-rose-300 font-semibold underline flex items-center gap-1">
-                        <i class="fa-solid fa-paperclip"></i> Ver archivo levantamiento cargado
+                        <i class="fa-solid fa-paperclip"></i> Ver archivo/plano adjunto
                       </button>
                     ` : ''}
                   </div>
@@ -1001,7 +1080,6 @@
 
       return `
         <div class="space-y-6">
-          <!-- Métricas Superiores -->
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
               <div class="text-xs text-slate-400 font-semibold uppercase">Total Proyectos</div>
@@ -1021,7 +1099,6 @@
             </div>
           </div>
 
-          <!-- Pestañas de Coordinación -->
           <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
             <div class="flex gap-2">
               <button onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
@@ -1044,7 +1121,6 @@
             ` : ''}
           </div>
 
-          <!-- Contenido de Proyectos o Logística -->
           ${currentNavTab === 'projects' ? renderAdminProjects() : renderAdminLogistics()}
         </div>
       `;
@@ -1065,7 +1141,6 @@
             ${appData.projects.map(p => `
               <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
                 
-                <!-- Encabezado del Proyecto -->
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
                   <div>
                     <div class="flex items-center gap-2">
@@ -1090,7 +1165,6 @@
                   </div>
                 </div>
 
-                <!-- Detalle de Dirección, Contactos y Marcaje GPS -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
                   <div>
                     <span class="text-slate-400 font-medium">Ubicación & Contactos:</span>
@@ -1098,7 +1172,6 @@
                     <p class="text-slate-400 mt-0.5">${p.contact}</p>
                   </div>
 
-                  <!-- MONITOREO DE LLEGADA / SALIDA GPS -->
                   <div>
                     <span class="text-slate-400 font-medium">Marcaje de Jornada en Sitio:</span>
                     <div class="mt-1 space-y-1">
@@ -1118,17 +1191,16 @@
                     </div>
                   </div>
 
-                  <!-- LEVANTAMIENTO & DESCARGA DE ARCHIVO -->
                   <div>
-                    <span class="text-slate-400 font-medium">Levantamiento del Técnico:</span>
-                    ${p.survey && (p.survey.meters || p.survey.file) ? `
+                    <span class="text-slate-400 font-medium">Levantamiento & Planos:</span>
+                    ${p.survey && (p.survey.meters || p.survey.file || (p.survey.itemsEquip && p.survey.itemsEquip.length)) ? `
                       <div class="mt-0.5">
                         <p class="text-emerald-400 font-bold">${p.survey.meters || 0} metros (${p.survey.structure || 'EMT'})</p>
-                        <p class="text-slate-300 text-[11px] truncate">${p.survey.notes || 'Notas adjuntas'}</p>
+                        <p class="text-slate-300 text-[11px] truncate">${p.survey.notes || 'Detalles registrados en campo'}</p>
                         ${p.survey.file ? `
                           <div class="mt-1.5 flex gap-2">
                             <button onclick="viewSurveyFile('${p.id}')" class="bg-rose-950 border border-rose-800 hover:bg-rose-900 text-rose-300 text-[11px] px-2 py-0.5 rounded flex items-center gap-1 font-semibold">
-                              <i class="fa-solid fa-eye"></i> Ver Levantamiento
+                              <i class="fa-solid fa-eye"></i> Ver Archivo/Plano
                             </button>
                             <button onclick="downloadSurveyFile('${p.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] px-2 py-0.5 rounded flex items-center gap-1">
                               <i class="fa-solid fa-download"></i> Descargar
@@ -1142,7 +1214,7 @@
                   </div>
                 </div>
 
-                <!-- COTIZACIÓN OFICIAL CARGADA -->
+                <!-- COTIZACIÓN OFICIAL -->
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
                   <div class="flex items-center gap-3">
                     <div class="p-2 rounded-lg ${p.quotation ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'bg-slate-800 text-slate-500'}">
@@ -1165,10 +1237,9 @@
                   </div>
                 </div>
 
-                <!-- Desglose de Presupuesto Interno (Servicios y Materiales) -->
+                <!-- Presupuesto Interno -->
                 ${renderBudgetSection(p)}
 
-                <!-- Acciones y Cambio de Estado del Proyecto -->
                 <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
                   <div class="flex flex-wrap gap-1.5">
                     <button onclick="changeProjectStatus('${p.id}', 'Levantamiento')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">Levantamiento</button>
@@ -1228,7 +1299,7 @@
 
             <div>
               <div class="font-bold text-slate-300 mb-1.5 flex justify-between">
-                <span>Materiales Registrados</span>
+                <span>Materiales & Equipos Registrados</span>
                 <span class="text-slate-400">RD$ ${totalMaterials.toLocaleString()}</span>
               </div>
               <div class="space-y-1">
@@ -1246,12 +1317,11 @@
     }
 
     /* ===================================================================
-       MÓDULO DE LOGÍSTICA & EQUIPOS (CON IMPORT/EXPORT PDF & EXCEL)
+       MÓDULO DE LOGÍSTICA & EQUIPOS
        =================================================================== */
     function renderAdminLogistics() {
       return `
         <div class="space-y-4">
-          <!-- Barra de navegación de sub-pestañas -->
           <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-1 gap-2">
             <div class="flex">
               <button onclick="setLogisticsSubtab('vehicles')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'vehicles' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
@@ -1268,7 +1338,6 @@
               </button>
             </div>
 
-            <!-- BOTONES DE IMPORTAR Y EXPORTAR (EXCEL Y PDF) -->
             <div class="flex items-center gap-2 py-1">
               <button onclick="exportLogisticsToExcel()" class="bg-emerald-900/70 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/60 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 shadow">
                 <i class="fa-solid fa-file-excel"></i> Exportar Excel
@@ -1296,7 +1365,6 @@
       render();
     }
 
-    /* GESTIÓN DE VEHÍCULOS: CON EDICIÓN, ELIMINACIÓN Y CONTEO */
     function renderVehiclesLogistics() {
       const avail = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
       const assigned = appData.vehicles.filter(v => v.status === 'Operativo' && v.assignedTo).length;
@@ -1322,7 +1390,7 @@
           </div>
 
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left" id="vehiclesTableExport">
+            <table class="w-full text-xs text-left">
               <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
                 <tr>
                   <th class="p-3">Placa</th>
@@ -1360,7 +1428,6 @@
       `;
     }
 
-    /* GESTIÓN DE HERRAMIENTAS: CON EDICIÓN Y ELIMINACIÓN */
     function renderToolsLogistics() {
       return `
         <div class="space-y-4">
@@ -1372,7 +1439,7 @@
           </div>
 
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left" id="toolsTableExport">
+            <table class="w-full text-xs text-left">
               <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
                 <tr>
                   <th class="p-3">Código</th>
@@ -1449,7 +1516,7 @@
             <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-slate-300">
               Historial de Consumo & Comparativa con Tareas Asignadas (GPS)
             </div>
-            <table class="w-full text-xs text-left" id="fuelTableExport">
+            <table class="w-full text-xs text-left">
               <thead class="bg-slate-950/50 text-slate-400 border-b border-slate-800 uppercase font-semibold">
                 <tr>
                   <th class="p-3">Fecha</th>
@@ -1507,7 +1574,7 @@
           </div>
 
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left" id="staffTableExport">
+            <table class="w-full text-xs text-left">
               <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
                 <tr>
                   <th class="p-3">Nombre</th>
@@ -1541,12 +1608,10 @@
     }
 
     /* ===================================================================
-       EXPORTACIÓN E IMPORTACIÓN (EXCEL & PDF)
+       EXPORTACIÓN / IMPORTACIÓN EXCEL & PDF
        =================================================================== */
     function exportLogisticsToExcel() {
       const wb = XLSX.utils.book_new();
-
-      // Hoja Vehículos
       const vehData = appData.vehicles.map(v => ({
         Placa: v.plate,
         Modelo: v.model,
@@ -1557,7 +1622,6 @@
       const wsVeh = XLSX.utils.json_to_sheet(vehData);
       XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
 
-      // Hoja Herramientas
       const toolsData = appData.tools.map(t => ({
         Codigo: t.code,
         Descripcion: t.name,
@@ -1568,7 +1632,6 @@
       const wsTools = XLSX.utils.json_to_sheet(toolsData);
       XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
 
-      // Guardar archivo Excel
       XLSX.writeFile(wb, "CentroXpert_Logistica_Equipos.xlsx");
     }
 
@@ -1645,7 +1708,7 @@
           ${p.quotation ? `
             <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
               <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
-              <p style="margin: 0; font-size: 12px;">Monto Aprobado: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
+              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
             </div>
           ` : ''}
         </div>
@@ -1663,7 +1726,6 @@
           const data = new Uint8Array(evt.target.result);
           const workbook = XLSX.read(data, { type: 'array' });
 
-          // Importar Vehículos si existe la hoja
           if (workbook.Sheets["Vehiculos"]) {
             const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
             jsonVeh.forEach(item => {
@@ -1688,7 +1750,6 @@
             });
           }
 
-          // Importar Herramientas si existe
           if (workbook.Sheets["Herramientas"]) {
             const jsonTools = XLSX.utils.sheet_to_json(workbook.Sheets["Herramientas"]);
             jsonTools.forEach(item => {
@@ -1715,14 +1776,14 @@
           alert('¡Datos de Logística importados exitosamente desde Excel!');
         } catch(err) {
           console.error(err);
-          alert('Error al procesar el archivo Excel. Asegúrate de usar el formato correcto.');
+          alert('Error al procesar el archivo Excel.');
         }
       };
       reader.readAsArrayBuffer(file);
     }
 
     /* ===================================================================
-       CRUD VEHÍCULOS & HERRAMIENTAS (EDITAR Y ELIMINAR)
+       CRUD VEHÍCULOS & HERRAMIENTAS
        =================================================================== */
     function openVehicleModal(id = null) {
       const select = document.getElementById('vehicleAssignedTo');
@@ -1763,7 +1824,6 @@
       if (id) {
         const v = appData.vehicles.find(item => item.id === id);
         if (v) {
-          // Desasignar del técnico anterior si cambió
           if (v.assignedTo && v.assignedTo !== assignedTo) {
             const oldT = appData.technicians.find(t => t.name === v.assignedTo);
             if (oldT && oldT.vehiclePlate === v.plate) oldT.vehiclePlate = '';
@@ -1774,7 +1834,6 @@
           v.status = status;
           v.assignedTo = assignedTo;
 
-          // Asignar al nuevo técnico
           if (assignedTo) {
             const newT = appData.technicians.find(t => t.name === assignedTo);
             if (newT) newT.vehiclePlate = plate;
@@ -1900,7 +1959,6 @@
       document.getElementById('editProjectAddress').value = p.address;
       document.getElementById('editProjectStatus').value = p.status;
 
-      // Selectores de Técnicos
       const leaderSelect = document.getElementById('editProjectTechLeader');
       leaderSelect.innerHTML = appData.technicians.map(t => `
         <option value="${t.name}" ${t.name === p.techLeader ? 'selected' : ''}>${t.name} (${t.level})</option>
@@ -1932,7 +1990,6 @@
       p.address = document.getElementById('editProjectAddress').value.trim();
       p.status = document.getElementById('editProjectStatus').value;
 
-      // Reasignación
       p.techLeader = newLeader;
       p.techCrew = crewName ? [crewName] : [];
 
@@ -2022,7 +2079,6 @@
         fileData: tempQuoteFileData
       };
 
-      // Si el proyecto estaba en Levantamiento, pasa a En Presupuesto / Cotizado
       if (p.status === 'Levantamiento') {
         p.status = 'En Presupuesto';
       }
@@ -2033,11 +2089,11 @@
     }
 
     /* ===================================================================
-       LEVANTAMIENTO MULTIFORMATO (FOTO, PDF, EXCEL) & VISOR
+       LEVANTAMIENTO MULTIFORMATO (IMAGEN, PDF, WORD), OCR & CANTIDADES
        =================================================================== */
     let currentSurveyProjectId = null;
-    let tempSurveyEquip = [];
-    let tempSurveyMaterials = [];
+    let tempSurveyItemsEquip = [];
+    let tempSurveyItemsMat = [];
     let tempSurveyFile = null;
 
     function openSurveyModal(id) {
@@ -2047,53 +2103,210 @@
 
       document.getElementById('surveyProjectId').value = id;
       document.getElementById('surveyProjectTitle').innerText = `${p.code} - ${p.title}`;
-      document.getElementById('surveyMeters').value = p.survey ? p.survey.meters : '';
-      document.getElementById('surveyStructure').value = p.survey ? p.survey.structure : 'Ductería EMT Existente';
+      document.getElementById('surveyMeters').value = p.survey ? (p.survey.meters || '') : '';
+      document.getElementById('surveyStructure').value = p.survey ? (p.survey.structure || 'Ductería EMT Existente') : 'Ductería EMT Existente';
       document.getElementById('surveyPower').value = p.survey ? (p.survey.power || '110V Regulada con UPS') : '110V Regulada con UPS';
-      document.getElementById('surveyNotes').value = p.survey ? p.survey.notes : '';
+      document.getElementById('surveyNotes').value = p.survey ? (p.survey.notes || '') : '';
+      document.getElementById('ocrStatusBadge').innerText = 'Listo para procesar';
 
-      tempSurveyEquip = p.survey && p.survey.equipment ? [...p.survey.equipment] : [];
-      tempSurveyMaterials = p.survey && p.survey.materials ? [...p.survey.materials] : [];
+      // Cargar lista de items con cantidades
+      if (p.survey && p.survey.itemsEquip) {
+        tempSurveyItemsEquip = JSON.parse(JSON.stringify(p.survey.itemsEquip));
+      } else if (p.survey && p.survey.equipment) {
+        tempSurveyItemsEquip = p.survey.equipment.map(name => ({ name, qty: 1, sku: 'GEN', price: 0 }));
+      } else {
+        tempSurveyItemsEquip = [];
+      }
+
+      if (p.survey && p.survey.itemsMat) {
+        tempSurveyItemsMat = JSON.parse(JSON.stringify(p.survey.itemsMat));
+      } else if (p.survey && p.survey.materials) {
+        tempSurveyItemsMat = p.survey.materials.map(name => ({ name, qty: 1, sku: 'GEN', price: 0 }));
+      } else {
+        tempSurveyItemsMat = [];
+      }
+
       tempSurveyFile = p.survey && p.survey.file ? { ...p.survey.file } : null;
 
       updateSurveyAttachedCard();
-      renderSurveyLists();
+      renderSurveyItemLists();
       searchOmegaCatalog();
       openModal('surveyModal');
     }
 
-    function handleSurveyFileUpload(e) {
+    /* Procesar Imagen, PDF y Word (.docx) con extracción automática */
+    function handleSurveyFileSelect(e) {
       const file = e.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        tempSurveyFile = {
-          name: file.name,
-          type: file.type,
-          data: evt.target.result,
-          size: file.size
+      const badge = document.getElementById('ocrStatusBadge');
+      const fileNameLower = file.name.toLowerCase();
+
+      // Caso 1: Word Document (.docx) con Mammoth.js
+      if (fileNameLower.endsWith('.docx') || fileNameLower.endsWith('.doc')) {
+        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Leyendo documento Word...';
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          mammoth.extractRawText({ arrayBuffer: evt.target.result })
+            .then(result => {
+              const docText = result.value;
+              processExtractedSurveyText(docText);
+              tempSurveyFile = {
+                name: file.name,
+                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                data: evt.target.result,
+                isDocx: true,
+                text: docText
+              };
+              updateSurveyAttachedCard();
+              badge.innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check mr-1"></i>Word digitalizado con éxito</span>';
+            })
+            .catch(err => {
+              console.error(err);
+              badge.innerText = 'Error al leer archivo Word.';
+            });
         };
-        updateSurveyAttachedCard();
-      };
-      reader.readAsDataURL(file);
+        reader.readAsArrayBuffer(file);
+      }
+      // Caso 2: Documento PDF con PDF.js
+      else if (fileNameLower.endsWith('.pdf')) {
+        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Extrayendo texto de PDF...';
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const typedarray = new Uint8Array(evt.target.result);
+          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+            let fullText = '';
+            let pagesPromises = [];
+            for (let i = 1; i <= Math.min(pdf.numPages, 3); i++) {
+              pagesPromises.push(pdf.getPage(i).then(page => {
+                return page.getTextContent().then(tc => {
+                  return tc.items.map(s => s.str).join(' ');
+                });
+              }));
+            }
+            Promise.all(pagesPromises).then(pagesText => {
+              fullText = pagesText.join('\n');
+              processExtractedSurveyText(fullText);
+              tempSurveyFile = {
+                name: file.name,
+                type: 'application/pdf',
+                data: URL.createObjectURL(file),
+                text: fullText
+              };
+              updateSurveyAttachedCard();
+              badge.innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check mr-1"></i>PDF digitalizado</span>';
+            });
+          }).catch(err => {
+            console.error(err);
+            badge.innerText = 'Error al leer PDF.';
+          });
+        };
+        reader.readAsArrayBuffer(file);
+      }
+      // Caso 3: Imagen con OCR (Tesseract.js)
+      else if (file.type && file.type.startsWith('image/')) {
+        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Digitalizando foto con OCR (Tesseract)...';
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const base64Data = evt.target.result;
+          tempSurveyFile = {
+            name: file.name,
+            type: file.type,
+            data: base64Data
+          };
+          updateSurveyAttachedCard();
+
+          Tesseract.recognize(base64Data, 'spa')
+            .then(({ data: { text } }) => {
+              processExtractedSurveyText(text);
+              badge.innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check mr-1"></i>Texto extraído por OCR</span>';
+            })
+            .catch(err => {
+              console.error(err);
+              badge.innerText = 'Foto adjunta (sin texto detectado)';
+            });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // Otros formatos (Excel, etc.)
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          tempSurveyFile = {
+            name: file.name,
+            type: file.type,
+            data: evt.target.result
+          };
+          updateSurveyAttachedCard();
+          badge.innerText = 'Archivo adjuntado correctamente.';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    /* Analizador inteligente de texto OCR / Documentos */
+    function processExtractedSurveyText(text) {
+      if (!text || !text.trim()) return;
+
+      const notesField = document.getElementById('surveyNotes');
+      notesField.value += (notesField.value ? '\n\n' : '') + '[Digitalizado]: ' + text.trim();
+
+      // Detección automática de metros lineales (ej: 140 metros, 85m, etc.)
+      const metersMatch = text.match(/(\d{2,4})\s*(?:metros?|mts?|m\b)/i);
+      if (metersMatch && !document.getElementById('surveyMeters').value) {
+        document.getElementById('surveyMeters').value = metersMatch[1];
+      }
+
+      // Detección de cámaras
+      const camMatch = text.match(/(\d+)\s*(?:c[aá]maras?|cam)/i);
+      if (camMatch) {
+        const qty = parseInt(camMatch[1]) || 1;
+        tempSurveyItemsEquip.push({
+          name: `Cámara IP Antivandálica 4MP (Detectada OCR)`,
+          qty: qty,
+          sku: 'CAM-HIK-4MP',
+          price: 5200
+        });
+      }
+
+      // Detección de rollos de cable UTP
+      const cableMatch = text.match(/(\d+)\s*(?:rollos?|bobinas?|cajas?)\s*(?:de\s*)?(?:cable|utp)/i);
+      if (cableMatch) {
+        const qty = parseInt(cableMatch[1]) || 1;
+        tempSurveyItemsMat.push({
+          name: `Bobina UTP Cat6 305m (Detectada OCR)`,
+          qty: qty,
+          sku: 'CAB-UTP-CAT6',
+          price: 7900
+        });
+      }
+
+      renderSurveyItemLists();
     }
 
     function simulateSurveyFileDemo() {
       tempSurveyFile = {
-        name: 'Levantamiento_Campo_Fotografia_Plano.jpg',
-        type: 'image/jpeg',
-        data: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80',
+        name: 'Levantamiento_Campo_Torre_Washington.docx',
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        data: null,
         isDemo: true
       };
       document.getElementById('surveyMeters').value = '175';
       document.getElementById('surveyStructure').value = 'Ductería EMT Existente';
-      document.getElementById('surveyNotes').value = 'Revisión en campo: 4 puntos de cámara domo en lobby y pasillos. Cruce por ducto de 3/4". Voltaje estable en cuarto de comunicaciones.';
-      tempSurveyEquip.push('Cámara IP Domo 4MP Hikvision Antivandálica IR30m (x4)');
-      tempSurveyMaterials.push('Bobina UTP Cat6 305m 100% Cobre Exterior Negra');
+      document.getElementById('surveyNotes').value = 'Digitalizado desde Word: Se requiere instalación de 4 cámaras IP en ductería de ascensor y lobby. Cruce por montante principal. Distancia aproximada de 175 metros lineales.';
+      
+      tempSurveyItemsEquip = [
+        { name: 'NVR 16 Canales 4K AcuSense', qty: 1, sku: 'NVR-HIK-16CH', price: 18500 },
+        { name: 'Cámara IP Domo 4MP Antivandálica', qty: 4, sku: 'CAM-HIK-4MP', price: 5200 }
+      ];
+
+      tempSurveyItemsMat = [
+        { name: 'Bobina UTP Cat6 305m Cobre', qty: 2, sku: 'CAB-UTP-CAT6', price: 7900 },
+        { name: 'Conectores RJ45 Blindados Paquete 50', qty: 1, sku: 'CON-RJ45-50P', price: 850 }
+      ];
+
       updateSurveyAttachedCard();
-      renderSurveyLists();
-      alert('¡Muestra de levantamiento cargada con fotografía técnica!');
+      renderSurveyItemLists();
+      document.getElementById('ocrStatusBadge').innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Muestra cargada con éxito</span>';
     }
 
     function updateSurveyAttachedCard() {
@@ -2104,15 +2317,18 @@
       }
       card.classList.remove('hidden');
       document.getElementById('surveyFileName').innerText = tempSurveyFile.name;
-      document.getElementById('surveyFileType').innerText = tempSurveyFile.type || 'Documento adjunto';
+      document.getElementById('surveyFileType').innerText = tempSurveyFile.type || 'Archivo adjunto';
 
       const icon = document.getElementById('surveyFileIcon');
-      if (tempSurveyFile.type && tempSurveyFile.type.includes('image')) {
-        icon.className = 'fa-solid fa-file-image text-emerald-400 text-lg';
-      } else if (tempSurveyFile.type && tempSurveyFile.type.includes('pdf')) {
+      const name = (tempSurveyFile.name || '').toLowerCase();
+      if (name.endsWith('.docx') || name.endsWith('.doc')) {
+        icon.className = 'fa-solid fa-file-word text-blue-400 text-lg';
+      } else if (name.endsWith('.pdf')) {
         icon.className = 'fa-solid fa-file-pdf text-rose-400 text-lg';
+      } else if (name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')) {
+        icon.className = 'fa-solid fa-file-image text-emerald-400 text-lg';
       } else {
-        icon.className = 'fa-solid fa-file-excel text-green-400 text-lg';
+        icon.className = 'fa-solid fa-file-lines text-amber-400 text-lg';
       }
     }
 
@@ -2121,29 +2337,92 @@
       updateSurveyAttachedCard();
     }
 
-    function renderSurveyLists() {
+    /* RENDER DE EQUIPOS Y MATERIALES CON CANTIDADES, EDICIÓN Y ELIMINACIÓN */
+    function renderSurveyItemLists() {
       const equipBox = document.getElementById('surveyEquipList');
       const matBox = document.getElementById('surveyMaterialList');
 
-      equipBox.innerHTML = tempSurveyEquip.length ? tempSurveyEquip.map((e, idx) => `
-        <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
-          <span>${e}</span>
-          <button type="button" onclick="removeSurveyItem('equip', ${idx})" class="text-rose-400 hover:text-white">&times;</button>
+      equipBox.innerHTML = tempSurveyItemsEquip.length ? tempSurveyItemsEquip.map((item, idx) => `
+        <div class="bg-slate-900 border border-slate-700/80 p-2 rounded-lg flex items-center justify-between gap-2 shadow-sm">
+          <div class="flex-1 truncate">
+            <span class="font-bold text-white">${item.name}</span>
+            <div class="text-[10px] text-slate-400 font-mono">SKU: ${item.sku || 'N/A'} • RD$ ${(item.price || 0).toLocaleString()} c/u</div>
+          </div>
+          <div class="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-700">
+            <button type="button" onclick="changeSurveyItemQty('equip', ${idx}, -1)" class="text-slate-400 hover:text-white px-1 font-bold">-</button>
+            <input type="number" min="1" value="${item.qty}" onchange="setSurveyItemQty('equip', ${idx}, this.value)" class="w-10 bg-transparent text-center font-bold text-white text-xs focus:outline-none">
+            <button type="button" onclick="changeSurveyItemQty('equip', ${idx}, 1)" class="text-slate-400 hover:text-white px-1 font-bold">+</button>
+          </div>
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="editSurveyItemName('equip', ${idx})" class="text-slate-400 hover:text-blue-300 p-1" title="Editar nombre"><i class="fa-solid fa-pen"></i></button>
+            <button type="button" onclick="removeSurveyItem('equip', ${idx})" class="text-rose-400 hover:text-white p-1" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
         </div>
       `).join('') : '<span class="text-slate-500 italic text-[11px]">No hay equipos cargados.</span>';
 
-      matBox.innerHTML = tempSurveyMaterials.length ? tempSurveyMaterials.map((m, idx) => `
-        <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
-          <span>${m}</span>
-          <button type="button" onclick="removeSurveyItem('mat', ${idx})" class="text-rose-400 hover:text-white">&times;</button>
+      matBox.innerHTML = tempSurveyItemsMat.length ? tempSurveyItemsMat.map((item, idx) => `
+        <div class="bg-slate-900 border border-slate-700/80 p-2 rounded-lg flex items-center justify-between gap-2 shadow-sm">
+          <div class="flex-1 truncate">
+            <span class="font-bold text-white">${item.name}</span>
+            <div class="text-[10px] text-slate-400 font-mono">SKU: ${item.sku || 'N/A'} • RD$ ${(item.price || 0).toLocaleString()} c/u</div>
+          </div>
+          <div class="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-700">
+            <button type="button" onclick="changeSurveyItemQty('mat', ${idx}, -1)" class="text-slate-400 hover:text-white px-1 font-bold">-</button>
+            <input type="number" min="1" value="${item.qty}" onchange="setSurveyItemQty('mat', ${idx}, this.value)" class="w-10 bg-transparent text-center font-bold text-white text-xs focus:outline-none">
+            <button type="button" onclick="changeSurveyItemQty('mat', ${idx}, 1)" class="text-slate-400 hover:text-white px-1 font-bold">+</button>
+          </div>
+          <div class="flex items-center gap-1">
+            <button type="button" onclick="editSurveyItemName('mat', ${idx})" class="text-slate-400 hover:text-blue-300 p-1" title="Editar nombre"><i class="fa-solid fa-pen"></i></button>
+            <button type="button" onclick="removeSurveyItem('mat', ${idx})" class="text-rose-400 hover:text-white p-1" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
         </div>
       `).join('') : '<span class="text-slate-500 italic text-[11px]">No hay insumos cargados.</span>';
     }
 
+    function changeSurveyItemQty(type, idx, delta) {
+      const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      if (arr[idx]) {
+        arr[idx].qty = Math.max(1, (arr[idx].qty || 1) + delta);
+        renderSurveyItemLists();
+      }
+    }
+
+    function setSurveyItemQty(type, idx, val) {
+      const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      if (arr[idx]) {
+        arr[idx].qty = Math.max(1, parseInt(val) || 1);
+        renderSurveyItemLists();
+      }
+    }
+
+    function editSurveyItemName(type, idx) {
+      const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      if (!arr[idx]) return;
+      const newName = prompt('Editar descripción del ítem:', arr[idx].name);
+      if (newName && newName.trim()) {
+        arr[idx].name = newName.trim();
+        renderSurveyItemLists();
+      }
+    }
+
     function removeSurveyItem(type, idx) {
-      if (type === 'equip') tempSurveyEquip.splice(idx, 1);
-      else tempSurveyMaterials.splice(idx, 1);
-      renderSurveyLists();
+      if (type === 'equip') tempSurveyItemsEquip.splice(idx, 1);
+      else tempSurveyItemsMat.splice(idx, 1);
+      renderSurveyItemLists();
+    }
+
+    function promptAddManualItem(type) {
+      const name = prompt(type === 'equip' ? 'Nombre del Equipo (ej: Switch PoE 24 Puertos):' : 'Nombre del Material (ej: Tubería EMT 3/4"):');
+      if (!name || !name.trim()) return;
+      const qty = parseInt(prompt('Cantidad:', '1')) || 1;
+      const target = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      target.push({
+        name: name.trim(),
+        qty: qty,
+        sku: 'MANUAL',
+        price: 0
+      });
+      renderSurveyItemLists();
     }
 
     function searchOmegaCatalog() {
@@ -2168,12 +2447,19 @@
       const prod = omegaProducts.find(p => p.sku === sku);
       if (!prod) return;
 
-      if (prod.category === 'Equipos') {
-        tempSurveyEquip.push(prod.name);
+      const target = prod.category === 'Equipos' ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      const existing = target.find(x => x.sku === prod.sku);
+      if (existing) {
+        existing.qty += 1;
       } else {
-        tempSurveyMaterials.push(prod.name);
+        target.push({
+          name: prod.name,
+          qty: 1,
+          sku: prod.sku,
+          price: prod.priceRD
+        });
       }
-      renderSurveyLists();
+      renderSurveyItemLists();
     }
 
     function handleSaveSurvey(e) {
@@ -2186,15 +2472,232 @@
         structure: document.getElementById('surveyStructure').value,
         power: document.getElementById('surveyPower').value,
         notes: document.getElementById('surveyNotes').value,
-        equipment: [...tempSurveyEquip],
-        materials: [...tempSurveyMaterials],
+        itemsEquip: [...tempSurveyItemsEquip],
+        itemsMat: [...tempSurveyItemsMat],
         file: tempSurveyFile
       };
+
+      // Transferir automáticamente los items al presupuesto de materiales del proyecto
+      if (p.budget) {
+        p.budget.materials = [];
+        tempSurveyItemsEquip.forEach(item => {
+          p.budget.materials.push({
+            desc: item.name,
+            qtyEst: item.qty,
+            qtyReal: item.qty,
+            unitCost: item.price || 1500,
+            subtotal: item.qty * (item.price || 1500)
+          });
+        });
+        tempSurveyItemsMat.forEach(item => {
+          p.budget.materials.push({
+            desc: item.name,
+            qtyEst: item.qty,
+            qtyReal: item.qty,
+            unitCost: item.price || 500,
+            subtotal: item.qty * (item.price || 500)
+          });
+        });
+      }
 
       p.status = 'En Presupuesto';
       closeModal('surveyModal');
       saveData();
-      alert('¡Levantamiento guardado! El coordinador ya puede ver y descargar las evidencias.');
+      alert('¡Levantamiento guardado con éxito! Ítems y cantidades transferidos a Presupuesto.');
+    }
+
+    /* ===================================================================
+       CANVAS PARA DIBUJAR PLANOS Y CROQUIS TÉCNICOS
+       =================================================================== */
+    let canvas, ctx;
+    let isDrawing = false;
+    let canvasTool = 'pen'; // 'pen', 'line', 'rect', 'camera', 'text', 'eraser'
+    let startX = 0, startY = 0;
+    let canvasSnapshot = null;
+
+    function openPlanCanvasModal() {
+      openModal('planCanvasModal');
+      setTimeout(initPlanCanvas, 50);
+    }
+
+    function initPlanCanvas() {
+      canvas = document.getElementById('planCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+
+      // Cuadrícula técnica de fondo si está en blanco
+      if (!canvasSnapshot) {
+        clearPlanCanvas();
+      }
+
+      canvas.onmousedown = startCanvasDraw;
+      canvas.onmousemove = drawCanvasMove;
+      canvas.onmouseup = stopCanvasDraw;
+
+      // Eventos táctiles para móviles / tablets
+      canvas.ontouchstart = (e) => {
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        startCanvasDraw({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} });
+      };
+      canvas.ontouchmove = (e) => {
+        const touch = e.touches[0];
+        drawCanvasMove({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} });
+      };
+      canvas.ontouchend = stopCanvasDraw;
+    }
+
+    function clearPlanCanvas() {
+      if (!ctx) return;
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Dibujar cuadrícula tenue de plano milimetrado
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 30) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 30) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      // Membrete
+      ctx.fillStyle = '#64748b';
+      ctx.font = '12px "Plus Jakarta Sans", sans-serif';
+      ctx.fillText('CentroXpert - Croquis Técnico de Instalación', 15, 25);
+    }
+
+    function setCanvasTool(tool) {
+      canvasTool = tool;
+      ['pen', 'line', 'rect', 'camera', 'text', 'eraser'].forEach(t => {
+        const btn = document.getElementById('toolBtn_' + t);
+        if (btn) {
+          if (t === tool) {
+            btn.className = 'bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow';
+          } else {
+            btn.className = 'bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg flex items-center gap-1 hover:text-white';
+          }
+        }
+      });
+    }
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+      };
+    }
+
+    function startCanvasDraw(e) {
+      isDrawing = true;
+      const coords = getCanvasCoords(e);
+      startX = coords.x;
+      startY = coords.y;
+
+      canvasSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      if (canvasTool === 'camera') {
+        drawCameraSymbol(startX, startY);
+        isDrawing = false;
+      } else if (canvasTool === 'text') {
+        const txt = prompt('Texto para el plano (ej: Cámara 1, NVR, 45m):');
+        if (txt) {
+          ctx.fillStyle = document.getElementById('canvasColor').value;
+          ctx.font = 'bold 14px Arial';
+          ctx.fillText(txt, startX, startY);
+        }
+        isDrawing = false;
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+      }
+    }
+
+    function drawCanvasMove(e) {
+      if (!isDrawing) return;
+      const coords = getCanvasCoords(e);
+      const color = document.getElementById('canvasColor').value;
+      const width = parseInt(document.getElementById('canvasLineWidth').value) || 3;
+
+      if (canvasTool === 'pen') {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.lineCap = 'round';
+        ctx.lineTo(coords.x, coords.y);
+        ctx.stroke();
+      } else if (canvasTool === 'eraser') {
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 20;
+        ctx.lineCap = 'round';
+        ctx.lineTo(coords.x, coords.y);
+        ctx.stroke();
+      } else if (canvasTool === 'line') {
+        ctx.putImageData(canvasSnapshot, 0, 0);
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(coords.x, coords.y);
+        ctx.stroke();
+      } else if (canvasTool === 'rect') {
+        ctx.putImageData(canvasSnapshot, 0, 0);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.strokeRect(startX, startY, coords.x - startX, coords.y - startY);
+      }
+    }
+
+    function stopCanvasDraw() {
+      isDrawing = false;
+    }
+
+    function drawCameraSymbol(x, y) {
+      ctx.fillStyle = '#8b1524';
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Cono de visión de cámara
+      ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 25, y - 15);
+      ctx.moveTo(x, y);
+      ctx.lineTo(x + 25, y + 15);
+      ctx.stroke();
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = '10px Arial';
+      ctx.fillText('CAM', x - 10, y - 12);
+    }
+
+    function savePlanDrawing() {
+      const dataUrl = canvas.toDataURL('image/png');
+      tempSurveyFile = {
+        name: 'Croquis_Plano_' + new Date().toISOString().slice(0, 10) + '.png',
+        type: 'image/png',
+        data: dataUrl,
+        isDrawing: true
+      };
+      updateSurveyAttachedCard();
+      closeModal('planCanvasModal');
+      alert('¡Croquis técnico guardado y vinculado al levantamiento!');
     }
 
     /* VISOR DE ARCHIVOS DEL LEVANTAMIENTO */
@@ -2218,6 +2721,15 @@
 
       if (file.type && file.type.includes('image')) {
         body.innerHTML = `<img src="${file.data}" alt="Evidencia Levantamiento" class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-md" />`;
+      } else if (file.type && file.type.includes('word')) {
+        body.innerHTML = `
+          <div class="text-center p-8 text-slate-300">
+            <i class="fa-solid fa-file-word text-6xl text-blue-500 mb-3"></i>
+            <h4 class="text-sm font-bold text-white">${file.name}</h4>
+            <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">Documento de Word procesado e importado con éxito.</p>
+            ${file.text ? `<div class="mt-4 p-3 bg-slate-900 border border-slate-800 rounded text-left text-xs text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap">${file.text}</div>` : ''}
+          </div>
+        `;
       } else if (file.type && file.type.includes('pdf')) {
         body.innerHTML = file.data ? 
           `<iframe src="${file.data}" class="w-full h-[70vh] rounded-lg border border-slate-700"></iframe>` :
@@ -2225,14 +2737,19 @@
       } else {
         body.innerHTML = `
           <div class="text-center p-8 text-slate-400">
-            <i class="fa-solid fa-file-excel text-5xl text-emerald-500 mb-3"></i>
+            <i class="fa-solid fa-file-lines text-5xl text-emerald-500 mb-3"></i>
             <p class="font-bold text-white">${file.name}</p>
-            <p class="text-xs mt-1">Planilla Excel / Datos de campo adjuntos.</p>
+            <p class="text-xs mt-1">Documento digitalizado adjunto.</p>
           </div>
         `;
       }
 
       openModal('fileViewerModal');
+    }
+
+    function previewCurrentSurveyFile() {
+      if (!tempSurveyFile) return;
+      viewSurveyFile(currentSurveyProjectId);
     }
 
     function downloadSurveyFile(projId) {
@@ -2375,9 +2892,6 @@
       alert(`¡Carga registrada! Distancia: ${dist} KM. Rendimiento: ${(dist/gallons).toFixed(1)} km/gal.`);
     }
 
-    /* ===================================================================
-       REGISTRO RÁPIDO DE PERSONAL TÉCNICO
-       =================================================================== */
     function promptNewTechnician() {
       const name = prompt('Nombre completo del técnico:');
       if (!name) return;
@@ -2415,7 +2929,7 @@
         techCrew: ['WESLY ALEJANDRO MOJICA'],
         status: 'Levantamiento',
         observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
-        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', equipment: [], materials: [], file: null },
+        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], file: null },
         quotation: null,
         budget: {
           approved: false,
@@ -2459,7 +2973,7 @@
                 techCrew: ['WESLY ALEJANDRO MOJICA'],
                 status: 'Levantamiento',
                 observations: 'Importado directamente desde orden de servicio digital CentroXpert.',
-                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', equipment: [], materials: [], file: null },
+                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], file: null },
                 quotation: null,
                 budget: { approved: false, services: [], materials: [] },
                 tracking: { checkIn: '', checkOut: '', hoursWorked: '' }
@@ -2476,7 +2990,6 @@
       fileReader.readAsArrayBuffer(file);
     }
 
-    // Inicialización al cargar la página
     window.addEventListener('DOMContentLoaded', () => {
       populateTechSelect();
       render();
