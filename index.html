@@ -70,10 +70,10 @@
           <div class="text-xs uppercase tracking-widest text-slate-400 font-bold flex items-center gap-2">
             Ingeniería y Servicios
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 live-pulse"></span>GEOLOCALIZACIÓN ACTIVA
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 live-pulse"></span>GPS EN TIEMPO REAL
             </span>
           </div>
-          <div class="text-sm font-semibold text-rose-400">Control Operativo & Técnico en Campo</div>
+          <div class="text-sm font-semibold text-rose-400">Control Operativo & Rendimiento Técnico</div>
         </div>
       </div>
 
@@ -87,10 +87,8 @@
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer">
   </main>
 
-  <!-- ================= MODALES DEL SISTEMA ================= -->
-
-  <!-- Modal Login -->
-  <div id="loginModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+  <!-- ================= MODAL LOGIN OBLIGATORIO AL INICIAR ================= -->
+  <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
       <div class="text-center mb-6">
         <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3 shadow">
@@ -109,8 +107,8 @@
             <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
           </svg>
         </div>
-        <h3 class="text-xl font-bold text-white">Ingreso a la Plataforma</h3>
-        <p class="text-xs text-slate-400 mt-1">Acceso seguro para técnicos y coordinación</p>
+        <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3>
+        <p class="text-xs text-slate-400 mt-1">Por seguridad, inicia sesión con tu usuario asignado</p>
       </div>
 
       <div class="flex border-b border-slate-800 mb-5">
@@ -122,6 +120,7 @@
         </button>
       </div>
 
+      <!-- Form Técnico -->
       <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Selecciona tu Nombre</label>
@@ -129,7 +128,7 @@
           </select>
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Clave inicial: 1234)</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Clave genérica inicial: 1234)</label>
           <input type="password" id="loginTecPin" required placeholder="••••" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500 font-mono">
           <p class="text-[10px] text-slate-400 mt-1">Si eres nuevo o te registraron recientemente, usa <strong>1234</strong> y cámbiala luego.</p>
         </div>
@@ -138,6 +137,7 @@
         </button>
       </form>
 
+      <!-- Form Coordinador -->
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinación (admin123)</label>
@@ -561,7 +561,7 @@
         <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-satellite"></i> Coordenadas GPS de la Obra (Para Geofencing Real)
+              <i class="fa-solid fa-satellite"></i> Coordenadas GPS de la Obra (Geofencing)
             </span>
             <button type="button" onclick="captureProjectGPSCurrentLocation()" class="text-[11px] bg-emerald-950 text-emerald-300 border border-emerald-800 hover:bg-emerald-900 px-2 py-0.5 rounded font-bold">
               <i class="fa-solid fa-crosshairs mr-1"></i> Fijar mi GPS actual como destino
@@ -577,7 +577,7 @@
               <input type="number" step="0.000001" id="editProjectLng" placeholder="-69.905600" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
             </div>
           </div>
-          <p class="text-[10px] text-slate-500">Esto permite que el sistema mida si el técnico realmente está en el lugar al marcar su llegada.</p>
+          <p class="text-[10px] text-slate-500">Mide con precisión si el técnico realmente está en el lugar de la obra al marcar llegada.</p>
         </div>
 
         <!-- REASIGNACIÓN DE PERSONAL: LÍDER Y CUADRILLA -->
@@ -751,10 +751,10 @@
     /* ===================================================================
        ESTADO CENTRAL & MIGRACIÓN LIMPIA DE DATOS
        =================================================================== */
-    const STORAGE_KEY = 'centroxpert_data_v5';
+    const STORAGE_KEY = 'centroxpert_data_v6';
 
     const defaultData = {
-      currentUser: { role: 'admin', name: 'Coordinador General' },
+      currentUser: null, // Obliga a autenticarse siempre al cargar
       technicians: [
         { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Av. Las Palmas #45, Herrera', vehiclePlate: 'L428901', pin: '1234' },
         { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'C/ Duarte #12, Los Alcarrizos', vehiclePlate: 'L389104', pin: '1234' },
@@ -789,13 +789,13 @@
           client: 'CONDOMINIO TORRE WASHINGTON',
           contact: 'Ana Milagros Guzman (829) 762-8952 / Jadiri Baez (809) 781-1045',
           address: 'Torre Washington, Av. George Washington (El Malecón), Santo Domingo',
-          targetLat: 18.463200, // Coordenadas oficiales de la obra
+          targetLat: 18.463200,
           targetLng: -69.905600,
-          geofenceRadiusMeters: 300, // Radio de 300 metros para confirmar en sitio
+          geofenceRadiusMeters: 300,
           plannedDate: '26/10/2026',
           techLeader: 'Enmanuel Matos',
           techCrew: ['WESLY ALEJANDRO MOJICA'],
-          status: 'Levantamiento',
+          status: 'En Curso',
           observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR Y PERÍMETRO',
           survey: {
             meters: 160,
@@ -811,16 +811,23 @@
               { name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', qty: 1, sku: 'CON-RJ45-50P', price: 850 },
               { name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', qty: 6, sku: 'CAJ-PASO-44', price: 290 }
             ],
-            // SE CORRIGE EL ERROR: NO LLEVA EL PDF DE LA ORDEN DE SERVICIO
-            file: null // Inicia limpio para que el técnico o coordinador suba o dibuje el plano real
+            // TOTALMENTE LIMPIO: Nunca más aparecerá el PDF de orden de servicio aquí
+            file: null
           },
           serviceOrderFile: {
             name: 'Orden_TORRE_WASHINGTON_CX-SGE-2026-005.pdf',
             type: 'application/pdf'
           },
-          quotation: null,
+          quotation: {
+            number: 'COT-2026-041',
+            amount: 68500,
+            date: '2026-10-25',
+            notes: '50% anticipo, 50% al finalizar entrega.',
+            fileName: 'Cotizacion_Torre_Washington.pdf',
+            fileData: null
+          },
           budget: {
-            approved: false,
+            approved: true,
             services: [
               { concept: 'Horas Hombre Técnicas (Líder + Asistente)', qty: 18, rate: 650, subtotal: 11700 },
               { concept: 'Viáticos & Dietas de Campo', qty: 2, rate: 600, subtotal: 1200 },
@@ -834,13 +841,13 @@
             ]
           },
           tracking: {
-            checkIn: '',
-            checkInCoords: null,
-            checkInRaw: null,
+            checkIn: '08:15 AM (18.4633, -69.9055)',
+            checkInCoords: { lat: 18.4633, lng: -69.9055 },
+            checkInRaw: new Date().setHours(8, 15, 0, 0),
             checkOut: '',
             hoursWorked: '',
-            isVerifiedOnSite: false,
-            distanceFromTargetMeters: null
+            isVerifiedOnSite: true,
+            distanceFromTargetMeters: 22
           }
         }
       ]
@@ -848,10 +855,24 @@
 
     let appData = loadData();
 
+    // Sesión activa (Siempre inicia desconectado para forzar Login por seguridad)
+    let currentAuthUser = null;
+
     function loadData() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        try { return JSON.parse(saved); } catch(e) { console.error(e); }
+        try { 
+          const parsed = JSON.parse(saved);
+          // Asegurar que ningún plano tenga por error el PDF viejo
+          if (parsed.projects) {
+            parsed.projects.forEach(p => {
+              if (p.survey && p.survey.file && p.survey.file.name && p.survey.file.name.toLowerCase().includes('washington')) {
+                p.survey.file = null;
+              }
+            });
+          }
+          return parsed;
+        } catch(e) { console.error(e); }
       }
       return JSON.parse(JSON.stringify(defaultData));
     }
@@ -861,7 +882,7 @@
       render();
     }
 
-    /* Catálogo Omega Tech precargado */
+    /* Catálogo Omega Tech */
     const omegaProducts = [
       { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200, priceUS: 86.6 },
       { sku: 'CAM-HIK-BUL', name: 'Cámara IP Bullet 4MP Hikvision ColorVu Exterior', category: 'Equipos', priceRD: 5650, priceUS: 94.1 },
@@ -876,7 +897,7 @@
       { sku: 'CAJ-PASO-44', name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', category: 'Materiales', priceRD: 290, priceUS: 4.8 }
     ];
 
-    let currentNavTab = 'projects';
+    let currentNavTab = 'projects'; // 'projects', 'logistics', 'kpis'
     let currentLogisticsSubtab = 'vehicles';
     let currentTechTab = 'my_tasks';
 
@@ -885,11 +906,11 @@
     }
 
     /* ===================================================================
-       FÓRMULA HAVERSINE: CÁLCULO DE DISTANCIA GPS EXACTA EN METROS
+       FÓRMULA HAVERSINE: DISTANCIA GPS EXACTA EN METROS
        =================================================================== */
     function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
       if (!lat1 || !lon1 || !lat2 || !lon2) return null;
-      const R = 6371e3; // Radio de la Tierra en metros
+      const R = 6371e3;
       const φ1 = (lat1 * Math.PI) / 180;
       const φ2 = (lat2 * Math.PI) / 180;
       const Δφ = ((lat2 - lat1) * Math.PI) / 180;
@@ -900,9 +921,12 @@
                 Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-      return Math.round(R * c); // Distancia en metros
+      return Math.round(R * c);
     }
 
+    /* ===================================================================
+       CONTROL DE SESIÓN Y LOGIN OBLIGATORIO
+       =================================================================== */
     function switchLoginTab(type) {
       if (type === 'tec') {
         document.getElementById('formLoginTec').classList.remove('hidden');
@@ -934,9 +958,9 @@
       const tech = appData.technicians.find(t => t.name === techName);
 
       if (tech && (tech.pin === pin || (!tech.pin && pin === '1234') || pin === '1234')) {
-        appData.currentUser = { role: 'tech', name: tech.name, techId: tech.id };
+        currentAuthUser = { role: 'tech', name: tech.name, techId: tech.id };
         closeModal('loginModal');
-        saveData();
+        render();
       } else {
         alert('PIN incorrecto. Si el técnico es nuevo, el PIN genérico inicial es 1234.');
       }
@@ -946,17 +970,21 @@
       e.preventDefault();
       const pass = document.getElementById('loginAdminPass').value;
       if (pass === 'admin123') {
-        appData.currentUser = { role: 'admin', name: 'Coordinador General' };
+        currentAuthUser = { role: 'admin', name: 'Coordinador General' };
         closeModal('loginModal');
-        saveData();
+        render();
       } else {
         alert('Clave de Coordinación incorrecta (Usa: admin123)');
       }
     }
 
     function logout() {
-      openModal('loginModal');
+      currentAuthUser = null;
+      document.getElementById('loginTecPin').value = '';
+      document.getElementById('loginAdminPass').value = '';
       populateTechSelect();
+      openModal('loginModal');
+      render();
     }
 
     function populateTechSelect() {
@@ -983,7 +1011,7 @@
         return;
       }
 
-      const tech = appData.technicians.find(t => t.name === appData.currentUser.name);
+      const tech = appData.technicians.find(t => t.name === currentAuthUser.name);
       if (tech) {
         if (tech.pin && tech.pin !== current && current !== '1234') {
           alert('El PIN actual es incorrecto.');
@@ -998,12 +1026,28 @@
 
     /* ===================================================================
        RENDERIZADO PRINCIPAL
-       =================================================================== */
+       ================================================================== */
     function render() {
       renderHeader();
       const container = document.getElementById('mainContainer');
 
-      if (appData.currentUser.role === 'tech') {
+      if (!currentAuthUser) {
+        container.innerHTML = `
+          <div class="h-[60vh] flex flex-col items-center justify-center text-center p-6">
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl max-w-sm">
+              <i class="fa-solid fa-lock text-4xl text-rose-500 mb-3"></i>
+              <h3 class="text-base font-bold text-white">Sesión Bloqueada</h3>
+              <p class="text-xs text-slate-400 mt-1 mb-4">Debes identificarte con tu perfil para acceder a las tareas y datos operativos.</p>
+              <button onclick="openModal('loginModal')" class="w-full bg-rose-700 hover:bg-rose-600 text-white font-bold py-2 rounded-xl text-xs shadow-lg shadow-rose-900/30">
+                Iniciar Sesión
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (currentAuthUser.role === 'tech') {
         container.innerHTML = renderTechView();
       } else {
         container.innerHTML = renderAdminView();
@@ -1012,13 +1056,22 @@
 
     function renderHeader() {
       const actions = document.getElementById('headerUserActions');
-      const isTech = appData.currentUser.role === 'tech';
+      if (!currentAuthUser) {
+        actions.innerHTML = `
+          <button onclick="openModal('loginModal')" class="bg-rose-700 hover:bg-rose-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+          </button>
+        `;
+        return;
+      }
+
+      const isTech = currentAuthUser.role === 'tech';
 
       actions.innerHTML = `
         <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
           <i class="fa-solid ${isTech ? 'fa-hard-hat text-rose-400' : 'fa-user-tie text-blue-400'} text-sm"></i>
           <div class="text-left leading-tight">
-            <div class="text-xs font-bold text-white">${appData.currentUser.name}</div>
+            <div class="text-xs font-bold text-white">${currentAuthUser.name}</div>
             <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'Técnico de Campo' : 'Coordinador General'}</div>
           </div>
         </div>
@@ -1029,7 +1082,7 @@
           </button>
         ` : ''}
 
-        <button onclick="logout()" title="Cambiar de usuario o salir" class="bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 p-2 rounded-xl border border-slate-700 text-sm">
+        <button onclick="logout()" title="Cerrar sesión" class="bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 p-2 rounded-xl border border-slate-700 text-sm">
           <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       `;
@@ -1039,7 +1092,7 @@
        VISTA DEL TÉCNICO (CON GPS Y GEOFENCING)
        =================================================================== */
     function renderTechView() {
-      const myTechName = appData.currentUser.name;
+      const myTechName = currentAuthUser.name;
       const myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
       const myVehicle = appData.vehicles.find(v => v.assignedTo === myTechName);
       const myTools = appData.tools.filter(t => t.assignedTo === myTechName);
@@ -1087,7 +1140,7 @@
                       <div class="text-slate-400 font-medium"><i class="fa-solid fa-location-dot mr-1.5 text-rose-500"></i>Ubicación:</div>
                       <div class="text-white font-medium mt-0.5">${p.address}</div>
                       ${p.targetLat && p.targetLng ? `
-                        <div class="text-[10px] text-slate-500 font-mono mt-0.5">Destino GPS: [${p.targetLat.toFixed(4)}, ${p.targetLng.toFixed(4)}]</div>
+                        <div class="text-[10px] text-emerald-400 font-mono mt-0.5">Destino GPS: [${p.targetLat.toFixed(4)}, ${p.targetLng.toFixed(4)}]</div>
                       ` : `
                         <div class="text-[10px] text-amber-400/80 mt-0.5">⚠️ Proyecto sin coordenada GPS fijada aún</div>
                       `}
@@ -1096,7 +1149,7 @@
                       <div class="text-slate-400 font-medium"><i class="fa-solid fa-phone mr-1.5 text-emerald-400"></i>Contacto:</div>
                       <div class="text-white font-medium mt-0.5">${p.contact}</div>
                       <button onclick="setProjectCoordsFromPhone('${p.id}')" class="text-[10px] text-blue-400 hover:underline mt-1 font-semibold flex items-center gap-1">
-                        <i class="fa-solid fa-location-pin"></i> Fijar mi GPS actual como ubicación del cliente
+                        <i class="fa-solid fa-location-pin"></i> Fijar mi GPS actual como ubicación de la obra
                       </button>
                     </div>
                   </div>
@@ -1204,7 +1257,7 @@
     }
 
     /* ===================================================================
-       VISTA DEL COORDINADOR (PANEL GENERAL EN TIEMPO REAL)
+       VISTA DEL COORDINADOR (PANEL GENERAL, LOGÍSTICA & MÓDULO KPIS)
        =================================================================== */
     function renderAdminView() {
       const availVehicles = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
@@ -1233,13 +1286,17 @@
             </div>
           </div>
 
+          <!-- NAVEGACIÓN PRINCIPAL: PROYECTOS, LOGÍSTICA E INFORMES KPIS -->
           <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
               <button onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
                 <i class="fa-solid fa-diagram-project mr-1.5"></i> Proyectos & Presupuestos
               </button>
               <button onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
                 <i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Logística & Activos
+              </button>
+              <button onclick="setNavTab('kpis')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'kpis' ? 'bg-emerald-700 text-white shadow-lg shadow-emerald-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
+                <i class="fa-solid fa-chart-line mr-1.5"></i> Informes & Rendimiento KPI
               </button>
             </div>
 
@@ -1253,9 +1310,22 @@
                 </button>
               </div>
             ` : ''}
+
+            ${currentNavTab === 'kpis' ? `
+              <div class="flex gap-2">
+                <button onclick="exportKPIReportToPDF()" class="bg-rose-950/80 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-file-pdf"></i> Exportar Informe KPI (PDF)
+                </button>
+                <button onclick="exportKPIToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-file-excel"></i> Exportar KPI (Excel)
+                </button>
+              </div>
+            ` : ''}
           </div>
 
-          ${currentNavTab === 'projects' ? renderAdminProjects() : renderAdminLogistics()}
+          ${currentNavTab === 'projects' ? renderAdminProjects() : ''}
+          ${currentNavTab === 'logistics' ? renderAdminLogistics() : ''}
+          ${currentNavTab === 'kpis' ? renderAdminKPIs() : ''}
         </div>
       `;
     }
@@ -1263,6 +1333,294 @@
     function setNavTab(tab) {
       currentNavTab = tab;
       render();
+    }
+
+    /* ===================================================================
+       NUEVO MÓDULO: INFORMES & KPIS DE RENDIMIENTO TÉCNICO
+       =================================================================== */
+    function renderAdminKPIs() {
+      // Cálculos globales
+      const totalProjects = appData.projects.length;
+      const completedProjects = appData.projects.filter(p => p.status === 'Finalizado').length;
+      const completionRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
+
+      // Geofencing GPS Compliance
+      const checkInProjects = appData.projects.filter(p => p.tracking && p.tracking.checkIn);
+      const verifiedOnSite = checkInProjects.filter(p => p.tracking.isVerifiedOnSite).length;
+      const gpsComplianceRate = checkInProjects.length > 0 ? Math.round((verifiedOnSite / checkInProjects.length) * 100) : 100;
+
+      // Rendimiento de combustible global
+      const totalFuelTickets = appData.fuelLogs.reduce((acc, l) => acc + (l.tickets500 || 0), 0);
+      const totalFuelMoney = totalFuelTickets * 500;
+      const totalKmLogged = appData.fuelLogs.reduce((acc, l) => acc + (l.dist || 0), 0);
+      const avgCostPerKm = totalKmLogged > 0 ? (totalFuelMoney / totalKmLogged).toFixed(2) : '0.00';
+
+      // Horas Hombre presupuestadas vs estimadas
+      let totalBudgetHours = 0;
+      appData.projects.forEach(p => {
+        if (p.budget && p.budget.services) {
+          p.budget.services.forEach(s => {
+            if (s.concept.toLowerCase().includes('horas') || s.concept.toLowerCase().includes('técnicas')) {
+              totalBudgetHours += (s.qty || 0);
+            }
+          });
+        }
+      });
+
+      // Cálculo individual por técnico
+      const techStats = appData.technicians.map(t => {
+        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || p.techCrew.includes(t.name));
+        const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
+        const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
+        const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
+        const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
+
+        // Combustible del vehículo asignado
+        const fuelEntries = appData.fuelLogs.filter(f => f.driver === t.name || f.plate === t.vehiclePlate);
+        let avgDev = 0;
+        if (fuelEntries.length > 0) {
+          const sumDev = fuelEntries.reduce((acc, f) => acc + parseFloat(f.dev || 0), 0);
+          avgDev = (sumDev / fuelEntries.length).toFixed(1);
+        }
+
+        // Score de Desempeño ponderado (0 - 100)
+        // 40% Tasa de Cierre + 40% Cumplimiento Geofencing GPS + 20% Eficiencia de Rutas
+        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 40 : 25;
+        const gpsScore = (gpsRate / 100) * 40;
+        const fuelScore = Math.max(0, (1 - (avgDev / 50))) * 20;
+        const performanceScore = Math.min(100, Math.round(closeScore + gpsScore + fuelScore));
+
+        return {
+          ...t,
+          assignedCount: assignedProj.length,
+          completedCount: completed,
+          gpsRate,
+          avgDev,
+          performanceScore
+        };
+      });
+
+      return `
+        <div class="space-y-6">
+          
+          <!-- BANNER RESUMEN EJECUTIVO KPI -->
+          <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-rose-950/40 border border-slate-800 p-5 rounded-2xl shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <span class="text-xs uppercase tracking-wider text-rose-400 font-bold"><i class="fa-solid fa-gauge-high mr-1.5"></i>Tablero de Control de Productividad</span>
+                <h2 class="text-xl font-black text-white mt-0.5">Métricas Clave de Rendimiento Técnico</h2>
+                <p class="text-xs text-slate-400 mt-1">Evaluación en tiempo real de cuadrillas en campo, cumplimiento GPS y optimización vehicular.</p>
+              </div>
+              <div class="flex items-center gap-3 bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800">
+                <i class="fa-solid fa-award text-amber-400 text-2xl"></i>
+                <div>
+                  <div class="text-[11px] text-slate-400 font-medium">Cumplimiento Operativo General</div>
+                  <div class="text-lg font-black text-white">${completionRate}% <span class="text-xs text-emerald-400 font-semibold">Tasa de Entrega</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TARJETAS DE KPIS PRINCIPALES -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
+                <span>Puntualidad & GPS Geofencing</span>
+                <i class="fa-solid fa-location-dot text-emerald-400"></i>
+              </div>
+              <div class="text-2xl font-black text-emerald-400 mt-2">${gpsComplianceRate}%</div>
+              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div class="bg-emerald-500 h-full rounded-full" style="width: ${gpsComplianceRate}%"></div>
+              </div>
+              <div class="text-[10px] text-slate-400 mt-2">Llegadas validadas a menos de 300m de la obra</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
+                <span>Inversión en Combustible</span>
+                <i class="fa-solid fa-gas-pump text-rose-400"></i>
+              </div>
+              <div class="text-2xl font-black text-white mt-2">RD$ ${totalFuelMoney.toLocaleString()}</div>
+              <div class="text-xs text-rose-400 font-bold mt-0.5">${totalFuelTickets} Tickets de RD$ 500</div>
+              <div class="text-[10px] text-slate-400 mt-1">Costo promedio: RD$ ${avgCostPerKm} / KM recorrido</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
+                <span>Horas Hombre Cotizadas</span>
+                <i class="fa-solid fa-clock text-blue-400"></i>
+              </div>
+              <div class="text-2xl font-black text-blue-400 mt-2">${totalBudgetHours} HH</div>
+              <div class="text-xs text-slate-300 font-medium mt-0.5">${checkInProjects.length} visitas con tiempo registrado</div>
+              <div class="text-[10px] text-slate-400 mt-1">Rendimiento según presupuesto aprobado</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
+                <span>Planos Técnicos en Obra</span>
+                <i class="fa-solid fa-compass-drafting text-purple-400"></i>
+              </div>
+              <div class="text-2xl font-black text-purple-400 mt-2">${appData.projects.filter(p => p.survey && p.survey.file).length}</div>
+              <div class="text-xs text-slate-300 font-medium mt-0.5">Levantamientos con croquis</div>
+              <div class="text-[10px] text-slate-400 mt-1">Soporte gráfico para instalación inmediata</div>
+            </div>
+
+          </div>
+
+          <!-- RANKING Y TABLA DE DESEMPEÑO POR TÉCNICO -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking de Rendimiento y Cumplimiento Técnico</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Puntaje basado en efectividad de cierre, geolocalización en sitio y desvío vehicular.</p>
+              </div>
+              <span class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">
+                Total Evaluados: ${techStats.length} Técnicos
+              </span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left" id="kpiTableExport">
+                <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                  <tr>
+                    <th class="p-3">Técnico</th>
+                    <th class="p-3">Categoría</th>
+                    <th class="p-3 text-center">Tareas (Total / Cierre)</th>
+                    <th class="p-3 text-center">Cumplimiento GPS</th>
+                    <th class="p-3 text-center">Desvío Combustible</th>
+                    <th class="p-3">Score de Eficiencia</th>
+                    <th class="p-3 text-right">Diagnóstico Operativo</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  ${techStats.sort((a,b) => b.performanceScore - a.performanceScore).map((t, idx) => `
+                    <tr class="hover:bg-slate-800/40">
+                      <td class="p-3">
+                        <div class="flex items-center gap-2">
+                          <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${idx === 0 ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300'}">${idx + 1}</span>
+                          <div>
+                            <span class="font-bold text-white">${t.name}</span>
+                            <div class="text-[10px] text-slate-500">${t.vehiclePlate ? `Vehículo: ${t.vehiclePlate}` : 'Sin auto'}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                          t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
+                          t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
+                          'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                        }">${t.level}</span>
+                      </td>
+                      <td class="p-3 text-center">
+                        <span class="font-bold text-white">${t.completedCount}</span> / <span class="text-slate-400">${t.assignedCount}</span>
+                      </td>
+                      <td class="p-3 text-center">
+                        <span class="font-bold font-mono ${t.gpsRate >= 80 ? 'text-emerald-400' : 'text-amber-400'}">${t.gpsRate}%</span>
+                      </td>
+                      <td class="p-3 text-center">
+                        <span class="font-mono ${parseFloat(t.avgDev) < 15 ? 'text-emerald-400' : 'text-rose-400'}">${t.avgDev}%</span>
+                      </td>
+                      <td class="p-3">
+                        <div class="flex items-center gap-2">
+                          <div class="w-24 bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full ${t.performanceScore >= 80 ? 'bg-emerald-500' : (t.performanceScore >= 60 ? 'bg-blue-500' : 'bg-amber-500')}" style="width: ${t.performanceScore}%"></div>
+                          </div>
+                          <span class="font-bold font-mono text-white">${t.performanceScore}/100</span>
+                        </div>
+                      </td>
+                      <td class="p-3 text-right">
+                        ${t.performanceScore >= 80 ? `
+                          <span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-star mr-1 text-amber-400"></i> Desempeño Sobresaliente
+                          </span>
+                        ` : t.performanceScore >= 60 ? `
+                          <span class="bg-blue-950/80 text-blue-300 border border-blue-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-check mr-1 text-blue-400"></i> Rendimiento Adecuado
+                          </span>
+                        ` : `
+                          <span class="bg-rose-950/80 text-rose-300 border border-rose-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-triangle-exclamation mr-1 text-rose-400"></i> Supervisar en Campo
+                          </span>
+                        `}
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    /* EXPORTACIÓN DE KPIS A EXCEL Y PDF */
+    function exportKPIToExcel() {
+      const wb = XLSX.utils.book_new();
+
+      const kpiData = appData.technicians.map(t => {
+        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || p.techCrew.includes(t.name));
+        const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
+        const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
+        const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
+        const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
+        
+        return {
+          Tecnico: t.name,
+          Rango: t.level,
+          Telefono: t.phone,
+          Vehiculo: t.vehiclePlate || 'Sin asignar',
+          Proyectos_Asignados: assignedProj.length,
+          Proyectos_Finalizados: completed,
+          Cumplimiento_GPS_Porc: gpsRate + '%',
+          Tasa_Efectividad: assignedProj.length > 0 ? Math.round((completed/assignedProj.length)*100) + '%' : '0%'
+        };
+      });
+
+      const ws = XLSX.utils.json_to_sheet(kpiData);
+      XLSX.utils.book_append_sheet(wb, ws, "Rendimiento_Tecnico_KPI");
+      XLSX.writeFile(wb, "CentroXpert_Informe_Rendimiento_KPI.xlsx");
+    }
+
+    function exportKPIReportToPDF() {
+      const printArea = document.getElementById('printContainer');
+      printArea.innerHTML = `
+        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
+          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
+          <h3 style="margin-top: 0;">Informe Ejecutivo de Rendimiento Técnico y KPIs</h3>
+          <p style="font-size: 11px; color: #555;">Fecha de reporte: ${new Date().toLocaleString()} | Emitido por: Coordinación General</p>
+          <hr/>
+          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 15px;">
+            <tr style="background-color: #f1f5f9;">
+              <th>Técnico</th>
+              <th>Nivel</th>
+              <th>Asignadas</th>
+              <th>Completadas</th>
+              <th>GPS Geofencing %</th>
+              <th>Vehículo</th>
+            </tr>
+            ${appData.technicians.map(t => {
+              const assigned = appData.projects.filter(p => p.techLeader === t.name || p.techCrew.includes(t.name));
+              const comp = assigned.filter(p => p.status === 'Finalizado').length;
+              const chk = assigned.filter(p => p.tracking && p.tracking.checkIn);
+              const ver = chk.filter(p => p.tracking.isVerifiedOnSite).length;
+              const rate = chk.length > 0 ? Math.round((ver/chk.length)*100) : 100;
+              return `
+                <tr>
+                  <td><strong>${t.name}</strong></td>
+                  <td>${t.level}</td>
+                  <td align="center">${assigned.length}</td>
+                  <td align="center">${comp}</td>
+                  <td align="center">${rate}%</td>
+                  <td>${t.vehiclePlate || 'N/A'}</td>
+                </tr>
+              `;
+            }).join('')}
+          </table>
+        </div>
+      `;
+      window.print();
     }
 
     /* ===================================================================
@@ -1321,7 +1679,6 @@
                     `}
                   </div>
 
-                  <!-- MONITOREO GPS EN VIVO Y DISTANCIA -->
                   <div>
                     <span class="text-slate-400 font-medium flex items-center justify-between">
                       <span>Geofencing & Marcaje GPS:</span>
@@ -1343,13 +1700,12 @@
                       ` : ''}
                       ${p.tracking && p.tracking.distanceFromTargetMeters !== null ? `
                         <div class="text-[10px] font-mono ${isVerified ? 'text-emerald-400' : 'text-amber-400'}">
-                          Distancia al cliente: ${p.tracking.distanceFromTargetMeters < 1000 ? p.tracking.distanceFromTargetMeters + ' m' : (p.tracking.distanceFromTargetMeters/1000).toFixed(2) + ' km'}
+                          Distancia medida: ${p.tracking.distanceFromTargetMeters < 1000 ? p.tracking.distanceFromTargetMeters + ' m' : (p.tracking.distanceFromTargetMeters/1000).toFixed(2) + ' km'}
                         </div>
                       ` : ''}
                     </div>
                   </div>
 
-                  <!-- LEVANTAMIENTO, PLANO TÉCNICO Y DESCARGA -->
                   <div>
                     <span class="text-slate-400 font-medium">Levantamiento & Plano Técnico:</span>
                     ${p.survey && (p.survey.meters || p.survey.file || (p.survey.itemsEquip && p.survey.itemsEquip.length)) ? `
@@ -1376,7 +1732,6 @@
                   </div>
                 </div>
 
-                <!-- COTIZACIÓN OFICIAL -->
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-2">
                   <div class="flex items-center gap-3">
                     <div class="p-2 rounded-lg ${p.quotation ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'bg-slate-800 text-slate-500'}">
@@ -1399,7 +1754,6 @@
                   </div>
                 </div>
 
-                <!-- Presupuesto Interno -->
                 ${renderBudgetSection(p)}
 
                 <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
@@ -1568,7 +1922,7 @@
                   <tr class="hover:bg-slate-800/40">
                     <td class="p-3 font-mono font-bold text-white">${v.plate}</td>
                     <td class="p-3 text-slate-300">${v.model}</td>
-                    <td class="p-3 font-mono text-emerald-400 font-bold">${v.odo.toLocaleString()} KM</td>
+                    <td class="p-3 font-mono text-emerald-400">${v.odo.toLocaleString()} KM</td>
                     <td class="p-3 font-bold ${v.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${v.assignedTo || 'Sin asignar'}</td>
                     <td class="p-3">
                       <span class="px-2 py-0.5 rounded-full font-semibold ${v.status === 'Operativo' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${v.status}</span>
@@ -1590,7 +1944,6 @@
       `;
     }
 
-    /* CONTROL DE COMBUSTIBLE SEMANAL POR TICKETS DE RD$ 500 Y CÁLCULO DE DESVÍO GPS */
     function renderFuelLogistics() {
       return `
         <div class="space-y-4">
@@ -1682,7 +2035,6 @@
       document.getElementById('fuelCost').value = tickets * 500;
     }
 
-    /* GESTIÓN DE PERSONAL TÉCNICO: REGISTRO, EDICIÓN Y CLAVE GENÉRICA */
     function renderStaffLogistics() {
       const specA = appData.technicians.filter(t => t.level === 'Especialista A').length;
       const specB = appData.technicians.filter(t => t.level === 'Especialista B').length;
@@ -2355,7 +2707,7 @@
         tempSurveyItemsMat = [];
       }
 
-      // CORRECCIÓN: el plano inicia limpio o con el archivo guardado por el usuario, nunca la orden PDF
+      // CORRECCIÓN DEFINITIVA: El plano inicia limpio (null) a menos que el usuario suba uno real
       tempSurveyFile = p.survey && p.survey.file ? { ...p.survey.file } : null;
 
       updateSurveyAttachedCard();
@@ -3026,7 +3378,6 @@
             p.tracking.checkInCoords = { lat: userLat, lng: userLng };
             p.tracking.checkInRaw = Date.now();
 
-            // Calcular distancia con Haversine
             let distanceMeters = null;
             let isVerified = false;
 
@@ -3035,7 +3386,6 @@
               const allowedRadius = p.geofenceRadiusMeters || 300;
               isVerified = distanceMeters <= allowedRadius;
             } else {
-              // Si no tenía coordenadas fijas, se asume la del primer técnico
               p.targetLat = userLat;
               p.targetLng = userLng;
               distanceMeters = 0;
@@ -3295,7 +3645,7 @@
         plannedDate: '26/10/2026',
         techLeader: 'Enmanuel Matos',
         techCrew: ['WESLY ALEJANDRO MOJICA'],
-        status: 'Levantamiento',
+        status: 'En Curso',
         observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
         survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], file: null },
         serviceOrderFile: { name: 'TORRE WASHINGTON.pdf', type: 'application/pdf' },
@@ -3305,7 +3655,7 @@
           services: [{ concept: 'Horas Hombre Técnicas (Líder + Cuadrilla)', qty: 16, rate: 650, subtotal: 10400 }],
           materials: []
         },
-        tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+        tracking: { checkIn: '08:15 AM (18.4633, -69.9055)', checkInCoords: { lat: 18.4633, lng: -69.9055 }, checkInRaw: Date.now(), checkOut: '', hoursWorked: '', isVerifiedOnSite: true, distanceFromTargetMeters: 22 }
       };
 
       appData.projects.unshift(newProj);
@@ -3363,8 +3713,10 @@
       fileReader.readAsArrayBuffer(file);
     }
 
+    // Al cargar la página SIEMPRE se muestra el Login y se cargan los técnicos
     window.addEventListener('DOMContentLoaded', () => {
       populateTechSelect();
+      openModal('loginModal');
       render();
     });
   </script>
