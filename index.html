@@ -71,14 +71,6 @@
       border-radius: 4px;
       font-size: 14px;
     }
-    .detalle-items {
-      margin-top: 10px;
-      font-size: 12px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      max-height: 200px;
-      overflow-y: auto;
-    }
   </style>
 </head>
 <body>
@@ -130,8 +122,8 @@
           <th>Proyecto</th>
           <th>Total Tareas</th>
           <th>Estatus Unificado</th>
-          <th>Servicios (80682)</th>
-          <th>Materiales (80687)</th>
+          <th>Servicios Prof.</th>
+          <th>Materiales</th>
           <th>Total Cotizado</th>
         </tr>
       </thead>
@@ -159,6 +151,7 @@
   // Configuración worker de PDF.js
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
+  // Estructura en memoria
   let tareas = [];
   let proyectos = {
     "PRJ-101": {
@@ -276,102 +269,63 @@
       const typedarray = new Uint8Array(this.result);
       const pdf = await pdfjsLib.getDocument(typedarray).promise;
 
-      let lineasTotales = [];
+      let fullText = "";
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
-        
-        // Agrupar elementos por línea vertical (coordenada Y aproximada)
-        let lineasMap = {};
-        for (let item of textContent.items) {
-          let y = Math.round(item.transform[5]);
-          if (!lineasMap[y]) lineasMap[y] = [];
-          lineasMap[y].push(item.str);
-        }
-        // Orden descendente de Y
-        let sortedY = Object.keys(lineasMap).sort((a,b) => b - a);
-        for (let y of sortedY) {
-          lineasTotales.push(lineasMap[y].join(" "));
-        }
+        fullText += textContent.items.map(item => item.str).join(" ") + "
+";
       }
 
-      procesarCotizacionPorCodigos(lineasTotales, proyectoId);
+      procesarTextoOmegatech(fullText, proyectoId);
     };
     fileReader.readAsArrayBuffer(file);
   });
 
-  function procesarCotizacionPorCodigos(lineas, proyectoId) {
+  function procesarTextoOmegatech(texto, proyectoId) {
     let servicios = 0;
-    let materiales = 0;
     let totalGeneral = 0;
     let pedido = "No identificado";
-    let textoCompleto = lineas.join(" ");
 
-    // Extraer número de pedido
-    let matchPedido = textoCompleto.match(/PEDIDO\s*#?:?\s*\|?\s*(\d+)/i);
+    const matchPedido = texto.match(/PEDIDO\s*#?:?\s*\|?\s*(\d+)/i);
     if (matchPedido) {
       pedido = matchPedido[1];
     }
 
-    // Extraer Total General
-    let matchTotal = textoCompleto.match(/TOTAL:?\s*\|?\s*(?:RD\$)?\s*([\d,]+\.\d{2})/i);
+    const matchTotal = texto.match(/TOTAL:?\s*\|?\s*(?:RD\$)?\s*([\d,]+\.\d{2})/i);
     if (matchTotal) {
       totalGeneral = parseFloat(matchTotal[1].replace(/,/g, ""));
     }
 
-    // Recorrer líneas buscando ítems por código (80682: Servicios, 80687: Materiales)
-    // O por descripción complementaria
-    for (let linea of lineas) {
-      let montos = linea.match(/[\d,]+\.\d{2}/g);
-      if (!montos || montos.length === 0) continue;
-
-      let importeLinea = parseFloat(montos[montos.length - 1].replace(/,/g, ""));
-
-      // Detección de Servicios Profesionales (Código 80682 o texto clave)
-      if (linea.includes("80682") || linea.includes("CX-SRV-") || linea.includes("SERVICIOS PROFESIONALES")) {
-        servicios += importeLinea;
-      }
-      // Detección de Materiales (Código 80687 o afines)
-      else if (linea.includes("80687") || linea.includes("MATERIALES") || linea.includes("EQUIPO")) {
-        materiales += importeLinea;
+    const regexServicio = /(CX-SRV-[^\n]+|SERVICIOS PROFESIONALES[^\n]+)/gi;
+    let match;
+    while ((match = regexServicio.exec(texto)) !== null) {
+      const linea = match[0];
+      const montos = linea.match(/[\d,]+\.\d{2}/g);
+      if (montos && montos.length > 0) {
+        servicios += parseFloat(montos[montos.length - 1].replace(/,/g, ""));
       }
     }
 
-    // Si los montos específicos no sumaron el total o fue cotización directa monotasa
-    if (servicios === 0 && materiales === 0 && totalGeneral > 0) {
-      if (textoCompleto.includes("80682") || textoCompleto.includes("SERVICIOS")) {
-        servicios = totalGeneral;
-      } else {
-        materiales = totalGeneral;
-      }
-    } else if (totalGeneral > 0 && (servicios + materiales) < totalGeneral) {
-      // Si detectó uno pero el otro no tenía código explícito por línea
-      if (servicios > 0 && materiales === 0) {
-        materiales = Math.max(0, totalGeneral - servicios);
-      } else if (materiales > 0 && servicios === 0) {
-        servicios = Math.max(0, totalGeneral - materiales);
-      }
+    if (servicios === 0 && texto.includes("SERVICIOS PROFESIONALES")) {
+      servicios = totalGeneral;
     }
 
-    if (totalGeneral === 0) {
-      totalGeneral = servicios + materiales;
-    }
+    const materiales = Math.max(0, totalGeneral - servicios);
 
-    // Actualizar registro de proyecto
     proyectos[proyectoId].servicios = servicios;
     proyectos[proyectoId].materiales = materiales;
     proyectos[proyectoId].total = totalGeneral;
     proyectos[proyectoId].pedidoOmegatech = pedido;
     proyectos[proyectoId].estatus = "Cotización Procesada";
 
-    // Mostrar resultado
     const resDiv = document.getElementById("resultado_extraccion");
     resDiv.style.display = "block";
     resDiv.innerHTML = `
-      <strong>Cotización Omegatech Procesada:</strong><br>
+      <strong>Cotización Omegatech Procesada Exitosamente:</strong><br>
       • Pedido #: <strong>${pedido}</strong><br>
-      • Servicios Profesionales (Ítem 80682): <strong>RD$ ${servicios.toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong><br>
-      • Materiales (Ítem 80687): <strong>RD$ ${materiales.toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong><br>
+      • Servicios Profesionales (Centroxpert): <strong>RD$ ${servicios.toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong><br>
+      • Materiales / Equipos: <strong>RD$ ${materiales.toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong><br>
       • Total General: <strong>RD$ ${totalGeneral.toLocaleString('es-DO', {minimumFractionDigits: 2})}</strong>
     `;
 
