@@ -5,948 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CentroXpert - Ingeniería y Servicios | Control Operativo en Tiempo Real</title>
   <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com">
-    /* ===================================================================
-       EXPORTACIÓN / IMPORTACIÓN LOGÍSTICA & PROYECTOS
-       =================================================================== */
-    function exportLogisticsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const vehData = appData.vehicles.map(v => ({
-        Placa: v.plate,
-        Modelo: v.model,
-        Odometro_KM: v.odo,
-        Custodio: v.assignedTo || 'Sin asignar',
-        Estatus: v.status
-      }));
-      const wsVeh = XLSX.utils.json_to_sheet(vehData);
-      XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
-
-      const fuelData = appData.fuelLogs.map(f => ({
-        Fecha: f.date,
-        Placa: f.plate,
-        Tecnico: f.driver,
-        Tickets_500: f.tickets500,
-        Monto_RD: f.cost,
-        Recorrido_KM: f.dist,
-        Desvio: f.dev
-      }));
-      const wsFuel = XLSX.utils.json_to_sheet(fuelData);
-      XLSX.utils.book_append_sheet(wb, wsFuel, "Combustible");
-
-      const staffData = appData.technicians.map(t => ({
-        Nombre: t.name,
-        Rango: t.level,
-        Telefono: t.phone,
-        Direccion: t.address,
-        Vehiculo: t.vehiclePlate || 'Ninguno'
-      }));
-      const wsStaff = XLSX.utils.json_to_sheet(staffData);
-      XLSX.utils.book_append_sheet(wb, wsStaff, "Personal");
-
-      const toolsData = appData.tools.map(t => ({
-        Codigo: t.code,
-        Descripcion: t.name,
-        Custodio: t.assignedTo || 'En Almacen',
-        Condicion: t.condition,
-        Fecha: t.date
-      }));
-      const wsTools = XLSX.utils.json_to_sheet(toolsData);
-      XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
-
-      XLSX.writeFile(wb, "CentroXpert_Logistica_Total.xlsx");
-    }
-
-    function exportLogisticsToPDF() {
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 4px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
-          <h3>Control de Flotilla y Combustible Semanal</h3>
-          <p style="font-size: 11px; color: #666;">Fecha de emisión: ${new Date().toLocaleString()}</p>
-          <hr/>
-          <h4>1. Flotilla Vehicular</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
-            <tr style="background-color: #f1f5f9;"><th>Placa</th><th>Modelo</th><th>Odómetro</th><th>Custodio</th><th>Estatus</th></tr>
-            ${appData.vehicles.map(v => `
-              <tr><td>${v.plate}</td><td>${v.model}</td><td>${v.odo} KM</td><td>${v.assignedTo || 'Sin asignar'}</td><td>${v.status}</td></tr>
-            `).join('')}
-          </table>
-
-          <h4>2. Registro de Combustible (Tickets RD$ 500)</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <tr style="background-color: #f1f5f9;"><th>Fecha</th><th>Placa</th><th>Técnico</th><th>Tickets</th><th>Distancia</th><th>Desvío</th></tr>
-            ${appData.fuelLogs.map(f => `
-              <tr><td>${f.date}</td><td>${f.plate}</td><td>${f.driver}</td><td>${f.tickets500} (RD$ ${f.cost})</td><td>${f.dist} KM</td><td>${f.dev}</td></tr>
-            `).join('')}
-          </table>
-        </div>
-      `;
-      window.print();
-    }
-
-    function printProjectPDF(projId) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p) return;
-
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Ficha de Proyecto</h2>
-          <p style="font-size: 12px; color: #555;">Código: <strong>${p.code}</strong> | Estado: <strong>${p.status}</strong></p>
-          <hr/>
-          <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-            <tr><td><strong>Proyecto:</strong> ${p.title}</td><td><strong>Cliente:</strong> ${p.client}</td></tr>
-            <tr><td><strong>Ubicación:</strong> ${p.address}</td><td><strong>Contacto:</strong> ${p.contact}</td></tr>
-            <tr><td><strong>Técnico Responsable:</strong> ${p.techLeader}</td><td><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
-            <tr><td><strong>Check-In GPS:</strong> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'N/A'}</td><td><strong>Check-Out GPS:</strong> ${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'N/A'}</td></tr>
-          </table>
-
-          <h4>Levantamiento Técnico</h4>
-          <p style="font-size: 12px;">Metros: ${p.survey ? p.survey.meters : 0}m | Estructura: ${p.survey ? p.survey.structure : 'EMT'} | Respaldo: ${p.survey ? p.survey.power : '110V'}</p>
-          <p style="font-size: 11px; color: #333;">${p.survey ? p.survey.notes : ''}</p>
-
-          ${p.quotation ? `
-            <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
-              <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
-              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      window.print();
-    }
-
-    function importLogisticsFromExcel(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-
-          if (workbook.Sheets["Vehiculos"]) {
-            const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
-            jsonVeh.forEach(item => {
-              if (item.Placa) {
-                const existing = appData.vehicles.find(v => v.plate === String(item.Placa).toUpperCase());
-                if (existing) {
-                  existing.model = item.Modelo || existing.model;
-                  existing.odo = parseInt(item.Odometro_KM) || existing.odo;
-                  existing.status = item.Estatus || existing.status;
-                } else {
-                  appData.vehicles.push({
-                    id: 'V_' + Date.now() + Math.random().toString().slice(2,5),
-                    plate: String(item.Placa).toUpperCase(),
-                    model: item.Modelo || 'Vehículo Importado',
-                    assignedTo: item.Custodio === 'Sin asignar' ? '' : (item.Custodio || ''),
-                    status: item.Estatus || 'Operativo',
-                    odo: parseInt(item.Odometro_KM) || 0,
-                    lastFuelKm: parseInt(item.Odometro_KM) || 0
-                  });
-                }
-              }
-            });
-          }
-
-          saveData();
-          alert('¡Datos de Logística importados exitosamente desde Excel!');
-        } catch(err) {
-          console.error(err);
-          alert('Error al procesar el archivo Excel.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- PDF.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js">
-    /* ===================================================================
-       EXPORTACIÓN / IMPORTACIÓN LOGÍSTICA & PROYECTOS
-       =================================================================== */
-    function exportLogisticsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const vehData = appData.vehicles.map(v => ({
-        Placa: v.plate,
-        Modelo: v.model,
-        Odometro_KM: v.odo,
-        Custodio: v.assignedTo || 'Sin asignar',
-        Estatus: v.status
-      }));
-      const wsVeh = XLSX.utils.json_to_sheet(vehData);
-      XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
-
-      const fuelData = appData.fuelLogs.map(f => ({
-        Fecha: f.date,
-        Placa: f.plate,
-        Tecnico: f.driver,
-        Tickets_500: f.tickets500,
-        Monto_RD: f.cost,
-        Recorrido_KM: f.dist,
-        Desvio: f.dev
-      }));
-      const wsFuel = XLSX.utils.json_to_sheet(fuelData);
-      XLSX.utils.book_append_sheet(wb, wsFuel, "Combustible");
-
-      const staffData = appData.technicians.map(t => ({
-        Nombre: t.name,
-        Rango: t.level,
-        Telefono: t.phone,
-        Direccion: t.address,
-        Vehiculo: t.vehiclePlate || 'Ninguno'
-      }));
-      const wsStaff = XLSX.utils.json_to_sheet(staffData);
-      XLSX.utils.book_append_sheet(wb, wsStaff, "Personal");
-
-      const toolsData = appData.tools.map(t => ({
-        Codigo: t.code,
-        Descripcion: t.name,
-        Custodio: t.assignedTo || 'En Almacen',
-        Condicion: t.condition,
-        Fecha: t.date
-      }));
-      const wsTools = XLSX.utils.json_to_sheet(toolsData);
-      XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
-
-      XLSX.writeFile(wb, "CentroXpert_Logistica_Total.xlsx");
-    }
-
-    function exportLogisticsToPDF() {
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 4px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
-          <h3>Control de Flotilla y Combustible Semanal</h3>
-          <p style="font-size: 11px; color: #666;">Fecha de emisión: ${new Date().toLocaleString()}</p>
-          <hr/>
-          <h4>1. Flotilla Vehicular</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
-            <tr style="background-color: #f1f5f9;"><th>Placa</th><th>Modelo</th><th>Odómetro</th><th>Custodio</th><th>Estatus</th></tr>
-            ${appData.vehicles.map(v => `
-              <tr><td>${v.plate}</td><td>${v.model}</td><td>${v.odo} KM</td><td>${v.assignedTo || 'Sin asignar'}</td><td>${v.status}</td></tr>
-            `).join('')}
-          </table>
-
-          <h4>2. Registro de Combustible (Tickets RD$ 500)</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <tr style="background-color: #f1f5f9;"><th>Fecha</th><th>Placa</th><th>Técnico</th><th>Tickets</th><th>Distancia</th><th>Desvío</th></tr>
-            ${appData.fuelLogs.map(f => `
-              <tr><td>${f.date}</td><td>${f.plate}</td><td>${f.driver}</td><td>${f.tickets500} (RD$ ${f.cost})</td><td>${f.dist} KM</td><td>${f.dev}</td></tr>
-            `).join('')}
-          </table>
-        </div>
-      `;
-      window.print();
-    }
-
-    function printProjectPDF(projId) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p) return;
-
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Ficha de Proyecto</h2>
-          <p style="font-size: 12px; color: #555;">Código: <strong>${p.code}</strong> | Estado: <strong>${p.status}</strong></p>
-          <hr/>
-          <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-            <tr><td><strong>Proyecto:</strong> ${p.title}</td><td><strong>Cliente:</strong> ${p.client}</td></tr>
-            <tr><td><strong>Ubicación:</strong> ${p.address}</td><td><strong>Contacto:</strong> ${p.contact}</td></tr>
-            <tr><td><strong>Técnico Responsable:</strong> ${p.techLeader}</td><td><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
-            <tr><td><strong>Check-In GPS:</strong> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'N/A'}</td><td><strong>Check-Out GPS:</strong> ${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'N/A'}</td></tr>
-          </table>
-
-          <h4>Levantamiento Técnico</h4>
-          <p style="font-size: 12px;">Metros: ${p.survey ? p.survey.meters : 0}m | Estructura: ${p.survey ? p.survey.structure : 'EMT'} | Respaldo: ${p.survey ? p.survey.power : '110V'}</p>
-          <p style="font-size: 11px; color: #333;">${p.survey ? p.survey.notes : ''}</p>
-
-          ${p.quotation ? `
-            <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
-              <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
-              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      window.print();
-    }
-
-    function importLogisticsFromExcel(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-
-          if (workbook.Sheets["Vehiculos"]) {
-            const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
-            jsonVeh.forEach(item => {
-              if (item.Placa) {
-                const existing = appData.vehicles.find(v => v.plate === String(item.Placa).toUpperCase());
-                if (existing) {
-                  existing.model = item.Modelo || existing.model;
-                  existing.odo = parseInt(item.Odometro_KM) || existing.odo;
-                  existing.status = item.Estatus || existing.status;
-                } else {
-                  appData.vehicles.push({
-                    id: 'V_' + Date.now() + Math.random().toString().slice(2,5),
-                    plate: String(item.Placa).toUpperCase(),
-                    model: item.Modelo || 'Vehículo Importado',
-                    assignedTo: item.Custodio === 'Sin asignar' ? '' : (item.Custodio || ''),
-                    status: item.Estatus || 'Operativo',
-                    odo: parseInt(item.Odometro_KM) || 0,
-                    lastFuelKm: parseInt(item.Odometro_KM) || 0
-                  });
-                }
-              }
-            });
-          }
-
-          saveData();
-          alert('¡Datos de Logística importados exitosamente desde Excel!');
-        } catch(err) {
-          console.error(err);
-          alert('Error al procesar el archivo Excel.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-  </script>
-  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    /* ===================================================================
-       EXPORTACIÓN / IMPORTACIÓN LOGÍSTICA & PROYECTOS
-       =================================================================== */
-    function exportLogisticsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const vehData = appData.vehicles.map(v => ({
-        Placa: v.plate,
-        Modelo: v.model,
-        Odometro_KM: v.odo,
-        Custodio: v.assignedTo || 'Sin asignar',
-        Estatus: v.status
-      }));
-      const wsVeh = XLSX.utils.json_to_sheet(vehData);
-      XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
-
-      const fuelData = appData.fuelLogs.map(f => ({
-        Fecha: f.date,
-        Placa: f.plate,
-        Tecnico: f.driver,
-        Tickets_500: f.tickets500,
-        Monto_RD: f.cost,
-        Recorrido_KM: f.dist,
-        Desvio: f.dev
-      }));
-      const wsFuel = XLSX.utils.json_to_sheet(fuelData);
-      XLSX.utils.book_append_sheet(wb, wsFuel, "Combustible");
-
-      const staffData = appData.technicians.map(t => ({
-        Nombre: t.name,
-        Rango: t.level,
-        Telefono: t.phone,
-        Direccion: t.address,
-        Vehiculo: t.vehiclePlate || 'Ninguno'
-      }));
-      const wsStaff = XLSX.utils.json_to_sheet(staffData);
-      XLSX.utils.book_append_sheet(wb, wsStaff, "Personal");
-
-      const toolsData = appData.tools.map(t => ({
-        Codigo: t.code,
-        Descripcion: t.name,
-        Custodio: t.assignedTo || 'En Almacen',
-        Condicion: t.condition,
-        Fecha: t.date
-      }));
-      const wsTools = XLSX.utils.json_to_sheet(toolsData);
-      XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
-
-      XLSX.writeFile(wb, "CentroXpert_Logistica_Total.xlsx");
-    }
-
-    function exportLogisticsToPDF() {
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 4px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
-          <h3>Control de Flotilla y Combustible Semanal</h3>
-          <p style="font-size: 11px; color: #666;">Fecha de emisión: ${new Date().toLocaleString()}</p>
-          <hr/>
-          <h4>1. Flotilla Vehicular</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
-            <tr style="background-color: #f1f5f9;"><th>Placa</th><th>Modelo</th><th>Odómetro</th><th>Custodio</th><th>Estatus</th></tr>
-            ${appData.vehicles.map(v => `
-              <tr><td>${v.plate}</td><td>${v.model}</td><td>${v.odo} KM</td><td>${v.assignedTo || 'Sin asignar'}</td><td>${v.status}</td></tr>
-            `).join('')}
-          </table>
-
-          <h4>2. Registro de Combustible (Tickets RD$ 500)</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <tr style="background-color: #f1f5f9;"><th>Fecha</th><th>Placa</th><th>Técnico</th><th>Tickets</th><th>Distancia</th><th>Desvío</th></tr>
-            ${appData.fuelLogs.map(f => `
-              <tr><td>${f.date}</td><td>${f.plate}</td><td>${f.driver}</td><td>${f.tickets500} (RD$ ${f.cost})</td><td>${f.dist} KM</td><td>${f.dev}</td></tr>
-            `).join('')}
-          </table>
-        </div>
-      `;
-      window.print();
-    }
-
-    function printProjectPDF(projId) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p) return;
-
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Ficha de Proyecto</h2>
-          <p style="font-size: 12px; color: #555;">Código: <strong>${p.code}</strong> | Estado: <strong>${p.status}</strong></p>
-          <hr/>
-          <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-            <tr><td><strong>Proyecto:</strong> ${p.title}</td><td><strong>Cliente:</strong> ${p.client}</td></tr>
-            <tr><td><strong>Ubicación:</strong> ${p.address}</td><td><strong>Contacto:</strong> ${p.contact}</td></tr>
-            <tr><td><strong>Técnico Responsable:</strong> ${p.techLeader}</td><td><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
-            <tr><td><strong>Check-In GPS:</strong> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'N/A'}</td><td><strong>Check-Out GPS:</strong> ${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'N/A'}</td></tr>
-          </table>
-
-          <h4>Levantamiento Técnico</h4>
-          <p style="font-size: 12px;">Metros: ${p.survey ? p.survey.meters : 0}m | Estructura: ${p.survey ? p.survey.structure : 'EMT'} | Respaldo: ${p.survey ? p.survey.power : '110V'}</p>
-          <p style="font-size: 11px; color: #333;">${p.survey ? p.survey.notes : ''}</p>
-
-          ${p.quotation ? `
-            <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
-              <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
-              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      window.print();
-    }
-
-    function importLogisticsFromExcel(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-
-          if (workbook.Sheets["Vehiculos"]) {
-            const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
-            jsonVeh.forEach(item => {
-              if (item.Placa) {
-                const existing = appData.vehicles.find(v => v.plate === String(item.Placa).toUpperCase());
-                if (existing) {
-                  existing.model = item.Modelo || existing.model;
-                  existing.odo = parseInt(item.Odometro_KM) || existing.odo;
-                  existing.status = item.Estatus || existing.status;
-                } else {
-                  appData.vehicles.push({
-                    id: 'V_' + Date.now() + Math.random().toString().slice(2,5),
-                    plate: String(item.Placa).toUpperCase(),
-                    model: item.Modelo || 'Vehículo Importado',
-                    assignedTo: item.Custodio === 'Sin asignar' ? '' : (item.Custodio || ''),
-                    status: item.Estatus || 'Operativo',
-                    odo: parseInt(item.Odometro_KM) || 0,
-                    lastFuelKm: parseInt(item.Odometro_KM) || 0
-                  });
-                }
-              }
-            });
-          }
-
-          saveData();
-          alert('¡Datos de Logística importados exitosamente desde Excel!');
-        } catch(err) {
-          console.error(err);
-          alert('Error al procesar el archivo Excel.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
   <!-- SheetJS para Excel -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js">
-    /* ===================================================================
-       EXPORTACIÓN / IMPORTACIÓN LOGÍSTICA & PROYECTOS
-       =================================================================== */
-    function exportLogisticsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const vehData = appData.vehicles.map(v => ({
-        Placa: v.plate,
-        Modelo: v.model,
-        Odometro_KM: v.odo,
-        Custodio: v.assignedTo || 'Sin asignar',
-        Estatus: v.status
-      }));
-      const wsVeh = XLSX.utils.json_to_sheet(vehData);
-      XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
-
-      const fuelData = appData.fuelLogs.map(f => ({
-        Fecha: f.date,
-        Placa: f.plate,
-        Tecnico: f.driver,
-        Tickets_500: f.tickets500,
-        Monto_RD: f.cost,
-        Recorrido_KM: f.dist,
-        Desvio: f.dev
-      }));
-      const wsFuel = XLSX.utils.json_to_sheet(fuelData);
-      XLSX.utils.book_append_sheet(wb, wsFuel, "Combustible");
-
-      const staffData = appData.technicians.map(t => ({
-        Nombre: t.name,
-        Rango: t.level,
-        Telefono: t.phone,
-        Direccion: t.address,
-        Vehiculo: t.vehiclePlate || 'Ninguno'
-      }));
-      const wsStaff = XLSX.utils.json_to_sheet(staffData);
-      XLSX.utils.book_append_sheet(wb, wsStaff, "Personal");
-
-      const toolsData = appData.tools.map(t => ({
-        Codigo: t.code,
-        Descripcion: t.name,
-        Custodio: t.assignedTo || 'En Almacen',
-        Condicion: t.condition,
-        Fecha: t.date
-      }));
-      const wsTools = XLSX.utils.json_to_sheet(toolsData);
-      XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
-
-      XLSX.writeFile(wb, "CentroXpert_Logistica_Total.xlsx");
-    }
-
-    function exportLogisticsToPDF() {
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 4px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
-          <h3>Control de Flotilla y Combustible Semanal</h3>
-          <p style="font-size: 11px; color: #666;">Fecha de emisión: ${new Date().toLocaleString()}</p>
-          <hr/>
-          <h4>1. Flotilla Vehicular</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
-            <tr style="background-color: #f1f5f9;"><th>Placa</th><th>Modelo</th><th>Odómetro</th><th>Custodio</th><th>Estatus</th></tr>
-            ${appData.vehicles.map(v => `
-              <tr><td>${v.plate}</td><td>${v.model}</td><td>${v.odo} KM</td><td>${v.assignedTo || 'Sin asignar'}</td><td>${v.status}</td></tr>
-            `).join('')}
-          </table>
-
-          <h4>2. Registro de Combustible (Tickets RD$ 500)</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <tr style="background-color: #f1f5f9;"><th>Fecha</th><th>Placa</th><th>Técnico</th><th>Tickets</th><th>Distancia</th><th>Desvío</th></tr>
-            ${appData.fuelLogs.map(f => `
-              <tr><td>${f.date}</td><td>${f.plate}</td><td>${f.driver}</td><td>${f.tickets500} (RD$ ${f.cost})</td><td>${f.dist} KM</td><td>${f.dev}</td></tr>
-            `).join('')}
-          </table>
-        </div>
-      `;
-      window.print();
-    }
-
-    function printProjectPDF(projId) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p) return;
-
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Ficha de Proyecto</h2>
-          <p style="font-size: 12px; color: #555;">Código: <strong>${p.code}</strong> | Estado: <strong>${p.status}</strong></p>
-          <hr/>
-          <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-            <tr><td><strong>Proyecto:</strong> ${p.title}</td><td><strong>Cliente:</strong> ${p.client}</td></tr>
-            <tr><td><strong>Ubicación:</strong> ${p.address}</td><td><strong>Contacto:</strong> ${p.contact}</td></tr>
-            <tr><td><strong>Técnico Responsable:</strong> ${p.techLeader}</td><td><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
-            <tr><td><strong>Check-In GPS:</strong> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'N/A'}</td><td><strong>Check-Out GPS:</strong> ${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'N/A'}</td></tr>
-          </table>
-
-          <h4>Levantamiento Técnico</h4>
-          <p style="font-size: 12px;">Metros: ${p.survey ? p.survey.meters : 0}m | Estructura: ${p.survey ? p.survey.structure : 'EMT'} | Respaldo: ${p.survey ? p.survey.power : '110V'}</p>
-          <p style="font-size: 11px; color: #333;">${p.survey ? p.survey.notes : ''}</p>
-
-          ${p.quotation ? `
-            <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
-              <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
-              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      window.print();
-    }
-
-    function importLogisticsFromExcel(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-
-          if (workbook.Sheets["Vehiculos"]) {
-            const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
-            jsonVeh.forEach(item => {
-              if (item.Placa) {
-                const existing = appData.vehicles.find(v => v.plate === String(item.Placa).toUpperCase());
-                if (existing) {
-                  existing.model = item.Modelo || existing.model;
-                  existing.odo = parseInt(item.Odometro_KM) || existing.odo;
-                  existing.status = item.Estatus || existing.status;
-                } else {
-                  appData.vehicles.push({
-                    id: 'V_' + Date.now() + Math.random().toString().slice(2,5),
-                    plate: String(item.Placa).toUpperCase(),
-                    model: item.Modelo || 'Vehículo Importado',
-                    assignedTo: item.Custodio === 'Sin asignar' ? '' : (item.Custodio || ''),
-                    status: item.Estatus || 'Operativo',
-                    odo: parseInt(item.Odometro_KM) || 0,
-                    lastFuelKm: parseInt(item.Odometro_KM) || 0
-                  });
-                }
-              }
-            });
-          }
-
-          saveData();
-          alert('¡Datos de Logística importados exitosamente desde Excel!');
-        } catch(err) {
-          console.error(err);
-          alert('Error al procesar el archivo Excel.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <!-- Mammoth.js para documentos Word (.docx) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js">
-    /* ===================================================================
-       EXPORTACIÓN / IMPORTACIÓN LOGÍSTICA & PROYECTOS
-       =================================================================== */
-    function exportLogisticsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const vehData = appData.vehicles.map(v => ({
-        Placa: v.plate,
-        Modelo: v.model,
-        Odometro_KM: v.odo,
-        Custodio: v.assignedTo || 'Sin asignar',
-        Estatus: v.status
-      }));
-      const wsVeh = XLSX.utils.json_to_sheet(vehData);
-      XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
-
-      const fuelData = appData.fuelLogs.map(f => ({
-        Fecha: f.date,
-        Placa: f.plate,
-        Tecnico: f.driver,
-        Tickets_500: f.tickets500,
-        Monto_RD: f.cost,
-        Recorrido_KM: f.dist,
-        Desvio: f.dev
-      }));
-      const wsFuel = XLSX.utils.json_to_sheet(fuelData);
-      XLSX.utils.book_append_sheet(wb, wsFuel, "Combustible");
-
-      const staffData = appData.technicians.map(t => ({
-        Nombre: t.name,
-        Rango: t.level,
-        Telefono: t.phone,
-        Direccion: t.address,
-        Vehiculo: t.vehiclePlate || 'Ninguno'
-      }));
-      const wsStaff = XLSX.utils.json_to_sheet(staffData);
-      XLSX.utils.book_append_sheet(wb, wsStaff, "Personal");
-
-      const toolsData = appData.tools.map(t => ({
-        Codigo: t.code,
-        Descripcion: t.name,
-        Custodio: t.assignedTo || 'En Almacen',
-        Condicion: t.condition,
-        Fecha: t.date
-      }));
-      const wsTools = XLSX.utils.json_to_sheet(toolsData);
-      XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
-
-      XLSX.writeFile(wb, "CentroXpert_Logistica_Total.xlsx");
-    }
-
-    function exportLogisticsToPDF() {
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 4px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
-          <h3>Control de Flotilla y Combustible Semanal</h3>
-          <p style="font-size: 11px; color: #666;">Fecha de emisión: ${new Date().toLocaleString()}</p>
-          <hr/>
-          <h4>1. Flotilla Vehicular</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
-            <tr style="background-color: #f1f5f9;"><th>Placa</th><th>Modelo</th><th>Odómetro</th><th>Custodio</th><th>Estatus</th></tr>
-            ${appData.vehicles.map(v => `
-              <tr><td>${v.plate}</td><td>${v.model}</td><td>${v.odo} KM</td><td>${v.assignedTo || 'Sin asignar'}</td><td>${v.status}</td></tr>
-            `).join('')}
-          </table>
-
-          <h4>2. Registro de Combustible (Tickets RD$ 500)</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <tr style="background-color: #f1f5f9;"><th>Fecha</th><th>Placa</th><th>Técnico</th><th>Tickets</th><th>Distancia</th><th>Desvío</th></tr>
-            ${appData.fuelLogs.map(f => `
-              <tr><td>${f.date}</td><td>${f.plate}</td><td>${f.driver}</td><td>${f.tickets500} (RD$ ${f.cost})</td><td>${f.dist} KM</td><td>${f.dev}</td></tr>
-            `).join('')}
-          </table>
-        </div>
-      `;
-      window.print();
-    }
-
-    function printProjectPDF(projId) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p) return;
-
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Ficha de Proyecto</h2>
-          <p style="font-size: 12px; color: #555;">Código: <strong>${p.code}</strong> | Estado: <strong>${p.status}</strong></p>
-          <hr/>
-          <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-            <tr><td><strong>Proyecto:</strong> ${p.title}</td><td><strong>Cliente:</strong> ${p.client}</td></tr>
-            <tr><td><strong>Ubicación:</strong> ${p.address}</td><td><strong>Contacto:</strong> ${p.contact}</td></tr>
-            <tr><td><strong>Técnico Responsable:</strong> ${p.techLeader}</td><td><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
-            <tr><td><strong>Check-In GPS:</strong> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'N/A'}</td><td><strong>Check-Out GPS:</strong> ${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'N/A'}</td></tr>
-          </table>
-
-          <h4>Levantamiento Técnico</h4>
-          <p style="font-size: 12px;">Metros: ${p.survey ? p.survey.meters : 0}m | Estructura: ${p.survey ? p.survey.structure : 'EMT'} | Respaldo: ${p.survey ? p.survey.power : '110V'}</p>
-          <p style="font-size: 11px; color: #333;">${p.survey ? p.survey.notes : ''}</p>
-
-          ${p.quotation ? `
-            <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
-              <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
-              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      window.print();
-    }
-
-    function importLogisticsFromExcel(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-
-          if (workbook.Sheets["Vehiculos"]) {
-            const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
-            jsonVeh.forEach(item => {
-              if (item.Placa) {
-                const existing = appData.vehicles.find(v => v.plate === String(item.Placa).toUpperCase());
-                if (existing) {
-                  existing.model = item.Modelo || existing.model;
-                  existing.odo = parseInt(item.Odometro_KM) || existing.odo;
-                  existing.status = item.Estatus || existing.status;
-                } else {
-                  appData.vehicles.push({
-                    id: 'V_' + Date.now() + Math.random().toString().slice(2,5),
-                    plate: String(item.Placa).toUpperCase(),
-                    model: item.Modelo || 'Vehículo Importado',
-                    assignedTo: item.Custodio === 'Sin asignar' ? '' : (item.Custodio || ''),
-                    status: item.Estatus || 'Operativo',
-                    odo: parseInt(item.Odometro_KM) || 0,
-                    lastFuelKm: parseInt(item.Odometro_KM) || 0
-                  });
-                }
-              }
-            });
-          }
-
-          saveData();
-          alert('¡Datos de Logística importados exitosamente desde Excel!');
-        } catch(err) {
-          console.error(err);
-          alert('Error al procesar el archivo Excel.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <!-- Tesseract.js para OCR -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js">
-    /* ===================================================================
-       EXPORTACIÓN / IMPORTACIÓN LOGÍSTICA & PROYECTOS
-       =================================================================== */
-    function exportLogisticsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const vehData = appData.vehicles.map(v => ({
-        Placa: v.plate,
-        Modelo: v.model,
-        Odometro_KM: v.odo,
-        Custodio: v.assignedTo || 'Sin asignar',
-        Estatus: v.status
-      }));
-      const wsVeh = XLSX.utils.json_to_sheet(vehData);
-      XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
-
-      const fuelData = appData.fuelLogs.map(f => ({
-        Fecha: f.date,
-        Placa: f.plate,
-        Tecnico: f.driver,
-        Tickets_500: f.tickets500,
-        Monto_RD: f.cost,
-        Recorrido_KM: f.dist,
-        Desvio: f.dev
-      }));
-      const wsFuel = XLSX.utils.json_to_sheet(fuelData);
-      XLSX.utils.book_append_sheet(wb, wsFuel, "Combustible");
-
-      const staffData = appData.technicians.map(t => ({
-        Nombre: t.name,
-        Rango: t.level,
-        Telefono: t.phone,
-        Direccion: t.address,
-        Vehiculo: t.vehiclePlate || 'Ninguno'
-      }));
-      const wsStaff = XLSX.utils.json_to_sheet(staffData);
-      XLSX.utils.book_append_sheet(wb, wsStaff, "Personal");
-
-      const toolsData = appData.tools.map(t => ({
-        Codigo: t.code,
-        Descripcion: t.name,
-        Custodio: t.assignedTo || 'En Almacen',
-        Condicion: t.condition,
-        Fecha: t.date
-      }));
-      const wsTools = XLSX.utils.json_to_sheet(toolsData);
-      XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
-
-      XLSX.writeFile(wb, "CentroXpert_Logistica_Total.xlsx");
-    }
-
-    function exportLogisticsToPDF() {
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 4px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
-          <h3>Control de Flotilla y Combustible Semanal</h3>
-          <p style="font-size: 11px; color: #666;">Fecha de emisión: ${new Date().toLocaleString()}</p>
-          <hr/>
-          <h4>1. Flotilla Vehicular</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
-            <tr style="background-color: #f1f5f9;"><th>Placa</th><th>Modelo</th><th>Odómetro</th><th>Custodio</th><th>Estatus</th></tr>
-            ${appData.vehicles.map(v => `
-              <tr><td>${v.plate}</td><td>${v.model}</td><td>${v.odo} KM</td><td>${v.assignedTo || 'Sin asignar'}</td><td>${v.status}</td></tr>
-            `).join('')}
-          </table>
-
-          <h4>2. Registro de Combustible (Tickets RD$ 500)</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <tr style="background-color: #f1f5f9;"><th>Fecha</th><th>Placa</th><th>Técnico</th><th>Tickets</th><th>Distancia</th><th>Desvío</th></tr>
-            ${appData.fuelLogs.map(f => `
-              <tr><td>${f.date}</td><td>${f.plate}</td><td>${f.driver}</td><td>${f.tickets500} (RD$ ${f.cost})</td><td>${f.dist} KM</td><td>${f.dev}</td></tr>
-            `).join('')}
-          </table>
-        </div>
-      `;
-      window.print();
-    }
-
-    function printProjectPDF(projId) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p) return;
-
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Ficha de Proyecto</h2>
-          <p style="font-size: 12px; color: #555;">Código: <strong>${p.code}</strong> | Estado: <strong>${p.status}</strong></p>
-          <hr/>
-          <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-            <tr><td><strong>Proyecto:</strong> ${p.title}</td><td><strong>Cliente:</strong> ${p.client}</td></tr>
-            <tr><td><strong>Ubicación:</strong> ${p.address}</td><td><strong>Contacto:</strong> ${p.contact}</td></tr>
-            <tr><td><strong>Técnico Responsable:</strong> ${p.techLeader}</td><td><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
-            <tr><td><strong>Check-In GPS:</strong> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'N/A'}</td><td><strong>Check-Out GPS:</strong> ${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'N/A'}</td></tr>
-          </table>
-
-          <h4>Levantamiento Técnico</h4>
-          <p style="font-size: 12px;">Metros: ${p.survey ? p.survey.meters : 0}m | Estructura: ${p.survey ? p.survey.structure : 'EMT'} | Respaldo: ${p.survey ? p.survey.power : '110V'}</p>
-          <p style="font-size: 11px; color: #333;">${p.survey ? p.survey.notes : ''}</p>
-
-          ${p.quotation ? `
-            <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
-              <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
-              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      window.print();
-    }
-
-    function importLogisticsFromExcel(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-
-          if (workbook.Sheets["Vehiculos"]) {
-            const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
-            jsonVeh.forEach(item => {
-              if (item.Placa) {
-                const existing = appData.vehicles.find(v => v.plate === String(item.Placa).toUpperCase());
-                if (existing) {
-                  existing.model = item.Modelo || existing.model;
-                  existing.odo = parseInt(item.Odometro_KM) || existing.odo;
-                  existing.status = item.Estatus || existing.status;
-                } else {
-                  appData.vehicles.push({
-                    id: 'V_' + Date.now() + Math.random().toString().slice(2,5),
-                    plate: String(item.Placa).toUpperCase(),
-                    model: item.Modelo || 'Vehículo Importado',
-                    assignedTo: item.Custodio === 'Sin asignar' ? '' : (item.Custodio || ''),
-                    status: item.Estatus || 'Operativo',
-                    odo: parseInt(item.Odometro_KM) || 0,
-                    lastFuelKm: parseInt(item.Odometro_KM) || 0
-                  });
-                }
-              }
-            });
-          }
-
-          saveData();
-          alert('¡Datos de Logística importados exitosamente desde Excel!');
-        } catch(err) {
-          console.error(err);
-          alert('Error al procesar el archivo Excel.');
-        }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Ubuntu:wght@400;500;700&display=swap');
@@ -1112,7 +182,7 @@
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
-        <button onclick="closeModal('techModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
@@ -1671,13 +741,145 @@
     </div>
   </div>
 
+  <!-- Modal Coordinador: Editar/Registrar Vehículo -->
+  <div id="vehicleModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="vehicleModalTitle"><i class="fa-solid fa-truck-pickup mr-2 text-rose-400"></i>Vehículo</h3>
+        <button onclick="closeModal('vehicleModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveVehicle(event)" class="space-y-3">
+        <input type="hidden" id="vehicleEditId">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Placa Oficial</label>
+          <input type="text" id="vehiclePlate" required placeholder="Ej: L458901" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Marca y Modelo</label>
+          <input type="text" id="vehicleModel" required placeholder="Ej: Toyota Hilux 2022" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Odómetro (KM)</label>
+            <input type="number" id="vehicleOdo" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Estatus</label>
+            <select id="vehicleStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Operativo">Operativo</option>
+              <option value="Mantenimiento">Mantenimiento</option>
+              <option value="Fuera de Servicio">Fuera de Servicio</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Técnico Custodio Asignado</label>
+          <select id="vehicleAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeModal('vehicleModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Coordinador: Editar/Registrar Herramienta -->
+  <div id="toolModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="toolModalTitle"><i class="fa-solid fa-toolbox mr-2 text-amber-400"></i>Herramienta / Equipo</h3>
+        <button onclick="closeModal('toolModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveTool(event)" class="space-y-3">
+        <input type="hidden" id="toolEditId">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Código / Serie</label>
+            <input type="text" id="toolCode" required placeholder="Ej: TL-08" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Condición Física</label>
+            <select id="toolCondition" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Excelente">Excelente</option>
+              <option value="Bueno">Bueno</option>
+              <option value="Requiere Revisión">Requiere Revisión</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Descripción del Equipo</label>
+          <input type="text" id="toolName" required placeholder="Ej: Certificador de Red Fluke DSX-5000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Técnico Custodio</label>
+          <select id="toolAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeModal('toolModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Visor de Documentos / Planos -->
+  <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+        <div>
+          <h3 class="text-base font-bold text-white" id="viewerTitle">Archivo Adjunto</h3>
+          <p class="text-xs text-slate-400" id="viewerSubtitle"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="viewerDownloadBtn" href="#" download class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow">
+            <i class="fa-solid fa-download"></i> Descargar
+          </a>
+          <button onclick="closeModal('fileViewerModal')" class="text-slate-400 hover:text-white p-1 text-lg"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div id="viewerBody" class="flex-1 overflow-auto bg-slate-950 rounded-xl p-3 flex items-center justify-center text-slate-300 text-xs">
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cargar PDF de Orden de Servicio -->
+  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden CentroXpert</h3>
+        <button onclick="closeModal('pdfModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="border-2 border-dashed border-slate-700 hover:border-rose-500 rounded-2xl p-6 text-center cursor-pointer mb-4 transition" onclick="document.getElementById('pdfInput').click()">
+        <i class="fa-solid fa-cloud-arrow-up text-3xl text-rose-400 mb-2"></i>
+        <div class="text-sm font-semibold text-white">Haz clic para subir la Orden de Servicio en PDF</div>
+        <div class="text-xs text-slate-400 mt-1">Extrae código, cliente, dirección, fecha y técnicos automáticamente</div>
+        <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePDFUpload(event)">
+      </div>
+
+      <div class="text-center">
+        <span class="text-xs text-slate-500 font-medium">¿Deseas probar con el documento de muestra?</span>
+        <button onclick="loadSampleTorreWashington()" class="block mx-auto mt-2 bg-slate-800 hover:bg-slate-700 text-rose-300 border border-slate-700 px-4 py-2 rounded-xl text-xs font-semibold">
+          <i class="fa-solid fa-building mr-1.5"></i>Cargar Muestra: TORRE WASHINGTON.pdf
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="printContainer" class="hidden print-area"></div>
 
   <script>
     /* ===================================================================
-       ESTADO CENTRAL & MIGRACIÓN LIMPIA DE DATOS (v8)
+       ESTADO CENTRAL & MIGRACIÓN LIMPIA DE DATOS (v7)
        =================================================================== */
-    const STORAGE_KEY = 'centroxpert_data_v8';
+    const STORAGE_KEY = 'centroxpert_data_v7';
 
     const defaultData = {
       currentUser: null, // Obliga a identificarse siempre
@@ -1737,6 +939,7 @@
               { name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', qty: 1, sku: 'CON-RJ45-50P', price: 850 },
               { name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', qty: 6, sku: 'CAJ-PASO-44', price: 290 }
             ],
+            // SEPARADOS LIMPIOS: Ningún PDF de prueba residual
             surveyDocFile: null,
             planFile: null
           },
@@ -1780,8 +983,9 @@
     };
 
     let appData = loadData();
-    let currentAuthUser = null;
+    let currentAuthUser = null; // Obliga a autenticarse
 
+    // Filtros de búsqueda
     let searchFilterQuery = '';
     let statusFilterOption = 'Todos';
 
@@ -1789,7 +993,8 @@
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try { 
-          return JSON.parse(saved);
+          const parsed = JSON.parse(saved);
+          return parsed;
         } catch(e) { console.error(e); }
       }
       return JSON.parse(JSON.stringify(defaultData));
@@ -1839,6 +1044,9 @@
       return Math.round(R * c);
     }
 
+    /* ===================================================================
+       CONTROL DE SESIÓN Y LOGIN OBLIGATORIO
+       =================================================================== */
     function switchLoginTab(type) {
       if (type === 'tec') {
         document.getElementById('formLoginTec').classList.remove('hidden');
@@ -1937,39 +1145,625 @@
     }
 
     /* ===================================================================
-       CONTROLADOR RESTAURADO: MODAL DE LEVANTAMIENTO & PLANOS
+       RENDERIZADO PRINCIPAL
        =================================================================== */
-    let currentSurveyProjectId = null;
-    let tempSurveyItemsEquip = [];
-    let tempSurveyItemsMat = [];
-    let tempSurveyDocFile = null;
-    let tempSurveyPlanFile = null;
+    function render() {
+      renderHeader();
+      const container = document.getElementById('mainContainer');
 
-    function openSurveyModal(id) {
-      currentSurveyProjectId = id;
-      const p = appData.projects.find(item => item.id === id);
+      if (!currentAuthUser) {
+        container.innerHTML = `
+          <div class="h-[60vh] flex flex-col items-center justify-center text-center p-6">
+            <div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl max-w-sm">
+              <i class="fa-solid fa-lock text-4xl text-rose-500 mb-3"></i>
+              <h3 class="text-base font-bold text-white">Sesión Bloqueada</h3>
+              <p class="text-xs text-slate-400 mt-1 mb-4">Debes identificarte con tu usuario para acceder a las tareas y datos operativos.</p>
+              <button onclick="openModal('loginModal')" class="w-full bg-rose-700 hover:bg-rose-600 text-white font-bold py-2 rounded-xl text-xs shadow-lg shadow-rose-900/30">
+                Iniciar Sesión
+              </button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (currentAuthUser.role === 'tech') {
+        container.innerHTML = renderTechView();
+      } else {
+        container.innerHTML = renderAdminView();
+      }
+    }
+
+    function renderHeader() {
+      const actions = document.getElementById('headerUserActions');
+      if (!currentAuthUser) {
+        actions.innerHTML = `
+          <button onclick="openModal('loginModal')" class="bg-rose-700 hover:bg-rose-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+          </button>
+        `;
+        return;
+      }
+
+      const isTech = currentAuthUser.role === 'tech';
+
+      actions.innerHTML = `
+        <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+          <i class="fa-solid ${isTech ? 'fa-hard-hat text-rose-400' : 'fa-user-tie text-blue-400'} text-sm"></i>
+          <div class="text-left leading-tight">
+            <div class="text-xs font-bold text-white">${currentAuthUser.name}</div>
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'Técnico de Campo' : 'Coordinador General'}</div>
+          </div>
+        </div>
+
+        ${isTech ? `
+          <button onclick="openPinModal()" title="Cambiar mi PIN" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-2 rounded-xl border border-slate-700 text-sm">
+            <i class="fa-solid fa-key"></i>
+          </button>
+        ` : ''}
+
+        <button onclick="logout()" title="Cerrar sesión" class="bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 p-2 rounded-xl border border-slate-700 text-sm">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      `;
+    }
+
+    /* ===================================================================
+       VISTA DEL TÉCNICO (CON BUSCADOR Y LISTA CON 1 CLIC DETALLE)
+       =================================================================== */
+    function renderTechView() {
+      const myTechName = currentAuthUser.name;
+      let myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
+      
+      // Aplicar búsqueda si existe
+      if (searchFilterQuery) {
+        const q = searchFilterQuery.toLowerCase();
+        myProjects = myProjects.filter(p => p.code.toLowerCase().includes(q) || p.client.toLowerCase().includes(q) || p.title.toLowerCase().includes(q));
+      }
+
+      const myVehicle = appData.vehicles.find(v => v.assignedTo === myTechName);
+      const myTools = appData.tools.filter(t => t.assignedTo === myTechName);
+
+      return `
+        <div class="space-y-6">
+          <div class="flex border-b border-slate-800">
+            <button onclick="setTechTab('my_tasks')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_tasks' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}">
+              <i class="fa-solid fa-list-check mr-2"></i>Mis Órdenes Asignadas (${myProjects.length})
+            </button>
+            <button onclick="setTechTab('my_assets')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_assets' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}">
+              <i class="fa-solid fa-truck-pickup mr-2"></i>Mis Activos Asignados
+            </button>
+          </div>
+
+          ${currentTechTab === 'my_tasks' ? `
+            <div class="space-y-4">
+              <!-- BUSCADOR RÁPIDO PARA TÉCNICOS -->
+              <div class="bg-slate-900 border border-slate-800 p-3 rounded-2xl flex items-center gap-3 shadow">
+                <i class="fa-solid fa-magnifying-glass text-slate-500 text-sm pl-2"></i>
+                <input type="text" oninput="handleSearchProjects(this.value)" value="${searchFilterQuery}" placeholder="Buscar por número de orden (CX-...) o nombre del cliente..." class="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none">
+                ${searchFilterQuery ? `<button onclick="handleSearchProjects('')" class="text-xs text-slate-500 hover:text-white pr-2"><i class="fa-solid fa-xmark"></i></button>` : ''}
+              </div>
+
+              <!-- LISTA DE PROYECTOS / ÓRDENES DEL TÉCNICO -->
+              ${myProjects.length === 0 ? `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
+                  <i class="fa-solid fa-clipboard-check text-4xl text-slate-600 mb-3"></i>
+                  <p class="font-semibold text-white">No se encontraron órdenes con los criterios especificados.</p>
+                </div>
+              ` : `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+                  <div class="p-3 bg-slate-950/70 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                    <span>Haz clic en cualquier orden para ver todos los detalles técnicos</span>
+                    <span>${myProjects.length} Órdenes</span>
+                  </div>
+                  <div class="divide-y divide-slate-800/80">
+                    ${myProjects.map(p => {
+                      const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
+                      return `
+                        <div class="p-4 hover:bg-slate-800/50 transition cursor-pointer flex flex-wrap items-center justify-between gap-3" onclick="openProjectDetail('${p.id}')">
+                          <div class="flex items-center gap-3">
+                            <div class="p-2.5 rounded-xl ${isInSite ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800' : 'bg-slate-800 text-rose-400'}">
+                              <i class="fa-solid ${isInSite ? 'fa-location-dot live-pulse' : 'fa-clipboard-list'} text-base"></i>
+                            </div>
+                            <div>
+                              <div class="flex items-center gap-2">
+                                <span class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">${p.code}</span>
+                                <span class="text-xs font-semibold px-2 py-0.5 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
+                                ${isInSite ? `
+                                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 live-pulse"></span>EN SITIO
+                                  </span>
+                                ` : ''}
+                              </div>
+                              <h4 class="text-sm font-bold text-white mt-1">${p.title}</h4>
+                              <div class="text-xs text-slate-400 flex items-center gap-2 mt-0.5">
+                                <span><i class="fa-solid fa-user-tag mr-1 text-slate-500"></i>${p.client}</span>
+                                <span>•</span>
+                                <span class="truncate max-w-xs text-slate-500"><i class="fa-solid fa-location-dot mr-1 text-slate-600"></i>${p.address}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="flex items-center gap-2" onclick="event.stopPropagation()">
+                            <button onclick="openSurveyModal('${p.id}')" class="bg-rose-900/80 hover:bg-rose-800 text-rose-200 border border-rose-700/60 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow">
+                              <i class="fa-solid fa-file-pen"></i> Levantamiento & Plano
+                            </button>
+                            <button onclick="openProjectDetail('${p.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 border border-slate-700">
+                              <span>Ver</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                            </button>
+                          </div>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              `}
+            </div>
+          ` : `
+            <!-- Mis Activos Asignados -->
+            <div class="space-y-6">
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <i class="fa-solid fa-truck-pickup text-rose-400"></i> Vehículo Asignado a mi Cargo
+                </h3>
+                ${myVehicle ? `
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                    <div>
+                      <div class="text-slate-400 text-xs">Placa Oficial</div>
+                      <div class="text-lg font-black text-white font-mono mt-0.5">${myVehicle.plate}</div>
+                    </div>
+                    <div>
+                      <div class="text-slate-400 text-xs">Marca & Modelo</div>
+                      <div class="text-sm font-bold text-white mt-0.5">${myVehicle.model}</div>
+                    </div>
+                    <div>
+                      <div class="text-slate-400 text-xs">Odómetro Actual</div>
+                      <div class="text-sm font-bold text-emerald-400 font-mono mt-0.5">${myVehicle.odo.toLocaleString()} KM</div>
+                    </div>
+                    <div>
+                      <div class="text-slate-400 text-xs">Estatus Mecánico</div>
+                      <span class="inline-block mt-0.5 text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800 font-bold">${myVehicle.status}</span>
+                    </div>
+                  </div>
+                ` : `
+                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">
+                    Actualmente no tienes un vehículo corporativo asignado individualmente.
+                  </div>
+                `}
+              </div>
+
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <i class="fa-solid fa-toolbox text-amber-400"></i> Herramientas y Equipos en Custodia (${myTools.length})
+                </h3>
+                ${myTools.length > 0 ? `
+                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    ${myTools.map(t => `
+                      <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="flex justify-between items-center">
+                          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-900/50">${t.code}</span>
+                          <span class="text-[10px] text-slate-400 font-medium">${t.condition}</span>
+                        </div>
+                        <div class="text-xs font-bold text-white">${t.name}</div>
+                        <div class="text-[10px] text-slate-500">Recibido: ${t.date}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : `
+                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">
+                    No tienes herramientas registradas bajo tu custodia directa.
+                  </div>
+                `}
+              </div>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function setTechTab(tab) {
+      currentTechTab = tab;
+      render();
+    }
+
+    /* ===================================================================
+       VISTA DEL COORDINADOR (PANEL GENERAL, LISTA DE PROYECTOS & KPIS)
+       =================================================================== */
+    function renderAdminView() {
+      const availVehicles = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
+      const techInSite = appData.projects.filter(p => p.tracking && p.tracking.checkIn && !p.tracking.checkOut && p.tracking.isVerifiedOnSite).length;
+
+      return `
+        <div class="space-y-6">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-xs text-slate-400 font-semibold uppercase">Total Proyectos</div>
+              <div class="text-2xl font-black text-white mt-1">${appData.projects.length}</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-xs text-emerald-400 font-semibold uppercase flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 live-pulse"></span> Verificados en Sitio
+              </div>
+              <div class="text-2xl font-black text-emerald-400 mt-1">${techInSite}</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-xs text-slate-400 font-semibold uppercase">Vehículos Libres</div>
+              <div class="text-2xl font-black text-blue-400 mt-1">${availVehicles}</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-xs text-slate-400 font-semibold uppercase">Técnicos Registrados</div>
+              <div class="text-2xl font-black text-rose-400 mt-1">${appData.technicians.length}</div>
+            </div>
+          </div>
+
+          <!-- NAVEGACIÓN PRINCIPAL: PROYECTOS, LOGÍSTICA E INFORMES KPIS -->
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
+            <div class="flex flex-wrap gap-2">
+              <button onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
+                <i class="fa-solid fa-list-check mr-1.5"></i> Órdenes & Proyectos (Lista)
+              </button>
+              <button onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
+                <i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Logística & Activos
+              </button>
+              <button onclick="setNavTab('kpis')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'kpis' ? 'bg-emerald-700 text-white shadow-lg shadow-emerald-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
+                <i class="fa-solid fa-chart-line mr-1.5"></i> Informes & Rendimiento KPI
+              </button>
+            </div>
+
+            ${currentNavTab === 'projects' ? `
+              <div class="flex gap-2">
+                <button onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 border border-rose-700 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-file-pdf"></i> Importar Orden PDF
+                </button>
+                <button onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-file-excel"></i> Exportar Excel
+                </button>
+              </div>
+            ` : ''}
+
+            ${currentNavTab === 'kpis' ? `
+              <div class="flex gap-2">
+                <button onclick="exportKPIReportToPDF()" class="bg-rose-950/80 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-file-pdf"></i> Exportar Informe KPI (PDF)
+                </button>
+                <button onclick="exportKPIToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-file-excel"></i> Exportar KPI (Excel)
+                </button>
+              </div>
+            ` : ''}
+          </div>
+
+          ${currentNavTab === 'projects' ? renderAdminProjectsList() : ''}
+          ${currentNavTab === 'logistics' ? renderAdminLogistics() : ''}
+          ${currentNavTab === 'kpis' ? renderAdminKPIs() : ''}
+        </div>
+      `;
+    }
+
+    function setNavTab(tab) {
+      currentNavTab = tab;
+      render();
+    }
+
+    /* ===================================================================
+       VISTA TIPO LISTA DE PROYECTOS CON BUSCADOR Y APERTURA DE 1 CLIC
+       =================================================================== */
+    function renderAdminProjectsList() {
+      let filtered = [...appData.projects];
+
+      // Filtro por texto (código o cliente o título)
+      if (searchFilterQuery) {
+        const q = searchFilterQuery.toLowerCase();
+        filtered = filtered.filter(p => p.code.toLowerCase().includes(q) || p.client.toLowerCase().includes(q) || p.title.toLowerCase().includes(q));
+      }
+
+      // Filtro por estatus
+      if (statusFilterOption !== 'Todos') {
+        filtered = filtered.filter(p => p.status === statusFilterOption);
+      }
+
+      return `
+        <div class="space-y-4">
+          <!-- BARRA DE BÚSQUEDA Y FILTROS RÁPIDOS -->
+          <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <!-- Campo Buscador -->
+              <div class="flex-1 min-w-[260px] bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 flex items-center gap-2.5">
+                <i class="fa-solid fa-magnifying-glass text-slate-500 text-xs"></i>
+                <input type="text" oninput="handleSearchProjects(this.value)" value="${searchFilterQuery}" placeholder="Buscar proyecto por código (CX-...) o nombre del cliente..." class="w-full bg-transparent text-xs text-white placeholder-slate-500 focus:outline-none">
+                ${searchFilterQuery ? `<button onclick="handleSearchProjects('')" class="text-xs text-slate-500 hover:text-white"><i class="fa-solid fa-xmark"></i></button>` : ''}
+              </div>
+
+              <!-- Selector de Estatus -->
+              <div class="flex items-center gap-2 text-xs">
+                <span class="text-slate-400 font-semibold">Estado:</span>
+                <select onchange="handleStatusFilter(this.value)" class="bg-slate-800 border border-slate-700 text-white rounded-xl px-3 py-2 text-xs focus:border-rose-500">
+                  <option value="Todos" ${statusFilterOption === 'Todos' ? 'selected' : ''}>Todos los Estados (${appData.projects.length})</option>
+                  <option value="Levantamiento" ${statusFilterOption === 'Levantamiento' ? 'selected' : ''}>Levantamiento</option>
+                  <option value="En Presupuesto" ${statusFilterOption === 'En Presupuesto' ? 'selected' : ''}>En Presupuesto</option>
+                  <option value="Aprobado" ${statusFilterOption === 'Aprobado' ? 'selected' : ''}>Aprobado</option>
+                  <option value="En Curso" ${statusFilterOption === 'En Curso' ? 'selected' : ''}>En Curso</option>
+                  <option value="Finalizado" ${statusFilterOption === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Chips de acceso rápido por estatus -->
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              ${['Todos', 'Levantamiento', 'En Presupuesto', 'Aprobado', 'En Curso', 'Finalizado'].map(st => {
+                const count = st === 'Todos' ? appData.projects.length : appData.projects.filter(x => x.status === st).length;
+                const active = statusFilterOption === st;
+                return `
+                  <button onclick="handleStatusFilter('${st}')" class="text-[11px] px-2.5 py-1 rounded-lg font-bold border transition ${active ? 'bg-rose-950 text-rose-300 border-rose-700' : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-slate-200'}">
+                    ${st} (${count})
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- TABLA / LISTA DE PROYECTOS -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-3 bg-slate-950/70 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+              <span>Listado de Proyectos & Órdenes de Servicio (Haz clic en una fila para ver el detalle)</span>
+              <span>${filtered.length} Mostrados</span>
+            </div>
+
+            ${filtered.length === 0 ? `
+              <div class="p-8 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-4xl text-slate-600 mb-2"></i>
+                <p class="font-semibold text-white">No se encontraron proyectos con los filtros actuales.</p>
+              </div>
+            ` : `
+              <div class="overflow-x-auto">
+                <table class="w-full text-xs text-left">
+                  <thead class="bg-slate-950/50 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                    <tr>
+                      <th class="p-3">Código</th>
+                      <th class="p-3">Proyecto / Cliente</th>
+                      <th class="p-3">Técnico Responsable</th>
+                      <th class="p-3 text-center">Estado del Proyecto</th>
+                      <th class="p-3 text-center">GPS en Sitio</th>
+                      <th class="p-3 text-right">Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800/80">
+                    ${filtered.map(p => {
+                      const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
+                      const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
+                      return `
+                        <tr class="hover:bg-slate-800/50 transition cursor-pointer" onclick="openProjectDetail('${p.id}')">
+                          <td class="p-3 font-mono font-bold text-rose-400 whitespace-nowrap">
+                            ${p.code}
+                          </td>
+                          <td class="p-3">
+                            <div class="font-bold text-white text-xs">${p.title}</div>
+                            <div class="text-[11px] text-slate-400">${p.client} — <span class="text-slate-500">${p.serviceType}</span></div>
+                          </td>
+                          <td class="p-3">
+                            <span class="font-bold text-slate-200">${p.techLeader}</span>
+                            <div class="text-[10px] text-slate-500">Cuadrilla: ${p.techCrew.join(', ') || 'N/A'}</div>
+                          </td>
+                          <td class="p-3 text-center whitespace-nowrap">
+                            <span class="px-2.5 py-0.5 rounded-full font-bold text-[11px] ${getStatusBadge(p.status)}">
+                              ${p.status}
+                            </span>
+                          </td>
+                          <td class="p-3 text-center whitespace-nowrap">
+                            ${isInSite ? `
+                              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${isVerified ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">
+                                <span class="w-1.5 h-1.5 rounded-full ${isVerified ? 'bg-emerald-400' : 'bg-amber-400'} mr-1 live-pulse"></span>
+                                ${isVerified ? 'EN SITIO' : 'DISTANTE'}
+                              </span>
+                            ` : (p.tracking && p.tracking.checkOut ? `
+                              <span class="text-slate-400 text-[10px]"><i class="fa-solid fa-check text-emerald-400 mr-1"></i>Finalizado</span>
+                            ` : `
+                              <span class="text-slate-500 text-[10px]">Sin marcaje</span>
+                            `)}
+                          </td>
+                          <td class="p-3 text-right whitespace-nowrap" onclick="event.stopPropagation()">
+                            <button onclick="openProjectDetail('${p.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold border border-slate-700 flex items-center gap-1.5 ml-auto">
+                              <span>Detalles</span> <i class="fa-solid fa-chevron-right text-[10px]"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    function handleSearchProjects(query) {
+      searchFilterQuery = query.trim();
+      render();
+    }
+
+    function handleStatusFilter(status) {
+      statusFilterOption = status;
+      render();
+    }
+
+    /* ===================================================================
+       MODAL DE DETALLES DEL PROYECTO (APERTURA CON 1 CLIC)
+       =================================================================== */
+    let currentDetailProjectId = null;
+
+    function openProjectDetail(projId) {
+      currentDetailProjectId = projId;
+      const p = appData.projects.find(x => x.id === projId);
       if (!p) return;
 
-      document.getElementById('surveyProjectId').value = id;
-      document.getElementById('surveyProjectTitle').innerText = `${p.code} - ${p.title}`;
-      document.getElementById('surveyMeters').value = p.survey ? (p.survey.meters || '') : '';
-      document.getElementById('surveyStructure').value = p.survey ? (p.survey.structure || 'Ductería EMT Existente') : 'Ductería EMT Existente';
-      document.getElementById('surveyPower').value = p.survey ? (p.survey.power || '110V Regulada con UPS') : '110V Regulada con UPS';
-      document.getElementById('surveyNotes').value = p.survey ? (p.survey.notes || '') : '';
-      document.getElementById('ocrStatusBadge').innerText = 'Listo para digitalizar';
+      const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
+      const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
 
-      tempSurveyItemsEquip = (p.survey && p.survey.itemsEquip) ? JSON.parse(JSON.stringify(p.survey.itemsEquip)) : [];
-      tempSurveyItemsMat = (p.survey && p.survey.itemsMat) ? JSON.parse(JSON.stringify(p.survey.itemsMat)) : [];
+      document.getElementById('detailProjCode').innerText = p.code;
+      document.getElementById('detailProjTitle').innerText = p.title;
+      document.getElementById('detailProjClientService').innerText = `${p.client} — ${p.serviceType}`;
+
+      const statusBadge = document.getElementById('detailProjStatusBadge');
+      statusBadge.className = `text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(p.status)}`;
+      statusBadge.innerText = p.status;
+
+      const liveBadge = document.getElementById('detailProjLiveBadge');
+      if (isInSite) {
+        liveBadge.classList.remove('hidden');
+        liveBadge.className = `inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${isVerified ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}`;
+        liveBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${isVerified ? 'bg-emerald-400' : 'bg-amber-400'} mr-1.5 live-pulse"></span>${isVerified ? 'EN SITIO AHORA' : 'FUERA DE RANGO'}`;
+      } else {
+        liveBadge.classList.add('hidden');
+      }
+
+      document.getElementById('detailProjAddress').innerText = p.address;
+      document.getElementById('detailProjContact').innerText = p.contact || 'Sin contacto directo';
+      document.getElementById('detailProjCoords').innerText = p.targetLat && p.targetLng ? `GPS Destino: [${p.targetLat.toFixed(4)}, ${p.targetLng.toFixed(4)}]` : 'Sin coordenadas GPS';
+
+      document.getElementById('detailProjTechLeader').innerText = `Líder: ${p.techLeader}`;
+      document.getElementById('detailProjTechCrew').innerText = `Cuadrilla: ${p.techCrew.join(', ') || 'N/A'}`;
+      document.getElementById('detailProjPlannedDate').innerText = `Planificado: ${p.plannedDate || 'N/A'}`;
+
+      document.getElementById('detailProjCheckIn').innerText = p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'No registrada';
+      document.getElementById('detailProjCheckOut').innerText = p.tracking && p.tracking.checkOut ? p.tracking.checkOut : (isInSite ? 'Trabajando en sitio...' : 'Pendiente');
+      document.getElementById('detailProjHoursWorked').innerText = p.tracking && p.tracking.hoursWorked ? `Tiempo en obra: ${p.tracking.hoursWorked}` : '';
       
-      tempSurveyDocFile = (p.survey && p.survey.surveyDocFile) ? { ...p.survey.surveyDocFile } : null;
-      tempSurveyPlanFile = (p.survey && p.survey.planFile) ? { ...p.survey.planFile } : null;
+      const distEl = document.getElementById('detailProjDistanceMeasured');
+      if (p.tracking && p.tracking.distanceFromTargetMeters !== null) {
+        distEl.innerText = `Distancia medida: ${p.tracking.distanceFromTargetMeters < 1000 ? p.tracking.distanceFromTargetMeters + ' metros' : (p.tracking.distanceFromTargetMeters/1000).toFixed(2) + ' KM'}`;
+      } else {
+        distEl.innerText = '';
+      }
 
-      updateSurveyDocCard();
-      updateSurveyPlanCard();
-      renderSurveyItemLists();
-      searchOmegaCatalog();
-      openModal('surveyModal');
+      // Archivo Levantamiento
+      const sDocEl = document.getElementById('detailProjSurveyDocInfo');
+      if (p.survey && p.survey.surveyDocFile) {
+        sDocEl.innerHTML = `
+          <div class="flex items-center justify-between w-full">
+            <span class="truncate font-semibold text-white mr-1">${p.survey.surveyDocFile.name}</span>
+            <div class="flex gap-1.5">
+              <button onclick="viewSurveyFile('${p.id}', 'doc')" class="text-blue-400 hover:underline">Ver</button>
+              <button onclick="downloadSurveyFile('${p.id}', 'doc')" class="text-emerald-400 hover:underline">Descargar</button>
+            </div>
+          </div>
+        `;
+      } else {
+        sDocEl.innerHTML = '<span class="italic text-slate-500">Sin documento adjunto</span>';
+      }
+
+      // Archivo Plano
+      const planEl = document.getElementById('detailProjPlanInfo');
+      if (p.survey && p.survey.planFile) {
+        planEl.innerHTML = `
+          <div class="flex items-center justify-between w-full">
+            <span class="truncate font-semibold text-white mr-1">${p.survey.planFile.name}</span>
+            <div class="flex gap-1.5">
+              <button onclick="viewSurveyFile('${p.id}', 'plan')" class="text-blue-400 hover:underline">Ver</button>
+              <button onclick="downloadSurveyFile('${p.id}', 'plan')" class="text-emerald-400 hover:underline">Descargar</button>
+            </div>
+          </div>
+        `;
+      } else {
+        planEl.innerHTML = '<span class="italic text-slate-500">Sin plano adjunto</span>';
+      }
+
+      // Cotización
+      const quoteEl = document.getElementById('detailProjQuoteInfo');
+      if (p.quotation) {
+        quoteEl.innerHTML = `
+          <div>
+            <div class="font-bold text-white">${p.quotation.number} (RD$ ${p.quotation.amount.toLocaleString()})</div>
+            <div class="text-[10px] text-slate-400">${p.quotation.date} • ${p.quotation.fileName || 'Adjunto'}</div>
+          </div>
+        `;
+      } else {
+        quoteEl.innerHTML = '<span class="italic text-slate-500">Pendiente de cotización formal</span>';
+      }
+
+      // Presupuesto Desglosado
+      const budgetBox = document.getElementById('detailProjBudgetContainer');
+      if (p.budget) {
+        const totalServices = p.budget.services.reduce((a, c) => a + c.subtotal, 0);
+        const totalMaterials = p.budget.materials.reduce((a, c) => a + c.subtotal, 0);
+        const grandTotal = totalServices + totalMaterials;
+
+        budgetBox.innerHTML = `
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+            <span class="font-bold text-white uppercase tracking-wider text-xs"><i class="fa-solid fa-calculator mr-1.5 text-rose-400"></i>Presupuesto Interno (Servicios y Materiales)</span>
+            <span class="font-black text-emerald-400 text-sm">Costo Estimado: RD$ ${grandTotal.toLocaleString()}</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <div class="font-bold text-slate-300 mb-1 flex justify-between">
+                <span>Servicios Profesionales:</span>
+                <span>RD$ ${totalServices.toLocaleString()}</span>
+              </div>
+              <div class="space-y-1 text-[11px] text-slate-400">
+                ${p.budget.services.map(s => `
+                  <div class="flex justify-between"><span>${s.concept} (${s.qty})</span><span class="font-mono text-slate-300">RD$ ${s.subtotal.toLocaleString()}</span></div>
+                `).join('')}
+              </div>
+            </div>
+            <div>
+              <div class="font-bold text-slate-300 mb-1 flex justify-between">
+                <span>Equipos & Materiales:</span>
+                <span>RD$ ${totalMaterials.toLocaleString()}</span>
+              </div>
+              <div class="space-y-1 text-[11px] text-slate-400">
+                ${p.budget.materials.map(m => `
+                  <div class="flex justify-between"><span class="truncate mr-2">${m.desc} (x${m.qtyReal})</span><span class="font-mono text-slate-300 whitespace-nowrap">RD$ ${m.subtotal.toLocaleString()}</span></div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        budgetBox.innerHTML = '<span class="text-slate-500 italic">No hay presupuesto configurado para esta orden.</span>';
+      }
+
+      // Botones de Estado
+      const statusBtnContainer = document.getElementById('detailProjStatusButtons');
+      statusBtnContainer.innerHTML = `
+        <button onclick="changeProjectStatusFromDetail('Levantamiento')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">Levantamiento</button>
+        <button onclick="changeProjectStatusFromDetail('En Presupuesto')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">En Presupuesto</button>
+        <button onclick="changeProjectStatusFromDetail('Aprobado')" class="text-[11px] bg-emerald-950 border border-emerald-800 hover:bg-emerald-900 px-2.5 py-1 rounded-lg text-emerald-300 font-bold">Aprobar</button>
+        <button onclick="changeProjectStatusFromDetail('En Curso')" class="text-[11px] bg-blue-950 border border-blue-800 hover:bg-blue-900 px-2.5 py-1 rounded-lg text-blue-300">En Curso</button>
+        <button onclick="changeProjectStatusFromDetail('Finalizado')" class="text-[11px] bg-purple-950 border border-purple-800 hover:bg-purple-900 px-2.5 py-1 rounded-lg text-purple-300">Finalizado</button>
+      `;
+
+      // Acciones Rápidas
+      const quickActions = document.getElementById('detailProjQuickActions');
+      quickActions.innerHTML = `
+        <button onclick="openSurveyModal('${p.id}'); closeModal('projectDetailModal');" class="bg-rose-900/80 hover:bg-rose-800 text-rose-200 border border-rose-700 px-3 py-1.5 rounded-xl text-xs font-bold">
+          <i class="fa-solid fa-file-pen mr-1"></i> Levantamiento & Plano
+        </button>
+        <button onclick="openQuotationModal('${p.id}'); closeModal('projectDetailModal');" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 border border-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold">
+          <i class="fa-solid fa-file-invoice-dollar mr-1"></i> Cotización
+        </button>
+        <button onclick="printProjectPDF('${p.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl text-xs border border-slate-700 font-semibold">
+          <i class="fa-solid fa-file-pdf mr-1 text-rose-400"></i> PDF
+        </button>
+        <a href="https://www.google.com/maps/search/?api=1&query=${p.targetLat && p.targetLng ? `${p.targetLat},${p.targetLng}` : encodeURIComponent(p.address)}" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl text-xs border border-slate-700 font-semibold flex items-center gap-1">
+          <i class="fa-solid fa-diamond-turn-right text-emerald-400"></i> Mapa
+        </a>
+      `;
+
+      openModal('projectDetailModal');
     }
+
+    function changeProjectStatusFromDetail(newStatus) {
+      if (!currentDetailProjectId) return;
+      changeProjectStatus(currentDetailProjectId, newStatus);
+      openProjectDetail(currentDetailProjectId); // Refrescar modal
+    }
+
+    /* ===================================================================
+       MANEJO INDEPENDIENTE DE LEVANTAMIENTO Y PLANO
+       =================================================================== */
+    let tempSurveyDocFile = null;
+    let tempSurveyPlanFile = null;
 
     function handleSurveyDocSelect(e) {
       const file = e.target.files[0];
@@ -2077,7 +1871,6 @@
 
     function updateSurveyDocCard() {
       const card = document.getElementById('surveyDocCard');
-      if (!card) return;
       if (!tempSurveyDocFile) {
         card.classList.add('hidden');
         return;
@@ -2089,7 +1882,6 @@
 
     function updateSurveyPlanCard() {
       const card = document.getElementById('surveyPlanCard');
-      if (!card) return;
       if (!tempSurveyPlanFile) {
         card.classList.add('hidden');
         return;
@@ -2606,1208 +2398,114 @@
     }
 
     /* ===================================================================
-       CONTROLADOR RESTAURADO: GESTIÓN DE PESTAÑAS ADMINISTRATIVAS
+       GEO-ASISTENCIA GPS CON GEOFENCING Y ALERTA DE DISTANCIA
        =================================================================== */
-    function setNavTab(tab) {
-      currentNavTab = tab;
-      render();
-    }
-
-    function setLogisticsSubtab(subtab) {
-      currentLogisticsSubtab = subtab;
-      render();
-    }
-
-    /* RENDER LOGÍSTICA COMPLETO */
-    function renderAdminLogistics() {
-      return `
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-1 gap-2">
-            <div class="flex">
-              <button onclick="setLogisticsSubtab('vehicles')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'vehicles' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-truck-pickup mr-1.5"></i> Flotilla de Vehículos
-              </button>
-              <button onclick="setLogisticsSubtab('fuel')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'fuel' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-gas-pump mr-1.5"></i> Control de Combustible (Tickets 500)
-              </button>
-              <button onclick="setLogisticsSubtab('staff')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'staff' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-users-gear mr-1.5"></i> Personal Técnico
-              </button>
-              <button onclick="setLogisticsSubtab('tools')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'tools' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-toolbox mr-1.5"></i> Herramientas y Equipos
-              </button>
-            </div>
-
-            <div class="flex items-center gap-2 py-1">
-              <button onclick="exportLogisticsToExcel()" class="bg-emerald-900/70 hover:bg-emerald-800 text-emerald-200 border border-emerald-700/60 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 shadow">
-                <i class="fa-solid fa-file-excel"></i> Exportar Excel
-              </button>
-              <button onclick="exportLogisticsToPDF()" class="bg-rose-950/70 hover:bg-rose-900 text-rose-200 border border-rose-800/60 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 shadow">
-                <i class="fa-solid fa-file-pdf"></i> Exportar PDF
-              </button>
-              <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 cursor-pointer">
-                <i class="fa-solid fa-file-import text-blue-400"></i> Importar Excel
-                <input type="file" accept=".xlsx,.xls,.csv" class="hidden" onchange="importLogisticsFromExcel(event)">
-              </label>
-            </div>
-          </div>
-
-          ${currentLogisticsSubtab === 'vehicles' ? renderVehiclesLogistics() : ''}
-          ${currentLogisticsSubtab === 'fuel' ? renderFuelLogistics() : ''}
-          ${currentLogisticsSubtab === 'staff' ? renderStaffLogistics() : ''}
-          ${currentLogisticsSubtab === 'tools' ? renderToolsLogistics() : ''}
-        </div>
-      `;
-    }
-
-    function renderVehiclesLogistics() {
-      const avail = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
-      const assigned = appData.vehicles.filter(v => v.status === 'Operativo' && v.assignedTo).length;
-      const maint = appData.vehicles.filter(v => v.status === 'Mantenimiento').length;
-
-      return `
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <div class="flex items-center gap-3">
-              <span class="text-xs bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
-                <i class="fa-solid fa-circle-check mr-1"></i>Disponibles: ${avail}
-              </span>
-              <span class="text-xs bg-blue-950/80 text-blue-400 border border-blue-800 px-3 py-1 rounded-xl font-bold">
-                <i class="fa-solid fa-truck-moving mr-1"></i>En Ruta: ${assigned}
-              </span>
-              <span class="text-xs bg-amber-950/80 text-amber-400 border border-amber-800 px-3 py-1 rounded-xl font-bold">
-                <i class="fa-solid fa-wrench mr-1"></i>Taller: ${maint}
-              </span>
-            </div>
-            <button onclick="openVehicleModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5">
-              <i class="fa-solid fa-plus"></i> Registrar Vehículo
-            </button>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Placa</th>
-                  <th class="p-3">Modelo</th>
-                  <th class="p-3">Odómetro</th>
-                  <th class="p-3">Técnico Custodio</th>
-                  <th class="p-3">Estatus</th>
-                  <th class="p-3 text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.vehicles.map(v => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-mono font-bold text-white">${v.plate}</td>
-                    <td class="p-3 text-slate-300">${v.model}</td>
-                    <td class="p-3 font-mono text-emerald-400">${v.odo.toLocaleString()} KM</td>
-                    <td class="p-3 font-bold ${v.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${v.assignedTo || 'Sin asignar'}</td>
-                    <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-full font-semibold ${v.status === 'Operativo' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${v.status}</span>
-                    </td>
-                    <td class="p-3 text-right space-x-1">
-                      <button onclick="openVehicleModal('${v.id}')" title="Editar Vehículo" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">
-                        <i class="fa-solid fa-pen"></i>
-                      </button>
-                      <button onclick="deleteVehicle('${v.id}')" title="Eliminar Vehículo" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 px-2.5 py-1 rounded-lg text-[11px]">
-                        <i class="fa-solid fa-trash-can"></i>
-                      </button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderFuelLogistics() {
-      return `
-        <div class="space-y-4">
-          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow">
-            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-              <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
-                <i class="fa-solid fa-gas-pump text-rose-400"></i> Llenado Semanal con Tickets de RD$ 500 & Desvío de Rutas
-              </h3>
-              <span class="text-xs bg-rose-950 text-rose-300 border border-rose-800 px-2.5 py-1 rounded-lg font-bold">
-                Ticket Base: RD$ 500.00
-              </span>
-            </div>
-
-            <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Vehículo / Placa</label>
-                <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-                  ${appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model} (${v.assignedTo || 'Sin técnico'})</option>`).join('')}
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Odómetro Anterior</label>
-                <input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 font-mono">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Nuevo Odómetro al Llenar (KM)</label>
-                <input type="number" id="fuelCurrentKm" required placeholder="KM Actual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Cant. Tickets de RD$ 500</label>
-                <input type="number" min="1" id="fuelTicketsCount" value="6" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-bold">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Monto Total en Tickets (RD$)</label>
-                <input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-emerald-400 font-bold font-mono">
-              </div>
-              <div class="md:col-span-5 flex justify-end">
-                <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-rose-900/30">
-                  <i class="fa-solid fa-calculator mr-1"></i> Calcular Kilómetros Recorridos & Desvío
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-slate-300 flex items-center justify-between">
-              <span>Historial de Llenado Semanal & Comparativa con Tareas de Campo</span>
-              <span class="text-[11px] text-slate-400">Verde: Normal | Amarillo: Alerta | Rojo: Desvío Alto</span>
-            </div>
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/50 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Fecha</th>
-                  <th class="p-3">Vehículo / Técnico</th>
-                  <th class="p-3">Km Recorridos</th>
-                  <th class="p-3">Tickets / Monto</th>
-                  <th class="p-3">Ruta de Proyectos</th>
-                  <th class="p-3">Desvío Calculado</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.fuelLogs.map(l => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 text-slate-400">${l.date}</td>
-                    <td class="p-3"><span class="font-bold text-white">${l.plate}</span> <span class="text-slate-400">(${l.driver})</span></td>
-                    <td class="p-3 font-mono text-emerald-400 font-bold">${l.dist} KM</td>
-                    <td class="p-3 font-mono">${l.tickets500} tickets (RD$ ${l.cost.toLocaleString()})</td>
-                    <td class="p-3 font-mono text-slate-400">${l.taskKmEst} KM proyectados</td>
-                    <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-full font-bold ${
-                        parseFloat(l.dev) < 15 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
-                        parseFloat(l.dev) < 30 ? 'bg-amber-950 text-amber-300 border border-amber-800' :
-                        'bg-rose-950 text-rose-300 border border-rose-800'
-                      }">
-                        ${l.dev} ${parseFloat(l.dev) > 30 ? '<i class="fa-solid fa-triangle-exclamation ml-1"></i>' : ''}
-                      </span>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    function calculateFuelTotalMonto() {
-      const tickets = parseInt(document.getElementById('fuelTicketsCount').value) || 0;
-      document.getElementById('fuelCost').value = tickets * 500;
-    }
-
-    function renderStaffLogistics() {
-      const specA = appData.technicians.filter(t => t.level === 'Especialista A').length;
-      const specB = appData.technicians.filter(t => t.level === 'Especialista B').length;
-      const aux = appData.technicians.filter(t => t.level === 'Auxiliar Técnico').length;
-
-      return `
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <div class="flex items-center gap-3">
-              <span class="text-xs bg-purple-950/80 text-purple-300 border border-purple-800 px-3 py-1 rounded-xl font-bold">
-                Especialistas A: ${specA}
-              </span>
-              <span class="text-xs bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1 rounded-xl font-bold">
-                Especialistas B: ${specB}
-              </span>
-              <span class="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
-                Auxiliares: ${aux}
-              </span>
-            </div>
-            <button onclick="openTechModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 shadow">
-              <i class="fa-solid fa-user-plus"></i> Registrar Nuevo Técnico
-            </button>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Nombre</th>
-                  <th class="p-3">Nivel / Rango</th>
-                  <th class="p-3">Teléfono</th>
-                  <th class="p-3">Dirección de Vivienda</th>
-                  <th class="p-3">Vehículo Asignado</th>
-                  <th class="p-3 text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.technicians.map(t => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-bold text-white">${t.name}</td>
-                    <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-full font-bold text-[11px] ${
-                        t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
-                        t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
-                        'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                      }">${t.level}</span>
-                    </td>
-                    <td class="p-3 text-emerald-400 font-mono"><a href="tel:${t.phone}"><i class="fa-solid fa-phone mr-1"></i>${t.phone}</a></td>
-                    <td class="p-3 text-slate-300 max-w-xs truncate">${t.address}</td>
-                    <td class="p-3 font-bold ${t.vehiclePlate ? 'text-amber-400' : 'text-slate-500 italic'}">${t.vehiclePlate || 'Sin vehículo'}</td>
-                    <td class="p-3 text-right space-x-1">
-                      <button onclick="openTechModal('${t.id}')" title="Editar Técnico" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">
-                        <i class="fa-solid fa-pen"></i>
-                      </button>
-                      <button onclick="deleteTechnician('${t.id}')" title="Eliminar Técnico" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 px-2.5 py-1 rounded-lg text-[11px]">
-                        <i class="fa-solid fa-trash-can"></i>
-                      </button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderToolsLogistics() {
-      return `
-        <div class="space-y-4">
-          <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <span class="text-xs text-slate-300 font-bold">Total Equipos de Medición & Herramientas: ${appData.tools.length}</span>
-            <button onclick="openToolModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5">
-              <i class="fa-solid fa-plus"></i> Registrar Herramienta
-            </button>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Código</th>
-                  <th class="p-3">Descripción de Herramienta</th>
-                  <th class="p-3">Custodio Actual</th>
-                  <th class="p-3">Condición</th>
-                  <th class="p-3 text-right">Acciones</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.tools.map(t => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-mono font-bold text-amber-400">${t.code}</td>
-                    <td class="p-3 text-white font-medium">${t.name}</td>
-                    <td class="p-3 font-bold ${t.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${t.assignedTo || 'En Almacén'}</td>
-                    <td class="p-3 text-slate-300">${t.condition}</td>
-                    <td class="p-3 text-right space-x-1">
-                      <button onclick="openToolModal('${t.id}')" title="Editar Herramienta" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">
-                        <i class="fa-solid fa-pen"></i>
-                      </button>
-                      <button onclick="deleteTool('${t.id}')" title="Eliminar Herramienta" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 px-2.5 py-1 rounded-lg text-[11px]">
-                        <i class="fa-solid fa-trash-can"></i>
-                      </button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    /* RENDER KPIS COMPLETO */
-    function renderAdminKPIs() {
-      const totalProjects = appData.projects.length;
-      const completedProjects = appData.projects.filter(p => p.status === 'Finalizado').length;
-      const completionRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
-
-      const checkInProjects = appData.projects.filter(p => p.tracking && p.tracking.checkIn);
-      const verifiedOnSite = checkInProjects.filter(p => p.tracking.isVerifiedOnSite).length;
-      const gpsComplianceRate = checkInProjects.length > 0 ? Math.round((verifiedOnSite / checkInProjects.length) * 100) : 100;
-
-      const totalFuelTickets = appData.fuelLogs.reduce((acc, l) => acc + (l.tickets500 || 0), 0);
-      const totalFuelMoney = totalFuelTickets * 500;
-      const totalKmLogged = appData.fuelLogs.reduce((acc, l) => acc + (l.dist || 0), 0);
-      const avgCostPerKm = totalKmLogged > 0 ? (totalFuelMoney / totalKmLogged).toFixed(2) : '0.00';
-
-      let totalBudgetHours = 0;
-      appData.projects.forEach(p => {
-        if (p.budget && p.budget.services) {
-          p.budget.services.forEach(s => {
-            if (s.concept.toLowerCase().includes('horas') || s.concept.toLowerCase().includes('técnicas')) {
-              totalBudgetHours += (s.qty || 0);
-            }
-          });
-        }
-      });
-
-      const techStats = appData.technicians.map(t => {
-        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || p.techCrew.includes(t.name));
-        const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
-        const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
-        const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
-        const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
-
-        const fuelEntries = appData.fuelLogs.filter(f => f.driver === t.name || f.plate === t.vehiclePlate);
-        let avgDev = 0;
-        if (fuelEntries.length > 0) {
-          const sumDev = fuelEntries.reduce((acc, f) => acc + parseFloat(f.dev || 0), 0);
-          avgDev = (sumDev / fuelEntries.length).toFixed(1);
-        }
-
-        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 40 : 25;
-        const gpsScore = (gpsRate / 100) * 40;
-        const fuelScore = Math.max(0, (1 - (avgDev / 50))) * 20;
-        const performanceScore = Math.min(100, Math.round(closeScore + gpsScore + fuelScore));
-
-        return {
-          ...t,
-          assignedCount: assignedProj.length,
-          completedCount: completed,
-          gpsRate,
-          avgDev,
-          performanceScore
-        };
-      });
-
-      return `
-        <div class="space-y-6">
-          <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-rose-950/40 border border-slate-800 p-5 rounded-2xl shadow-xl">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <span class="text-xs uppercase tracking-wider text-rose-400 font-bold"><i class="fa-solid fa-gauge-high mr-1.5"></i>Tablero de Control de Productividad</span>
-                <h2 class="text-xl font-black text-white mt-0.5">Métricas Clave de Rendimiento Técnico</h2>
-                <p class="text-xs text-slate-400 mt-1">Evaluación en tiempo real de cuadrillas en campo, cumplimiento GPS y optimización vehicular.</p>
-              </div>
-              <div class="flex items-center gap-3 bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800">
-                <i class="fa-solid fa-award text-amber-400 text-2xl"></i>
-                <div>
-                  <div class="text-[11px] text-slate-400 font-medium">Cumplimiento Operativo General</div>
-                  <div class="text-lg font-black text-white">${completionRate}% <span class="text-xs text-emerald-400 font-semibold">Tasa de Entrega</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
-                <span>Puntualidad & GPS Geofencing</span>
-                <i class="fa-solid fa-location-dot text-emerald-400"></i>
-              </div>
-              <div class="text-2xl font-black text-emerald-400 mt-2">${gpsComplianceRate}%</div>
-              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                <div class="bg-emerald-500 h-full rounded-full" style="width: ${gpsComplianceRate}%"></div>
-              </div>
-              <div class="text-[10px] text-slate-400 mt-2">Llegadas validadas a menos de 300m de la obra</div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
-                <span>Inversión en Combustible</span>
-                <i class="fa-solid fa-gas-pump text-rose-400"></i>
-              </div>
-              <div class="text-2xl font-black text-white mt-2">RD$ ${totalFuelMoney.toLocaleString()}</div>
-              <div class="text-xs text-rose-400 font-bold mt-0.5">${totalFuelTickets} Tickets de RD$ 500</div>
-              <div class="text-[10px] text-slate-400 mt-1">Costo promedio: RD$ ${avgCostPerKm} / KM recorrido</div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
-                <span>Horas Hombre Cotizadas</span>
-                <i class="fa-solid fa-clock text-blue-400"></i>
-              </div>
-              <div class="text-2xl font-black text-blue-400 mt-2">${totalBudgetHours} HH</div>
-              <div class="text-xs text-slate-300 font-medium mt-0.5">${checkInProjects.length} visitas con tiempo registrado</div>
-              <div class="text-[10px] text-slate-400 mt-1">Rendimiento según presupuesto aprobado</div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold">
-                <span>Planos Técnicos en Obra</span>
-                <i class="fa-solid fa-compass-drafting text-purple-400"></i>
-              </div>
-              <div class="text-2xl font-black text-purple-400 mt-2">${appData.projects.filter(p => p.survey && p.survey.planFile).length}</div>
-              <div class="text-xs text-slate-300 font-medium mt-0.5">Levantamientos con croquis</div>
-              <div class="text-[10px] text-slate-400 mt-1">Soporte gráfico para instalación inmediata</div>
-            </div>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking de Rendimiento y Cumplimiento Técnico</h3>
-                <p class="text-[11px] text-slate-400 mt-0.5">Puntaje basado en efectividad de cierre, geolocalización en sitio y desvío vehicular.</p>
-              </div>
-              <span class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">
-                Total Evaluados: ${techStats.length} Técnicos
-              </span>
-            </div>
-
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs text-left" id="kpiTableExport">
-                <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                  <tr>
-                    <th class="p-3">Técnico</th>
-                    <th class="p-3">Categoría</th>
-                    <th class="p-3 text-center">Tareas (Total / Cierre)</th>
-                    <th class="p-3 text-center">Cumplimiento GPS</th>
-                    <th class="p-3 text-center">Desvío Combustible</th>
-                    <th class="p-3">Score de Eficiencia</th>
-                    <th class="p-3 text-right">Diagnóstico Operativo</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-800">
-                  ${techStats.sort((a,b) => b.performanceScore - a.performanceScore).map((t, idx) => `
-                    <tr class="hover:bg-slate-800/40">
-                      <td class="p-3">
-                        <div class="flex items-center gap-2">
-                          <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${idx === 0 ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300'}">${idx + 1}</span>
-                          <div>
-                            <span class="font-bold text-white">${t.name}</span>
-                            <div class="text-[10px] text-slate-500">${t.vehiclePlate ? `Vehículo: ${t.vehiclePlate}` : 'Sin auto'}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="p-3">
-                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                          t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
-                          t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
-                          'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                        }">${t.level}</span>
-                      </td>
-                      <td class="p-3 text-center">
-                        <span class="font-bold text-white">${t.completedCount}</span> / <span class="text-slate-400">${t.assignedCount}</span>
-                      </td>
-                      <td class="p-3 text-center">
-                        <span class="font-bold font-mono ${t.gpsRate >= 80 ? 'text-emerald-400' : 'text-amber-400'}">${t.gpsRate}%</span>
-                      </td>
-                      <td class="p-3 text-center">
-                        <span class="font-mono ${parseFloat(t.avgDev) < 15 ? 'text-emerald-400' : 'text-rose-400'}">${t.avgDev}%</span>
-                      </td>
-                      <td class="p-3">
-                        <div class="flex items-center gap-2">
-                          <div class="w-24 bg-slate-800 h-2 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full ${t.performanceScore >= 80 ? 'bg-emerald-500' : (t.performanceScore >= 60 ? 'bg-blue-500' : 'bg-amber-500')}" style="width: ${t.performanceScore}%"></div>
-                          </div>
-                          <span class="font-bold font-mono text-white">${t.performanceScore}/100</span>
-                        </div>
-                      </td>
-                      <td class="p-3 text-right">
-                        ${t.performanceScore >= 80 ? `
-                          <span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                            <i class="fa-solid fa-star mr-1 text-amber-400"></i> Desempeño Sobresaliente
-                          </span>
-                        ` : t.performanceScore >= 60 ? `
-                          <span class="bg-blue-950/80 text-blue-300 border border-blue-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                            <i class="fa-solid fa-check mr-1 text-blue-400"></i> Rendimiento Adecuado
-                          </span>
-                        ` : `
-                          <span class="bg-rose-950/80 text-rose-300 border border-rose-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">
-                            <i class="fa-solid fa-triangle-exclamation mr-1 text-rose-400"></i> Supervisar en Campo
-                          </span>
-                        `}
-                      </td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    /* EXPORTACIÓN DE KPIS */
-    function exportKPIToExcel() {
-      const wb = XLSX.utils.book_new();
-      const kpiData = appData.technicians.map(t => {
-        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || p.techCrew.includes(t.name));
-        const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
-        const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
-        const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
-        const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
-        
-        return {
-          Tecnico: t.name,
-          Rango: t.level,
-          Telefono: t.phone,
-          Vehiculo: t.vehiclePlate || 'Sin asignar',
-          Proyectos_Asignados: assignedProj.length,
-          Proyectos_Finalizados: completed,
-          Cumplimiento_GPS_Porc: gpsRate + '%',
-          Tasa_Efectividad: assignedProj.length > 0 ? Math.round((completed/assignedProj.length)*100) + '%' : '0%'
-        };
-      });
-
-      const ws = XLSX.utils.json_to_sheet(kpiData);
-      XLSX.utils.book_append_sheet(wb, ws, "Rendimiento_Tecnico_KPI");
-      XLSX.writeFile(wb, "CentroXpert_Informe_Rendimiento_KPI.xlsx");
-    }
-
-    function exportKPIReportToPDF() {
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
-          <h3 style="margin-top: 0;">Informe Ejecutivo de Rendimiento Técnico y KPIs</h3>
-          <p style="font-size: 11px; color: #555;">Fecha de reporte: ${new Date().toLocaleString()} | Emitido por: Coordinación General</p>
-          <hr/>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 15px;">
-            <tr style="background-color: #f1f5f9;">
-              <th>Técnico</th>
-              <th>Nivel</th>
-              <th>Asignadas</th>
-              <th>Completadas</th>
-              <th>GPS Geofencing %</th>
-              <th>Vehículo</th>
-            </tr>
-            ${appData.technicians.map(t => {
-              const assigned = appData.projects.filter(p => p.techLeader === t.name || p.techCrew.includes(t.name));
-              const comp = assigned.filter(p => p.status === 'Finalizado').length;
-              const chk = assigned.filter(p => p.tracking && p.tracking.checkIn);
-              const ver = chk.filter(p => p.tracking.isVerifiedOnSite).length;
-              const rate = chk.length > 0 ? Math.round((ver/chk.length)*100) : 100;
-              return `
-                <tr>
-                  <td><strong>${t.name}</strong></td>
-                  <td>${t.level}</td>
-                  <td align="center">${assigned.length}</td>
-                  <td align="center">${comp}</td>
-                  <td align="center">${rate}%</td>
-                  <td>${t.vehiclePlate || 'N/A'}</td>
-                </tr>
-              `;
-            }).join('')}
-          </table>
-        </div>
-      `;
-      window.print();
-    }
-
-    /* CONTROL DE COMBUSTIBLE */
-    function updateFuelPlateHelper() {
-      const plate = document.getElementById('fuelPlateSelect').value;
-      const v = appData.vehicles.find(item => item.plate === plate);
-      if (v) {
-        document.getElementById('fuelPrevKm').value = v.lastFuelKm || v.odo;
-      }
-    }
-
-    function handleFuelSubmit(e) {
-      e.preventDefault();
-      const plate = document.getElementById('fuelPlateSelect').value;
-      const prev = parseInt(document.getElementById('fuelPrevKm').value) || 0;
-      const current = parseInt(document.getElementById('fuelCurrentKm').value) || 0;
-      const tickets = parseInt(document.getElementById('fuelTicketsCount').value) || 1;
-      const cost = tickets * 500;
-
-      if (current <= prev) {
-        alert('El nuevo kilometraje debe ser mayor al odómetro del llenado anterior.');
-        return;
-      }
-
-      const dist = current - prev;
-      const v = appData.vehicles.find(item => item.plate === plate);
-      const driver = v ? v.assignedTo || 'Sin asignar' : 'Conductor';
-      
-      const taskKmEst = Math.max(30, Math.round(dist * 0.90)); 
-      const diff = Math.abs(dist - taskKmEst);
-      const dev = ((diff / taskKmEst) * 100).toFixed(1) + '%';
-
-      appData.fuelLogs.unshift({
-        id: 'FL_' + Date.now(),
-        date: new Date().toISOString().split('T')[0],
-        plate,
-        driver,
-        tickets500: tickets,
-        cost,
-        prevKm: prev,
-        currentKm: current,
-        dist,
-        taskKmEst,
-        dev
-      });
-
-      if (v) {
-        v.odo = current;
-        v.lastFuelKm = current;
-      }
-
-      saveData();
-      alert(`¡Llenado registrado! ${dist} KM recorridos con ${tickets} tickets (RD$ ${cost}). Desvío de ruta: ${dev}.`);
-    }
-
-    /* CRUD TÉCNICOS */
-    function openTechModal(id = null) {
-      const select = document.getElementById('techVehiclePlate');
-      select.innerHTML = '<option value="">-- Sin vehículo asignado --</option>' + 
-        appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model}</option>`).join('');
-
-      const resetBtn = document.getElementById('techResetPinBtn');
-
-      if (id) {
-        const t = appData.technicians.find(item => item.id === id);
-        if (!t) return;
-        document.getElementById('techModalTitle').innerText = 'Editar Técnico: ' + t.name;
-        document.getElementById('techEditId').value = t.id;
-        document.getElementById('techName').value = t.name;
-        document.getElementById('techLevel').value = t.level;
-        document.getElementById('techPhone').value = t.phone;
-        document.getElementById('techAddress').value = t.address;
-        document.getElementById('techVehiclePlate').value = t.vehiclePlate || '';
-        if (resetBtn) resetBtn.classList.remove('hidden');
-      } else {
-        document.getElementById('techModalTitle').innerText = 'Registrar Nuevo Técnico';
-        document.getElementById('techEditId').value = '';
-        document.getElementById('techName').value = '';
-        document.getElementById('techLevel').value = 'Especialista B';
-        document.getElementById('techPhone').value = '';
-        document.getElementById('techAddress').value = '';
-        document.getElementById('techVehiclePlate').value = '';
-        if (resetBtn) resetBtn.classList.add('hidden');
-      }
-      openModal('techModal');
-    }
-
-    function resetTechPinDirectly() {
-      const id = document.getElementById('techEditId').value;
-      const t = appData.technicians.find(item => item.id === id);
-      if (!t) return;
-
-      if (confirm(`¿Restablecer la clave de ${t.name} al PIN genérico inicial (1234)?`)) {
-        t.pin = '1234';
-        saveData();
-        alert(`¡Clave de ${t.name} restablecida a 1234 exitosamente!`);
-      }
-    }
-
-    function handleSaveTechnician(e) {
-      e.preventDefault();
-      const id = document.getElementById('techEditId').value;
-      const name = document.getElementById('techName').value.trim();
-      const level = document.getElementById('techLevel').value;
-      const phone = document.getElementById('techPhone').value.trim();
-      const address = document.getElementById('techAddress').value.trim();
-      const vehiclePlate = document.getElementById('techVehiclePlate').value;
-
-      if (id) {
-        const t = appData.technicians.find(item => item.id === id);
-        if (t) {
-          const oldName = t.name;
-          const oldPlate = t.vehiclePlate;
-
-          t.name = name;
-          t.level = level;
-          t.phone = phone;
-          t.address = address;
-          t.vehiclePlate = vehiclePlate;
-
-          if (oldPlate && oldPlate !== vehiclePlate) {
-            const oldV = appData.vehicles.find(v => v.plate === oldPlate);
-            if (oldV && oldV.assignedTo === oldName) oldV.assignedTo = '';
-          }
-          if (vehiclePlate) {
-            const newV = appData.vehicles.find(v => v.plate === vehiclePlate);
-            if (newV) newV.assignedTo = name;
-          }
-
-          appData.projects.forEach(p => {
-            if (p.techLeader === oldName) p.techLeader = name;
-            p.techCrew = p.techCrew.map(c => c === oldName ? name : c);
-          });
-        }
-      } else {
-        const newTech = {
-          id: 'T_' + Date.now(),
-          name,
-          level,
-          phone,
-          address,
-          vehiclePlate,
-          pin: '1234'
-        };
-        appData.technicians.push(newTech);
-
-        if (vehiclePlate) {
-          const v = appData.vehicles.find(item => item.plate === vehiclePlate);
-          if (v) v.assignedTo = name;
-        }
-
-        alert(`¡Técnico ${name} registrado! Ya puede iniciar sesión con el PIN genérico 1234.`);
-      }
-
-      closeModal('techModal');
-      populateTechSelect();
-      saveData();
-    }
-
-    function deleteTechnician(id) {
-      const t = appData.technicians.find(item => item.id === id);
-      if (!t) return;
-
-      if (confirm(`¿Estás seguro de eliminar al técnico ${t.name}?`)) {
-        if (t.vehiclePlate) {
-          const v = appData.vehicles.find(item => item.plate === t.vehiclePlate);
-          if (v && v.assignedTo === t.name) v.assignedTo = '';
-        }
-        appData.technicians = appData.technicians.filter(item => item.id !== id);
-        populateTechSelect();
-        saveData();
-      }
-    }
-
-    /* CRUD VEHÍCULOS */
-    function openVehicleModal(id = null) {
-      const select = document.getElementById('vehicleAssignedTo');
-      select.innerHTML = '<option value="">-- Sin asignar (Disponible) --</option>' + 
-        appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
-
-      if (id) {
-        const v = appData.vehicles.find(item => item.id === id);
-        if (!v) return;
-        document.getElementById('vehicleModalTitle').innerText = 'Editar Vehículo ' + v.plate;
-        document.getElementById('vehicleEditId').value = v.id;
-        document.getElementById('vehiclePlate').value = v.plate;
-        document.getElementById('vehicleModel').value = v.model;
-        document.getElementById('vehicleOdo').value = v.odo;
-        document.getElementById('vehicleStatus').value = v.status;
-        document.getElementById('vehicleAssignedTo').value = v.assignedTo || '';
-      } else {
-        document.getElementById('vehicleModalTitle').innerText = 'Registrar Nuevo Vehículo';
-        document.getElementById('vehicleEditId').value = '';
-        document.getElementById('vehiclePlate').value = '';
-        document.getElementById('vehicleModel').value = '';
-        document.getElementById('vehicleOdo').value = 0;
-        document.getElementById('vehicleStatus').value = 'Operativo';
-        document.getElementById('vehicleAssignedTo').value = '';
-      }
-      openModal('vehicleModal');
-    }
-
-    function handleSaveVehicle(e) {
-      e.preventDefault();
-      const id = document.getElementById('vehicleEditId').value;
-      const plate = document.getElementById('vehiclePlate').value.trim().toUpperCase();
-      const model = document.getElementById('vehicleModel').value.trim();
-      const odo = parseInt(document.getElementById('vehicleOdo').value) || 0;
-      const status = document.getElementById('vehicleStatus').value;
-      const assignedTo = document.getElementById('vehicleAssignedTo').value;
-
-      if (id) {
-        const v = appData.vehicles.find(item => item.id === id);
-        if (v) {
-          if (v.assignedTo && v.assignedTo !== assignedTo) {
-            const oldT = appData.technicians.find(t => t.name === v.assignedTo);
-            if (oldT && oldT.vehiclePlate === v.plate) oldT.vehiclePlate = '';
-          }
-          v.plate = plate;
-          v.model = model;
-          v.odo = odo;
-          v.status = status;
-          v.assignedTo = assignedTo;
-
-          if (assignedTo) {
-            const newT = appData.technicians.find(t => t.name === assignedTo);
-            if (newT) newT.vehiclePlate = plate;
-          }
-        }
-      } else {
-        appData.vehicles.push({
-          id: 'V_' + Date.now(),
-          plate,
-          model,
-          odo,
-          lastFuelKm: odo,
-          status,
-          assignedTo
-        });
-        if (assignedTo) {
-          const tech = appData.technicians.find(t => t.name === assignedTo);
-          if (tech) tech.vehiclePlate = plate;
-        }
-      }
-
-      closeModal('vehicleModal');
-      saveData();
-    }
-
-    function deleteVehicle(id) {
-      const v = appData.vehicles.find(item => item.id === id);
-      if (!v) return;
-
-      if (confirm(`¿Estás seguro de eliminar el vehículo ${v.plate} (${v.model})?`)) {
-        if (v.assignedTo) {
-          const t = appData.technicians.find(x => x.name === v.assignedTo);
-          if (t && t.vehiclePlate === v.plate) t.vehiclePlate = '';
-        }
-        appData.vehicles = appData.vehicles.filter(x => x.id !== id);
-        saveData();
-      }
-    }
-
-    /* CRUD HERRAMIENTAS */
-    function openToolModal(id = null) {
-      const select = document.getElementById('toolAssignedTo');
-      select.innerHTML = '<option value="">-- Almacén Central (Disponible) --</option>' + 
-        appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
-
-      if (id) {
-        const t = appData.tools.find(item => item.id === id);
-        if (!t) return;
-        document.getElementById('toolModalTitle').innerText = 'Editar Herramienta ' + t.code;
-        document.getElementById('toolEditId').value = t.id;
-        document.getElementById('toolCode').value = t.code;
-        document.getElementById('toolName').value = t.name;
-        document.getElementById('toolCondition').value = t.condition;
-        document.getElementById('toolAssignedTo').value = t.assignedTo || '';
-      } else {
-        document.getElementById('toolModalTitle').innerText = 'Registrar Nueva Herramienta';
-        document.getElementById('toolEditId').value = '';
-        document.getElementById('toolCode').value = 'TL-' + Date.now().toString().slice(-3);
-        document.getElementById('toolName').value = '';
-        document.getElementById('toolCondition').value = 'Excelente';
-        document.getElementById('toolAssignedTo').value = '';
-      }
-      openModal('toolModal');
-    }
-
-    function handleSaveTool(e) {
-      e.preventDefault();
-      const id = document.getElementById('toolEditId').value;
-      const code = document.getElementById('toolCode').value.trim().toUpperCase();
-      const name = document.getElementById('toolName').value.trim();
-      const condition = document.getElementById('toolCondition').value;
-      const assignedTo = document.getElementById('toolAssignedTo').value;
-
-      if (id) {
-        const t = appData.tools.find(item => item.id === id);
-        if (t) {
-          t.code = code;
-          t.name = name;
-          t.condition = condition;
-          t.assignedTo = assignedTo;
-        }
-      } else {
-        appData.tools.push({
-          id: 'H_' + Date.now(),
-          code,
-          name,
-          assignedTo,
-          condition,
-          date: new Date().toISOString().split('T')[0]
-        });
-      }
-
-      closeModal('toolModal');
-      saveData();
-    }
-
-    function deleteTool(id) {
-      const t = appData.tools.find(item => item.id === id);
-      if (!t) return;
-
-      if (confirm(`¿Estás seguro de eliminar la herramienta ${t.code} - ${t.name}?`)) {
-        appData.tools = appData.tools.filter(x => x.id !== id);
-        saveData();
-      }
-    }
-
-    /* EDICIÓN DE PROYECTO & FIJAR GPS */
-    let editingProjectId = null;
-
-    function openEditProjectModal(id) {
-      editingProjectId = id;
-      const p = appData.projects.find(item => item.id === id);
+    function registerTechArrivalWithGeofence(projectId) {
+      const p = appData.projects.find(item => item.id === projectId);
       if (!p) return;
 
-      document.getElementById('editProjectId').value = p.id;
-      document.getElementById('editProjectCode').value = p.code;
-      document.getElementById('editProjectTitle').value = p.title;
-      document.getElementById('editProjectClient').value = p.client;
-      document.getElementById('editProjectServiceType').value = p.serviceType || 'INSTALACIÓN';
-      document.getElementById('editProjectContact').value = p.contact || '';
-      document.getElementById('editProjectPlannedDate').value = p.plannedDate || '';
-      document.getElementById('editProjectAddress').value = p.address;
-      document.getElementById('editProjectStatus').value = p.status;
-      document.getElementById('editProjectLat').value = p.targetLat || '';
-      document.getElementById('editProjectLng').value = p.targetLng || '';
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      const leaderSelect = document.getElementById('editProjectTechLeader');
-      leaderSelect.innerHTML = appData.technicians.map(t => `
-        <option value="${t.name}" ${t.name === p.techLeader ? 'selected' : ''}>${t.name} (${t.level})</option>
-      `).join('');
-
-      const crewSelect = document.getElementById('editProjectTechCrew');
-      crewSelect.innerHTML = '<option value="">-- Sin acompañante --</option>' + appData.technicians.map(t => `
-        <option value="${t.name}" ${(p.techCrew && p.techCrew.includes(t.name)) ? 'selected' : ''}>${t.name} (${t.level})</option>
-      `).join('');
-
-      openModal('editProjectModal');
-    }
-
-    function captureProjectGPSCurrentLocation() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           pos => {
-            document.getElementById('editProjectLat').value = pos.coords.latitude.toFixed(6);
-            document.getElementById('editProjectLng').value = pos.coords.longitude.toFixed(6);
-            alert(`¡Ubicación GPS capturada!\nLatitud: ${pos.coords.latitude}\nLongitud: ${pos.coords.longitude}`);
+            const userLat = pos.coords.latitude;
+            const userLng = pos.coords.longitude;
+            p.tracking.checkInCoords = { lat: userLat, lng: userLng };
+            p.tracking.checkInRaw = Date.now();
+
+            let distanceMeters = null;
+            let isVerified = false;
+
+            if (p.targetLat && p.targetLng) {
+              distanceMeters = calculateHaversineDistance(userLat, userLng, p.targetLat, p.targetLng);
+              const allowedRadius = p.geofenceRadiusMeters || 300;
+              isVerified = distanceMeters <= allowedRadius;
+            } else {
+              p.targetLat = userLat;
+              p.targetLng = userLng;
+              distanceMeters = 0;
+              isVerified = true;
+            }
+
+            p.tracking.distanceFromTargetMeters = distanceMeters;
+            p.tracking.isVerifiedOnSite = isVerified;
+            p.tracking.checkIn = `${timeStr} (${userLat.toFixed(4)}, ${userLng.toFixed(4)})`;
+            p.status = 'En Curso';
+
+            saveData();
+
+            if (isVerified) {
+              alert(`🟢 ¡LLEGADA CONFIRMADA EN SITIO!\n\nHora: ${timeStr}\nDistancia a la obra: ${distanceMeters} metros (Dentro del radio permitido).`);
+            } else {
+              const km = (distanceMeters / 1000).toFixed(2);
+              alert(`⚠️ ADVERTENCIA DE DISTANCIA:\n\nTu GPS actual indica que estás a ${km} KM de la obra.\n\nLa llegada fue registrada con advertencia para revisión del Coordinador.`);
+            }
           },
           err => {
-            alert('No se pudo acceder al GPS del dispositivo.');
+            p.tracking.checkIn = `${timeStr} (GPS sin señal precisa)`;
+            p.tracking.checkInRaw = Date.now();
+            p.tracking.isVerifiedOnSite = false;
+            p.status = 'En Curso';
+            saveData();
+            alert(`Llegada registrada a las ${timeStr} (Sin señal de satélite GPS precisa).`);
           },
-          { enableHighAccuracy: true, timeout: 8000 }
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
       } else {
-        alert('Geolocalización no soportada.');
+        p.tracking.checkIn = `${timeStr}`;
+        p.tracking.checkInRaw = Date.now();
+        p.status = 'En Curso';
+        saveData();
+        alert(`Llegada registrada a las ${timeStr}.`);
       }
     }
 
-    function setProjectCoordsFromPhone(projId) {
-      const p = appData.projects.find(x => x.id === projId);
+    function registerTechDeparture(projectId) {
+      const p = appData.projects.find(item => item.id === projectId);
       if (!p) return;
 
-      if (confirm(`¿Fijar tu ubicación actual del teléfono como las coordenadas de la obra (${p.title})?`)) {
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(
-            pos => {
-              p.targetLat = pos.coords.latitude;
-              p.targetLng = pos.coords.longitude;
-              saveData();
-              alert(`¡Coordenadas actualizadas!\n[${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}]`);
-            },
-            err => alert('No se pudo capturar el GPS. Verifica los permisos.'),
-            { enableHighAccuracy: true, timeout: 8000 }
-          );
-        }
-      }
-    }
-
-    function handleSaveEditedProject(e) {
-      e.preventDefault();
-      const p = appData.projects.find(item => item.id === editingProjectId);
-      if (!p) return;
-
-      const oldLeader = p.techLeader;
-      const newLeader = document.getElementById('editProjectTechLeader').value;
-      const crewName = document.getElementById('editProjectTechCrew').value;
-
-      p.code = document.getElementById('editProjectCode').value.trim();
-      p.title = document.getElementById('editProjectTitle').value.trim();
-      p.client = document.getElementById('editProjectClient').value.trim();
-      p.serviceType = document.getElementById('editProjectServiceType').value.trim();
-      p.contact = document.getElementById('editProjectContact').value.trim();
-      p.plannedDate = document.getElementById('editProjectPlannedDate').value.trim();
-      p.address = document.getElementById('editProjectAddress').value.trim();
-      p.status = document.getElementById('editProjectStatus').value;
-
-      const latVal = parseFloat(document.getElementById('editProjectLat').value);
-      const lngVal = parseFloat(document.getElementById('editProjectLng').value);
-      p.targetLat = !isNaN(latVal) ? latVal : null;
-      p.targetLng = !isNaN(lngVal) ? lngVal : null;
-
-      p.techLeader = newLeader;
-      p.techCrew = crewName ? [crewName] : [];
-
-      closeModal('editProjectModal');
-      saveData();
-
-      if (oldLeader !== newLeader) {
-        alert(`¡Proyecto reasignado a ${newLeader}! Ya no aparecerá en la sesión de ${oldLeader}.`);
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      p.tracking.checkOut = `${timeStr}`;
+      
+      if (p.tracking.checkInRaw) {
+        const diffMs = Date.now() - p.tracking.checkInRaw;
+        const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        p.tracking.hoursWorked = `${diffHrs > 0 ? diffHrs + 'h ' : ''}${diffMins}m en obra`;
       } else {
-        alert('¡Proyecto actualizado correctamente!');
+        p.tracking.hoursWorked = 'Jornada completada';
       }
+
+      saveData();
+      alert(`Salida registrada a las ${timeStr}. Jornada finalizada.`);
     }
 
-    function deleteProjectPrompt() {
-      if (!editingProjectId) return;
-      const p = appData.projects.find(item => item.id === editingProjectId);
-      if (!p) return;
-
-      if (confirm(`¿Eliminar definitivamente el proyecto ${p.code} - ${p.title}?`)) {
-        appData.projects = appData.projects.filter(x => x.id !== editingProjectId);
-        closeModal('editProjectModal');
+    function changeProjectStatus(id, newStatus) {
+      const p = appData.projects.find(item => item.id === id);
+      if (p) {
+        p.status = newStatus;
+        if (newStatus === 'Aprobado' && p.budget) {
+          p.budget.approved = true;
+        }
         saveData();
       }
     }
 
-    /* COTIZACIÓN */
-    let activeQuotationProjectId = null;
-    let tempQuoteFileData = null;
-    let tempQuoteFileName = null;
-
-    function openQuotationModal(projId) {
-      activeQuotationProjectId = projId;
-      const p = appData.projects.find(item => item.id === projId);
-      if (!p) return;
-
-      document.getElementById('quoteProjectId').value = projId;
-      document.getElementById('quoteProjectSubtitle').innerText = `${p.code} - ${p.title}`;
-      
-      if (p.quotation) {
-        document.getElementById('quoteNumber').value = p.quotation.number || '';
-        document.getElementById('quoteAmount').value = p.quotation.amount || '';
-        document.getElementById('quoteDate').value = p.quotation.date || '';
-        document.getElementById('quoteNotes').value = p.quotation.notes || '';
-        document.getElementById('quoteFileLabel').innerText = p.quotation.fileName || 'Documento adjunto existente';
-        tempQuoteFileName = p.quotation.fileName;
-        tempQuoteFileData = p.quotation.fileData;
-      } else {
-        document.getElementById('quoteNumber').value = 'COT-' + new Date().getFullYear() + '-' + Math.floor(100 + Math.random() * 900);
-        document.getElementById('quoteAmount').value = '';
-        document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
-        document.getElementById('quoteNotes').value = 'Condición de pago: 50% anticipo, 50% contra entrega.';
-        document.getElementById('quoteFileLabel').innerText = 'Seleccionar documento PDF o Excel';
-        tempQuoteFileName = null;
-        tempQuoteFileData = null;
+    function getStatusBadge(status) {
+      switch(status) {
+        case 'Levantamiento': return 'bg-amber-950 text-amber-300 border border-amber-800';
+        case 'En Presupuesto': return 'bg-blue-950 text-blue-300 border border-blue-800';
+        case 'Aprobado': return 'bg-emerald-950 text-emerald-300 border border-emerald-800';
+        case 'En Curso': return 'bg-indigo-950 text-indigo-300 border border-indigo-800';
+        case 'Finalizado': return 'bg-purple-950 text-purple-300 border border-purple-800';
+        default: return 'bg-slate-800 text-slate-300';
       }
-
-      openModal('quoteModal');
     }
 
-    function handleQuoteFileUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      tempQuoteFileName = file.name;
-      document.getElementById('quoteFileLabel').innerText = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        tempQuoteFileData = evt.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function handleSaveQuotation(e) {
-      e.preventDefault();
-      const p = appData.projects.find(item => item.id === activeQuotationProjectId);
-      if (!p) return;
-
-      p.quotation = {
-        number: document.getElementById('quoteNumber').value.trim(),
-        amount: parseFloat(document.getElementById('quoteAmount').value) || 0,
-        date: document.getElementById('quoteDate').value,
-        notes: document.getElementById('quoteNotes').value.trim(),
-        fileName: tempQuoteFileName || 'Cotizacion_Oficial.pdf',
-        fileData: tempQuoteFileData
-      };
-
-      if (p.status === 'Levantamiento') {
-        p.status = 'En Presupuesto';
-      }
-
-      closeModal('quoteModal');
-      saveData();
-      alert('¡Cotización guardada exitosamente y vinculada al proyecto!');
-    }
-
-    /* CARGAR MUESTRA PDF */
-    function loadSampleTorreWashington() {
-      const newProj = {
-        id: 'P_' + Date.now(),
-        code: 'CX-SGE-2026-005',
-        title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-        serviceType: 'INSTALACIÓN (3255.73)',
-        client: 'CONDOMINIO TORRE WASHINGTON',
-        contact: 'Ana Milagros Guzman +1 (829) 762-8952 / Jadiri Baez (809) 781-1045',
-        address: 'Torre Washington en el malecom, Santo Domingo',
-        targetLat: 18.463200,
-        targetLng: -69.905600,
-        geofenceRadiusMeters: 300,
-        plannedDate: '26/10/2026',
-        techLeader: 'Enmanuel Matos',
-        techCrew: ['WESLY ALEJANDRO MOJICA'],
-        status: 'En Curso',
-        observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
-        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDocFile: null, planFile: null },
-        serviceOrderFile: { name: 'TORRE WASHINGTON.pdf', type: 'application/pdf' },
-        quotation: null,
-        budget: {
-          approved: false,
-          services: [{ concept: 'Horas Hombre Técnicas (Líder + Cuadrilla)', qty: 16, rate: 650, subtotal: 10400 }],
-          materials: []
-        },
-        tracking: { checkIn: '08:15 AM (18.4633, -69.9055)', checkInCoords: { lat: 18.4633, lng: -69.9055 }, checkInRaw: Date.now(), checkOut: '', hoursWorked: '', isVerifiedOnSite: true, distanceFromTargetMeters: 22 }
-      };
-
-      appData.projects.unshift(newProj);
-      closeModal('pdfModal');
-      saveData();
-      alert('¡Orden de Torre Washington importada exitosamente!');
-    }
-
-    function handlePDFUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const fileReader = new FileReader();
-      fileReader.onload = function() {
-        const typedarray = new Uint8Array(this.result);
-        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-          pdf.getPage(1).then(page => {
-            page.getTextContent().then(textContent => {
-              const fullText = textContent.items.map(item => item.str).join(' ');
-              
-              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || ['CX-SGE-2026-006'];
-              const clientMatch = fullText.match(/Cliente:\s*\|\s*\|\s*([^|]+)/i);
-
-              const newProj = {
-                id: 'P_' + Date.now(),
-                code: codeMatch[0],
-                title: 'SERVICIO TÉCNICO ' + codeMatch[0],
-                serviceType: 'INSTALACIÓN',
-                client: clientMatch ? clientMatch[1].trim() : 'CLIENTE CORPORATIVO',
-                contact: 'Contacto de orden PDF',
-                address: 'Santo Domingo, República Dominicana',
-                targetLat: 18.463200,
-                targetLng: -69.905600,
-                geofenceRadiusMeters: 300,
-                plannedDate: '26/10/2026',
-                techLeader: 'Enmanuel Matos',
-                techCrew: ['WESLY ALEJANDRO MOJICA'],
-                status: 'Levantamiento',
-                observations: 'Importado directamente desde orden de servicio digital CentroXpert.',
-                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDocFile: null, planFile: null },
-                serviceOrderFile: { name: file.name, type: 'application/pdf' },
-                quotation: null,
-                budget: { approved: false, services: [], materials: [] },
-                tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
-              };
-
-              appData.projects.unshift(newProj);
-              closeModal('pdfModal');
-              saveData();
-              alert(`¡Orden ${newProj.code} importada con éxito desde el PDF!`);
-            });
-          });
-        });
-      };
-      fileReader.readAsArrayBuffer(file);
-    }
-
-    // Inicialización al cargar: siempre abrir Login para seguridad
-    window.addEventListener('DOMContentLoaded', () => {
-      populateTechSelect();
-      openModal('loginModal');
-      render();
-    });
-  
-    /* ===================================================================
-       EXPORTACIÓN / IMPORTACIÓN LOGÍSTICA & PROYECTOS
-       =================================================================== */
+    /* EXPORTACIÓN DE LOGÍSTICA & PROYECTOS */
     function exportLogisticsToExcel() {
       const wb = XLSX.utils.book_new();
       const vehData = appData.vehicles.map(v => ({
@@ -3842,17 +2540,28 @@
       const wsStaff = XLSX.utils.json_to_sheet(staffData);
       XLSX.utils.book_append_sheet(wb, wsStaff, "Personal");
 
-      const toolsData = appData.tools.map(t => ({
-        Codigo: t.code,
-        Descripcion: t.name,
-        Custodio: t.assignedTo || 'En Almacen',
-        Condicion: t.condition,
-        Fecha: t.date
-      }));
-      const wsTools = XLSX.utils.json_to_sheet(toolsData);
-      XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
-
       XLSX.writeFile(wb, "CentroXpert_Logistica_Total.xlsx");
+    }
+
+    function exportProjectsToExcel() {
+      const wb = XLSX.utils.book_new();
+      const projData = appData.projects.map(p => ({
+        Codigo: p.code,
+        Proyecto: p.title,
+        Cliente: p.client,
+        Servicio: p.serviceType,
+        Tecnico_Lider: p.techLeader,
+        Estado: p.status,
+        CheckIn_GPS: p.tracking ? p.tracking.checkIn : '',
+        CheckOut_GPS: p.tracking ? p.tracking.checkOut : '',
+        Horas_Trabajadas: p.tracking ? p.tracking.hoursWorked : '',
+        Cotizacion_No: p.quotation ? p.quotation.number : 'Sin cotizar',
+        Cotizacion_Monto: p.quotation ? p.quotation.amount : 0
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(projData);
+      XLSX.utils.book_append_sheet(wb, ws, "Proyectos");
+      XLSX.writeFile(wb, "CentroXpert_Proyectos_Control.xlsx");
     }
 
     function exportLogisticsToPDF() {
@@ -3950,7 +2659,7 @@
           }
 
           saveData();
-          alert('¡Datos de Logística importados exitosamente desde Excel!');
+          alert('¡Datos importados exitosamente desde Excel!');
         } catch(err) {
           console.error(err);
           alert('Error al procesar el archivo Excel.');
@@ -3959,6 +2668,95 @@
       reader.readAsArrayBuffer(file);
     }
 
+    function loadSampleTorreWashington() {
+      const newProj = {
+        id: 'P_' + Date.now(),
+        code: 'CX-SGE-2026-005',
+        title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
+        serviceType: 'INSTALACIÓN (3255.73)',
+        client: 'CONDOMINIO TORRE WASHINGTON',
+        contact: 'Ana Milagros Guzman +1 (829) 762-8952 / Jadiri Baez (809) 781-1045',
+        address: 'Torre Washington en el malecom, Santo Domingo',
+        targetLat: 18.463200,
+        targetLng: -69.905600,
+        geofenceRadiusMeters: 300,
+        plannedDate: '26/10/2026',
+        techLeader: 'Enmanuel Matos',
+        techCrew: ['WESLY ALEJANDRO MOJICA'],
+        status: 'En Curso',
+        observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
+        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDocFile: null, planFile: null },
+        serviceOrderFile: { name: 'TORRE WASHINGTON.pdf', type: 'application/pdf' },
+        quotation: null,
+        budget: {
+          approved: false,
+          services: [{ concept: 'Horas Hombre Técnicas (Líder + Cuadrilla)', qty: 16, rate: 650, subtotal: 10400 }],
+          materials: []
+        },
+        tracking: { checkIn: '08:15 AM (18.4633, -69.9055)', checkInCoords: { lat: 18.4633, lng: -69.9055 }, checkInRaw: Date.now(), checkOut: '', hoursWorked: '', isVerifiedOnSite: true, distanceFromTargetMeters: 22 }
+      };
+
+      appData.projects.unshift(newProj);
+      closeModal('pdfModal');
+      saveData();
+      alert('¡Orden de Torre Washington importada exitosamente!');
+    }
+
+    function handlePDFUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            page.getTextContent().then(textContent => {
+              const fullText = textContent.items.map(item => item.str).join(' ');
+              
+              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || ['CX-SGE-2026-006'];
+              const clientMatch = fullText.match(/Cliente:\s*\|\s*\|\s*([^|]+)/i);
+
+              const newProj = {
+                id: 'P_' + Date.now(),
+                code: codeMatch[0],
+                title: 'SERVICIO TÉCNICO ' + codeMatch[0],
+                serviceType: 'INSTALACIÓN',
+                client: clientMatch ? clientMatch[1].trim() : 'CLIENTE CORPORATIVO',
+                contact: 'Contacto de orden PDF',
+                address: 'Santo Domingo, República Dominicana',
+                targetLat: 18.463200,
+                targetLng: -69.905600,
+                geofenceRadiusMeters: 300,
+                plannedDate: '26/10/2026',
+                techLeader: 'Enmanuel Matos',
+                techCrew: ['WESLY ALEJANDRO MOJICA'],
+                status: 'Levantamiento',
+                observations: 'Importado directamente desde orden de servicio digital CentroXpert.',
+                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDocFile: null, planFile: null },
+                serviceOrderFile: { name: file.name, type: 'application/pdf' },
+                quotation: null,
+                budget: { approved: false, services: [], materials: [] },
+                tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+              };
+
+              appData.projects.unshift(newProj);
+              closeModal('pdfModal');
+              saveData();
+              alert(`¡Orden ${newProj.code} importada con éxito desde el PDF!`);
+            });
+          });
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    // Al cargar la página SIEMPRE se muestra el Login obligatorio por seguridad
+    window.addEventListener('DOMContentLoaded', () => {
+      populateTechSelect();
+      openModal('loginModal');
+      render();
+    });
   </script>
 </body>
 </html>
