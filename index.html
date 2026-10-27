@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CentroXpert - Ingeniería y Servicios</title>
+  <title>CentroXpert - Ingeniería y Servicios | Control Operativo en Tiempo Real</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome -->
@@ -13,7 +13,7 @@
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
   <!-- SheetJS para Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Mammoth.js para leer archivos Word (.docx) -->
+  <!-- Mammoth.js para documentos Word (.docx) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <!-- Tesseract.js para OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -26,6 +26,12 @@
     .bg-wine-brand { background-color: #8b1524; }
     .border-wine-brand { border-color: #8b1524; }
     
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+    .live-pulse { animation: pulse-dot 1.5s infinite ease-in-out; }
+
     @media print {
       body { background-color: #ffffff !important; color: #000000 !important; }
       header, .no-print, button, nav { display: none !important; }
@@ -61,21 +67,24 @@
           </svg>
         </div>
         <div class="hidden sm:block border-l border-slate-700 pl-3">
-          <div class="text-xs uppercase tracking-widest text-slate-400 font-bold">Ingeniería y Servicios</div>
-          <div class="text-sm font-semibold text-rose-400">Control Operativo & Técnico</div>
+          <div class="text-xs uppercase tracking-widest text-slate-400 font-bold flex items-center gap-2">
+            Ingeniería y Servicios
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 live-pulse"></span>GPS EN VIVO
+            </span>
+          </div>
+          <div class="text-sm font-semibold text-rose-400">Control Operativo & Técnico en Campo</div>
         </div>
       </div>
 
       <!-- ACCIONES DE SESIÓN Y VISTA -->
       <div class="flex items-center gap-3" id="headerUserActions">
-        <!-- Inyectado dinámicamente -->
       </div>
     </div>
   </header>
 
   <!-- ================= CONTENEDOR PRINCIPAL ================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer">
-    <!-- Vistas dinámicas -->
   </main>
 
   <!-- ================= MODALES DEL SISTEMA ================= -->
@@ -84,7 +93,7 @@
   <div id="loginModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
       <div class="text-center mb-6">
-        <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3">
+        <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3 shadow">
           <svg viewBox="0 0 280 60" class="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
             <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
               <text x="2" y="38" fill="#111827">centr</text>
@@ -100,8 +109,8 @@
             <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
           </svg>
         </div>
-        <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3>
-        <p class="text-xs text-slate-400 mt-1">Selecciona tu perfil de acceso para continuar</p>
+        <h3 class="text-xl font-bold text-white">Ingreso a la Plataforma</h3>
+        <p class="text-xs text-slate-400 mt-1">Acceso seguro para cuadrillas y coordinación</p>
       </div>
 
       <div class="flex border-b border-slate-800 mb-5">
@@ -115,13 +124,14 @@
 
       <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Asignado</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Selecciona tu Nombre</label>
           <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
           </select>
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Por defecto: 1234)</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Clave genérica: 1234)</label>
           <input type="password" id="loginTecPin" required placeholder="••••" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
+          <p class="text-[10px] text-slate-400 mt-1">Si eres nuevo o te registraron recientemente, usa <strong>1234</strong> y cámbiala luego.</p>
         </div>
         <button type="submit" class="w-full bg-rose-700 hover:bg-rose-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-rose-900/30">
           Entrar como Técnico
@@ -167,53 +177,113 @@
     </div>
   </div>
 
-  <!-- Modal Levantamiento Técnico (Imagen, PDF, Word, OCR, Dibujo de Planos) -->
+  <!-- Modal Registrar / Editar Técnico -->
+  <div id="techModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
+        <button onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
+        <input type="hidden" id="techEditId">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Nombre Completo</label>
+          <input type="text" id="techName" required placeholder="Ej: Ramón Valdez" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Rango / Categoría</label>
+            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Especialista A">Especialista A</option>
+              <option value="Especialista B">Especialista B</option>
+              <option value="Auxiliar Técnico">Auxiliar Técnico</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Teléfono</label>
+            <input type="text" id="techPhone" required placeholder="809-555-0100" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Dirección de Vivienda (Ruta)</label>
+          <input type="text" id="techAddress" required placeholder="Ej: C/ Duarte #15, Los Alcarrizos" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Vehículo Asignado</label>
+          <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </select>
+        </div>
+
+        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">
+          <i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i>Clave de acceso inicial genérica: <strong>1234</strong>. El técnico podrá cambiarla al iniciar sesión.
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar Técnico</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Levantamiento Técnico (Carga de Plano, Foto, PDF, Word, OCR y Dibujo) -->
   <div id="surveyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
         <div>
-          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-clipboard-list mr-2 text-rose-400"></i>Cargar Levantamiento Técnico de Campo</h3>
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-clipboard-list mr-2 text-rose-400"></i>Levantamiento Técnico & Gestión de Planos</h3>
           <p class="text-xs text-slate-400" id="surveyProjectTitle">Cargando...</p>
         </div>
         <button onclick="closeModal('surveyModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- SECCIÓN MULTI-ARCHIVO + OCR DIGITALIZADOR (IMAGEN, PDF, WORD .DOCX) -->
+      <!-- SECCIÓN MULTI-ARCHIVO + CARGA DE PLANOS + OCR DIGITALIZADOR -->
       <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 mb-4">
         <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
           <span class="text-xs font-bold uppercase tracking-wider text-rose-400">
-            <i class="fa-solid fa-brain mr-1.5"></i>Carga & Digitalización OCR (Imagen, PDF o Word)
+            <i class="fa-solid fa-map-location-dot mr-1.5"></i>Adjunto de Planos & Evidencias (Foto, PDF, Word o Plano)
           </span>
           <span id="ocrStatusBadge" class="text-[11px] text-slate-400 italic">Listo para procesar</span>
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 items-center">
           <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2.5 rounded-xl cursor-pointer border border-slate-700 font-medium text-center flex items-center justify-center gap-2">
-            <i class="fa-solid fa-file-arrow-up text-rose-400 text-sm"></i> Subir Archivo (JPG, PDF, DOCX)
-            <input type="file" id="surveyFileInput" accept="image/*,application/pdf,.docx,.doc,.xlsx,.xls" class="hidden" onchange="handleSurveyFileSelect(event)">
+            <i class="fa-solid fa-file-arrow-up text-rose-400 text-sm"></i> Cargar Plano / Archivo
+            <input type="file" id="surveyFileInput" accept="image/*,application/pdf,.docx,.doc,.xlsx,.xls,.dwg,.dxf" class="hidden" onchange="handleSurveyFileSelect(event)">
           </label>
 
           <button type="button" onclick="openPlanCanvasModal()" class="bg-blue-950/70 border border-blue-800 hover:bg-blue-900 text-blue-300 text-xs px-3 py-2.5 rounded-xl font-bold flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-compass-drafting text-blue-400"></i> Dibujar Plano / Croquis
+            <i class="fa-solid fa-compass-drafting text-blue-400"></i> Dibujar Plano en Línea
           </button>
 
           <button type="button" onclick="simulateSurveyFileDemo()" class="bg-rose-950/60 border border-rose-800 hover:bg-rose-900 text-rose-300 text-xs px-3 py-2.5 rounded-xl font-medium">
-            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Cargar Muestra Digitalizada
+            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Muestra Digitalizada
           </button>
         </div>
 
-        <!-- Archivo adjunto o plano guardado -->
-        <div id="surveyAttachedFileCard" class="mt-3 hidden bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center justify-between text-xs">
-          <div class="flex items-center gap-2 truncate">
-            <i id="surveyFileIcon" class="fa-solid fa-file text-rose-400 text-base"></i>
+        <!-- Archivo adjunto o plano guardado con botones de ver, descargar y ELIMINAR -->
+        <div id="surveyAttachedFileCard" class="mt-3 hidden bg-slate-900 border border-slate-700 rounded-lg p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-2.5 truncate max-w-sm">
+            <i id="surveyFileIcon" class="fa-solid fa-file text-rose-400 text-xl"></i>
             <div>
               <div id="surveyFileName" class="font-bold text-white truncate">archivo.pdf</div>
               <div id="surveyFileType" class="text-[10px] text-slate-400">Tipo de archivo</div>
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="previewCurrentSurveyFile()" class="text-xs text-blue-400 hover:underline">Vista Previa</button>
-            <button type="button" onclick="removeSurveyFile()" class="text-rose-400 hover:text-white p-1" title="Eliminar archivo"><i class="fa-solid fa-trash-can"></i></button>
+            <button type="button" onclick="previewCurrentSurveyFile()" class="bg-slate-800 hover:bg-slate-700 text-blue-400 px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-eye"></i> Ver
+            </button>
+            <button type="button" onclick="downloadCurrentSurveyFile()" class="bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-download"></i> Descargar
+            </button>
+            <button type="button" onclick="removeSurveyFile()" class="bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 px-2.5 py-1 rounded text-xs font-semibold flex items-center gap-1" title="Eliminar archivo del levantamiento">
+              <i class="fa-solid fa-trash-can"></i> Eliminar
+            </button>
           </div>
         </div>
       </div>
@@ -273,7 +343,6 @@
 
         <!-- ITEMS AGREGADOS AL LEVANTAMIENTO CON CANTIDAD, EDICIÓN Y ELIMINACIÓN -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <!-- EQUIPOS -->
           <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800">
             <div class="flex justify-between items-center mb-2">
               <h4 class="text-xs font-bold text-rose-400 uppercase"><i class="fa-solid fa-video mr-1"></i>Equipos Activos</h4>
@@ -282,7 +351,6 @@
             <div id="surveyEquipList" class="space-y-2 text-xs min-h-[60px]"></div>
           </div>
 
-          <!-- MATERIALES -->
           <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800">
             <div class="flex justify-between items-center mb-2">
               <h4 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-boxes-stacked mr-1"></i>Materiales e Insumos</h4>
@@ -295,7 +363,7 @@
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
           <button type="button" onclick="closeModal('surveyModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
           <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/40">
-            Guardar y Enviar al Coordinador
+            Guardar Levantamiento & Enviar
           </button>
         </div>
       </form>
@@ -313,7 +381,6 @@
         <button onclick="closeModal('planCanvasModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- Barra de herramientas del lienzo -->
       <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 mb-3 text-xs">
         <div class="flex items-center gap-2">
           <button type="button" onclick="setCanvasTool('pen')" id="toolBtn_pen" class="bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow">
@@ -355,13 +422,12 @@
         </div>
       </div>
 
-      <!-- Lienzo de dibujo HTML5 -->
       <div class="relative w-full bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center">
         <canvas id="planCanvas" width="850" height="480" class="cursor-crosshair bg-slate-950 touch-none max-w-full h-auto"></canvas>
       </div>
 
       <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-800">
-        <span class="text-[11px] text-slate-400">Al guardar, el plano se convertirá en imagen adjunta al levantamiento.</span>
+        <span class="text-[11px] text-slate-400">El plano se guardará como documento gráfico de soporte.</span>
         <div class="flex gap-2">
           <button type="button" onclick="closeModal('planCanvasModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cerrar</button>
           <button type="button" onclick="savePlanDrawing()" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">
@@ -495,7 +561,7 @@
               <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Líder Responsable</label>
               <select id="editProjectTechLeader" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-bold text-rose-400">
               </select>
-              <p class="text-[10px] text-slate-400 mt-1">Al cambiar el líder, el proyecto solo se mostrará en la sesión del nuevo técnico.</p>
+              <p class="text-[10px] text-slate-400 mt-1">Al reasignar, el proyecto desaparece automáticamente de la vista del técnico anterior y se muestra al nuevo líder.</p>
             </div>
             <div>
               <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Cuadrilla / Acompañante</label>
@@ -606,17 +672,17 @@
     </div>
   </div>
 
-  <!-- Modal Visor de Archivo del Levantamiento (Foto, PDF, Word, Excel) -->
+  <!-- Modal Visor de Archivo del Levantamiento (Foto, PDF, Word, Plano) -->
   <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
         <div>
-          <h3 class="text-base font-bold text-white" id="viewerTitle">Evidencia de Levantamiento</h3>
+          <h3 class="text-base font-bold text-white" id="viewerTitle">Evidencia / Plano</h3>
           <p class="text-xs text-slate-400" id="viewerSubtitle"></p>
         </div>
         <div class="flex items-center gap-2">
           <a id="viewerDownloadBtn" href="#" download class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow">
-            <i class="fa-solid fa-download"></i> Descargar Archivo
+            <i class="fa-solid fa-download"></i> Descargar
           </a>
           <button onclick="closeModal('fileViewerModal')" class="text-slate-400 hover:text-white p-1 text-lg"><i class="fa-solid fa-xmark"></i></button>
         </div>
@@ -650,14 +716,13 @@
     </div>
   </div>
 
-  <!-- Area oculta de impresión para exportar a PDF -->
   <div id="printContainer" class="hidden print-area"></div>
 
   <script>
     /* ===================================================================
        ESTADO CENTRAL DE LA APLICACIÓN
        =================================================================== */
-    const STORAGE_KEY = 'centroxpert_data_v3';
+    const STORAGE_KEY = 'centroxpert_data_v4';
 
     const defaultData = {
       currentUser: { role: 'admin', name: 'Coordinador General' },
@@ -684,7 +749,7 @@
         { id: 'H6', code: 'TL-06', name: 'Generador de Tono y Pollo Probe Fluke', assignedTo: '', condition: 'Bueno', date: '2026-01-10' }
       ],
       fuelLogs: [
-        { id: 'FL1', date: '2026-10-22', plate: 'L428901', driver: 'Enmanuel Matos', prevKm: 48120, currentKm: 48520, dist: 400, gallons: 16.5, cost: 4800, taskKmEst: 380, dev: '5%' }
+        { id: 'FL1', date: '2026-10-22', plate: 'L428901', driver: 'Enmanuel Matos', tickets500: 8, cost: 4000, prevKm: 48120, currentKm: 48520, dist: 400, taskKmEst: 380, dev: '5.3%' }
       ],
       projects: [
         {
@@ -698,7 +763,7 @@
           plannedDate: '26/10/2026',
           techLeader: 'Enmanuel Matos',
           techCrew: ['WESLY ALEJANDRO MOJICA'],
-          status: 'Levantamiento',
+          status: 'En Curso',
           observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR Y PERÍMETRO',
           survey: {
             meters: 160,
@@ -730,7 +795,7 @@
             fileData: null
           },
           budget: {
-            approved: false,
+            approved: true,
             services: [
               { concept: 'Horas Hombre Técnicas (Líder + Asistente)', qty: 18, rate: 650, subtotal: 11700 },
               { concept: 'Viáticos & Dietas de Campo', qty: 2, rate: 600, subtotal: 1200 },
@@ -745,8 +810,9 @@
           },
           tracking: {
             checkIn: '08:15 AM (18.4682, -69.9145)',
-            checkOut: '05:00 PM (18.4685, -69.9143)',
-            hoursWorked: '8h 45m en sitio'
+            checkInRaw: new Date().setHours(8, 15, 0, 0),
+            checkOut: '',
+            hoursWorked: ''
           }
         }
       ]
@@ -820,12 +886,12 @@
       const pin = document.getElementById('loginTecPin').value;
       const tech = appData.technicians.find(t => t.name === techName);
 
-      if (tech && (tech.pin === pin || pin === '1234')) {
+      if (tech && (tech.pin === pin || (!tech.pin && pin === '1234') || pin === '1234')) {
         appData.currentUser = { role: 'tech', name: tech.name, techId: tech.id };
         closeModal('loginModal');
         saveData();
       } else {
-        alert('PIN incorrecto. El PIN por defecto es 1234.');
+        alert('PIN incorrecto. Si el técnico es nuevo, el PIN genérico es 1234.');
       }
     }
 
@@ -872,12 +938,12 @@
 
       const tech = appData.technicians.find(t => t.name === appData.currentUser.name);
       if (tech) {
-        if (tech.pin !== current && current !== '1234') {
+        if (tech.pin && tech.pin !== current && current !== '1234') {
           alert('El PIN actual es incorrecto.');
           return;
         }
         tech.pin = newP;
-        alert('¡PIN actualizado correctamente!');
+        alert('¡PIN actualizado correctamente! Ahora debes usar tu nueva clave.');
         closeModal('pinModal');
         saveData();
       }
@@ -958,7 +1024,14 @@
                       <h3 class="text-base font-bold text-white mt-1">${p.title}</h3>
                       <div class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-user-tag mr-1 text-slate-500"></i>${p.client}</div>
                     </div>
-                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
+                    <div class="flex items-center gap-2">
+                      ${p.tracking && p.tracking.checkIn && !p.tracking.checkOut ? `
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 live-pulse"></span>En Sitio Ahora
+                        </span>
+                      ` : ''}
+                      <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
+                    </div>
                   </div>
 
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
@@ -998,7 +1071,7 @@
                     </div>
                     ${p.survey && p.survey.file ? `
                       <button onclick="viewSurveyFile('${p.id}')" class="text-rose-400 hover:text-rose-300 font-semibold underline flex items-center gap-1">
-                        <i class="fa-solid fa-paperclip"></i> Ver archivo/plano adjunto
+                        <i class="fa-solid fa-paperclip"></i> Ver plano / archivo adjunto
                       </button>
                     ` : ''}
                   </div>
@@ -1073,10 +1146,11 @@
     }
 
     /* ===================================================================
-       VISTA DEL COORDINADOR (PANEL GENERAL)
+       VISTA DEL COORDINADOR (PANEL GENERAL EN TIEMPO REAL)
        =================================================================== */
     function renderAdminView() {
       const availVehicles = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
+      const techInSite = appData.projects.filter(p => p.tracking && p.tracking.checkIn && !p.tracking.checkOut).length;
 
       return `
         <div class="space-y-6">
@@ -1086,16 +1160,18 @@
               <div class="text-2xl font-black text-white mt-1">${appData.projects.length}</div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">En Levantamiento</div>
-              <div class="text-2xl font-black text-rose-400 mt-1">${appData.projects.filter(p => p.status === 'Levantamiento').length}</div>
+              <div class="text-xs text-emerald-400 font-semibold uppercase flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 live-pulse"></span> Cuadrillas en Sitio
+              </div>
+              <div class="text-2xl font-black text-emerald-400 mt-1">${techInSite}</div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">Vehículos Disponibles</div>
-              <div class="text-2xl font-black text-emerald-400 mt-1">${availVehicles}</div>
+              <div class="text-xs text-slate-400 font-semibold uppercase">Vehículos Libres</div>
+              <div class="text-2xl font-black text-blue-400 mt-1">${availVehicles}</div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">Técnicos Activos</div>
-              <div class="text-2xl font-black text-blue-400 mt-1">${appData.technicians.length}</div>
+              <div class="text-xs text-slate-400 font-semibold uppercase">Técnicos Registrados</div>
+              <div class="text-2xl font-black text-rose-400 mt-1">${appData.technicians.length}</div>
             </div>
           </div>
 
@@ -1132,20 +1208,27 @@
     }
 
     /* ===================================================================
-       PROYECTOS & PRESUPUESTOS (VISTA COORDINADOR)
+       PROYECTOS & CONTROL EN TIEMPO REAL
        =================================================================== */
     function renderAdminProjects() {
       return `
         <div class="space-y-4">
           <div class="grid grid-cols-1 gap-4">
-            ${appData.projects.map(p => `
-              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+            ${appData.projects.map(p => {
+              const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
+              return `
+              <div class="bg-slate-900 border ${isInSite ? 'border-emerald-600/70 shadow-emerald-950/40' : 'border-slate-800'} rounded-2xl p-5 shadow-lg space-y-4 transition">
                 
                 <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
                   <div>
                     <div class="flex items-center gap-2">
                       <span class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">${p.code}</span>
                       <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
+                      ${isInSite ? `
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 live-pulse"></span>EN SITIO AHORA
+                        </span>
+                      ` : ''}
                     </div>
                     <h3 class="text-base font-bold text-white mt-1">${p.title}</h3>
                     <div class="text-xs text-slate-400 mt-0.5">
@@ -1172,8 +1255,12 @@
                     <p class="text-slate-400 mt-0.5">${p.contact}</p>
                   </div>
 
+                  <!-- TIEMPO REAL: LLEGADA, SALIDA Y GPS -->
                   <div>
-                    <span class="text-slate-400 font-medium">Marcaje de Jornada en Sitio:</span>
+                    <span class="text-slate-400 font-medium flex items-center justify-between">
+                      <span>Monitoreo GPS en Tiempo Real:</span>
+                      ${isInSite ? '<span class="text-emerald-400 font-bold text-[10px]">EN VIVO</span>' : ''}
+                    </span>
                     <div class="mt-1 space-y-1">
                       <div class="flex items-center gap-1.5">
                         <i class="fa-solid fa-location-arrow text-emerald-400 text-[10px]"></i>
@@ -1183,27 +1270,31 @@
                       <div class="flex items-center gap-1.5">
                         <i class="fa-solid fa-flag-checkered text-amber-400 text-[10px]"></i>
                         <span class="text-slate-400">Salida:</span>
-                        <span class="font-bold text-white">${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'Aún en sitio'}</span>
+                        <span class="font-bold text-white">${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : (isInSite ? 'Trabajando en sitio...' : 'Pendiente')}</span>
                       </div>
                       ${p.tracking && p.tracking.hoursWorked ? `
-                        <div class="text-[10px] font-bold text-emerald-400 mt-0.5">Tiempo total: ${p.tracking.hoursWorked}</div>
+                        <div class="text-[10px] font-bold text-emerald-400 mt-0.5">Tiempo en sitio: ${p.tracking.hoursWorked}</div>
                       ` : ''}
                     </div>
                   </div>
 
+                  <!-- LEVANTAMIENTO, PLANO Y DESCARGA -->
                   <div>
-                    <span class="text-slate-400 font-medium">Levantamiento & Planos:</span>
+                    <span class="text-slate-400 font-medium">Levantamiento & Plano Técnico:</span>
                     ${p.survey && (p.survey.meters || p.survey.file || (p.survey.itemsEquip && p.survey.itemsEquip.length)) ? `
                       <div class="mt-0.5">
                         <p class="text-emerald-400 font-bold">${p.survey.meters || 0} metros (${p.survey.structure || 'EMT'})</p>
                         <p class="text-slate-300 text-[11px] truncate">${p.survey.notes || 'Detalles registrados en campo'}</p>
                         ${p.survey.file ? `
-                          <div class="mt-1.5 flex gap-2">
+                          <div class="mt-1.5 flex flex-wrap gap-1.5">
                             <button onclick="viewSurveyFile('${p.id}')" class="bg-rose-950 border border-rose-800 hover:bg-rose-900 text-rose-300 text-[11px] px-2 py-0.5 rounded flex items-center gap-1 font-semibold">
-                              <i class="fa-solid fa-eye"></i> Ver Archivo/Plano
+                              <i class="fa-solid fa-eye"></i> Ver Plano/Archivo
                             </button>
-                            <button onclick="downloadSurveyFile('${p.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] px-2 py-0.5 rounded flex items-center gap-1">
+                            <button onclick="downloadSurveyFile('${p.id}')" class="bg-emerald-950 border border-emerald-800 hover:bg-emerald-900 text-emerald-300 text-[11px] px-2 py-0.5 rounded flex items-center gap-1">
                               <i class="fa-solid fa-download"></i> Descargar
+                            </button>
+                            <button onclick="deleteSurveyFileFromProject('${p.id}')" class="bg-red-950/70 border border-red-800 hover:bg-red-900 text-red-300 text-[11px] px-1.5 py-0.5 rounded" title="Eliminar Plano">
+                              <i class="fa-solid fa-trash-can"></i>
                             </button>
                           </div>
                         ` : ''}
@@ -1260,7 +1351,7 @@
                 </div>
 
               </div>
-            `).join('')}
+            `}).join('')}
           </div>
         </div>
       `;
@@ -1327,14 +1418,14 @@
               <button onclick="setLogisticsSubtab('vehicles')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'vehicles' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
                 <i class="fa-solid fa-truck-pickup mr-1.5"></i> Flotilla de Vehículos
               </button>
-              <button onclick="setLogisticsSubtab('tools')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'tools' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-toolbox mr-1.5"></i> Herramientas y Equipos
-              </button>
               <button onclick="setLogisticsSubtab('fuel')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'fuel' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-gas-pump mr-1.5"></i> Control de Combustible
+                <i class="fa-solid fa-gas-pump mr-1.5"></i> Control de Combustible (Tickets 500)
               </button>
               <button onclick="setLogisticsSubtab('staff')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'staff' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
                 <i class="fa-solid fa-users-gear mr-1.5"></i> Personal Técnico
+              </button>
+              <button onclick="setLogisticsSubtab('tools')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'tools' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
+                <i class="fa-solid fa-toolbox mr-1.5"></i> Herramientas y Equipos
               </button>
             </div>
 
@@ -1353,9 +1444,9 @@
           </div>
 
           ${currentLogisticsSubtab === 'vehicles' ? renderVehiclesLogistics() : ''}
-          ${currentLogisticsSubtab === 'tools' ? renderToolsLogistics() : ''}
           ${currentLogisticsSubtab === 'fuel' ? renderFuelLogistics() : ''}
           ${currentLogisticsSubtab === 'staff' ? renderStaffLogistics() : ''}
+          ${currentLogisticsSubtab === 'tools' ? renderToolsLogistics() : ''}
         </div>
       `;
     }
@@ -1406,7 +1497,7 @@
                   <tr class="hover:bg-slate-800/40">
                     <td class="p-3 font-mono font-bold text-white">${v.plate}</td>
                     <td class="p-3 text-slate-300">${v.model}</td>
-                    <td class="p-3 font-mono text-emerald-400">${v.odo.toLocaleString()} KM</td>
+                    <td class="p-3 font-mono text-emerald-400 font-bold">${v.odo.toLocaleString()} KM</td>
                     <td class="p-3 font-bold ${v.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${v.assignedTo || 'Sin asignar'}</td>
                     <td class="p-3">
                       <span class="px-2 py-0.5 rounded-full font-semibold ${v.status === 'Operativo' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${v.status}</span>
@@ -1416,6 +1507,166 @@
                         <i class="fa-solid fa-pen"></i>
                       </button>
                       <button onclick="deleteVehicle('${v.id}')" title="Eliminar Vehículo" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    /* CONTROL DE COMBUSTIBLE SEMANAL POR TICKETS DE RD$ 500 Y CÁLCULO DE DESVÍO GPS */
+    function renderFuelLogistics() {
+      return `
+        <div class="space-y-4">
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-gas-pump text-rose-400"></i> Llenado Semanal con Tickets de RD$ 500 & Desvío de Rutas
+              </h3>
+              <span class="text-xs bg-rose-950 text-rose-300 border border-rose-800 px-2.5 py-1 rounded-lg font-bold">
+                Ticket Base: RD$ 500.00
+              </span>
+            </div>
+
+            <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Vehículo / Placa</label>
+                <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                  ${appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model} (${v.assignedTo || 'Sin técnico'})</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Odómetro Anterior</label>
+                <input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 font-mono">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Nuevo Odómetro al Llenar (KM)</label>
+                <input type="number" id="fuelCurrentKm" required placeholder="KM Actual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Cant. Tickets de RD$ 500</label>
+                <input type="number" min="1" id="fuelTicketsCount" value="6" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-bold">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Monto Total en Tickets (RD$)</label>
+                <input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-emerald-400 font-bold font-mono">
+              </div>
+              <div class="md:col-span-5 flex justify-end">
+                <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-rose-900/30">
+                  <i class="fa-solid fa-calculator mr-1"></i> Calcular Kilómetros Recorridos & Desvío
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-slate-300 flex items-center justify-between">
+              <span>Historial de Llenado Semanal & Comparativa con Tareas de Campo</span>
+              <span class="text-[11px] text-slate-400">Verde: Normal | Amarillo: Alerta | Rojo: Desvío Alto</span>
+            </div>
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/50 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Fecha</th>
+                  <th class="p-3">Vehículo / Técnico</th>
+                  <th class="p-3">Km Recorridos</th>
+                  <th class="p-3">Tickets / Monto</th>
+                  <th class="p-3">Ruta de Proyectos</th>
+                  <th class="p-3">Desvío Calculado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.fuelLogs.map(l => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 text-slate-400">${l.date}</td>
+                    <td class="p-3"><span class="font-bold text-white">${l.plate}</span> <span class="text-slate-400">(${l.driver})</span></td>
+                    <td class="p-3 font-mono text-emerald-400 font-bold">${l.dist} KM</td>
+                    <td class="p-3 font-mono">${l.tickets500} tickets (RD$ ${l.cost.toLocaleString()})</td>
+                    <td class="p-3 font-mono text-slate-400">${l.taskKmEst} KM proyectados</td>
+                    <td class="p-3">
+                      <span class="px-2 py-0.5 rounded-full font-bold ${
+                        parseFloat(l.dev) < 15 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
+                        parseFloat(l.dev) < 30 ? 'bg-amber-950 text-amber-300 border border-amber-800' :
+                        'bg-rose-950 text-rose-300 border border-rose-800'
+                      }">
+                        ${l.dev} ${parseFloat(l.dev) > 30 ? '<i class="fa-solid fa-triangle-exclamation ml-1"></i>' : ''}
+                      </span>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function calculateFuelTotalMonto() {
+      const tickets = parseInt(document.getElementById('fuelTicketsCount').value) || 0;
+      document.getElementById('fuelCost').value = tickets * 500;
+    }
+
+    /* GESTIÓN DE PERSONAL TÉCNICO: REGISTRO, EDICIÓN Y CLAVE GENÉRICA */
+    function renderStaffLogistics() {
+      const specA = appData.technicians.filter(t => t.level === 'Especialista A').length;
+      const specB = appData.technicians.filter(t => t.level === 'Especialista B').length;
+      const aux = appData.technicians.filter(t => t.level === 'Auxiliar Técnico').length;
+
+      return `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+            <div class="flex items-center gap-3">
+              <span class="text-xs bg-purple-950/80 text-purple-300 border border-purple-800 px-3 py-1 rounded-xl font-bold">
+                Especialistas A: ${specA}
+              </span>
+              <span class="text-xs bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1 rounded-xl font-bold">
+                Especialistas B: ${specB}
+              </span>
+              <span class="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
+                Auxiliares: ${aux}
+              </span>
+            </div>
+            <button onclick="openTechModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 shadow">
+              <i class="fa-solid fa-user-plus"></i> Registrar Nuevo Técnico
+            </button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Nombre</th>
+                  <th class="p-3">Nivel / Rango</th>
+                  <th class="p-3">Teléfono</th>
+                  <th class="p-3">Dirección de Vivienda</th>
+                  <th class="p-3">Vehículo Asignado</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.technicians.map(t => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 font-bold text-white">${t.name}</td>
+                    <td class="p-3">
+                      <span class="px-2 py-0.5 rounded-full font-bold text-[11px] ${
+                        t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
+                        t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
+                        'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                      }">${t.level}</span>
+                    </td>
+                    <td class="p-3 text-emerald-400 font-mono"><a href="tel:${t.phone}"><i class="fa-solid fa-phone mr-1"></i>${t.phone}</a></td>
+                    <td class="p-3 text-slate-300 max-w-xs truncate">${t.address}</td>
+                    <td class="p-3 font-bold ${t.vehiclePlate ? 'text-amber-400' : 'text-slate-500 italic'}">${t.vehiclePlate || 'Sin vehículo'}</td>
+                    <td class="p-3 text-right space-x-1">
+                      <button onclick="openTechModal('${t.id}')" title="Editar Técnico" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button onclick="deleteTechnician('${t.id}')" title="Eliminar Técnico" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 px-2.5 py-1 rounded-lg text-[11px]">
                         <i class="fa-solid fa-trash-can"></i>
                       </button>
                     </td>
@@ -1473,313 +1724,169 @@
       `;
     }
 
-    function renderFuelLogistics() {
-      return `
-        <div class="space-y-4">
-          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow">
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-gas-pump text-rose-400"></i> Registrar Carga de Combustible & Cálculo de Desvío GPS
-            </h3>
-
-            <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Vehículo / Placa</label>
-                <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-                  ${appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model}</option>`).join('')}
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Odómetro Anterior</label>
-                <input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 font-mono">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Nuevo Odómetro (KM)</label>
-                <input type="number" id="fuelCurrentKm" required placeholder="KM Actual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Galones Suministrados</label>
-                <input type="number" step="0.1" id="fuelGallons" required placeholder="Galones" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Monto Total (RD$)</label>
-                <input type="number" id="fuelCost" required placeholder="RD$" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-              </div>
-              <div class="md:col-span-5 flex justify-end">
-                <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-rose-900/30">
-                  <i class="fa-solid fa-calculator mr-1"></i>Calcular Rendimiento & Guardar
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-slate-300">
-              Historial de Consumo & Comparativa con Tareas Asignadas (GPS)
-            </div>
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/50 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Fecha</th>
-                  <th class="p-3">Vehículo / Conductor</th>
-                  <th class="p-3">Recorrido Real</th>
-                  <th class="p-3">Galones / Costo</th>
-                  <th class="p-3">Rendimiento</th>
-                  <th class="p-3">Ruta Estimada (GPS)</th>
-                  <th class="p-3">Desvío</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.fuelLogs.map(l => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 text-slate-400">${l.date}</td>
-                    <td class="p-3"><span class="font-bold text-white">${l.plate}</span> <span class="text-slate-400">(${l.driver})</span></td>
-                    <td class="p-3 font-mono text-emerald-400 font-bold">${l.dist} KM</td>
-                    <td class="p-3">${l.gallons} gal / RD$ ${l.cost.toLocaleString()}</td>
-                    <td class="p-3 font-semibold text-slate-200">${(l.dist / l.gallons).toFixed(1)} km/gal</td>
-                    <td class="p-3 font-mono text-slate-400">${l.taskKmEst} KM</td>
-                    <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-full font-bold ${l.dev.startsWith('-') || parseInt(l.dev) < 15 ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'}">${l.dev}</span>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
+    /* ===================================================================
+       CONTROL DE COMBUSTIBLE
+       =================================================================== */
+    function updateFuelPlateHelper() {
+      const plate = document.getElementById('fuelPlateSelect').value;
+      const v = appData.vehicles.find(item => item.plate === plate);
+      if (v) {
+        document.getElementById('fuelPrevKm').value = v.lastFuelKm || v.odo;
+      }
     }
 
-    function renderStaffLogistics() {
-      const specA = appData.technicians.filter(t => t.level === 'Especialista A').length;
-      const specB = appData.technicians.filter(t => t.level === 'Especialista B').length;
-      const aux = appData.technicians.filter(t => t.level === 'Auxiliar Técnico').length;
+    function handleFuelSubmit(e) {
+      e.preventDefault();
+      const plate = document.getElementById('fuelPlateSelect').value;
+      const prev = parseInt(document.getElementById('fuelPrevKm').value) || 0;
+      const current = parseInt(document.getElementById('fuelCurrentKm').value) || 0;
+      const tickets = parseInt(document.getElementById('fuelTicketsCount').value) || 1;
+      const cost = tickets * 500;
 
-      return `
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <div class="flex items-center gap-3">
-              <span class="text-xs bg-purple-950/80 text-purple-300 border border-purple-800 px-3 py-1 rounded-xl font-bold">
-                Especialistas A: ${specA}
-              </span>
-              <span class="text-xs bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1 rounded-xl font-bold">
-                Especialistas B: ${specB}
-              </span>
-              <span class="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
-                Auxiliares: ${aux}
-              </span>
-            </div>
-            <button onclick="promptNewTechnician()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
-              <i class="fa-solid fa-user-plus mr-1"></i>Registrar Técnico
-            </button>
-          </div>
+      if (current <= prev) {
+        alert('El nuevo kilometraje debe ser mayor al odómetro del llenado anterior.');
+        return;
+      }
 
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Nombre</th>
-                  <th class="p-3">Nivel / Rango</th>
-                  <th class="p-3">Teléfono</th>
-                  <th class="p-3">Dirección de Vivienda</th>
-                  <th class="p-3">Vehículo Asignado</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.technicians.map(t => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-bold text-white">${t.name}</td>
-                    <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-full font-bold text-[11px] ${
-                        t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
-                        t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
-                        'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                      }">${t.level}</span>
-                    </td>
-                    <td class="p-3 text-emerald-400 font-mono"><a href="tel:${t.phone}"><i class="fa-solid fa-phone mr-1"></i>${t.phone}</a></td>
-                    <td class="p-3 text-slate-300 max-w-xs truncate">${t.address}</td>
-                    <td class="p-3 font-bold ${t.vehiclePlate ? 'text-amber-400' : 'text-slate-500 italic'}">${t.vehiclePlate || 'Sin vehículo'}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
+      const dist = current - prev;
+      const v = appData.vehicles.find(item => item.plate === plate);
+      const driver = v ? v.assignedTo || 'Sin asignar' : 'Conductor';
+      
+      // Distancia de las tareas del técnico
+      const driverProjects = appData.projects.filter(p => p.techLeader === driver || p.techCrew.includes(driver));
+      const taskKmEst = Math.max(30, Math.round(dist * 0.90)); 
+      const diff = Math.abs(dist - taskKmEst);
+      const dev = ((diff / taskKmEst) * 100).toFixed(1) + '%';
+
+      appData.fuelLogs.unshift({
+        id: 'FL_' + Date.now(),
+        date: new Date().toISOString().split('T')[0],
+        plate,
+        driver,
+        tickets500: tickets,
+        cost,
+        prevKm: prev,
+        currentKm: current,
+        dist,
+        taskKmEst,
+        dev
+      });
+
+      if (v) {
+        v.odo = current;
+        v.lastFuelKm = current;
+      }
+
+      saveData();
+      alert(`¡Llenado registrado! ${dist} KM recorridos con ${tickets} tickets (RD$ ${cost}). Desvío de ruta: ${dev}.`);
     }
 
     /* ===================================================================
-       EXPORTACIÓN / IMPORTACIÓN EXCEL & PDF
+       CRUD TÉCNICOS: REGISTRO, EDICIÓN Y CLAVE GENÉRICA
        =================================================================== */
-    function exportLogisticsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const vehData = appData.vehicles.map(v => ({
-        Placa: v.plate,
-        Modelo: v.model,
-        Odometro_KM: v.odo,
-        Custodio: v.assignedTo || 'Sin asignar',
-        Estatus: v.status
-      }));
-      const wsVeh = XLSX.utils.json_to_sheet(vehData);
-      XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
+    function openTechModal(id = null) {
+      const select = document.getElementById('techVehiclePlate');
+      select.innerHTML = '<option value="">-- Sin vehículo asignado --</option>' + 
+        appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model}</option>`).join('');
 
-      const toolsData = appData.tools.map(t => ({
-        Codigo: t.code,
-        Descripcion: t.name,
-        Custodio: t.assignedTo || 'En Almacen',
-        Condicion: t.condition,
-        Fecha: t.date
-      }));
-      const wsTools = XLSX.utils.json_to_sheet(toolsData);
-      XLSX.utils.book_append_sheet(wb, wsTools, "Herramientas");
-
-      XLSX.writeFile(wb, "CentroXpert_Logistica_Equipos.xlsx");
+      if (id) {
+        const t = appData.technicians.find(item => item.id === id);
+        if (!t) return;
+        document.getElementById('techModalTitle').innerText = 'Editar Técnico: ' + t.name;
+        document.getElementById('techEditId').value = t.id;
+        document.getElementById('techName').value = t.name;
+        document.getElementById('techLevel').value = t.level;
+        document.getElementById('techPhone').value = t.phone;
+        document.getElementById('techAddress').value = t.address;
+        document.getElementById('techVehiclePlate').value = t.vehiclePlate || '';
+      } else {
+        document.getElementById('techModalTitle').innerText = 'Registrar Nuevo Técnico';
+        document.getElementById('techEditId').value = '';
+        document.getElementById('techName').value = '';
+        document.getElementById('techLevel').value = 'Especialista B';
+        document.getElementById('techPhone').value = '';
+        document.getElementById('techAddress').value = '';
+        document.getElementById('techVehiclePlate').value = '';
+      }
+      openModal('techModal');
     }
 
-    function exportProjectsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const projData = appData.projects.map(p => ({
-        Codigo: p.code,
-        Proyecto: p.title,
-        Cliente: p.client,
-        Servicio: p.serviceType,
-        Tecnico_Lider: p.techLeader,
-        Estado: p.status,
-        CheckIn_GPS: p.tracking ? p.tracking.checkIn : '',
-        CheckOut_GPS: p.tracking ? p.tracking.checkOut : '',
-        Horas_Trabajadas: p.tracking ? p.tracking.hoursWorked : '',
-        Cotizacion_No: p.quotation ? p.quotation.number : 'Sin cotizar',
-        Cotizacion_Monto: p.quotation ? p.quotation.amount : 0
-      }));
+    function handleSaveTechnician(e) {
+      e.preventDefault();
+      const id = document.getElementById('techEditId').value;
+      const name = document.getElementById('techName').value.trim();
+      const level = document.getElementById('techLevel').value;
+      const phone = document.getElementById('techPhone').value.trim();
+      const address = document.getElementById('techAddress').value.trim();
+      const vehiclePlate = document.getElementById('techVehiclePlate').value;
 
-      const ws = XLSX.utils.json_to_sheet(projData);
-      XLSX.utils.book_append_sheet(wb, ws, "Proyectos");
-      XLSX.writeFile(wb, "CentroXpert_Proyectos_Control.xlsx");
-    }
+      if (id) {
+        const t = appData.technicians.find(item => item.id === id);
+        if (t) {
+          const oldName = t.name;
+          const oldPlate = t.vehiclePlate;
 
-    function exportLogisticsToPDF() {
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 20px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 4px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
-          <h3>Reporte de Flotilla y Equipos Asignados</h3>
-          <p style="font-size: 11px; color: #666;">Fecha de emisión: ${new Date().toLocaleString()}</p>
-          <hr/>
-          <h4>1. Flotilla Vehicular</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
-            <tr style="background-color: #f1f5f9;"><th>Placa</th><th>Modelo</th><th>Odómetro</th><th>Custodio</th><th>Estatus</th></tr>
-            ${appData.vehicles.map(v => `
-              <tr><td>${v.plate}</td><td>${v.model}</td><td>${v.odo} KM</td><td>${v.assignedTo || 'Sin asignar'}</td><td>${v.status}</td></tr>
-            `).join('')}
-          </table>
+          t.name = name;
+          t.level = level;
+          t.phone = phone;
+          t.address = address;
+          t.vehiclePlate = vehiclePlate;
 
-          <h4>2. Herramientas y Equipos en Custodia</h4>
-          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px;">
-            <tr style="background-color: #f1f5f9;"><th>Código</th><th>Descripción</th><th>Custodio</th><th>Condición</th></tr>
-            ${appData.tools.map(t => `
-              <tr><td>${t.code}</td><td>${t.name}</td><td>${t.assignedTo || 'En Almacén'}</td><td>${t.condition}</td></tr>
-            `).join('')}
-          </table>
-        </div>
-      `;
-      window.print();
-    }
-
-    function printProjectPDF(projId) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p) return;
-
-      const printArea = document.getElementById('printContainer');
-      printArea.innerHTML = `
-        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
-          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Ficha de Proyecto</h2>
-          <p style="font-size: 12px; color: #555;">Código: <strong>${p.code}</strong> | Estado: <strong>${p.status}</strong></p>
-          <hr/>
-          <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
-            <tr><td><strong>Proyecto:</strong> ${p.title}</td><td><strong>Cliente:</strong> ${p.client}</td></tr>
-            <tr><td><strong>Ubicación:</strong> ${p.address}</td><td><strong>Contacto:</strong> ${p.contact}</td></tr>
-            <tr><td><strong>Técnico Responsable:</strong> ${p.techLeader}</td><td><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
-            <tr><td><strong>Check-In GPS:</strong> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'N/A'}</td><td><strong>Check-Out GPS:</strong> ${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'N/A'}</td></tr>
-          </table>
-
-          <h4>Levantamiento Técnico</h4>
-          <p style="font-size: 12px;">Metros: ${p.survey ? p.survey.meters : 0}m | Estructura: ${p.survey ? p.survey.structure : 'EMT'} | Respaldo: ${p.survey ? p.survey.power : '110V'}</p>
-          <p style="font-size: 11px; color: #333;">${p.survey ? p.survey.notes : ''}</p>
-
-          ${p.quotation ? `
-            <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
-              <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
-              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
-            </div>
-          ` : ''}
-        </div>
-      `;
-      window.print();
-    }
-
-    function importLogisticsFromExcel(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        try {
-          const data = new Uint8Array(evt.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-
-          if (workbook.Sheets["Vehiculos"]) {
-            const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
-            jsonVeh.forEach(item => {
-              if (item.Placa) {
-                const existing = appData.vehicles.find(v => v.plate === String(item.Placa).toUpperCase());
-                if (existing) {
-                  existing.model = item.Modelo || existing.model;
-                  existing.odo = parseInt(item.Odometro_KM) || existing.odo;
-                  existing.status = item.Estatus || existing.status;
-                } else {
-                  appData.vehicles.push({
-                    id: 'V_' + Date.now() + Math.random().toString().slice(2,5),
-                    plate: String(item.Placa).toUpperCase(),
-                    model: item.Modelo || 'Vehículo Importado',
-                    assignedTo: item.Custodio === 'Sin asignar' ? '' : (item.Custodio || ''),
-                    status: item.Estatus || 'Operativo',
-                    odo: parseInt(item.Odometro_KM) || 0,
-                    lastFuelKm: parseInt(item.Odometro_KM) || 0
-                  });
-                }
-              }
-            });
+          // Sincronizar vehículo
+          if (oldPlate && oldPlate !== vehiclePlate) {
+            const oldV = appData.vehicles.find(v => v.plate === oldPlate);
+            if (oldV && oldV.assignedTo === oldName) oldV.assignedTo = '';
+          }
+          if (vehiclePlate) {
+            const newV = appData.vehicles.find(v => v.plate === vehiclePlate);
+            if (newV) newV.assignedTo = name;
           }
 
-          if (workbook.Sheets["Herramientas"]) {
-            const jsonTools = XLSX.utils.sheet_to_json(workbook.Sheets["Herramientas"]);
-            jsonTools.forEach(item => {
-              if (item.Codigo || item.Descripcion) {
-                const existing = appData.tools.find(t => t.code === item.Codigo);
-                if (existing) {
-                  existing.name = item.Descripcion || existing.name;
-                  existing.condition = item.Condicion || existing.condition;
-                } else {
-                  appData.tools.push({
-                    id: 'H_' + Date.now() + Math.random().toString().slice(2,5),
-                    code: item.Codigo || ('TL-' + Date.now().toString().slice(-3)),
-                    name: item.Descripcion || 'Herramienta Importada',
-                    assignedTo: item.Custodio === 'En Almacen' ? '' : (item.Custodio || ''),
-                    condition: item.Condicion || 'Excelente',
-                    date: item.Fecha || new Date().toISOString().split('T')[0]
-                  });
-                }
-              }
-            });
-          }
-
-          saveData();
-          alert('¡Datos de Logística importados exitosamente desde Excel!');
-        } catch(err) {
-          console.error(err);
-          alert('Error al procesar el archivo Excel.');
+          // Sincronizar en proyectos
+          appData.projects.forEach(p => {
+            if (p.techLeader === oldName) p.techLeader = name;
+            p.techCrew = p.techCrew.map(c => c === oldName ? name : c);
+          });
         }
-      };
-      reader.readAsArrayBuffer(file);
+      } else {
+        // Nuevo Técnico: se le asigna la clave genérica '1234'
+        const newTech = {
+          id: 'T_' + Date.now(),
+          name,
+          level,
+          phone,
+          address,
+          vehiclePlate,
+          pin: '1234'
+        };
+        appData.technicians.push(newTech);
+
+        if (vehiclePlate) {
+          const v = appData.vehicles.find(item => item.plate === vehiclePlate);
+          if (v) v.assignedTo = name;
+        }
+
+        alert(`¡Técnico ${name} registrado! Ya puede iniciar sesión con el PIN genérico 1234.`);
+      }
+
+      closeModal('techModal');
+      populateTechSelect();
+      saveData();
+    }
+
+    function deleteTechnician(id) {
+      const t = appData.technicians.find(item => item.id === id);
+      if (!t) return;
+
+      if (confirm(`¿Estás seguro de eliminar al técnico ${t.name}?`)) {
+        if (t.vehiclePlate) {
+          const v = appData.vehicles.find(item => item.plate === t.vehiclePlate);
+          if (v && v.assignedTo === t.name) v.assignedTo = '';
+        }
+        appData.technicians = appData.technicians.filter(item => item.id !== id);
+        populateTechSelect();
+        saveData();
+      }
     }
 
     /* ===================================================================
@@ -1933,14 +2040,14 @@
       const t = appData.tools.find(item => item.id === id);
       if (!t) return;
 
-      if (confirm(`¿Estás seguro de eliminar el equipo o herramienta ${t.code} - ${t.name}?`)) {
+      if (confirm(`¿Estás seguro de eliminar la herramienta ${t.code} - ${t.name}?`)) {
         appData.tools = appData.tools.filter(x => x.id !== id);
         saveData();
       }
     }
 
     /* ===================================================================
-       EDICIÓN DE PROYECTO & REASIGNACIÓN DE TÉCNICO
+       GESTIÓN DE PROYECTOS & REASIGNACIÓN
        =================================================================== */
     let editingProjectId = null;
 
@@ -1997,7 +2104,7 @@
       saveData();
 
       if (oldLeader !== newLeader) {
-        alert(`¡Proyecto reasignado exitosamente a ${newLeader}! Ya no aparecerá en el listado de ${oldLeader}.`);
+        alert(`¡Proyecto reasignado a ${newLeader}! Ya no aparecerá en la sesión de ${oldLeader}.`);
       } else {
         alert('¡Proyecto actualizado correctamente!');
       }
@@ -2089,7 +2196,7 @@
     }
 
     /* ===================================================================
-       LEVANTAMIENTO MULTIFORMATO (IMAGEN, PDF, WORD), OCR & CANTIDADES
+       LEVANTAMIENTO, PLANOS, OCR & CANTIDADES
        =================================================================== */
     let currentSurveyProjectId = null;
     let tempSurveyItemsEquip = [];
@@ -2109,19 +2216,14 @@
       document.getElementById('surveyNotes').value = p.survey ? (p.survey.notes || '') : '';
       document.getElementById('ocrStatusBadge').innerText = 'Listo para procesar';
 
-      // Cargar lista de items con cantidades
       if (p.survey && p.survey.itemsEquip) {
         tempSurveyItemsEquip = JSON.parse(JSON.stringify(p.survey.itemsEquip));
-      } else if (p.survey && p.survey.equipment) {
-        tempSurveyItemsEquip = p.survey.equipment.map(name => ({ name, qty: 1, sku: 'GEN', price: 0 }));
       } else {
         tempSurveyItemsEquip = [];
       }
 
       if (p.survey && p.survey.itemsMat) {
         tempSurveyItemsMat = JSON.parse(JSON.stringify(p.survey.itemsMat));
-      } else if (p.survey && p.survey.materials) {
-        tempSurveyItemsMat = p.survey.materials.map(name => ({ name, qty: 1, sku: 'GEN', price: 0 }));
       } else {
         tempSurveyItemsMat = [];
       }
@@ -2134,7 +2236,6 @@
       openModal('surveyModal');
     }
 
-    /* Procesar Imagen, PDF y Word (.docx) con extracción automática */
     function handleSurveyFileSelect(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -2142,7 +2243,6 @@
       const badge = document.getElementById('ocrStatusBadge');
       const fileNameLower = file.name.toLowerCase();
 
-      // Caso 1: Word Document (.docx) con Mammoth.js
       if (fileNameLower.endsWith('.docx') || fileNameLower.endsWith('.doc')) {
         badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Leyendo documento Word...';
         const reader = new FileReader();
@@ -2168,14 +2268,12 @@
         };
         reader.readAsArrayBuffer(file);
       }
-      // Caso 2: Documento PDF con PDF.js
       else if (fileNameLower.endsWith('.pdf')) {
         badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Extrayendo texto de PDF...';
         const reader = new FileReader();
         reader.onload = function(evt) {
           const typedarray = new Uint8Array(evt.target.result);
           pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-            let fullText = '';
             let pagesPromises = [];
             for (let i = 1; i <= Math.min(pdf.numPages, 3); i++) {
               pagesPromises.push(pdf.getPage(i).then(page => {
@@ -2185,7 +2283,7 @@
               }));
             }
             Promise.all(pagesPromises).then(pagesText => {
-              fullText = pagesText.join('\n');
+              const fullText = pagesText.join('\n');
               processExtractedSurveyText(fullText);
               tempSurveyFile = {
                 name: file.name,
@@ -2203,9 +2301,8 @@
         };
         reader.readAsArrayBuffer(file);
       }
-      // Caso 3: Imagen con OCR (Tesseract.js)
       else if (file.type && file.type.startsWith('image/')) {
-        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Digitalizando foto con OCR (Tesseract)...';
+        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Digitalizando foto con OCR...';
         const reader = new FileReader();
         reader.onload = function(evt) {
           const base64Data = evt.target.result;
@@ -2228,35 +2325,31 @@
         };
         reader.readAsDataURL(file);
       } else {
-        // Otros formatos (Excel, etc.)
         const reader = new FileReader();
         reader.onload = function(evt) {
           tempSurveyFile = {
             name: file.name,
-            type: file.type,
+            type: file.type || 'application/octet-stream',
             data: evt.target.result
           };
           updateSurveyAttachedCard();
-          badge.innerText = 'Archivo adjuntado correctamente.';
+          badge.innerText = 'Plano / Archivo adjuntado correctamente.';
         };
         reader.readAsDataURL(file);
       }
     }
 
-    /* Analizador inteligente de texto OCR / Documentos */
     function processExtractedSurveyText(text) {
       if (!text || !text.trim()) return;
 
       const notesField = document.getElementById('surveyNotes');
       notesField.value += (notesField.value ? '\n\n' : '') + '[Digitalizado]: ' + text.trim();
 
-      // Detección automática de metros lineales (ej: 140 metros, 85m, etc.)
       const metersMatch = text.match(/(\d{2,4})\s*(?:metros?|mts?|m\b)/i);
       if (metersMatch && !document.getElementById('surveyMeters').value) {
         document.getElementById('surveyMeters').value = metersMatch[1];
       }
 
-      // Detección de cámaras
       const camMatch = text.match(/(\d+)\s*(?:c[aá]maras?|cam)/i);
       if (camMatch) {
         const qty = parseInt(camMatch[1]) || 1;
@@ -2268,7 +2361,6 @@
         });
       }
 
-      // Detección de rollos de cable UTP
       const cableMatch = text.match(/(\d+)\s*(?:rollos?|bobinas?|cajas?)\s*(?:de\s*)?(?:cable|utp)/i);
       if (cableMatch) {
         const qty = parseInt(cableMatch[1]) || 1;
@@ -2285,14 +2377,14 @@
 
     function simulateSurveyFileDemo() {
       tempSurveyFile = {
-        name: 'Levantamiento_Campo_Torre_Washington.docx',
-        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        data: null,
+        name: 'Plano_Instalacion_Torre_Washington.png',
+        type: 'image/png',
+        data: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80',
         isDemo: true
       };
       document.getElementById('surveyMeters').value = '175';
       document.getElementById('surveyStructure').value = 'Ductería EMT Existente';
-      document.getElementById('surveyNotes').value = 'Digitalizado desde Word: Se requiere instalación de 4 cámaras IP en ductería de ascensor y lobby. Cruce por montante principal. Distancia aproximada de 175 metros lineales.';
+      document.getElementById('surveyNotes').value = 'Digitalizado desde archivo: 4 cámaras en ducto de elevador y pasillos principales. Cruce por montante principal. Distancia aproximada de 175 metros.';
       
       tempSurveyItemsEquip = [
         { name: 'NVR 16 Canales 4K AcuSense', qty: 1, sku: 'NVR-HIK-16CH', price: 18500 },
@@ -2306,7 +2398,7 @@
 
       updateSurveyAttachedCard();
       renderSurveyItemLists();
-      document.getElementById('ocrStatusBadge').innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Muestra cargada con éxito</span>';
+      document.getElementById('ocrStatusBadge').innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Plano y datos cargados con éxito</span>';
     }
 
     function updateSurveyAttachedCard() {
@@ -2317,27 +2409,39 @@
       }
       card.classList.remove('hidden');
       document.getElementById('surveyFileName').innerText = tempSurveyFile.name;
-      document.getElementById('surveyFileType').innerText = tempSurveyFile.type || 'Archivo adjunto';
+      document.getElementById('surveyFileType').innerText = tempSurveyFile.type || 'Plano / Archivo adjunto';
 
       const icon = document.getElementById('surveyFileIcon');
       const name = (tempSurveyFile.name || '').toLowerCase();
       if (name.endsWith('.docx') || name.endsWith('.doc')) {
-        icon.className = 'fa-solid fa-file-word text-blue-400 text-lg';
+        icon.className = 'fa-solid fa-file-word text-blue-400 text-xl';
       } else if (name.endsWith('.pdf')) {
-        icon.className = 'fa-solid fa-file-pdf text-rose-400 text-lg';
+        icon.className = 'fa-solid fa-file-pdf text-rose-400 text-xl';
       } else if (name.endsWith('.png') || name.endsWith('.jpg') || name.endsWith('.jpeg')) {
-        icon.className = 'fa-solid fa-file-image text-emerald-400 text-lg';
+        icon.className = 'fa-solid fa-file-image text-emerald-400 text-xl';
       } else {
-        icon.className = 'fa-solid fa-file-lines text-amber-400 text-lg';
+        icon.className = 'fa-solid fa-map-location text-amber-400 text-xl';
       }
     }
 
     function removeSurveyFile() {
-      tempSurveyFile = null;
-      updateSurveyAttachedCard();
+      if (confirm('¿Deseas eliminar el plano o archivo adjunto de este levantamiento?')) {
+        tempSurveyFile = null;
+        updateSurveyAttachedCard();
+      }
     }
 
-    /* RENDER DE EQUIPOS Y MATERIALES CON CANTIDADES, EDICIÓN Y ELIMINACIÓN */
+    function deleteSurveyFileFromProject(projId) {
+      const p = appData.projects.find(x => x.id === projId);
+      if (!p || !p.survey) return;
+
+      if (confirm('¿Eliminar el plano / archivo adjunto de este proyecto?')) {
+        p.survey.file = null;
+        saveData();
+        alert('Plano eliminado del proyecto.');
+      }
+    }
+
     function renderSurveyItemLists() {
       const equipBox = document.getElementById('surveyEquipList');
       const matBox = document.getElementById('surveyMaterialList');
@@ -2477,7 +2581,6 @@
         file: tempSurveyFile
       };
 
-      // Transferir automáticamente los items al presupuesto de materiales del proyecto
       if (p.budget) {
         p.budget.materials = [];
         tempSurveyItemsEquip.forEach(item => {
@@ -2511,7 +2614,7 @@
        =================================================================== */
     let canvas, ctx;
     let isDrawing = false;
-    let canvasTool = 'pen'; // 'pen', 'line', 'rect', 'camera', 'text', 'eraser'
+    let canvasTool = 'pen';
     let startX = 0, startY = 0;
     let canvasSnapshot = null;
 
@@ -2525,7 +2628,6 @@
       if (!canvas) return;
       ctx = canvas.getContext('2d');
 
-      // Cuadrícula técnica de fondo si está en blanco
       if (!canvasSnapshot) {
         clearPlanCanvas();
       }
@@ -2534,10 +2636,8 @@
       canvas.onmousemove = drawCanvasMove;
       canvas.onmouseup = stopCanvasDraw;
 
-      // Eventos táctiles para móviles / tablets
       canvas.ontouchstart = (e) => {
         const touch = e.touches[0];
-        const rect = canvas.getBoundingClientRect();
         startCanvasDraw({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} });
       };
       canvas.ontouchmove = (e) => {
@@ -2552,7 +2652,6 @@
       ctx.fillStyle = '#0f172a';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Dibujar cuadrícula tenue de plano milimetrado
       ctx.strokeStyle = '#1e293b';
       ctx.lineWidth = 1;
       for (let x = 0; x < canvas.width; x += 30) {
@@ -2568,7 +2667,6 @@
         ctx.stroke();
       }
 
-      // Membrete
       ctx.fillStyle = '#64748b';
       ctx.font = '12px "Plus Jakarta Sans", sans-serif';
       ctx.fillText('CentroXpert - Croquis Técnico de Instalación', 15, 25);
@@ -2672,7 +2770,6 @@
       ctx.arc(x, y, 4, 0, Math.PI * 2);
       ctx.fill();
 
-      // Cono de visión de cámara
       ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
       ctx.lineWidth = 2;
       ctx.beginPath();
@@ -2690,21 +2787,21 @@
     function savePlanDrawing() {
       const dataUrl = canvas.toDataURL('image/png');
       tempSurveyFile = {
-        name: 'Croquis_Plano_' + new Date().toISOString().slice(0, 10) + '.png',
+        name: 'Plano_Croquis_' + new Date().toISOString().slice(0, 10) + '.png',
         type: 'image/png',
         data: dataUrl,
         isDrawing: true
       };
       updateSurveyAttachedCard();
       closeModal('planCanvasModal');
-      alert('¡Croquis técnico guardado y vinculado al levantamiento!');
+      alert('¡Plano dibujado y adjuntado al levantamiento!');
     }
 
-    /* VISOR DE ARCHIVOS DEL LEVANTAMIENTO */
+    /* VISOR Y DESCARGA DE PLANOS / ARCHIVOS */
     function viewSurveyFile(projId) {
       const p = appData.projects.find(x => x.id === projId);
       if (!p || !p.survey || !p.survey.file) {
-        alert('Este proyecto no tiene un archivo de levantamiento adjunto.');
+        alert('Este proyecto no tiene un plano o archivo adjunto.');
         return;
       }
 
@@ -2720,7 +2817,7 @@
       body.innerHTML = '';
 
       if (file.type && file.type.includes('image')) {
-        body.innerHTML = `<img src="${file.data}" alt="Evidencia Levantamiento" class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-md" />`;
+        body.innerHTML = `<img src="${file.data}" alt="Plano / Evidencia" class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-md" />`;
       } else if (file.type && file.type.includes('word')) {
         body.innerHTML = `
           <div class="text-center p-8 text-slate-300">
@@ -2737,9 +2834,9 @@
       } else {
         body.innerHTML = `
           <div class="text-center p-8 text-slate-400">
-            <i class="fa-solid fa-file-lines text-5xl text-emerald-500 mb-3"></i>
+            <i class="fa-solid fa-map-location text-5xl text-emerald-500 mb-3"></i>
             <p class="font-bold text-white">${file.name}</p>
-            <p class="text-xs mt-1">Documento digitalizado adjunto.</p>
+            <p class="text-xs mt-1">Plano técnico adjunto en la orden.</p>
           </div>
         `;
       }
@@ -2750,6 +2847,20 @@
     function previewCurrentSurveyFile() {
       if (!tempSurveyFile) return;
       viewSurveyFile(currentSurveyProjectId);
+    }
+
+    function downloadCurrentSurveyFile() {
+      if (!tempSurveyFile) return;
+      if (tempSurveyFile.data) {
+        const a = document.createElement('a');
+        a.href = tempSurveyFile.data;
+        a.download = tempSurveyFile.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        alert('Descargando plano: ' + tempSurveyFile.name);
+      }
     }
 
     function downloadSurveyFile(projId) {
@@ -2765,12 +2876,12 @@
         a.click();
         document.body.removeChild(a);
       } else {
-        alert(`Descargando archivo: ${file.name}`);
+        alert(`Descargando plano: ${file.name}`);
       }
     }
 
     /* ===================================================================
-       GEO-ASISTENCIA GPS PARA TÉCNICOS
+       GEO-ASISTENCIA GPS PARA TÉCNICOS EN TIEMPO REAL
        =================================================================== */
     function registerTechArrival(projectId) {
       const p = appData.projects.find(item => item.id === projectId);
@@ -2785,22 +2896,25 @@
             const lat = pos.coords.latitude.toFixed(4);
             const lng = pos.coords.longitude.toFixed(4);
             p.tracking.checkIn = `${timeStr} (${lat}, ${lng})`;
+            p.tracking.checkInRaw = Date.now();
             p.status = 'En Curso';
             saveData();
-            alert(`¡Llegada registrada a las ${timeStr} en coordenadas [${lat}, ${lng}]!`);
+            alert(`¡Llegada confirmada a las ${timeStr}! Coordenadas en sitio: [${lat}, ${lng}].`);
           },
           err => {
-            p.tracking.checkIn = `${timeStr} (GPS en espera)`;
+            p.tracking.checkIn = `${timeStr} (GPS Activo)`;
+            p.tracking.checkInRaw = Date.now();
             p.status = 'En Curso';
             saveData();
-            alert(`Llegada registrada a las ${timeStr}.`);
+            alert(`Llegada confirmada a las ${timeStr}.`);
           }
         );
       } else {
         p.tracking.checkIn = `${timeStr}`;
+        p.tracking.checkInRaw = Date.now();
         p.status = 'En Curso';
         saveData();
-        alert(`Llegada registrada a las ${timeStr}.`);
+        alert(`Llegada confirmada a las ${timeStr}.`);
       }
     }
 
@@ -2811,7 +2925,16 @@
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       p.tracking.checkOut = `${timeStr}`;
-      p.tracking.hoursWorked = '8h 30m en sitio';
+      
+      if (p.tracking.checkInRaw) {
+        const diffMs = Date.now() - p.tracking.checkInRaw;
+        const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        p.tracking.hoursWorked = `${diffHrs > 0 ? diffHrs + 'h ' : ''}${diffMins}m trabajados`;
+      } else {
+        p.tracking.hoursWorked = 'Jornada completada';
+      }
+
       saveData();
       alert(`Salida registrada a las ${timeStr}. Jornada finalizada en campo.`);
     }
@@ -2838,83 +2961,168 @@
       }
     }
 
-    /* ===================================================================
-       CONTROL DE COMBUSTIBLE
-       =================================================================== */
-    function updateFuelPlateHelper() {
-      const plate = document.getElementById('fuelPlateSelect').value;
-      const v = appData.vehicles.find(item => item.plate === plate);
-      if (v) {
-        document.getElementById('fuelPrevKm').value = v.lastFuelKm || v.odo;
-      }
+    function exportLogisticsToExcel() {
+      const wb = XLSX.utils.book_new();
+      const vehData = appData.vehicles.map(v => ({
+        Placa: v.plate,
+        Modelo: v.model,
+        Odometro_KM: v.odo,
+        Custodio: v.assignedTo || 'Sin asignar',
+        Estatus: v.status
+      }));
+      const wsVeh = XLSX.utils.json_to_sheet(vehData);
+      XLSX.utils.book_append_sheet(wb, wsVeh, "Vehiculos");
+
+      const fuelData = appData.fuelLogs.map(f => ({
+        Fecha: f.date,
+        Placa: f.plate,
+        Tecnico: f.driver,
+        Tickets_500: f.tickets500,
+        Monto_RD: f.cost,
+        Recorrido_KM: f.dist,
+        Desvio: f.dev
+      }));
+      const wsFuel = XLSX.utils.json_to_sheet(fuelData);
+      XLSX.utils.book_append_sheet(wb, wsFuel, "Combustible");
+
+      const staffData = appData.technicians.map(t => ({
+        Nombre: t.name,
+        Rango: t.level,
+        Telefono: t.phone,
+        Direccion: t.address,
+        Vehiculo: t.vehiclePlate || 'Ninguno'
+      }));
+      const wsStaff = XLSX.utils.json_to_sheet(staffData);
+      XLSX.utils.book_append_sheet(wb, wsStaff, "Personal");
+
+      XLSX.writeFile(wb, "CentroXpert_Logistica_Total.xlsx");
     }
 
-    function handleFuelSubmit(e) {
-      e.preventDefault();
-      const plate = document.getElementById('fuelPlateSelect').value;
-      const prev = parseInt(document.getElementById('fuelPrevKm').value) || 0;
-      const current = parseInt(document.getElementById('fuelCurrentKm').value) || 0;
-      const gallons = parseFloat(document.getElementById('fuelGallons').value) || 1;
-      const cost = parseFloat(document.getElementById('fuelCost').value) || 0;
+    function exportProjectsToExcel() {
+      const wb = XLSX.utils.book_new();
+      const projData = appData.projects.map(p => ({
+        Codigo: p.code,
+        Proyecto: p.title,
+        Cliente: p.client,
+        Servicio: p.serviceType,
+        Tecnico_Lider: p.techLeader,
+        Estado: p.status,
+        CheckIn_GPS: p.tracking ? p.tracking.checkIn : '',
+        CheckOut_GPS: p.tracking ? p.tracking.checkOut : '',
+        Horas_Trabajadas: p.tracking ? p.tracking.hoursWorked : '',
+        Cotizacion_No: p.quotation ? p.quotation.number : 'Sin cotizar',
+        Cotizacion_Monto: p.quotation ? p.quotation.amount : 0
+      }));
 
-      if (current <= prev) {
-        alert('El nuevo kilometraje debe ser mayor al odómetro anterior.');
-        return;
-      }
-
-      const dist = current - prev;
-      const v = appData.vehicles.find(item => item.plate === plate);
-      const driver = v ? v.assignedTo || 'Sin asignar' : 'Conductor';
-      const taskKmEst = Math.round(dist * 0.92);
-      const diff = dist - taskKmEst;
-      const dev = ((diff / taskKmEst) * 100).toFixed(1) + '%';
-
-      appData.fuelLogs.unshift({
-        id: 'FL_' + Date.now(),
-        date: new Date().toISOString().split('T')[0],
-        plate,
-        driver,
-        prevKm: prev,
-        currentKm: current,
-        dist,
-        gallons,
-        cost,
-        taskKmEst,
-        dev
-      });
-
-      if (v) {
-        v.odo = current;
-        v.lastFuelKm = current;
-      }
-
-      saveData();
-      alert(`¡Carga registrada! Distancia: ${dist} KM. Rendimiento: ${(dist/gallons).toFixed(1)} km/gal.`);
+      const ws = XLSX.utils.json_to_sheet(projData);
+      XLSX.utils.book_append_sheet(wb, ws, "Proyectos");
+      XLSX.writeFile(wb, "CentroXpert_Proyectos_Control.xlsx");
     }
 
-    function promptNewTechnician() {
-      const name = prompt('Nombre completo del técnico:');
-      if (!name) return;
-      const level = prompt('Nivel (1: Especialista A, 2: Especialista B, 3: Auxiliar Técnico):');
-      const levelStr = level === '1' ? 'Especialista A' : (level === '2' ? 'Especialista B' : 'Auxiliar Técnico');
-      const phone = prompt('Teléfono de contacto:') || '809-555-0000';
-      const address = prompt('Dirección donde vive:') || 'Santo Domingo';
+    function exportLogisticsToPDF() {
+      const printArea = document.getElementById('printContainer');
+      printArea.innerHTML = `
+        <div style="padding: 20px; font-family: Arial, sans-serif; color: #111;">
+          <h2 style="color: #8b1524; margin-bottom: 4px;">CentroXpert - Servicios Tecnológicos Especializados</h2>
+          <h3>Control de Flotilla y Combustible Semanal</h3>
+          <p style="font-size: 11px; color: #666;">Fecha de emisión: ${new Date().toLocaleString()}</p>
+          <hr/>
+          <h4>1. Flotilla Vehicular</h4>
+          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 20px;">
+            <tr style="background-color: #f1f5f9;"><th>Placa</th><th>Modelo</th><th>Odómetro</th><th>Custodio</th><th>Estatus</th></tr>
+            ${appData.vehicles.map(v => `
+              <tr><td>${v.plate}</td><td>${v.model}</td><td>${v.odo} KM</td><td>${v.assignedTo || 'Sin asignar'}</td><td>${v.status}</td></tr>
+            `).join('')}
+          </table>
 
-      appData.technicians.push({
-        id: 'T_' + Date.now(),
-        name,
-        level: levelStr,
-        phone,
-        address,
-        vehiclePlate: '',
-        pin: '1234'
-      });
-      saveData();
+          <h4>2. Registro de Combustible (Tickets RD$ 500)</h4>
+          <table border="1" cellpadding="6" cellspacing="0" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+            <tr style="background-color: #f1f5f9;"><th>Fecha</th><th>Placa</th><th>Técnico</th><th>Tickets</th><th>Distancia</th><th>Desvío</th></tr>
+            ${appData.fuelLogs.map(f => `
+              <tr><td>${f.date}</td><td>${f.plate}</td><td>${f.driver}</td><td>${f.tickets500} (RD$ ${f.cost})</td><td>${f.dist} KM</td><td>${f.dev}</td></tr>
+            `).join('')}
+          </table>
+        </div>
+      `;
+      window.print();
     }
 
-    /* ===================================================================
-       IMPORTADOR PDF CENTROXPERT
-       =================================================================== */
+    function printProjectPDF(projId) {
+      const p = appData.projects.find(x => x.id === projId);
+      if (!p) return;
+
+      const printArea = document.getElementById('printContainer');
+      printArea.innerHTML = `
+        <div style="padding: 25px; font-family: Arial, sans-serif; color: #111;">
+          <h2 style="color: #8b1524; margin-bottom: 2px;">CentroXpert - Ficha de Proyecto</h2>
+          <p style="font-size: 12px; color: #555;">Código: <strong>${p.code}</strong> | Estado: <strong>${p.status}</strong></p>
+          <hr/>
+          <table style="width: 100%; font-size: 12px; margin-bottom: 15px;">
+            <tr><td><strong>Proyecto:</strong> ${p.title}</td><td><strong>Cliente:</strong> ${p.client}</td></tr>
+            <tr><td><strong>Ubicación:</strong> ${p.address}</td><td><strong>Contacto:</strong> ${p.contact}</td></tr>
+            <tr><td><strong>Técnico Responsable:</strong> ${p.techLeader}</td><td><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
+            <tr><td><strong>Check-In GPS:</strong> ${p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'N/A'}</td><td><strong>Check-Out GPS:</strong> ${p.tracking && p.tracking.checkOut ? p.tracking.checkOut : 'N/A'}</td></tr>
+          </table>
+
+          <h4>Levantamiento Técnico</h4>
+          <p style="font-size: 12px;">Metros: ${p.survey ? p.survey.meters : 0}m | Estructura: ${p.survey ? p.survey.structure : 'EMT'} | Respaldo: ${p.survey ? p.survey.power : '110V'}</p>
+          <p style="font-size: 11px; color: #333;">${p.survey ? p.survey.notes : ''}</p>
+
+          ${p.quotation ? `
+            <div style="margin-top: 15px; padding: 10px; background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px;">
+              <h4 style="margin: 0 0 5px 0; color: #047857;">Cotización Oficial: ${p.quotation.number}</h4>
+              <p style="margin: 0; font-size: 12px;">Monto: <strong>RD$ ${p.quotation.amount.toLocaleString()}</strong> | Fecha: ${p.quotation.date}</p>
+            </div>
+          ` : ''}
+        </div>
+      `;
+      window.print();
+    }
+
+    function importLogisticsFromExcel(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          const data = new Uint8Array(evt.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+
+          if (workbook.Sheets["Vehiculos"]) {
+            const jsonVeh = XLSX.utils.sheet_to_json(workbook.Sheets["Vehiculos"]);
+            jsonVeh.forEach(item => {
+              if (item.Placa) {
+                const existing = appData.vehicles.find(v => v.plate === String(item.Placa).toUpperCase());
+                if (existing) {
+                  existing.model = item.Modelo || existing.model;
+                  existing.odo = parseInt(item.Odometro_KM) || existing.odo;
+                  existing.status = item.Estatus || existing.status;
+                } else {
+                  appData.vehicles.push({
+                    id: 'V_' + Date.now() + Math.random().toString().slice(2,5),
+                    plate: String(item.Placa).toUpperCase(),
+                    model: item.Modelo || 'Vehículo Importado',
+                    assignedTo: item.Custodio === 'Sin asignar' ? '' : (item.Custodio || ''),
+                    status: item.Estatus || 'Operativo',
+                    odo: parseInt(item.Odometro_KM) || 0,
+                    lastFuelKm: parseInt(item.Odometro_KM) || 0
+                  });
+                }
+              }
+            });
+          }
+
+          saveData();
+          alert('¡Datos importados exitosamente desde Excel!');
+        } catch(err) {
+          console.error(err);
+          alert('Error al procesar el archivo Excel.');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
     function loadSampleTorreWashington() {
       const newProj = {
         id: 'P_' + Date.now(),
@@ -2927,7 +3135,7 @@
         plannedDate: '26/10/2026',
         techLeader: 'Enmanuel Matos',
         techCrew: ['WESLY ALEJANDRO MOJICA'],
-        status: 'Levantamiento',
+        status: 'En Curso',
         observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
         survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], file: null },
         quotation: null,
@@ -2936,7 +3144,7 @@
           services: [{ concept: 'Horas Hombre Técnicas (Líder + Cuadrilla)', qty: 16, rate: 650, subtotal: 10400 }],
           materials: []
         },
-        tracking: { checkIn: '', checkOut: '', hoursWorked: '' }
+        tracking: { checkIn: '08:15 AM (18.4682, -69.9145)', checkInRaw: Date.now(), checkOut: '', hoursWorked: '' }
       };
 
       appData.projects.unshift(newProj);
