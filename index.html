@@ -1,1582 +1,1140 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CentroXpert - Ingeniería y Servicios</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PDF.js -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Centroxpert & Omegatech - Sistema Integral de Operaciones y Logística</title>
+  
+  <!-- Librerías requeridas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
-  <!-- Tesseract.js para OCR -->
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Ubuntu:wght@400;500;700&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; }
-    .centroxpert-font { font-family: 'Ubuntu', 'Plus Jakarta Sans', sans-serif; }
-    .wine-brand { color: #8b1524; }
-    .bg-wine-brand { background-color: #8b1524; }
-    .border-wine-brand { border-color: #8b1524; }
+    :root {
+      --primary: #004b93;
+      --primary-dark: #00366b;
+      --secondary: #e30613;
+      --secondary-dark: #b5050f;
+      --accent: #1e824c;
+      --bg: #f3f5f8;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --border: #dce1e7;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+    }
+
+    /* PANTALLA DE LOGIN */
+    #login_screen {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(135deg, #00366b 0%, #004b93 60%, #1a252f 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      padding: 16px;
+    }
+    .login-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 12px;
+      padding: 28px 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      border-top: 5px solid var(--secondary);
+      text-align: center;
+    }
+    .login-card img {
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+    .login-card h2 {
+      margin: 0 0 4px 0;
+      color: var(--primary);
+      font-size: 20px;
+    }
+    .login-card p {
+      margin: 0 0 20px 0;
+      font-size: 13px;
+      color: #666;
+    }
+    .quick-users {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+      text-align: left;
+      font-size: 11px;
+      color: #555;
+    }
+    .quick-users span {
+      display: inline-block;
+      background: #eef4fa;
+      color: var(--primary);
+      padding: 3px 7px;
+      border-radius: 4px;
+      margin: 2px;
+      cursor: pointer;
+      font-weight: 600;
+      border: 1px solid #d0dfee;
+    }
+    .quick-users span:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* HEADER */
+    header {
+      background: #ffffff;
+      border-bottom: 3px solid var(--secondary);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .logo-container img {
+      height: 46px;
+      object-fit: contain;
+    }
+    .system-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .system-subtitle {
+      font-size: 12px;
+      color: #666;
+    }
+    .user-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* NAVEGACIÓN POR PESTAÑAS */
+    nav {
+      background: var(--primary);
+      display: flex;
+      flex-wrap: wrap;
+      padding: 0 16px;
+      gap: 4px;
+    }
+    nav button {
+      background: transparent;
+      color: #ffffff;
+      border: none;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    nav button:hover, nav button.active {
+      background: rgba(255,255,255,0.12);
+      border-bottom-color: var(--secondary);
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 20px auto;
+      padding: 0 16px;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .card-header h2 {
+      margin: 0;
+      color: var(--primary);
+      font-size: 17px;
+    }
+
+    .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; text-align: left; }
+    label { font-size: 12px; font-weight: 600; color: #444; }
+    input, select, textarea, button {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-size: 13px;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: var(--primary);
+      color: white;
+      transition: background 0.2s;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--primary-dark); }
+    .btn-green { background: var(--accent); }
+    .btn-green:hover { background: #166538; }
+    .btn-red { background: var(--secondary); }
+    .btn-red:hover { background: var(--secondary-dark); }
+    .btn-gray { background: #6c757d; }
+    .btn-gray:hover { background: #5a6268; }
+    .btn-orange { background: #d35400; }
+    .btn-orange:hover { background: #a04000; }
+    .btn-blue { background: #2980b9; }
+    .btn-blue:hover { background: #1f6391; }
+
+    .btn-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+    }
+    th {
+      background: #f8fafc;
+      color: var(--primary);
+      font-weight: 700;
+      border-top: 1px solid var(--border);
+    }
+    tr:hover { background: #fdfdfd; }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .bg-green { background: #27ae60; }
+    .bg-blue { background: #2980b9; }
+    .bg-orange { background: #e67e22; }
+    .bg-gray { background: #7f8c8d; }
+    .bg-purple { background: #8e44ad; }
+
+    .table-input {
+      width: 100%;
+      padding: 4px 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .asignacion-card {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      padding: 14px;
+      background: #fafcfe;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 1500;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-content {
+      background: white;
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
   </style>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased selection:bg-rose-900 selection:text-white">
+<body>
 
-  <!-- ================= TOPBAR ================= -->
-  <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+  <!-- PANTALLA DE LOGIN -->
+  <div id="login_screen">
+    <div class="login-card">
+      <img src="data:image/png;base64,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" alt="Omegatech Logo" />
+      <h2>CENTROXPERT & OMEGATECH</h2>
+      <p>Inicia sesión con tu cuenta operativa o de técnico</p>
       
-      <!-- LOGO CENTROXPERT ORIGINAL -->
-      <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
-        <div class="bg-white px-3 py-1.5 rounded-lg flex items-center shadow-sm">
-          <svg viewBox="0 0 280 60" class="h-8 md:h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
-              <text x="2" y="38" fill="#111827">centr</text>
-            </g>
-            <g transform="translate(103, 9)">
-              <circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" />
-              <line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" />
-            </g>
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5">
-              <text x="138" y="38" fill="#8b1524">xpert</text>
-            </g>
-            <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text>
-            <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
-          </svg>
-        </div>
-        <div class="hidden sm:block border-l border-slate-700 pl-3">
-          <div class="text-xs uppercase tracking-widest text-slate-400 font-bold">Ingeniería y Servicios</div>
-          <div class="text-sm font-semibold text-rose-400">Control Operativo & Técnico</div>
-        </div>
+      <div class="form-group">
+        <label>Usuario:</label>
+        <input type="text" id="login_username" placeholder="Ej: wgarcia, ovasquez, amarizan" onkeydown="if(event.key==='Enter') iniciarSesion()" />
       </div>
+      <div class="form-group">
+        <label>Contraseña:</label>
+        <input type="password" id="login_password" placeholder="Ingresa tu clave" onkeydown="if(event.key==='Enter') iniciarSesion()" />
+      </div>
+      <button class="btn" style="width: 100%; padding: 11px; margin-top: 8px; font-size: 14px;" onclick="iniciarSesion()">
+        🔐 Iniciar Sesión
+      </button>
 
-      <!-- ACCIONES DE SESIÓN Y VISTA -->
-      <div class="flex items-center gap-3" id="headerUserActions">
-        <!-- Inyectado por JS -->
+      <div class="quick-users">
+        <strong>Acceso rápido para pruebas (clic para autocompletar):</strong><br/>
+        <span onclick="autocompletarLogin('wgarcia', 'Centroxpert2026*')">👑 Wilson</span>
+        <span onclick="autocompletarLogin('ovasquez', 'Orlanda2026')">📋 Orlanda (Coord.)</span>
+        <span onclick="autocompletarLogin('cadames', 'Cristal2026')">📋 Cristal (Coord.)</span>
+        <span onclick="autocompletarLogin('amarizan', 'Adrian2026')">🔧 Adrián (Tec. A)</span>
+        <span onclick="autocompletarLogin('yrodriguez', 'Yerison2026')">🔧 Yerison (Tec. A)</span>
+        <span onclick="autocompletarLogin('wpolanco', 'Wander2026')">🔧 Wander (Tec. A)</span>
+        <span onclick="autocompletarLogin('jpacheco', 'Juan2026')">🔧 Juan (Tec. A)</span>
+        <span onclick="autocompletarLogin('aezequiel', 'Anferny2026')">🔧 Anferny (Tec. A)</span>
+        <span onclick="autocompletarLogin('ematos', 'Enmanuel2026')">🔧 Enmanuel (Tec. A)</span>
       </div>
     </div>
-  </header>
+  </div>
 
-  <!-- ================= CONTENEDOR PRINCIPAL ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer">
-    <!-- Vistas dinámicas -->
-  </main>
-
-  <!-- ================= MODALES ================= -->
-  <!-- Modal Login -->
-  <div id="loginModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-      <div class="text-center mb-6">
-        <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3">
-          <svg viewBox="0 0 280 60" class="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
-              <text x="2" y="38" fill="#111827">centr</text>
-            </g>
-            <g transform="translate(103, 9)">
-              <circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" />
-              <line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" />
-            </g>
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5">
-              <text x="138" y="38" fill="#8b1524">xpert</text>
-            </g>
-            <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text>
-            <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
-          </svg>
-        </div>
-        <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3>
-        <p class="text-xs text-slate-400 mt-1">Selecciona tu perfil de acceso para continuar</p>
-      </div>
-
-      <div class="flex border-b border-slate-800 mb-5">
-        <button id="tabLoginTec" onclick="switchLoginTab('tec')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400">
-          <i class="fa-solid fa-hard-hat mr-1.5"></i> Técnico
-        </button>
-        <button id="tabLoginAdmin" onclick="switchLoginTab('admin')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200">
-          <i class="fa-solid fa-user-shield mr-1.5"></i> Coordinación
-        </button>
-      </div>
-
-      <!-- Form Técnico -->
-      <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
+  <!-- CONTENIDO DE LA APLICACIÓN -->
+  <div id="app_wrapper" style="display: none;">
+    <!-- HEADER -->
+    <header>
+      <div class="logo-container">
+        <img src="data:image/png;base64,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" alt="Omegatech Logo" id="header_logo" />
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Asignado</label>
-          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
-            <!-- Cargado por JS -->
+          <div class="system-title">CENTROXPERT & OMEGATECH</div>
+          <div class="system-subtitle">Plataforma Integral de Proyectos, Órdenes Técnicas y Logística</div>
+        </div>
+      </div>
+      <div class="user-bar">
+        <div style="text-align: right;">
+          <div id="user_display_name" style="font-size: 13px; font-weight: 700; color: var(--primary);">Usuario</div>
+          <div id="user_display_role" style="font-size: 11px; color: #666;">Rol</div>
+        </div>
+        <button class="btn btn-green" style="padding: 6px 10px; font-size: 11.5px;" title="Descargar copia de seguridad de todos los datos" onclick="exportarRespaldoTotal()">💾 Respaldar Datos</button>
+        <label class="btn btn-gray" style="padding: 6px 10px; font-size: 11.5px; margin:0;" title="Cargar copia de seguridad sin borrar lo actual">
+          📂 Restaurar
+          <input type="file" accept=".json" style="display:none;" onchange="importarRespaldoTotal(event)" />
+        </label>
+        <button class="btn btn-red" style="padding: 6px 12px; font-size: 12px;" onclick="cerrarSesion()">🚪 Salir</button>
+      </div>
+    </header>
+
+    <!-- NAVEGACIÓN PRINCIPAL -->
+    <nav id="main_nav">
+      <button id="nav_coordinador" class="nav-btn active" onclick="cambiarTab('tab-coordinador', this)">📋 Módulo Coordinador</button>
+      <button id="nav_tecnicos" class="nav-btn" onclick="cambiarTab('tab-tecnicos', this)">🔧 Módulo Técnico & Asignaciones</button>
+      <button id="nav_logistica" class="nav-btn" onclick="cambiarTab('tab-logistica', this)">🚚 Logística, Flota y Equipos</button>
+      <button id="nav_kpi" class="nav-btn" onclick="cambiarTab('tab-kpi', this)">📈 Reportes & KPIs</button>
+      <button id="nav_usuarios" class="nav-btn" onclick="cambiarTab('tab-usuarios', this)">👥 Usuarios & Claves</button>
+    </nav>
+
+    <div class="container">
+
+      <!-- 1. MÓDULO COORDINADOR -->
+      <div id="tab-coordinador" class="tab-content active">
+        <div class="card">
+          <div class="card-header">
+            <h2>Gestión Unificada de Proyectos y Carga de Órdenes</h2>
+            <div class="search-box">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="buscar_proyecto" placeholder="Buscar por ID, nombre, cliente o ubicación..." oninput="filtrarProyectos()" />
+            </div>
+          </div>
+
+          <div class="btn-toolbar">
+            <button class="btn btn-green" onclick="abrirModalProyecto()">+ Nuevo Proyecto</button>
+            <label class="btn btn-orange" style="margin:0;">
+              📄 Subir PDF Orden de Técnico (Extraer Proyecto/Ubicación/Tel)
+              <input type="file" id="input_orden_pdf_coord" accept="application/pdf" style="display:none;" onchange="procesarPDFOrdenCoord(event)" />
+            </label>
+            <button class="btn" onclick="exportarProyectosExcel()">📊 Exportar a Excel</button>
+            <button class="btn btn-red" onclick="exportarProyectosPDF()">📄 Exportar a PDF</button>
+            <label class="btn btn-gray" style="margin:0;">
+              📥 Importar Proyectos (Excel)
+              <input type="file" id="import_proyectos_excel" accept=".xlsx,.xls" style="display:none;" onchange="importarProyectosExcel(event)" />
+            </label>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table id="tabla_proyectos_coord">
+              <thead>
+                <tr>
+                  <th>ID Proyecto / Cliente</th>
+                  <th>Ubicación y Teléfono</th>
+                  <th>Técnico y Tiempos GPS</th>
+                  <th>Levantamiento del Técnico</th>
+                  <th>Cotización Omegatech</th>
+                  <th>Estatus Unificado</th>
+                  <th>Monto Presupuesto</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" id="card_detalle_cotizacion" style="display: none; border-left: 5px solid var(--primary);">
+          <div class="card-header">
+            <h2 id="titulo_detalle_extraido">Resultado de Procesamiento de Documento</h2>
+            <button class="btn btn-gray" onclick="document.getElementById('card_detalle_cotizacion').style.display='none'">Cerrar</button>
+          </div>
+          <div id="info_cotizacion_cuerpo" style="font-size: 13.5px; line-height: 1.6;"></div>
+        </div>
+      </div>
+
+      <!-- 2. MÓDULO TÉCNICO & ASIGNACIONES -->
+      <div id="tab-tecnicos" class="tab-content">
+        
+        <div class="card">
+          <div class="card-header">
+            <h2>📌 Mis Órdenes y Proyectos Asignados</h2>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <label style="margin:0;">Filtrar Técnico:</label>
+              <select id="filtro_tecnico_asignaciones" onchange="renderizarAsignacionesTecnico()">
+                <option value="TODOS">-- Ver Todos --</option>
+              </select>
+            </div>
+          </div>
+          <p style="font-size: 12.5px; color: #555; margin-top: 0;">
+            Selecciona una orden asignada, marca tu llegada/salida vía GPS y sube tu levantamiento en cualquier formato (Foto, PDF, Excel o Word).
+          </p>
+          <div id="contenedor_asignaciones_tecnico"></div>
+        </div>
+      </div>
+
+      <!-- 3. MÓDULO LOGÍSTICA & FLOTA -->
+      <div id="tab-logistica" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h2>Control de Logística, Vehículos y Herramientas</h2>
+          </div>
+          <p style="font-size: 13px; color: #555;">
+            Administra placas de vehículos, asignación de herramientas, materiales e insumos. Edita directamente en la tabla, elimina o importa/exporta en Excel y PDF oficial.
+          </p>
+
+          <div class="btn-toolbar">
+            <button class="btn btn-green" onclick="agregarFilaLogistica()">+ Agregar Fila / Vehículo / Herramienta</button>
+            <button class="btn" onclick="guardarLogisticaStorage()">💾 Guardar Cambios</button>
+            <button class="btn" onclick="exportarLogisticaExcel()">📊 Exportar a Excel</button>
+            <button class="btn btn-red" onclick="exportarLogisticaPDF()">📄 Exportar a PDF Oficial</button>
+            <label class="btn btn-gray" style="margin:0;">
+              📥 Importar de Excel
+              <input type="file" id="import_logistica_excel" accept=".xlsx,.xls" style="display:none;" onchange="importarLogisticaExcel(event)" />
+            </label>
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table id="tabla_logistica">
+              <thead>
+                <tr>
+                  <th style="width: 11%;">Categoría</th>
+                  <th style="width: 10%;">Proyecto</th>
+                  <th style="width: 11%;">Placa Vehículo</th>
+                  <th style="width: 13%;">Técnico / Chofer</th>
+                  <th style="width: 10%;">Código Ítem</th>
+                  <th style="width: 22%;">Descripción / Herramienta / Insumo</th>
+                  <th style="width: 6%;">Cant.</th>
+                  <th style="width: 11%;">Estatus</th>
+                  <th style="width: 6%;">Acción</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. MÓDULO REPORTES & KPIS -->
+      <div id="tab-kpi" class="tab-content">
+        <div class="grid-4" style="margin-bottom: 20px;">
+          <div class="kpi-stat-card">
+            <div class="kpi-title">Proyectos Registrados</div>
+            <div class="kpi-value" id="kpi_total_proyectos">0</div>
+          </div>
+          <div class="kpi-stat-card">
+            <div class="kpi-title">Órdenes / Tareas</div>
+            <div class="kpi-value" id="kpi_total_ordenes">0</div>
+          </div>
+          <div class="kpi-stat-card">
+            <div class="kpi-title">Total Presupuestado</div>
+            <div class="kpi-value" id="kpi_total_cotizado">RD$ 0.00</div>
+          </div>
+          <div class="kpi-stat-card">
+            <div class="kpi-title">Efectividad de Entrega</div>
+            <div class="kpi-value" id="kpi_efectividad">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. MÓDULO USUARIOS & CLAVES -->
+      <div id="tab-usuarios" class="tab-content">
+        <div class="card">
+          <div class="card-header">
+            <h2>Gestión de Accesos, Usuarios y Contraseñas</h2>
+            <button class="btn btn-green" onclick="abrirModalUsuario()">+ Agregar Usuario</button>
+          </div>
+          <div style="overflow-x: auto;">
+            <table id="tabla_usuarios">
+              <thead>
+                <tr>
+                  <th>Nombre Completo</th>
+                  <th>Usuario (Login)</th>
+                  <th>Rol / Perfil</th>
+                  <th>Contraseña</th>
+                  <th>Estatus</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INPUTS OCULTOS DE ARCHIVO -->
+  <input type="file" id="input_cotizacion_pdf" accept="application/pdf" style="display:none;" onchange="procesarArchivoCotizacion(event)" />
+
+  <!-- MODAL CREAR / EDITAR PROYECTO Y ASIGNAR ORDEN -->
+  <div class="modal-overlay" id="modal_proyecto">
+    <div class="modal-content">
+      <h3 id="modal_proyecto_titulo" style="margin-top:0; color:var(--primary);">Nuevo Proyecto / Asignación</h3>
+      <p style="font-size:12px; color:#555;">Si editas el técnico asignado, la orden desaparecerá del panel del técnico anterior y se reasignará automáticamente al nuevo.</p>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>ID / Número de Proyecto:</label>
+          <input type="text" id="m_proy_id" placeholder="Ej: PRJ-6964678" />
+        </div>
+        <div class="form-group">
+          <label>Nombre del Proyecto:</label>
+          <input type="text" id="m_proy_nombre" placeholder="Ej: Diagnóstico Equipos PC" />
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Cliente:</label>
+          <input type="text" id="m_proy_cliente" placeholder="Ej: LIBERTT SRL" />
+        </div>
+        <div class="form-group">
+          <label>Teléfono del Cliente:</label>
+          <input type="text" id="m_proy_telefono" placeholder="Ej: (809) 683-4343" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Ubicación / Dirección del Cliente:</label>
+        <input type="text" id="m_proy_ubicacion" placeholder="Ej: Diamond Mall, Tercera Planta, Local 16" />
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Técnico Asignado:</label>
+          <select id="m_proy_tecnico"></select>
+        </div>
+        <div class="form-group">
+          <label>Estatus General:</label>
+          <select id="m_proy_estatus">
+            <option value="En Espera de Levantamiento">En Espera de Levantamiento</option>
+            <option value="Levantamiento Realizado">Levantamiento Realizado</option>
+            <option value="Listo para Cotización">Listo para Cotización</option>
+            <option value="Cotización Procesada">Cotización Procesada</option>
+            <option value="En Ejecución">En Ejecución</option>
+            <option value="Finalizado">Finalizado</option>
           </select>
         </div>
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Por defecto: 1234)</label>
-          <input type="password" id="loginTecPin" required placeholder="••••" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
-        </div>
-        <button type="submit" class="w-full bg-rose-700 hover:bg-rose-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-rose-900/30">
-          Entrar como Técnico
-        </button>
-      </form>
-
-      <!-- Form Coordinador -->
-      <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinación (admin123)</label>
-          <input type="password" id="loginAdminPass" required placeholder="Clave administrativa" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
-        </div>
-        <button type="submit" class="w-full bg-blue-700 hover:bg-blue-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-blue-900/30">
-          Entrar a Panel Central
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Cambiar PIN -->
-  <div id="pinModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
-      <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-key mr-2 text-rose-400"></i>Cambiar mi PIN</h3>
-      <p class="text-xs text-slate-400 mb-4">Actualiza tu código de acceso para mayor seguridad.</p>
-      
-      <form onsubmit="handleUpdatePin(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">PIN Actual</label>
-          <input type="password" id="currentPin" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Nuevo PIN</label>
-          <input type="password" id="newPin" required maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Confirmar Nuevo PIN</label>
-          <input type="password" id="confirmPin" required maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
-        </div>
-        <div class="flex gap-2 pt-2">
-          <button type="button" onclick="closeModal('pinModal')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs font-semibold">Cancelar</button>
-          <button type="submit" class="flex-1 bg-rose-700 hover:bg-rose-600 text-white py-2 rounded-xl text-xs font-bold">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Levantamiento Técnico / OCR / Tienda -->
-  <div id="surveyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl my-8">
-      <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
-        <div>
-          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-clipboard-list mr-2 text-rose-400"></i>Levantamiento Técnico de Campo</h3>
-          <p class="text-xs text-slate-400" id="surveyProjectTitle">Cargando...</p>
-        </div>
-        <button onclick="closeModal('surveyModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
-
-      <!-- OCR Y DIGITALIZACIÓN -->
-      <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 mb-4">
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-rose-400"><i class="fa-solid fa-camera mr-1.5"></i>Digitalización & OCR de Notas</span>
-          <span class="text-[10px] text-slate-400">Extrae metros y equipos de fotos de notas</span>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg cursor-pointer border border-slate-700 font-medium">
-            <i class="fa-solid fa-file-arrow-up mr-1.5"></i>Subir Foto de Nota
-            <input type="file" accept="image/*" class="hidden" onchange="runOCR(event)">
-          </label>
-          <button onclick="simulateOCRDemo()" class="bg-rose-950/60 border border-rose-800 hover:bg-rose-900/80 text-rose-300 text-xs px-3 py-2 rounded-lg font-medium">
-            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i>Muestra de Levantamiento
-          </button>
-          <div id="ocrStatus" class="text-xs self-center text-slate-400 italic"></div>
-        </div>
-      </div>
-
-      <!-- FORMULARIO DE LEVANTAMIENTO -->
-      <form onsubmit="handleSaveSurvey(event)" class="space-y-4">
-        <input type="hidden" id="surveyProjectId">
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Metros Lineales Estimados</label>
-            <input type="number" id="surveyMeters" placeholder="Ej: 140" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Tipo de Estructura / Cielo</label>
-            <select id="surveyStructure" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
-              <option value="Ductería EMT Existente">Ductería EMT Existente</option>
-              <option value="Cielo Raso / Drywall">Cielo Raso / Drywall</option>
-              <option value="Estructura Abierta / Techo Industrial">Estructura Abierta / Techo Industrial</option>
-              <option value="Zanja Exterior / Soterrado">Zanja Exterior / Soterrado</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-300 mb-1">Condición Eléctrica</label>
-            <select id="surveyPower" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
-              <option value="110V Regulada con UPS">110V Regulada con UPS</option>
-              <option value="110V Sin Respaldo">110V Sin Respaldo</option>
-              <option value="Requiere Acometida Nueva">Requiere Acometida Nueva</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas de Campo</label>
-          <textarea id="surveyNotes" rows="3" placeholder="Detalles de paso de cable, fijación, puntos ciegos..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
-        </div>
-
-        <!-- CONSULTA DIRECTA TIENDA.OMEGA.COM.DO -->
-        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">
-              <i class="fa-solid fa-store mr-1.5"></i>Catálogo tienda.omega.com.do
-            </span>
-            <span class="text-[10px] text-slate-400">Agregar equipos & materiales oficiales con 1 clic</span>
-          </div>
-
-          <div class="flex gap-2 mb-3">
-            <input type="text" id="omegaSearchInput" placeholder="Buscar cámara, switch PoE, cable UTP, UPS..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
-            <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold">Buscar</button>
-          </div>
-
-          <!-- Resultados del catálogo -->
-          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
-            <!-- JS -->
-          </div>
-        </div>
-
-        <!-- ITEMS AGREGADOS AL LEVANTAMIENTO -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <h4 class="text-xs font-bold text-rose-400 uppercase mb-2"><i class="fa-solid fa-video mr-1"></i>Equipos Activos Sugeridos</h4>
-            <div id="surveyEquipList" class="space-y-1.5 text-xs text-slate-300 min-h-[60px]">
-              <span class="text-slate-500 italic text-[11px]">No hay equipos cargados.</span>
-            </div>
-          </div>
-
-          <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
-            <h4 class="text-xs font-bold text-amber-400 uppercase mb-2"><i class="fa-solid fa-boxes-stacked mr-1"></i>Materiales e Insumos</h4>
-            <div id="surveyMaterialList" class="space-y-1.5 text-xs text-slate-300 min-h-[60px]">
-              <span class="text-slate-500 italic text-[11px]">No hay insumos cargados.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
-          <button type="button" onclick="closeModal('surveyModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cerrar</button>
-          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/40">
-            Guardar Levantamiento y Pasar a Presupuesto
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Cargar PDF de Orden de Servicio -->
-  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden CentroXpert</h3>
-        <button onclick="closeModal('pdfModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="border-2 border-dashed border-slate-700 hover:border-rose-500 rounded-2xl p-6 text-center cursor-pointer mb-4 transition" onclick="document.getElementById('pdfInput').click()">
-        <i class="fa-solid fa-cloud-arrow-up text-3xl text-rose-400 mb-2"></i>
-        <div class="text-sm font-semibold text-white">Haz clic para subir la Orden de Servicio en PDF</div>
-        <div class="text-xs text-slate-400 mt-1">Extrae código, cliente, dirección, fecha y técnicos automáticamente</div>
-        <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePDFUpload(event)">
-      </div>
-
-      <div class="text-center">
-        <span class="text-xs text-slate-500 font-medium">¿Deseas probar con el documento de muestra?</span>
-        <button onclick="loadSampleTorreWashington()" class="block mx-auto mt-2 bg-slate-800 hover:bg-slate-700 text-rose-300 border border-slate-700 px-4 py-2 rounded-xl text-xs font-semibold">
-          <i class="fa-solid fa-building mr-1.5"></i>Cargar Muestra: TORRE WASHINGTON.pdf
-        </button>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px;">
+        <button class="btn btn-gray" onclick="document.getElementById('modal_proyecto').style.display='none'">Cancelar</button>
+        <button class="btn btn-green" onclick="guardarModalProyecto()">Guardar Proyecto</button>
       </div>
     </div>
   </div>
 
+  <!-- SCRIPT LÓGICO COMPLETO -->
   <script>
-    /* ===================================================================
-       ESTADO CENTRAL DE LA APLICACIÓN (Persistencia en LocalStorage)
-       =================================================================== */
-    const STORAGE_KEY = 'centroxpert_data_v1';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-    const defaultData = {
-      currentUser: { role: 'admin', name: 'Coordinador General' }, // 'admin' o 'tech'
-      technicians: [
-        { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Av. Las Palmas #45, Herrera', vehiclePlate: 'L428901', pin: '1234' },
-        { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'C/ Duarte #12, Los Alcarrizos', vehiclePlate: 'L389104', pin: '1234' },
-        { id: 'T3', name: 'Carlos Morales', level: 'Especialista A', phone: '849-555-0188', address: 'Villa Mella, Sto Dgo Norte', vehiclePlate: 'L451299', pin: '1234' },
-        { id: 'T4', name: 'Andrés Rivas', level: 'Auxiliar Técnico', phone: '829-555-0176', address: 'Los Mina, Sto Dgo Este', vehiclePlate: '', pin: '1234' },
-        { id: 'T5', name: 'Mario Gómez', level: 'Auxiliar Técnico', phone: '809-555-0122', address: 'Ensanche La Fe, DN', vehiclePlate: '', pin: '1234' }
-      ],
-      vehicles: [
-        { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520, lastFuelKm: 48120 },
-        { id: 'V2', plate: 'L389104', model: 'Nissan Frontier 2019', assignedTo: 'WESLY ALEJANDRO MOJICA', status: 'Operativo', odo: 74210, lastFuelKm: 73800 },
-        { id: 'V3', plate: 'L451299', model: 'Isuzu D-Max 2022', assignedTo: 'Carlos Morales', status: 'Operativo', odo: 31050, lastFuelKm: 30600 },
-        { id: 'V4', plate: 'L290112', model: 'Hyundai H-1 Panel 2018', assignedTo: '', status: 'Operativo', odo: 98400, lastFuelKm: 98000 },
-        { id: 'V5', plate: 'L194020', model: 'Chevrolet Colorado 2017', assignedTo: '', status: 'Mantenimiento', odo: 112000, lastFuelKm: 111500 }
-      ],
-      tools: [
-        { id: 'H1', code: 'TL-01', name: 'Fusionadora de Fibra Óptica Fujikura 70S', assignedTo: 'Enmanuel Matos', condition: 'Excelente', date: '2026-01-15' },
-        { id: 'H2', code: 'TL-02', name: 'Certificador de Red Fluke DSX-5000', assignedTo: 'Carlos Morales', condition: 'Excelente', date: '2026-02-10' },
-        { id: 'H3', code: 'TL-03', name: 'Rotomartillo SDS Plus DeWalt 20V', assignedTo: 'Enmanuel Matos', condition: 'Bueno', date: '2026-03-01' },
-        { id: 'H4', code: 'TL-04', name: 'Escalera Telescópica 24 Pies Aluminio', assignedTo: 'WESLY ALEJANDRO MOJICA', condition: 'Bueno', date: '2026-02-20' },
-        { id: 'H5', code: 'TL-05', name: 'Kit Ponchadora RJ45 / Crimpadora Pro', assignedTo: 'WESLY ALEJANDRO MOJICA', condition: 'Excelente', date: '2026-03-12' },
-        { id: 'H6', code: 'TL-06', name: 'Generador de Tono y Pollo Probe Fluke', assignedTo: '', condition: 'Bueno', date: '2026-01-10' }
-      ],
-      fuelLogs: [
-        { id: 'FL1', date: '2026-10-22', plate: 'L428901', driver: 'Enmanuel Matos', prevKm: 48120, currentKm: 48520, dist: 400, gallons: 16.5, cost: 4800, taskKmEst: 380, dev: '5%' }
-      ],
-      projects: [
-        {
-          id: 'P1',
-          code: 'CX-SGE-2026-005',
-          title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-          serviceType: 'INSTALACIÓN (3255.73)',
-          client: 'CONDOMINIO TORRE WASHINGTON',
-          contact: 'Ana Milagros Guzman (829) 762-8952 / Jadiri Baez (809) 781-1045',
-          address: 'Torre Washington, Av. George Washington (El Malecón), Santo Domingo',
-          plannedDate: '26/10/2026',
-          techLeader: 'Enmanuel Matos',
-          techCrew: ['WESLY ALEJANDRO MOJICA'],
-          status: 'Levantamiento', // Levantamiento, En Presupuesto, Aprobado, En Curso, Finalizado
-          observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR Y PERÍMETRO',
-          survey: {
-            meters: 160,
-            structure: 'Ductería EMT Existente',
-            power: '110V Regulada con UPS',
-            notes: 'Paso por ducto principal del ascensor requiere llave de mantenimiento técnico. Señal estable.',
-            equipment: ['NVR 16 Canales 4K', 'Cámaras IP Antivandálicas 4MP (x4)'],
-            materials: ['2x Rollos UTP Cat6 100% Cobre', 'Cajas de paso 4x4', 'Conectores RJ45']
-          },
-          budget: {
-            approved: false,
-            services: [
-              { concept: 'Horas Hombre Técnicas (Líder + Asistente)', qty: 18, rate: 650, subtotal: 11700 },
-              { concept: 'Viáticos & Dietas de Campo', qty: 2, rate: 600, subtotal: 1200 },
-              { concept: 'Desgaste y Combustible Vehículo (Toyota Hilux)', qty: 1, rate: 1800, subtotal: 1800 }
-            ],
-            materials: [
-              { desc: 'NVR 16 CH 4K AcuSense', qtyEst: 1, qtyReal: 1, unitCost: 18500, subtotal: 18500 },
-              { desc: 'Cámara IP Domo 4MP Antivandálica Hikvision', qtyEst: 4, qtyReal: 4, unitCost: 5200, subtotal: 20800 },
-              { desc: 'Bobina UTP Cat6 305m 100% Cobre Exterior', qtyEst: 1, qtyReal: 1, unitCost: 7900, subtotal: 7900 },
-              { desc: 'Conectores RJ45 Blindados (Funda 50 Und)', qtyEst: 1, qtyReal: 1, unitCost: 850, subtotal: 850 }
-            ]
-          },
-          tracking: {
-            checkIn: '08:15 AM (18.4682, -69.9145)',
-            checkOut: '',
-            hoursWorked: ''
-          }
-        }
-      ]
-    };
+    let proyectos = [];
+    let ordenes = [];
+    let registrosLogistica = [];
+    let usuarios = [];
+    let proyectoIdParaCotizar = null;
 
-    let appData = loadData();
+    window.addEventListener("DOMContentLoaded", () => {
+      cargarDatosStorage();
+      renderizarTodo();
+    });
 
-    function loadData() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try { return JSON.parse(saved); } catch(e) { console.error(e); }
-      }
-      return JSON.parse(JSON.stringify(defaultData));
+    function autocompletarLogin(user, pass) {
+      document.getElementById("login_username").value = user;
+      document.getElementById("login_password").value = pass;
+      iniciarSesion();
     }
 
-    function saveData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-      render();
-    }
+    function iniciarSesion() {
+      const uInput = document.getElementById("login_username").value.trim().toLowerCase();
+      const pInput = document.getElementById("login_password").value.trim();
 
-    /* Catálogo Omega Tech precargado para búsquedas */
-    const omegaProducts = [
-      { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200, priceUS: 86.6 },
-      { sku: 'CAM-HIK-BUL', name: 'Cámara IP Bullet 4MP Hikvision ColorVu Exterior', category: 'Equipos', priceRD: 5650, priceUS: 94.1 },
-      { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', category: 'Equipos', priceRD: 18500, priceUS: 308.3 },
-      { sku: 'NVR-HIK-08CH', name: 'NVR 8 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 12400, priceUS: 206.6 },
-      { sku: 'SW-TEN-16POE', name: 'Switch 16 Puertos Tenda TEG1120P-16-150W Gigabit PoE', category: 'Equipos', priceRD: 11047, priceUS: 184.1 },
-      { sku: 'UPS-FORZA-1K', name: 'UPS Forza NT-1011D 1000VA / 500W con Regulador', category: 'Equipos', priceRD: 3855, priceUS: 64.2 },
-      { sku: 'UPS-APC-2K', name: 'UPS Online APC Smart-UPS 2000VA Rackmount LCD', category: 'Equipos', priceRD: 56555, priceUS: 942.5 },
-      { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', category: 'Materiales', priceRD: 7900, priceUS: 131.6 },
-      { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', category: 'Materiales', priceRD: 850, priceUS: 14.1 },
-      { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada Galvanizado 10 Pies', category: 'Materiales', priceRD: 380, priceUS: 6.3 },
-      { sku: 'CAJ-PASO-44', name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', category: 'Materiales', priceRD: 290, priceUS: 4.8 }
-    ];
-
-    /* ===================================================================
-       CONTROL DE VISTAS Y NAVEGACIÓN
-       =================================================================== */
-    let currentNavTab = 'projects'; // 'projects' o 'logistics' (para admin)
-    let currentLogisticsSubtab = 'vehicles'; // 'vehicles', 'tools', 'fuel', 'staff'
-    let currentTechTab = 'my_tasks'; // 'my_tasks' o 'my_assets'
-
-    function goHome() {
-      render();
-    }
-
-    function switchLoginTab(type) {
-      if (type === 'tec') {
-        document.getElementById('formLoginTec').classList.remove('hidden');
-        document.getElementById('formLoginAdmin').classList.add('hidden');
-        document.getElementById('tabLoginTec').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400';
-        document.getElementById('tabLoginAdmin').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200';
-      } else {
-        document.getElementById('formLoginTec').classList.add('hidden');
-        document.getElementById('formLoginAdmin').classList.remove('hidden');
-        document.getElementById('tabLoginAdmin').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400';
-        document.getElementById('tabLoginTec').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200';
-      }
-    }
-
-    function openModal(id) {
-      document.getElementById(id).classList.remove('hidden');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
-
-    function handleTecLogin(e) {
-      e.preventDefault();
-      const techName = document.getElementById('loginTecSelect').value;
-      const pin = document.getElementById('loginTecPin').value;
-      const tech = appData.technicians.find(t => t.name === techName);
-
-      if (tech && (tech.pin === pin || pin === '1234')) {
-        appData.currentUser = { role: 'tech', name: tech.name, techId: tech.id };
-        closeModal('loginModal');
-        saveData();
-      } else {
-        alert('PIN incorrecto. El PIN por defecto es 1234.');
-      }
-    }
-
-    function handleAdminLogin(e) {
-      e.preventDefault();
-      const pass = document.getElementById('loginAdminPass').value;
-      if (pass === 'admin123') {
-        appData.currentUser = { role: 'admin', name: 'Coordinador General' };
-        closeModal('loginModal');
-        saveData();
-      } else {
-        alert('Clave de Coordinación incorrecta (Usa: admin123)');
-      }
-    }
-
-    function logout() {
-      openModal('loginModal');
-      populateTechSelect();
-    }
-
-    function populateTechSelect() {
-      const select = document.getElementById('loginTecSelect');
-      if (!select) return;
-      select.innerHTML = appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
-    }
-
-    function openPinModal() {
-      document.getElementById('currentPin').value = '';
-      document.getElementById('newPin').value = '';
-      document.getElementById('confirmPin').value = '';
-      openModal('pinModal');
-    }
-
-    function handleUpdatePin(e) {
-      e.preventDefault();
-      const current = document.getElementById('currentPin').value;
-      const newP = document.getElementById('newPin').value;
-      const confirmP = document.getElementById('confirmPin').value;
-
-      if (newP !== confirmP) {
-        alert('El nuevo PIN y su confirmación no coinciden.');
+      if (!uInput || !pInput) {
+        alert("Por favor ingresa tu usuario y contraseña.");
         return;
       }
 
-      const tech = appData.technicians.find(t => t.name === appData.currentUser.name);
-      if (tech) {
-        if (tech.pin !== current && current !== '1234') {
-          alert('El PIN actual es incorrecto.');
-          return;
-        }
-        tech.pin = newP;
-        alert('¡PIN actualizado correctamente!');
-        closeModal('pinModal');
-        saveData();
-      }
-    }
-
-    /* ===================================================================
-       RENDER PRINCIPAL
-       =================================================================== */
-    function render() {
-      renderHeader();
-      const container = document.getElementById('mainContainer');
-
-      if (appData.currentUser.role === 'tech') {
-        container.innerHTML = renderTechView();
-      } else {
-        container.innerHTML = renderAdminView();
-      }
-    }
-
-    function renderHeader() {
-      const actions = document.getElementById('headerUserActions');
-      const isTech = appData.currentUser.role === 'tech';
-
-      actions.innerHTML = `
-        <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
-          <i class="fa-solid ${isTech ? 'fa-hard-hat text-rose-400' : 'fa-user-tie text-blue-400'} text-sm"></i>
-          <div class="text-left leading-tight">
-            <div class="text-xs font-bold text-white">${appData.currentUser.name}</div>
-            <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'Técnico de Campo' : 'Coordinador General'}</div>
-          </div>
-        </div>
-
-        ${isTech ? `
-          <button onclick="openPinModal()" title="Cambiar mi PIN" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-2 rounded-xl border border-slate-700 text-sm">
-            <i class="fa-solid fa-key"></i>
-          </button>
-        ` : ''}
-
-        <button onclick="logout()" title="Cambiar de usuario o salir" class="bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 p-2 rounded-xl border border-slate-700 text-sm">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </button>
-      `;
-    }
-
-    /* ===================================================================
-       VISTA DEL TÉCNICO
-       =================================================================== */
-    function renderTechView() {
-      const myTechName = appData.currentUser.name;
-      const myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
-      const myVehicle = appData.vehicles.find(v => v.assignedTo === myTechName);
-      const myTools = appData.tools.filter(t => t.assignedTo === myTechName);
-
-      return `
-        <div class="space-y-6">
-          <!-- Pestañas del Técnico -->
-          <div class="flex border-b border-slate-800">
-            <button onclick="setTechTab('my_tasks')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_tasks' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}">
-              <i class="fa-solid fa-list-check mr-2"></i>Mis Tareas y Órdenes (${myProjects.length})
-            </button>
-            <button onclick="setTechTab('my_assets')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_assets' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}">
-              <i class="fa-solid fa-truck-pickup mr-2"></i>Mis Activos Asignados
-            </button>
-          </div>
-
-          ${currentTechTab === 'my_tasks' ? `
-            <div class="space-y-4">
-              ${myProjects.length === 0 ? `
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
-                  <i class="fa-solid fa-clipboard-check text-4xl text-slate-600 mb-3"></i>
-                  <p class="font-semibold text-white">No tienes órdenes pendientes asignadas actualmente.</p>
-                  <p class="text-xs text-slate-500 mt-1">El coordinador te asignará nuevos servicios en cuanto estén programados.</p>
-                </div>
-              ` : myProjects.map(p => `
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                    <div>
-                      <span class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">${p.code}</span>
-                      <h3 class="text-base font-bold text-white mt-1">${p.title}</h3>
-                      <div class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-user-tag mr-1 text-slate-500"></i>${p.client}</div>
-                    </div>
-                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
-                  </div>
-
-                  <!-- Datos de Dirección y Contacto -->
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
-                    <div>
-                      <div class="text-slate-400 font-medium"><i class="fa-solid fa-location-dot mr-1.5 text-rose-500"></i>Ubicación:</div>
-                      <div class="text-white font-medium mt-0.5">${p.address}</div>
-                    </div>
-                    <div>
-                      <div class="text-slate-400 font-medium"><i class="fa-solid fa-phone mr-1.5 text-emerald-400"></i>Contacto:</div>
-                      <div class="text-white font-medium mt-0.5">${p.contact}</div>
-                    </div>
-                  </div>
-
-                  <!-- Botones de Acción Inmediata: Mapa & Registro GPS -->
-                  <div class="flex flex-wrap gap-2 pt-1">
-                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}" target="_blank" class="flex-1 min-w-[140px] bg-emerald-800/80 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-xl text-xs text-center border border-emerald-700/50 flex items-center justify-center gap-1.5 shadow">
-                      <i class="fa-solid fa-diamond-turn-right"></i> Ir con Mapa GPS
-                    </a>
-
-                    <button onclick="registerTechArrival('${p.id}')" class="flex-1 min-w-[140px] bg-blue-800/80 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-700/50 shadow">
-                      <i class="fa-solid fa-location-crosshairs"></i> Marcar Llegada
-                    </button>
-
-                    <button onclick="registerTechDeparture('${p.id}')" class="flex-1 min-w-[140px] bg-amber-800/80 hover:bg-amber-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-amber-700/50 shadow">
-                      <i class="fa-solid fa-flag-checkered"></i> Marcar Salida
-                    </button>
-
-                    <button onclick="openSurveyModal('${p.id}')" class="flex-1 min-w-[140px] bg-rose-800 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-rose-700 shadow">
-                      <i class="fa-solid fa-clipboard-check"></i> Cargar Levantamiento
-                    </button>
-                  </div>
-
-                  <!-- Historial de Marcajes -->
-                  ${p.tracking && p.tracking.checkIn ? `
-                    <div class="text-[11px] text-slate-400 bg-slate-800/50 p-2.5 rounded-lg flex items-center justify-between border border-slate-700">
-                      <div><span class="text-emerald-400 font-bold">Llegada:</span> ${p.tracking.checkIn}</div>
-                      ${p.tracking.checkOut ? `<div><span class="text-amber-400 font-bold">Salida:</span> ${p.tracking.checkOut}</div>` : `<span class="text-rose-400 italic">En sitio actualmente</span>`}
-                      ${p.tracking.hoursWorked ? `<div class="font-bold text-white"><i class="fa-regular fa-clock mr-1"></i>${p.tracking.hoursWorked}</div>` : ''}
-                    </div>
-                  ` : ''}
-                </div>
-              `).join('')}
-            </div>
-          ` : `
-            <!-- Mis Activos Asignados -->
-            <div class="space-y-6">
-              <!-- Vehículo -->
-              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <i class="fa-solid fa-truck-pickup text-rose-400"></i> Vehículo Asignado a mi Cargo
-                </h3>
-                ${myVehicle ? `
-                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                    <div>
-                      <div class="text-slate-400 text-xs">Placa Oficial</div>
-                      <div class="text-lg font-black text-white font-mono mt-0.5">${myVehicle.plate}</div>
-                    </div>
-                    <div>
-                      <div class="text-slate-400 text-xs">Marca & Modelo</div>
-                      <div class="text-sm font-bold text-white mt-0.5">${myVehicle.model}</div>
-                    </div>
-                    <div>
-                      <div class="text-slate-400 text-xs">Odómetro Actual</div>
-                      <div class="text-sm font-bold text-emerald-400 font-mono mt-0.5">${myVehicle.odo.toLocaleString()} KM</div>
-                    </div>
-                    <div>
-                      <div class="text-slate-400 text-xs">Estatus Mecánico</div>
-                      <span class="inline-block mt-0.5 text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800 font-bold">${myVehicle.status}</span>
-                    </div>
-                  </div>
-                ` : `
-                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">
-                    Actualmente no tienes un vehículo corporativo asignado individualmente.
-                  </div>
-                `}
-              </div>
-
-              <!-- Herramientas -->
-              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <i class="fa-solid fa-toolbox text-amber-400"></i> Herramientas y Equipos en Custodia (${myTools.length})
-                </h3>
-                ${myTools.length > 0 ? `
-                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    ${myTools.map(t => `
-                      <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                        <div class="flex justify-between items-center">
-                          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-900/50">${t.code}</span>
-                          <span class="text-[10px] text-slate-400 font-medium">${t.condition}</span>
-                        </div>
-                        <div class="text-xs font-bold text-white">${t.name}</div>
-                        <div class="text-[10px] text-slate-500">Recibido: ${t.date}</div>
-                      </div>
-                    `).join('')}
-                  </div>
-                ` : `
-                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">
-                    No tienes herramientas de alto valor registradas a tu cargo directo.
-                  </div>
-                `}
-              </div>
-            </div>
-          `}
-        </div>
-      `;
-    }
-
-    function setTechTab(tab) {
-      currentTechTab = tab;
-      render();
-    }
-
-    /* ===================================================================
-       VISTA DEL COORDINADOR (PANEL GENERAL)
-       =================================================================== */
-    function renderAdminView() {
-      const availVehicles = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
-
-      return `
-        <div class="space-y-6">
-          <!-- Métricas Superiores -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">Total Proyectos</div>
-              <div class="text-2xl font-black text-white mt-1">${appData.projects.length}</div>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">En Levantamiento</div>
-              <div class="text-2xl font-black text-rose-400 mt-1">${appData.projects.filter(p => p.status === 'Levantamiento').length}</div>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">Vehículos Libres</div>
-              <div class="text-2xl font-black text-emerald-400 mt-1">${availVehicles}</div>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">Técnicos Activos</div>
-              <div class="text-2xl font-black text-blue-400 mt-1">${appData.technicians.length}</div>
-            </div>
-          </div>
-
-          <!-- Pestañas de Coordinación -->
-          <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
-            <div class="flex gap-2">
-              <button onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-diagram-project mr-1.5"></i> Proyectos & Presupuestos
-              </button>
-              <button onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Logística & Activos
-              </button>
-            </div>
-
-            ${currentNavTab === 'projects' ? `
-              <button onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 border border-rose-700 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
-                <i class="fa-solid fa-file-pdf"></i> Importar Orden PDF
-              </button>
-            ` : ''}
-          </div>
-
-          <!-- Contenido de Proyectos o Logística -->
-          ${currentNavTab === 'projects' ? renderAdminProjects() : renderAdminLogistics()}
-        </div>
-      `;
-    }
-
-    function setNavTab(tab) {
-      currentNavTab = tab;
-      render();
-    }
-
-    function renderAdminProjects() {
-      return `
-        <div class="space-y-4">
-          <div class="grid grid-cols-1 gap-4">
-            ${appData.projects.map(p => `
-              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                  <div>
-                    <div class="flex items-center gap-2">
-                      <span class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">${p.code}</span>
-                      <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
-                    </div>
-                    <h3 class="text-base font-bold text-white mt-1">${p.title}</h3>
-                    <div class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-building mr-1"></i>${p.client} — <span class="text-slate-300">${p.serviceType}</span></div>
-                  </div>
-
-                  <div class="text-right">
-                    <div class="text-xs text-slate-400">Responsable:</div>
-                    <div class="text-xs font-bold text-rose-400">${p.techLeader}</div>
-                    <div class="text-[10px] text-slate-500">Cuadrilla: ${p.techCrew.join(', ') || 'N/A'}</div>
-                  </div>
-                </div>
-
-                <!-- Detalle de Dirección y Notas -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
-                  <div>
-                    <span class="text-slate-400 font-medium">Ubicación & Contactos:</span>
-                    <p class="text-white font-medium mt-0.5">${p.address}</p>
-                    <p class="text-slate-400 mt-0.5">${p.contact}</p>
-                  </div>
-                  <div>
-                    <span class="text-slate-400 font-medium">Levantamiento Realizado:</span>
-                    ${p.survey && p.survey.meters ? `
-                      <p class="text-emerald-400 font-bold mt-0.5">${p.survey.meters} metros lineales (${p.survey.structure})</p>
-                      <p class="text-slate-300 mt-0.5">${p.survey.notes}</p>
-                    ` : `
-                      <p class="text-slate-500 italic mt-0.5">Pendiente de levantamiento por el técnico.</p>
-                    `}
-                  </div>
-                </div>
-
-                <!-- Presupuesto Resumen -->
-                ${renderBudgetSection(p)}
-
-                <!-- Acciones del Proyecto -->
-                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
-                  <div class="flex gap-2">
-                    <button onclick="changeProjectStatus('${p.id}', 'Levantamiento')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">Levantamiento</button>
-                    <button onclick="changeProjectStatus('${p.id}', 'En Presupuesto')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">En Presupuesto</button>
-                    <button onclick="changeProjectStatus('${p.id}', 'Aprobado')" class="text-[11px] bg-emerald-950 border border-emerald-800 hover:bg-emerald-900 px-2.5 py-1 rounded-lg text-emerald-300 font-bold">Aprobar</button>
-                    <button onclick="changeProjectStatus('${p.id}', 'En Curso')" class="text-[11px] bg-blue-950 border border-blue-800 hover:bg-blue-900 px-2.5 py-1 rounded-lg text-blue-300">En Curso</button>
-                    <button onclick="changeProjectStatus('${p.id}', 'Finalizado')" class="text-[11px] bg-purple-950 border border-purple-800 hover:bg-purple-900 px-2.5 py-1 rounded-lg text-purple-300">Finalizado</button>
-                  </div>
-
-                  <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}" target="_blank" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700">
-                    <i class="fa-solid fa-map-location-dot mr-1"></i>Ver en Mapa
-                  </a>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    function renderBudgetSection(p) {
-      if (!p.budget) return '';
-      const totalServices = p.budget.services.reduce((a, c) => a + c.subtotal, 0);
-      const totalMaterials = p.budget.materials.reduce((a, c) => a + c.subtotal, 0);
-      const grandTotal = totalServices + totalMaterials;
-
-      return `
-        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 space-y-3">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-            <div class="text-xs font-bold uppercase tracking-wider text-rose-400">
-              <i class="fa-solid fa-calculator mr-1.5"></i>Presupuesto del Proyecto (Servicios Profesionales & Materiales)
-            </div>
-            <div class="text-sm font-black text-emerald-400">Total: RD$ ${grandTotal.toLocaleString()}</div>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <!-- Servicios Profesionales -->
-            <div>
-              <div class="font-bold text-slate-300 mb-1.5 flex justify-between">
-                <span>Servicios (Horas Hombre, Viáticos, Vehículo)</span>
-                <span class="text-slate-400">RD$ ${totalServices.toLocaleString()}</span>
-              </div>
-              <div class="space-y-1">
-                ${p.budget.services.map(s => `
-                  <div class="flex justify-between text-slate-400 text-[11px]">
-                    <span>${s.concept} (${s.qty})</span>
-                    <span class="text-slate-300 font-mono">RD$ ${s.subtotal.toLocaleString()}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-
-            <!-- Materiales -->
-            <div>
-              <div class="font-bold text-slate-300 mb-1.5 flex justify-between">
-                <span>Equipos & Materiales Registrados</span>
-                <span class="text-slate-400">RD$ ${totalMaterials.toLocaleString()}</span>
-              </div>
-              <div class="space-y-1">
-                ${p.budget.materials.map(m => `
-                  <div class="flex justify-between text-slate-400 text-[11px]">
-                    <span class="truncate mr-2">${m.desc} (x${m.qtyReal})</span>
-                    <span class="text-slate-300 font-mono whitespace-nowrap">RD$ ${m.subtotal.toLocaleString()}</span>
-                  </div>
-                `).join('')}
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    /* ===================================================================
-       MÓDULO DE LOGÍSTICA
-       =================================================================== */
-    function renderAdminLogistics() {
-      return `
-        <div class="space-y-4">
-          <!-- Sub-pestañas de Logística -->
-          <div class="flex border-b border-slate-800">
-            <button onclick="setLogisticsSubtab('vehicles')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'vehicles' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-              <i class="fa-solid fa-truck-pickup mr-1.5"></i> Flotilla de Vehículos
-            </button>
-            <button onclick="setLogisticsSubtab('fuel')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'fuel' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-              <i class="fa-solid fa-gas-pump mr-1.5"></i> Control de Combustible
-            </button>
-            <button onclick="setLogisticsSubtab('staff')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'staff' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-              <i class="fa-solid fa-users-gear mr-1.5"></i> Personal Técnico
-            </button>
-            <button onclick="setLogisticsSubtab('tools')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'tools' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
-              <i class="fa-solid fa-toolbox mr-1.5"></i> Herramientas y Equipos
-            </button>
-          </div>
-
-          ${currentLogisticsSubtab === 'vehicles' ? renderVehiclesLogistics() : ''}
-          ${currentLogisticsSubtab === 'fuel' ? renderFuelLogistics() : ''}
-          ${currentLogisticsSubtab === 'staff' ? renderStaffLogistics() : ''}
-          ${currentLogisticsSubtab === 'tools' ? renderToolsLogistics() : ''}
-        </div>
-      `;
-    }
-
-    function setLogisticsSubtab(subtab) {
-      currentLogisticsSubtab = subtab;
-      render();
-    }
-
-    function renderVehiclesLogistics() {
-      const avail = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
-      const assigned = appData.vehicles.filter(v => v.status === 'Operativo' && v.assignedTo).length;
-      const maint = appData.vehicles.filter(v => v.status === 'Mantenimiento').length;
-
-      return `
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <div class="flex items-center gap-3">
-              <span class="text-xs bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
-                <i class="fa-solid fa-circle-check mr-1"></i>Disponibles: ${avail}
-              </span>
-              <span class="text-xs bg-blue-950/80 text-blue-400 border border-blue-800 px-3 py-1 rounded-xl font-bold">
-                <i class="fa-solid fa-truck-moving mr-1"></i>En Ruta: ${assigned}
-              </span>
-              <span class="text-xs bg-amber-950/80 text-amber-400 border border-amber-800 px-3 py-1 rounded-xl font-bold">
-                <i class="fa-solid fa-wrench mr-1"></i>Taller: ${maint}
-              </span>
-            </div>
-            <button onclick="promptNewVehicle()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
-              <i class="fa-solid fa-plus mr-1"></i>Registrar Vehículo
-            </button>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Placa</th>
-                  <th class="p-3">Modelo</th>
-                  <th class="p-3">Odómetro</th>
-                  <th class="p-3">Técnico Custodio</th>
-                  <th class="p-3">Estatus</th>
-                  <th class="p-3 text-right">Acción</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.vehicles.map(v => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-mono font-bold text-white">${v.plate}</td>
-                    <td class="p-3 text-slate-300">${v.model}</td>
-                    <td class="p-3 font-mono text-emerald-400">${v.odo.toLocaleString()} KM</td>
-                    <td class="p-3 font-bold ${v.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${v.assignedTo || 'Sin asignar'}</td>
-                    <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-full font-semibold ${v.status === 'Operativo' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${v.status}</span>
-                    </td>
-                    <td class="p-3 text-right">
-                      <button onclick="assignVehiclePrompt('${v.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">Asignar</button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderFuelLogistics() {
-      return `
-        <div class="space-y-4">
-          <!-- Formulario de Recarga -->
-          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow">
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-gas-pump text-rose-400"></i> Registrar Carga de Combustible & Cálculo de Desvío GPS
-            </h3>
-
-            <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Vehículo / Placa</label>
-                <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-                  ${appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model}</option>`).join('')}
-                </select>
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Odómetro Anterior</label>
-                <input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 font-mono">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Nuevo Odómetro (KM)</label>
-                <input type="number" id="fuelCurrentKm" required placeholder="KM Actual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Galones Suministrados</label>
-                <input type="number" step="0.1" id="fuelGallons" required placeholder="Galones" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Monto Total (RD$)</label>
-                <input type="number" id="fuelCost" required placeholder="RD$" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
-              </div>
-              <div class="md:col-span-5 flex justify-end">
-                <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-rose-900/30">
-                  <i class="fa-solid fa-calculator mr-1"></i>Calcular Rendimiento & Guardar
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <!-- Tabla de Historial -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-slate-300">
-              Historial de Consumo & Comparativa con Tareas Asignadas (GPS)
-            </div>
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/50 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Fecha</th>
-                  <th class="p-3">Vehículo / Conductor</th>
-                  <th class="p-3">Recorrido Real</th>
-                  <th class="p-3">Galones / Costo</th>
-                  <th class="p-3">Rendimiento</th>
-                  <th class="p-3">Ruta Estimada (GPS)</th>
-                  <th class="p-3">Desvío</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.fuelLogs.map(l => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 text-slate-400">${l.date}</td>
-                    <td class="p-3"><span class="font-bold text-white">${l.plate}</span> <span class="text-slate-400">(${l.driver})</span></td>
-                    <td class="p-3 font-mono text-emerald-400 font-bold">${l.dist} KM</td>
-                    <td class="p-3">${l.gallons} gal / RD$ ${l.cost.toLocaleString()}</td>
-                    <td class="p-3 font-semibold text-slate-200">${(l.dist / l.gallons).toFixed(1)} km/gal</td>
-                    <td class="p-3 font-mono text-slate-400">${l.taskKmEst} KM</td>
-                    <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-full font-bold ${l.dev.startsWith('-') || parseInt(l.dev) < 15 ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'}">${l.dev}</span>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderStaffLogistics() {
-      const specA = appData.technicians.filter(t => t.level === 'Especialista A').length;
-      const specB = appData.technicians.filter(t => t.level === 'Especialista B').length;
-      const aux = appData.technicians.filter(t => t.level === 'Auxiliar Técnico').length;
-
-      return `
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <div class="flex items-center gap-3">
-              <span class="text-xs bg-purple-950/80 text-purple-300 border border-purple-800 px-3 py-1 rounded-xl font-bold">
-                Especialistas A: ${specA}
-              </span>
-              <span class="text-xs bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1 rounded-xl font-bold">
-                Especialistas B: ${specB}
-              </span>
-              <span class="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
-                Auxiliares: ${aux}
-              </span>
-            </div>
-            <button onclick="promptNewTechnician()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
-              <i class="fa-solid fa-user-plus mr-1"></i>Registrar Técnico
-            </button>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Nombre</th>
-                  <th class="p-3">Nivel / Rango</th>
-                  <th class="p-3">Teléfono</th>
-                  <th class="p-3">Dirección de Vivienda</th>
-                  <th class="p-3">Vehículo Asignado</th>
-                  <th class="p-3 text-right">Acción</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.technicians.map(t => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-bold text-white">${t.name}</td>
-                    <td class="p-3">
-                      <span class="px-2 py-0.5 rounded-full font-bold text-[11px] ${
-                        t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
-                        t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
-                        'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                      }">${t.level}</span>
-                    </td>
-                    <td class="p-3 text-emerald-400 font-mono"><a href="tel:${t.phone}"><i class="fa-solid fa-phone mr-1"></i>${t.phone}</a></td>
-                    <td class="p-3 text-slate-300 max-w-xs truncate">${t.address}</td>
-                    <td class="p-3 font-bold ${t.vehiclePlate ? 'text-amber-400' : 'text-slate-500 italic'}">${t.vehiclePlate || 'Sin vehículo'}</td>
-                    <td class="p-3 text-right">
-                      <button onclick="editTechVehicle('${t.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">Asignar Auto</button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderToolsLogistics() {
-      return `
-        <div class="space-y-4">
-          <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-            <span class="text-xs text-slate-300 font-bold">Total Equipos de Medición & Herramientas: ${appData.tools.length}</span>
-            <button onclick="promptNewTool()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
-              <i class="fa-solid fa-plus mr-1"></i>Registrar Herramienta
-            </button>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                <tr>
-                  <th class="p-3">Código</th>
-                  <th class="p-3">Descripción de Herramienta</th>
-                  <th class="p-3">Custodio Actual</th>
-                  <th class="p-3">Condición</th>
-                  <th class="p-3 text-right">Acción</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.tools.map(t => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-3 font-mono font-bold text-amber-400">${t.code}</td>
-                    <td class="p-3 text-white font-medium">${t.name}</td>
-                    <td class="p-3 font-bold ${t.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${t.assignedTo || 'En Almacén'}</td>
-                    <td class="p-3 text-slate-300">${t.condition}</td>
-                    <td class="p-3 text-right">
-                      <button onclick="assignToolPrompt('${t.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">Custodia</button>
-                    </td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-    }
-
-    /* ===================================================================
-       UTILIDADES & HELPERS
-       =================================================================== */
-    function getStatusBadge(status) {
-      switch(status) {
-        case 'Levantamiento': return 'bg-amber-950 text-amber-300 border border-amber-800';
-        case 'En Presupuesto': return 'bg-blue-950 text-blue-300 border border-blue-800';
-        case 'Aprobado': return 'bg-emerald-950 text-emerald-300 border border-emerald-800';
-        case 'En Curso': return 'bg-indigo-950 text-indigo-300 border border-indigo-800';
-        case 'Finalizado': return 'bg-purple-950 text-purple-300 border border-purple-800';
-        default: return 'bg-slate-800 text-slate-300';
-      }
-    }
-
-    function changeProjectStatus(id, newStatus) {
-      const p = appData.projects.find(item => item.id === id);
-      if (p) {
-        p.status = newStatus;
-        if (newStatus === 'Aprobado' && p.budget) {
-          p.budget.approved = true;
-        }
-        saveData();
-      }
-    }
-
-    function registerTechArrival(projectId) {
-      const p = appData.projects.find(item => item.id === projectId);
-      if (!p) return;
-
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          pos => {
-            const lat = pos.coords.latitude.toFixed(4);
-            const lng = pos.coords.longitude.toFixed(4);
-            p.tracking.checkIn = `${timeStr} (${lat}, ${lng})`;
-            p.status = 'En Curso';
-            saveData();
-            alert(`Llegada registrada exitosamente a las ${timeStr} en coordenadas [${lat}, ${lng}].`);
-          },
-          err => {
-            p.tracking.checkIn = `${timeStr} (GPS no disponible)`;
-            p.status = 'En Curso';
-            saveData();
-            alert(`Llegada registrada a las ${timeStr}.`);
-          }
-        );
-      } else {
-        p.tracking.checkIn = `${timeStr}`;
-        p.status = 'En Curso';
-        saveData();
-        alert(`Llegada registrada a las ${timeStr}.`);
-      }
-    }
-
-    function registerTechDeparture(projectId) {
-      const p = appData.projects.find(item => item.id === projectId);
-      if (!p) return;
-
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      p.tracking.checkOut = `${timeStr}`;
-      p.tracking.hoursWorked = '8h 30m en sitio';
-      saveData();
-      alert(`Salida registrada a las ${timeStr}. Jornada completada.`);
-    }
-
-    /* ===================================================================
-       MODAL DE LEVANTAMIENTO & TIENDA.OMEGA.COM.DO
-       =================================================================== */
-    let currentSurveyProjectId = null;
-    let tempSurveyEquip = [];
-    let tempSurveyMaterials = [];
-
-    function openSurveyModal(id) {
-      currentSurveyProjectId = id;
-      const p = appData.projects.find(item => item.id === id);
-      if (!p) return;
-
-      document.getElementById('surveyProjectId').value = id;
-      document.getElementById('surveyProjectTitle').innerText = `${p.code} - ${p.title}`;
-      document.getElementById('surveyMeters').value = p.survey ? p.survey.meters : '';
-      document.getElementById('surveyStructure').value = p.survey ? p.survey.structure : 'Ductería EMT Existente';
-      document.getElementById('surveyNotes').value = p.survey ? p.survey.notes : '';
-
-      tempSurveyEquip = p.survey && p.survey.equipment ? [...p.survey.equipment] : [];
-      tempSurveyMaterials = p.survey && p.survey.materials ? [...p.survey.materials] : [];
-      renderSurveyLists();
-
-      searchOmegaCatalog(); // Cargar productos
-      openModal('surveyModal');
-    }
-
-    function renderSurveyLists() {
-      const equipBox = document.getElementById('surveyEquipList');
-      const matBox = document.getElementById('surveyMaterialList');
-
-      equipBox.innerHTML = tempSurveyEquip.length ? tempSurveyEquip.map((e, idx) => `
-        <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
-          <span>${e}</span>
-          <button type="button" onclick="removeSurveyItem('equip', ${idx})" class="text-rose-400 hover:text-white">&times;</button>
-        </div>
-      `).join('') : '<span class="text-slate-500 italic text-[11px]">No hay equipos cargados.</span>';
-
-      matBox.innerHTML = tempSurveyMaterials.length ? tempSurveyMaterials.map((m, idx) => `
-        <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
-          <span>${m}</span>
-          <button type="button" onclick="removeSurveyItem('mat', ${idx})" class="text-rose-400 hover:text-white">&times;</button>
-        </div>
-      `).join('') : '<span class="text-slate-500 italic text-[11px]">No hay insumos cargados.</span>';
-    }
-
-    function removeSurveyItem(type, idx) {
-      if (type === 'equip') tempSurveyEquip.splice(idx, 1);
-      else tempSurveyMaterials.splice(idx, 1);
-      renderSurveyLists();
-    }
-
-    function searchOmegaCatalog() {
-      const q = (document.getElementById('omegaSearchInput').value || '').toLowerCase();
-      const results = omegaProducts.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
-      const box = document.getElementById('omegaResults');
-
-      box.innerHTML = results.map(r => `
-        <div class="bg-slate-900 border border-slate-800 p-2 rounded-lg flex items-center justify-between text-xs">
-          <div class="truncate mr-2">
-            <div class="font-bold text-white truncate">${r.name}</div>
-            <div class="text-[10px] text-slate-400 font-mono">SKU: ${r.sku} • RD$ ${r.priceRD.toLocaleString()}</div>
-          </div>
-          <button type="button" onclick="addOmegaToSurvey('${r.sku}')" class="bg-blue-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap">
-            + Agregar
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function addOmegaToSurvey(sku) {
-      const prod = omegaProducts.find(p => p.sku === sku);
-      if (!prod) return;
-
-      if (prod.category === 'Equipos') {
-        tempSurveyEquip.push(prod.name);
-      } else {
-        tempSurveyMaterials.push(prod.name);
-      }
-      renderSurveyLists();
-    }
-
-    function simulateOCRDemo() {
-      document.getElementById('ocrStatus').innerText = 'Analizando nota técnica...';
-      setTimeout(() => {
-        document.getElementById('surveyMeters').value = '185';
-        document.getElementById('surveyStructure').value = 'Cielo Raso / Drywall';
-        document.getElementById('surveyNotes').value = 'Nota digitalizada: Se requieren 4 cámaras antivandálicas en pasillo y elevador. Distancia total 185 metros con cruce por techo falso. Enlace eléctrico estable.';
-        tempSurveyEquip.push('Cámara IP Domo 4MP Hikvision Antivandálica IR30m (x4)');
-        tempSurveyMaterials.push('Bobina UTP Cat6 305m 100% Cobre Exterior');
-        renderSurveyLists();
-        document.getElementById('ocrStatus').innerText = '¡Extracción completada!';
-      }, 700);
-    }
-
-    function runOCR(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      document.getElementById('ocrStatus').innerText = 'Procesando imagen con OCR...';
+      const usuariosPorDefecto = [
+        { nombre: "Wilson García Beltré", username: "wgarcia", rol: "Coordinador General", clave: "Centroxpert2026*", estado: "Activo" },
+        { nombre: "Orlanda Vásquez", username: "ovasquez", rol: "Coordinador", clave: "Orlanda2026", estado: "Activo" },
+        { nombre: "Cristal Adames", username: "cadames", rol: "Coordinador", clave: "Cristal2026", estado: "Activo" },
+        { nombre: "Adrián Marizán", username: "amarizan", rol: "Técnico Especialista A", clave: "Adrian2026", estado: "Activo" },
+        { nombre: "Yerison Rodríguez", username: "yrodriguez", rol: "Técnico Especialista A", clave: "Yerison2026", estado: "Activo" },
+        { nombre: "Wander Polanco", username: "wpolanco", rol: "Técnico Especialista A", clave: "Wander2026", estado: "Activo" },
+        { nombre: "Juan Pacheco", username: "jpacheco", rol: "Técnico Especialista A", clave: "Juan2026", estado: "Activo" },
+        { nombre: "Anferny Ezequiel", username: "aezequiel", rol: "Técnico Especialista A", clave: "Anferny2026", estado: "Activo" },
+        { nombre: "Enmanuel Matos", username: "ematos", rol: "Técnico Especialista A", clave: "Enmanuel2026", estado: "Activo" }
+      ];
       
-      Tesseract.recognize(file, 'spa')
-        .then(({ data: { text } }) => {
-          document.getElementById('surveyNotes').value += `\n[OCR]: ` + text.trim();
-          document.getElementById('ocrStatus').innerText = 'Texto extraído correctamente.';
-        })
-        .catch(err => {
-          document.getElementById('ocrStatus').innerText = 'Error al procesar OCR.';
+      if (!Array.isArray(usuarios) || usuarios.length === 0) {
+        usuarios = usuariosPorDefecto;
+      } else {
+        usuariosPorDefecto.forEach(ud => {
+          if (!usuarios.find(u => u.username === ud.username)) usuarios.push(ud);
         });
+      }
+
+      let userObj = usuarios.find(u => (u.username.toLowerCase() === uInput || u.nombre.toLowerCase() === uInput) && u.clave === pInput);
+      
+      if (!userObj) {
+        alert("Usuario o contraseña incorrectos.");
+        return;
+      }
+
+      window.usuarioActual = userObj;
+      document.getElementById("login_screen").style.display = "none";
+      document.getElementById("app_wrapper").style.display = "block";
+      document.getElementById("user_display_name").textContent = userObj.nombre;
+      document.getElementById("user_display_role").textContent = userObj.rol;
+
+      configurarVistaPorRol();
     }
 
-    function handleSaveSurvey(e) {
-      e.preventDefault();
-      const p = appData.projects.find(item => item.id === currentSurveyProjectId);
-      if (!p) return;
-
-      p.survey = {
-        meters: parseInt(document.getElementById('surveyMeters').value) || 0,
-        structure: document.getElementById('surveyStructure').value,
-        power: document.getElementById('surveyPower').value,
-        notes: document.getElementById('surveyNotes').value,
-        equipment: [...tempSurveyEquip],
-        materials: [...tempSurveyMaterials]
-      };
-
-      p.status = 'En Presupuesto';
-      closeModal('surveyModal');
-      saveData();
-      alert('¡Levantamiento guardado y proyecto transferido a etapa de Presupuesto!');
+    function cerrarSesion() {
+      window.usuarioActual = null;
+      document.getElementById("login_password").value = "";
+      document.getElementById("app_wrapper").style.display = "none";
+      document.getElementById("login_screen").style.display = "flex";
     }
 
-    /* ===================================================================
-       IMPORTADOR PDF CENTROXPERT
-       =================================================================== */
-    function loadSampleTorreWashington() {
-      const newProj = {
-        id: 'P_' + Date.now(),
-        code: 'CX-SGE-2026-005',
-        title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-        serviceType: 'INSTALACIÓN (3255.73)',
-        client: 'CONDOMINIO TORRE WASHINGTON',
-        contact: 'Ana Milagros Guzman +1 (829) 762-8952 / Jadiri Baez (809) 781-1045',
-        address: 'Torre Washington en el malecom, Santo Domingo',
-        plannedDate: '26/10/2026',
-        techLeader: 'Enmanuel Matos',
-        techCrew: ['WESLY ALEJANDRO MOJICA'],
-        status: 'Levantamiento',
-        observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
-        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', equipment: [], materials: [] },
-        budget: {
-          approved: false,
-          services: [{ concept: 'Horas Hombre Técnicas (Líder + Cuadrilla)', qty: 16, rate: 650, subtotal: 10400 }],
-          materials: []
-        },
-        tracking: { checkIn: '', checkOut: '', hoursWorked: '' }
-      };
-
-      appData.projects.unshift(newProj);
-      closeModal('pdfModal');
-      saveData();
-      alert('¡Orden de Torre Washington importada exitosamente!');
+    function configurarVistaPorRol() {
+      poblarSelectTecnicos();
+      if (window.usuarioActual.rol.includes("Técnico")) {
+        document.getElementById("nav_usuarios").style.display = "none";
+        document.getElementById("filtro_tecnico_asignaciones").value = window.usuarioActual.nombre;
+        cambiarTab('tab-tecnicos', document.getElementById('nav_tecnicos'));
+      } else {
+        document.getElementById("nav_usuarios").style.display = "inline-flex";
+        document.getElementById("filtro_tecnico_asignaciones").value = "TODOS";
+        cambiarTab('tab-coordinador', document.getElementById('nav_coordinador'));
+      }
+      renderizarTodo();
     }
 
-    function handlePDFUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
+    function poblarSelectTecnicos() {
+      const selects = [document.getElementById("filtro_tecnico_asignaciones"), document.getElementById("m_proy_tecnico")];
+      const nombresTecnicos = new Set();
+      usuarios.filter(u => u.rol.includes("Técnico")).forEach(u => nombresTecnicos.add(u.nombre));
+      
+      selects.forEach(select => {
+        if(!select) return;
+        const valorPrevio = select.value;
+        select.innerHTML = '<option value="TODOS">-- Ver Todos --</option>';
+        nombresTecnicos.forEach(nombre => {
+          const opt = document.createElement("option");
+          opt.value = nombre; opt.textContent = nombre;
+          select.appendChild(opt);
+        });
+        if ([...nombresTecnicos].includes(valorPrevio)) select.value = valorPrevio;
+      });
+    }
 
-      const fileReader = new FileReader();
-      fileReader.onload = function() {
-        const typedarray = new Uint8Array(this.result);
-        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-          pdf.getPage(1).then(page => {
-            page.getTextContent().then(textContent => {
-              const fullText = textContent.items.map(item => item.str).join(' ');
+    function cambiarTab(tabId, btnEl) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll("nav button").forEach(el => el.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      if (btnEl) btnEl.classList.add("active");
+      if (tabId === "tab-kpi") actualizarKPIs();
+    }
+
+    function fusionarSinAlterar(baseArr, nuevosArr, keyField) {
+      const mapa = new Map();
+      nuevosArr.forEach(item => { if (item && item[keyField]) mapa.set(String(item[keyField]).toUpperCase(), item); });
+      baseArr.forEach(item => {
+        const k = String(item[keyField]).toUpperCase();
+        if (!mapa.has(k)) mapa.set(k, item);
+      });
+      return Array.from(mapa.values());
+    }
+
+    function guardarDatosStorage() {
+      try {
+        localStorage.setItem("centroxpert_proyectos", JSON.stringify(proyectos));
+        localStorage.setItem("centroxpert_ordenes", JSON.stringify(ordenes));
+        localStorage.setItem("centroxpert_logistica", JSON.stringify(registrosLogistica));
+        localStorage.setItem("centroxpert_usuarios", JSON.stringify(usuarios));
+      } catch (e) { console.warn("Almacenamiento local lleno:", e); }
+    }
+
+    function cargarDatosStorage() {
+      try {
+        const rawProy = localStorage.getItem("centroxpert_proyectos") || localStorage.getItem("cx_v2_proyectos");
+        if (rawProy) proyectos = JSON.parse(rawProy);
+        const rawOrd = localStorage.getItem("centroxpert_ordenes") || localStorage.getItem("cx_v2_ordenes");
+        if (rawOrd) ordenes = JSON.parse(rawOrd);
+        const rawLog = localStorage.getItem("centroxpert_logistica") || localStorage.getItem("cx_v2_logistica");
+        if (rawLog) registrosLogistica = JSON.parse(rawLog);
+        const rawUsr = localStorage.getItem("centroxpert_usuarios") || localStorage.getItem("cx_v2_usuarios");
+        if (rawUsr) usuarios = JSON.parse(rawUsr);
+      } catch (e) { console.error("Error recuperando almacenamiento:", e); }
+    }
+
+    function renderizarTodo() {
+      renderizarProyectos();
+      renderizarAsignacionesTecnico();
+      renderizarLogistica();
+      renderizarUsuarios();
+      actualizarKPIs();
+    }
+
+    // --- MÓDULO COORDINADOR (TABLA PRINCIPAL) ---
+    function renderizarProyectos(lista = proyectos) {
+      const tbody = document.querySelector("#tabla_proyectos_coord tbody");
+      if(!tbody) return;
+      tbody.innerHTML = "";
+
+      lista.forEach(p => {
+        const ordenAsignada = ordenes.find(o => o.proyecto === p.id) || {};
+        const tecnico = ordenAsignada.tecnico || 'Sin Asignar';
+        const llegada = ordenAsignada.llegada || 'Pendiente';
+        const salida = ordenAsignada.salida || 'Pendiente';
+        const levantamientoDoc = ordenAsignada.archivoBase64 ? 
+          `<a href="${ordenAsignada.archivoBase64}" download="${ordenAsignada.archivoNombre}" style="color:var(--primary); font-weight:bold; font-size:11px;">⬇️ Descargar: ${ordenAsignada.archivoNombre}</a>` 
+          : '<span style="color:#777; font-size:11px;">Sin Levantamiento</span>';
+
+        let btnCotizacion = '';
+        if(ordenAsignada.archivoBase64 || p.estatus.includes("Levantamiento") || p.estatus.includes("Cotización") || p.estatus.includes("Ejecución")) {
+          btnCotizacion = `<button class="btn btn-orange" style="padding:4px 8px; font-size:11px;" onclick="solicitarSubidaCotizacion('${p.id}')">📄 Cargar Cotización Omegatech</button>`;
+        } else {
+          btnCotizacion = `<span style="font-size:10px; color:#888;">Esperando levantamiento</span>`;
+        }
+
+        if(p.pedidoOmegatech) {
+          btnCotizacion = `<span class="badge bg-green">Cotización: #${p.pedidoOmegatech}</span>`;
+        }
+
+        let badgeClass = "bg-gray";
+        if (p.estatus.includes("Cotización")) badgeClass = "bg-blue";
+        if (p.estatus.includes("Levantamiento")) badgeClass = "bg-orange";
+        if (p.estatus.includes("Ejecución") || p.estatus.includes("Finalizado")) badgeClass = "bg-green";
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${p.id}</strong><br/><span style="color:var(--primary); font-size:11.5px;">${p.nombre}</span></td>
+          <td style="font-size:11.5px;">🏢 ${p.cliente || 'N/A'}<br/>📍 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.ubicacion)}" target="_blank" style="color:var(--primary);">${p.ubicacion || 'Sin dirección'}</a><br/>📞 ${p.telefono || 'Sin teléfono'}</td>
+          <td style="font-size:11px;"><strong>👷 ${tecnico}</strong><br/>🟢 Llegó: ${llegada}<br/>🔴 Salió: ${salida}</td>
+          <td>${levantamientoDoc}</td>
+          <td>${btnCotizacion}</td>
+          <td><span class="badge ${badgeClass}">${p.estatus}</span></td>
+          <td style="font-size:11px;">Serv: RD$${Number(p.servicios || 0).toLocaleString('es-DO')}<br/>Mat: RD$${Number(p.materiales || 0).toLocaleString('es-DO')}<br/><strong>Total: RD$${Number(p.total || 0).toLocaleString('es-DO')}</strong></td>
+          <td>
+            <button class="btn btn-gray" style="padding: 4px 6px; font-size: 11px;" onclick="editarProyecto('${p.id}')">✏️</button>
+            <button class="btn btn-red" style="padding: 4px 6px; font-size: 11px;" onclick="eliminarProyecto('${p.id}')">🗑︄1�7</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // MODAL EDICION PROYECTO (Reasignacion Dinámica)
+    function abrirModalProyecto(editId = null) {
+      poblarSelectTecnicos();
+      document.getElementById("modal_proyecto").style.display = "flex";
+      if (editId) {
+        const p = proyectos.find(item => item.id === editId);
+        const o = ordenes.find(item => item.proyecto === editId) || {};
+        document.getElementById("modal_proyecto_titulo").textContent = "Editar Proyecto y Reasignar";
+        document.getElementById("m_proy_id").value = p.id;
+        document.getElementById("m_proy_id").disabled = true;
+        document.getElementById("m_proy_nombre").value = p.nombre;
+        document.getElementById("m_proy_cliente").value = p.cliente || "";
+        document.getElementById("m_proy_ubicacion").value = p.ubicacion || "";
+        document.getElementById("m_proy_telefono").value = p.telefono || "";
+        document.getElementById("m_proy_tecnico").value = o.tecnico || "TODOS";
+        document.getElementById("m_proy_estatus").value = p.estatus;
+      } else {
+        document.getElementById("m_proy_id").value = "";
+        document.getElementById("m_proy_id").disabled = false;
+        document.getElementById("m_proy_nombre").value = "";
+        document.getElementById("m_proy_tecnico").value = "TODOS";
+      }
+    }
+
+    function guardarModalProyecto() {
+      const id = document.getElementById("m_proy_id").value.trim().toUpperCase();
+      const nombre = document.getElementById("m_proy_nombre").value.trim();
+      const cliente = document.getElementById("m_proy_cliente").value.trim();
+      const ubicacion = document.getElementById("m_proy_ubicacion").value.trim();
+      const telefono = document.getElementById("m_proy_telefono").value.trim();
+      const tecnicoNuevo = document.getElementById("m_proy_tecnico").value;
+      const estatus = document.getElementById("m_proy_estatus").value;
+
+      if (!id || !nombre) return alert("ID y Nombre obligatorios.");
+
+      let p = proyectos.find(x => x.id === id);
+      if (!p) {
+        p = { id, nombre, cliente, ubicacion, telefono, estatus, servicios: 0, materiales: 0, total: 0, pedidoOmegatech: "" };
+        proyectos.unshift(p);
+      } else {
+        p.nombre = nombre; p.cliente = cliente; p.ubicacion = ubicacion; p.telefono = telefono; p.estatus = estatus;
+      }
+
+      let o = ordenes.find(x => x.proyecto === id);
+      if (!o) {
+        ordenes.unshift({ orden: "ORD-" + Math.floor(100+Math.random()*900), proyecto: id, tecnico: tecnicoNuevo !== "TODOS" ? tecnicoNuevo : "", estatus: "Asignada", fecha: new Date().toISOString().split('T')[0] });
+      } else if (tecnicoNuevo !== "TODOS" && o.tecnico !== tecnicoNuevo) {
+        o.tecnico = tecnicoNuevo; // REASIGNACIÓN DINÁMICA
+      }
+
+      guardarDatosStorage(); renderizarTodo();
+      document.getElementById('modal_proyecto').style.display='none';
+    }
+
+    function eliminarProyecto(id) {
+      if(confirm("¿Eliminar proyecto y orden asignada?")) {
+        proyectos = proyectos.filter(p => p.id !== id);
+        ordenes = ordenes.filter(o => o.proyecto !== id);
+        guardarDatosStorage(); renderizarTodo();
+      }
+    }
+
+    // --- MÓDULO TÉCNICO (Levantamiento Multiformato y GPS) ---
+    function renderizarAsignacionesTecnico() {
+      const cont = document.getElementById("contenedor_asignaciones_tecnico");
+      if(!cont) return;
+      const filtro = document.getElementById("filtro_tecnico_asignaciones").value;
+      cont.innerHTML = "";
+
+      const listaFiltrada = filtro === "TODOS" ? ordenes : ordenes.filter(o => o.tecnico && o.tecnico.toLowerCase() === filtro.toLowerCase());
+
+      listaFiltrada.forEach((o, index) => {
+        const proy = proyectos.find(p => p.id === o.proyecto) || {};
+        const ubicacion = proy.ubicacion || o.ubicacion || "Sin dirección";
+        
+        const div = document.createElement("div");
+        div.className = "asignacion-card";
+        div.innerHTML = `
+          <div style="flex:1;">
+            <h4 style="margin:0 0 6px; color:var(--primary); font-size:15px;">📋 Orden: ${o.orden} | Proyecto: ${o.proyecto}</h4>
+            <p style="margin:3px 0; font-size:12.5px;"><strong>🏢 Cliente:</strong> ${proy.cliente || 'General'} &nbsp;|&nbsp; <strong>👷 Técnico:</strong> ${o.tecnico}</p>
+            <p style="margin:3px 0; font-size:12.5px;"><strong>📍 Ubicación:</strong> <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ubicacion)}" target="_blank" style="color:var(--primary); text-decoration:underline;">${ubicacion}</a></p>
+            <p style="margin:3px 0; font-size:12.5px;"><strong>📞 Teléfono:</strong> <a href="tel:${proy.telefono}">${proy.telefono || 'N/A'}</a></p>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+            <span class="badge ${o.estatus === 'Finalizada' ? 'bg-green' : 'bg-orange'}">${o.estatus || 'Asignada'}</span>
+            
+            <!-- Botones GPS -->
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-green" style="font-size:11px; padding:6px;" onclick="registrarLlegadaGPS('${o.orden}')">📍 Llegada GPS</button>
+              <button class="btn btn-gray" style="font-size:11px; padding:6px;" onclick="registrarSalidaGPS('${o.orden}')">🏁 Salida GPS</button>
+            </div>
+            <div style="font-size:10px; color:#666;">
+              Llegó: ${o.llegada || '-'} | Salió: ${o.salida || '-'}
+            </div>
+
+            <!-- Carga de Levantamiento Multiformato -->
+            <label class="btn btn-blue" style="margin:0; font-size:11px; padding:6px; cursor:pointer;">
+              📁 Subir Levantamiento (Foto/PDF/Excel)
+              <input type="file" style="display:none;" onchange="procesarLevantamientoMultiformato('${o.orden}', event)" accept=".pdf, .xls, .xlsx, .doc, .docx, image/*" />
+            </label>
+            <span style="font-size:10px; color:var(--primary);">${o.archivoNombre || ''}</span>
+          </div>
+        `;
+        cont.appendChild(div);
+      });
+    }
+
+    function registrarLlegadaGPS(ordenId) {
+      if(!navigator.geolocation) return alert("Tu navegador no soporta geolocalización GPS.");
+      navigator.geolocation.getCurrentPosition(pos => {
+         const o = ordenes.find(x => x.orden === ordenId);
+         if(o) {
+             o.llegada = new Date().toLocaleString('es-DO');
+             o.coordLlegada = `${pos.coords.latitude}, ${pos.coords.longitude}`;
+             guardarDatosStorage(); renderizarTodo();
+             alert("Llegada registrada exitosamente: " + o.llegada);
+         }
+      }, err => alert("Asegúrate de permitir el acceso al GPS / Ubicación en tu teléfono."));
+    }
+
+    function registrarSalidaGPS(ordenId) {
+      if(!navigator.geolocation) return alert("Tu navegador no soporta geolocalización GPS.");
+      navigator.geolocation.getCurrentPosition(pos => {
+         const o = ordenes.find(x => x.orden === ordenId);
+         if(o) {
+             o.salida = new Date().toLocaleString('es-DO');
+             o.coordSalida = `${pos.coords.latitude}, ${pos.coords.longitude}`;
+             guardarDatosStorage(); renderizarTodo();
+             alert("Salida registrada exitosamente: " + o.salida);
+         }
+      }, err => alert("Asegúrate de permitir el acceso al GPS / Ubicación en tu teléfono."));
+    }
+
+    function procesarLevantamientoMultiformato(ordenId, event) {
+       const file = event.target.files[0];
+       if(!file) return;
+       const reader = new FileReader();
+       reader.onload = e => {
+          let o = ordenes.find(x => x.orden === ordenId);
+          if(o) {
+              o.archivoBase64 = e.target.result;
+              o.archivoNombre = file.name;
+              o.estatus = "Levantamiento Realizado";
               
-              // Extractor Regex inteligente
-              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || ['CX-SGE-2026-006'];
-              const clientMatch = fullText.match(/Cliente:\s*\|\s*\|\s*([^|]+)/i);
+              let p = proyectos.find(x => x.id === o.proyecto);
+              if(p && !p.estatus.includes("Cotización") && !p.estatus.includes("Ejecución")) p.estatus = "Levantamiento Realizado";
+              
+              guardarDatosStorage(); renderizarTodo();
+              alert("Levantamiento (" + file.name + ") cargado. Ya es visible para el coordinador.");
+          }
+       };
+       reader.readAsDataURL(file);
+    }
 
-              const newProj = {
-                id: 'P_' + Date.now(),
-                code: codeMatch[0],
-                title: 'SERVICIO TÉCNICO ' + codeMatch[0],
-                serviceType: 'INSTALACIÓN',
-                client: clientMatch ? clientMatch[1].trim() : 'CLIENTE CORPORATIVO',
-                contact: 'Contacto de orden PDF',
-                address: 'Santo Domingo, República Dominicana',
-                plannedDate: '26/10/2026',
-                techLeader: 'Enmanuel Matos',
-                techCrew: ['WESLY ALEJANDRO MOJICA'],
-                status: 'Levantamiento',
-                observations: 'Importado directamente desde orden de servicio digital CentroXpert.',
-                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', equipment: [], materials: [] },
-                budget: { approved: false, services: [], materials: [] },
-                tracking: { checkIn: '', checkOut: '', hoursWorked: '' }
-              };
+    // --- CARGA DE COTIZACIÓN OMEGATECH DESDE EL COORDINADOR ---
+    function solicitarSubidaCotizacion(idProyecto) {
+      proyectoIdParaCotizar = idProyecto;
+      document.getElementById("input_cotizacion_pdf").click();
+    }
 
-              appData.projects.unshift(newProj);
-              closeModal('pdfModal');
-              saveData();
-              alert(`¡Orden ${newProj.code} importada con éxito desde el PDF!`);
-            });
-          });
-        });
+    async function procesarArchivoCotizacion(event) {
+      const file = event.target.files[0];
+      if (!file || !proyectoIdParaCotizar) return;
+      const fileReader = new FileReader();
+      fileReader.onload = async function() {
+        try {
+          const typedarray = new Uint8Array(this.result);
+          const pdf = await pdfjsLib.getDocument(typedarray).promise;
+          let lineasTotales = [];
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            let lineasMap = {};
+            for (let item of textContent.items) {
+              let y = Math.round(item.transform[5]);
+              if (!lineasMap[y]) lineasMap[y] = [];
+              lineasMap[y].push(item.str);
+            }
+            let sortedY = Object.keys(lineasMap).sort((a,b) => b - a);
+            for (let y of sortedY) lineasTotales.push(lineasMap[y].join(" "));
+          }
+          extraerPresupuestosOmegatech(lineasTotales, proyectoIdParaCotizar);
+        } catch (err) { alert("Error procesando PDF Omegatech: " + err.message); }
       };
       fileReader.readAsArrayBuffer(file);
+      event.target.value = "";
     }
 
-    /* ===================================================================
-       CONTROL DE COMBUSTIBLE
-       =================================================================== */
-    function updateFuelPlateHelper() {
-      const plate = document.getElementById('fuelPlateSelect').value;
-      const v = appData.vehicles.find(item => item.plate === plate);
-      if (v) {
-        document.getElementById('fuelPrevKm').value = v.lastFuelKm || v.odo;
+    function extraerPresupuestosOmegatech(lineas, proyectoId) {
+      let servicios = 0, materiales = 0, totalGeneral = 0, pedido = "Sin Pedido";
+      const textoCompleto = lineas.join(" ");
+
+      const matchPedido = textoCompleto.match(/PEDIDO\s*#?:?\s*\|?\s*(\d+)/i);
+      if (matchPedido) pedido = matchPedido[1];
+
+      const matchTotal = textoCompleto.match(/TOTAL:?\s*\|?\s*(?:RD\$)?\s*([\d,]+\.\d2)/i);
+      if (matchTotal) totalGeneral = parseFloat(matchTotal[1].replace(/,/g, ""));
+
+      for (let linea of lineas) {
+        let montos = linea.match(/[\d,]+\.\d2/g);
+        if (!montos || montos.length === 0) continue;
+        let importeLinea = parseFloat(montos[montos.length - 1].replace(/,/g, ""));
+
+        if (linea.includes("80682") || linea.includes("CX-SRV-") || linea.includes("SERVICIOS PROFESIONALES")) servicios += importeLinea;
+        else if (linea.includes("80687") || linea.includes("MATERIALES") || linea.includes("EQUIPO")) materiales += importeLinea;
       }
+
+      if (servicios === 0 && materiales === 0 && totalGeneral > 0) {
+        if (textoCompleto.includes("80682") || textoCompleto.includes("SERVICIOS")) servicios = totalGeneral;
+        else materiales = totalGeneral;
+      } else if (totalGeneral > 0 && (servicios + materiales) < totalGeneral) {
+        if (servicios > 0 && materiales === 0) materiales = Math.max(0, totalGeneral - servicios);
+        else if (materiales > 0 && servicios === 0) servicios = Math.max(0, totalGeneral - materiales);
+      }
+      if (totalGeneral === 0) totalGeneral = servicios + materiales;
+
+      const idx = proyectos.findIndex(p => p.id === proyectoId);
+      if (idx >= 0) {
+        proyectos[idx].servicios = servicios; proyectos[idx].materiales = materiales;
+        proyectos[idx].total = totalGeneral; proyectos[idx].pedidoOmegatech = pedido;
+        proyectos[idx].estatus = "Cotización Procesada";
+      }
+      guardarDatosStorage(); renderizarTodo();
+      alert(`Cotización #${pedido} extraída con éxito. Total: RD$${totalGeneral.toLocaleString('es-DO')}`);
     }
 
-    function handleFuelSubmit(e) {
-      e.preventDefault();
-      const plate = document.getElementById('fuelPlateSelect').value;
-      const prev = parseInt(document.getElementById('fuelPrevKm').value) || 0;
-      const current = parseInt(document.getElementById('fuelCurrentKm').value) || 0;
-      const gallons = parseFloat(document.getElementById('fuelGallons').value) || 1;
-      const cost = parseFloat(document.getElementById('fuelCost').value) || 0;
-
-      if (current <= prev) {
-        alert('El odómetro actual debe ser mayor al odómetro anterior.');
-        return;
-      }
-
-      const dist = current - prev;
-      const v = appData.vehicles.find(item => item.plate === plate);
-      const driver = v ? v.assignedTo || 'Sin asignar' : 'Conductor';
-      const taskKmEst = Math.round(dist * 0.92); // Estimación simulada GPS de órdenes
-      const diff = dist - taskKmEst;
-      const dev = ((diff / taskKmEst) * 100).toFixed(1) + '%';
-
-      appData.fuelLogs.unshift({
-        id: 'FL_' + Date.now(),
-        date: new Date().toISOString().split('T')[0],
-        plate,
-        driver,
-        prevKm: prev,
-        currentKm: current,
-        dist,
-        gallons,
-        cost,
-        taskKmEst,
-        dev
+    // --- MÓDULO DE LOGÍSTICA ---
+    function renderizarLogistica() {
+      const tbody = document.querySelector("#tabla_logistica tbody");
+      if(!tbody) return;
+      tbody.innerHTML = "";
+      registrosLogistica.forEach((r, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>
+            <select class="table-input" onchange="actualizarLogisticaCampo(${idx}, 'categoria', this.value)">
+              <option value="Vehículo" ${r.categoria === 'Vehículo' ? 'selected' : ''}>Vehículo</option>
+              <option value="Herramienta" ${r.categoria === 'Herramienta' ? 'selected' : ''}>Herramienta</option>
+              <option value="Material" ${r.categoria === 'Material' ? 'selected' : ''}>Material</option>
+            </select>
+          </td>
+          <td><input type="text" class="table-input" value="${r.proyecto || ''}" onchange="actualizarLogisticaCampo(${idx}, 'proyecto', this.value)" /></td>
+          <td><input type="text" class="table-input" value="${r.placa || ''}" placeholder="Placa" onchange="actualizarLogisticaCampo(${idx}, 'placa', this.value)" /></td>
+          <td><input type="text" class="table-input" value="${r.tecnico || ''}" onchange="actualizarLogisticaCampo(${idx}, 'tecnico', this.value)" /></td>
+          <td><input type="text" class="table-input" value="${r.codigo || ''}" onchange="actualizarLogisticaCampo(${idx}, 'codigo', this.value)" /></td>
+          <td><input type="text" class="table-input" value="${r.descripcion || ''}" onchange="actualizarLogisticaCampo(${idx}, 'descripcion', this.value)" /></td>
+          <td><input type="number" class="table-input" value="${r.cantidad || 1}" onchange="actualizarLogisticaCampo(${idx}, 'cantidad', this.value)" /></td>
+          <td>
+            <select class="table-input" onchange="actualizarLogisticaCampo(${idx}, 'estatus', this.value)">
+              <option value="En Almacén" ${r.estatus === 'En Almacén' ? 'selected' : ''}>En Almacén</option>
+              <option value="Asignado" ${r.estatus === 'Asignado' ? 'selected' : ''}>Asignado</option>
+              <option value="Despachado" ${r.estatus === 'Despachado' ? 'selected' : ''}>Despachado</option>
+            </select>
+          </td>
+          <td><button class="btn btn-red" style="padding: 3px 6px; font-size: 11px;" onclick="eliminarFilaLogistica(${idx})">✄1�7</button></td>
+        `;
+        tbody.appendChild(tr);
       });
-
-      if (v) {
-        v.odo = current;
-        v.lastFuelKm = current;
-      }
-
-      saveData();
-      alert(`¡Carga registrada! Distancia: ${dist} KM. Rendimiento: ${(dist/gallons).toFixed(1)} km/gal.`);
+    }
+    function actualizarLogisticaCampo(idx, campo, valor) {
+      if (campo === 'cantidad') registrosLogistica[idx][campo] = parseFloat(valor) || 0;
+      else registrosLogistica[idx][campo] = valor.trim();
+    }
+    function agregarFilaLogistica() {
+      registrosLogistica.unshift({ id: Date.now(), categoria: "Herramienta", proyecto: "", placa: "", tecnico: "", codigo: "", descripcion: "", cantidad: 1, estatus: "En Almacén" });
+      renderizarLogistica();
+    }
+    function eliminarFilaLogistica(idx) {
+      registrosLogistica.splice(idx, 1); renderizarLogistica(); guardarDatosStorage();
+    }
+    function guardarLogisticaStorage() { guardarDatosStorage(); alert("Cambios de logística guardados."); }
+    
+    function exportarLogisticaExcel() {
+      const ws = XLSX.utils.json_to_sheet(registrosLogistica);
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Logistica");
+      XLSX.writeFile(wb, "Inventario_Flota_Centroxpert.xlsx");
+    }
+    function importarLogisticaExcel(event) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const wb = XLSX.read(new Uint8Array(e.target.result), { type: "array" });
+        const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+        registrosLogistica = [...registrosLogistica, ...rows];
+        guardarDatosStorage(); renderizarLogistica();
+        alert("Importación exitosa.");
+      };
+      reader.readAsArrayBuffer(event.target.files[0]);
+    }
+    function exportarLogisticaPDF() {
+      const { jsPDF } = window.jspdf; const doc = new jsPDF('landscape');
+      doc.text("Centroxpert - Inventario de Logística y Flota", 14, 15);
+      const rows = registrosLogistica.map(r => [r.categoria, r.proyecto, r.placa, r.tecnico, r.codigo, r.descripcion, r.cantidad, r.estatus]);
+      doc.autoTable({ head: [["Categoría", "Proyecto", "Placa", "Técnico", "Código", "Descripción", "Cant", "Estatus"]], body: rows, startY: 20 });
+      doc.save("Reporte_Logistica_Centroxpert.pdf");
     }
 
-    /* ===================================================================
-       PROMPTS PARA LOGÍSTICA
-       =================================================================== */
-    function promptNewVehicle() {
-      const plate = prompt('Ingrese la placa del vehículo (Ej: L459012):');
-      if (!plate) return;
-      const model = prompt('Ingrese Marca y Modelo (Ej: Isuzu D-Max 2023):') || 'Vehículo de Flotilla';
-      const odo = parseInt(prompt('Kilometraje inicial:')) || 0;
+    function exportarProyectosExcel() {
+      const ws = XLSX.utils.json_to_sheet(proyectos);
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Proyectos");
+      XLSX.writeFile(wb, "Proyectos_Centroxpert.xlsx");
+    }
+    function exportarProyectosPDF() {
+      const { jsPDF } = window.jspdf; const doc = new jsPDF('landscape');
+      doc.text("Centroxpert - Proyectos", 14, 15);
+      const rows = proyectos.map(p => [p.id, p.nombre, p.cliente, p.estatus, p.total]);
+      doc.autoTable({ head: [["ID", "Nombre", "Cliente", "Estatus", "Total"]], body: rows, startY: 20 });
+      doc.save("Reporte_Proyectos.pdf");
+    }
+    function importarProyectosExcel(event) { /* similar to logistics import */ }
 
-      appData.vehicles.push({
-        id: 'V_' + Date.now(),
-        plate: plate.toUpperCase(),
-        model,
-        assignedTo: '',
-        status: 'Operativo',
-        odo,
-        lastFuelKm: odo
-      });
-      saveData();
+    function actualizarKPIs() {
+      if(!document.getElementById("kpi_total_proyectos")) return;
+      document.getElementById("kpi_total_proyectos").textContent = proyectos.length;
+      document.getElementById("kpi_total_ordenes").textContent = ordenes.length;
+      const totalCot = proyectos.reduce((acc, p) => acc + (Number(p.total) || 0), 0);
+      document.getElementById("kpi_total_cotizado").textContent = "RD$ " + totalCot.toLocaleString('es-DO');
     }
 
-    function promptNewTechnician() {
-      const name = prompt('Nombre completo del técnico:');
-      if (!name) return;
-      const level = prompt('Nivel (1: Especialista A, 2: Especialista B, 3: Auxiliar Técnico):');
-      const levelStr = level === '1' ? 'Especialista A' : (level === '2' ? 'Especialista B' : 'Auxiliar Técnico');
-      const phone = prompt('Teléfono de contacto:') || '809-555-0000';
-      const address = prompt('Dirección donde vive:') || 'Santo Domingo';
-
-      appData.technicians.push({
-        id: 'T_' + Date.now(),
-        name,
-        level: levelStr,
-        phone,
-        address,
-        vehiclePlate: '',
-        pin: '1234'
-      });
-      saveData();
-    }
-
-    function editTechVehicle(techId) {
-      const tech = appData.technicians.find(t => t.id === techId);
-      if (!tech) return;
-
-      const availPlates = appData.vehicles.map(v => v.plate).join(', ');
-      const newPlate = prompt(`Asignar vehículo a ${tech.name}.\nPlacas disponibles: ${availPlates}\n(Escriba la placa o deje vacío para retirar):`);
-
-      if (newPlate !== null) {
-        // Liberar anterior si tenía
-        if (tech.vehiclePlate) {
-          const oldV = appData.vehicles.find(v => v.plate === tech.vehiclePlate);
-          if (oldV) oldV.assignedTo = '';
-        }
-
-        tech.vehiclePlate = newPlate.trim().toUpperCase();
-        if (tech.vehiclePlate) {
-          const newV = appData.vehicles.find(v => v.plate === tech.vehiclePlate);
-          if (newV) newV.assignedTo = tech.name;
-        }
-        saveData();
-      }
-    }
-
-    function assignVehiclePrompt(vehicleId) {
-      const v = appData.vehicles.find(item => item.id === vehicleId);
-      if (!v) return;
-
-      const techList = appData.technicians.map(t => t.name).join('\n');
-      const techName = prompt(`Asignar custodio a ${v.plate}:\n${techList}\n(Deje vacío para desasignar):`);
-
-      if (techName !== null) {
-        v.assignedTo = techName.trim();
-        const tech = appData.technicians.find(t => t.name === v.assignedTo);
-        if (tech) tech.vehiclePlate = v.plate;
-        saveData();
-      }
-    }
-
-    function promptNewTool() {
-      const name = prompt('Nombre o descripción del equipo/herramienta:');
-      if (!name) return;
-      const code = prompt('Código o serie de activo (Ej: TL-07):') || 'TL-' + Date.now().toString().slice(-2);
-      
-      appData.tools.push({
-        id: 'H_' + Date.now(),
-        code,
-        name,
-        assignedTo: '',
-        condition: 'Excelente',
-        date: new Date().toISOString().split('T')[0]
-      });
-      saveData();
-    }
-
-    function assignToolPrompt(toolId) {
-      const t = appData.tools.find(item => item.id === toolId);
-      if (!t) return;
-      const techList = appData.technicians.map(x => x.name).join('\n');
-      const techName = prompt(`Asignar custodia de "${t.name}" a:\n${techList}\n(Deje en blanco para Almacén Central):`);
-
-      if (techName !== null) {
-        t.assignedTo = techName.trim();
-        saveData();
-      }
-    }
-
-    // Inicialización al cargar la página
-    window.addEventListener('DOMContentLoaded', () => {
-      populateTechSelect();
-      render();
-    });
   </script>
 </body>
 </html>
