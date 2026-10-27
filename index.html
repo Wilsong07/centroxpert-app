@@ -4,20 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CentroXpert - Ingeniería y Servicios</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+  <!-- Tesseract.js para OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  
-  <!-- Exportación Excel y PDF -->
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Ubuntu:wght@400;500;700&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; color: #f8fafc; }
+    .centroxpert-font { font-family: 'Ubuntu', 'Plus Jakarta Sans', sans-serif; }
+    .wine-brand { color: #8b1524; }
+    .bg-wine-brand { background-color: #8b1524; }
+    .border-wine-brand { border-color: #8b1524; }
   </style>
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased selection:bg-rose-900 selection:text-white">
@@ -25,15 +28,21 @@
   <!-- ================= TOPBAR ================= -->
   <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- LOGO CENTROXPERT ORIGINAL -->
       <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
         <div class="bg-white px-3 py-1.5 rounded-lg flex items-center shadow-sm">
           <svg viewBox="0 0 280 60" class="h-8 md:h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1"><text x="2" y="38" fill="#111827">centr</text></g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
+              <text x="2" y="38" fill="#111827">centr</text>
+            </g>
             <g transform="translate(103, 9)">
               <circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" />
               <line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" />
             </g>
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5"><text x="138" y="38" fill="#8b1524">xpert</text></g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5">
+              <text x="138" y="38" fill="#8b1524">xpert</text>
+            </g>
             <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text>
             <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
           </svg>
@@ -43,19 +52,41 @@
           <div class="text-sm font-semibold text-rose-400">Control Operativo & Técnico</div>
         </div>
       </div>
-      <div class="flex items-center gap-3" id="headerUserActions"></div>
+
+      <!-- ACCIONES DE SESIÓN Y VISTA -->
+      <div class="flex items-center gap-3" id="headerUserActions">
+        <!-- Inyectado por JS -->
+      </div>
     </div>
   </header>
 
   <!-- ================= CONTENEDOR PRINCIPAL ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer"></main>
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer">
+    <!-- Vistas dinámicas -->
+  </main>
 
   <!-- ================= MODALES ================= -->
   <!-- Modal Login -->
   <div id="loginModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
       <div class="text-center mb-6">
-        <h3 class="text-xl font-bold text-white">Ingreso al Sistema v2.0</h3>
+        <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3">
+          <svg viewBox="0 0 280 60" class="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
+              <text x="2" y="38" fill="#111827">centr</text>
+            </g>
+            <g transform="translate(103, 9)">
+              <circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" />
+              <line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" />
+            </g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5">
+              <text x="138" y="38" fill="#8b1524">xpert</text>
+            </g>
+            <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text>
+            <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3>
         <p class="text-xs text-slate-400 mt-1">Selecciona tu perfil de acceso para continuar</p>
       </div>
 
@@ -68,442 +99,1484 @@
         </button>
       </div>
 
+      <!-- Form Técnico -->
       <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Asignado</label>
-          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"></select>
+          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
+            <!-- Cargado por JS -->
+          </select>
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Por defecto: 1234)</label>
           <input type="password" id="loginTecPin" required placeholder="••••" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
         </div>
-        <button type="submit" class="w-full bg-rose-700 hover:bg-rose-600 font-bold py-2.5 rounded-xl text-sm transition">Entrar como Técnico</button>
+        <button type="submit" class="w-full bg-rose-700 hover:bg-rose-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-rose-900/30">
+          Entrar como Técnico
+        </button>
       </form>
 
+      <!-- Form Coordinador -->
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinación (admin123)</label>
           <input type="password" id="loginAdminPass" required placeholder="Clave administrativa" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
         </div>
-        <button type="submit" class="w-full bg-blue-700 hover:bg-blue-600 font-bold py-2.5 rounded-xl text-sm transition">Entrar a Panel Central</button>
+        <button type="submit" class="w-full bg-blue-700 hover:bg-blue-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-blue-900/30">
+          Entrar a Panel Central
+        </button>
       </form>
     </div>
   </div>
 
   <!-- Modal Cambiar PIN -->
   <div id="pinModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <!-- Similar al anterior -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
-      <h3 class="text-lg font-bold text-white mb-1">Cambiar mi PIN</h3>
-      <form onsubmit="handleUpdatePin(event)" class="space-y-3 mt-4">
-        <input type="password" id="currentPin" required placeholder="PIN Actual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-        <input type="password" id="newPin" required placeholder="Nuevo PIN" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-        <input type="password" id="confirmPin" required placeholder="Confirmar PIN" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+      <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-key mr-2 text-rose-400"></i>Cambiar mi PIN</h3>
+      <p class="text-xs text-slate-400 mb-4">Actualiza tu código de acceso para mayor seguridad.</p>
+      
+      <form onsubmit="handleUpdatePin(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">PIN Actual</label>
+          <input type="password" id="currentPin" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Nuevo PIN</label>
+          <input type="password" id="newPin" required maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Confirmar Nuevo PIN</label>
+          <input type="password" id="confirmPin" required maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+        </div>
         <div class="flex gap-2 pt-2">
-          <button type="button" onclick="closeModal('pinModal')" class="flex-1 bg-slate-800 py-2 rounded-xl text-xs font-semibold">Cancelar</button>
-          <button type="submit" class="flex-1 bg-rose-700 text-white py-2 rounded-xl text-xs font-bold">Guardar</button>
+          <button type="button" onclick="closeModal('pinModal')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs font-semibold">Cancelar</button>
+          <button type="submit" class="flex-1 bg-rose-700 hover:bg-rose-600 text-white py-2 rounded-xl text-xs font-bold">Guardar</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal Levantamiento Técnico -->
+  <!-- Modal Levantamiento Técnico / OCR / Tienda -->
   <div id="surveyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl my-8">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
         <div>
-          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-clipboard-list mr-2 text-rose-400"></i>Levantamiento Técnico</h3>
+          <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-clipboard-list mr-2 text-rose-400"></i>Levantamiento Técnico de Campo</h3>
           <p class="text-xs text-slate-400" id="surveyProjectTitle">Cargando...</p>
         </div>
         <button onclick="closeModal('surveyModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
+      <!-- OCR Y DIGITALIZACIÓN -->
+      <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-4 mb-4">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-rose-400"><i class="fa-solid fa-camera mr-1.5"></i>Digitalización & OCR de Notas</span>
+          <span class="text-[10px] text-slate-400">Extrae metros y equipos de fotos de notas</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg cursor-pointer border border-slate-700 font-medium">
+            <i class="fa-solid fa-file-arrow-up mr-1.5"></i>Subir Foto de Nota
+            <input type="file" accept="image/*" class="hidden" onchange="runOCR(event)">
+          </label>
+          <button onclick="simulateOCRDemo()" class="bg-rose-950/60 border border-rose-800 hover:bg-rose-900/80 text-rose-300 text-xs px-3 py-2 rounded-lg font-medium">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i>Muestra de Levantamiento
+          </button>
+          <div id="ocrStatus" class="text-xs self-center text-slate-400 italic"></div>
+        </div>
+      </div>
+
+      <!-- FORMULARIO DE LEVANTAMIENTO -->
       <form onsubmit="handleSaveSurvey(event)" class="space-y-4">
         <input type="hidden" id="surveyProjectId">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div><label class="block text-xs font-medium text-slate-300 mb-1">Metros Lineales</label><input type="number" id="surveyMeters" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm"></div>
-          <div><label class="block text-xs font-medium text-slate-300 mb-1">Estructura</label><select id="surveyStructure" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm"><option>Ductería EMT Existente</option><option>Cielo Raso / Drywall</option><option>Zanja Exterior / Soterrado</option></select></div>
-          <div><label class="block text-xs font-medium text-slate-300 mb-1">Energía</label><select id="surveyPower" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm"><option>110V Regulada con UPS</option><option>110V Sin Respaldo</option></select></div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Metros Lineales Estimados</label>
+            <input type="number" id="surveyMeters" placeholder="Ej: 140" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Tipo de Estructura / Cielo</label>
+            <select id="surveyStructure" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+              <option value="Ductería EMT Existente">Ductería EMT Existente</option>
+              <option value="Cielo Raso / Drywall">Cielo Raso / Drywall</option>
+              <option value="Estructura Abierta / Techo Industrial">Estructura Abierta / Techo Industrial</option>
+              <option value="Zanja Exterior / Soterrado">Zanja Exterior / Soterrado</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Condición Eléctrica</label>
+            <select id="surveyPower" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+              <option value="110V Regulada con UPS">110V Regulada con UPS</option>
+              <option value="110V Sin Respaldo">110V Sin Respaldo</option>
+              <option value="Requiere Acometida Nueva">Requiere Acometida Nueva</option>
+            </select>
+          </div>
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones</label>
-          <textarea id="surveyNotes" rows="2" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm"></textarea>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas de Campo</label>
+          <textarea id="surveyNotes" rows="3" placeholder="Detalles de paso de cable, fijación, puntos ciegos..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
         </div>
 
-        <!-- Archivos Adjuntos (Fotos, PDF, Excel) -->
-        <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800">
-          <label class="block text-xs font-bold text-blue-400 mb-2"><i class="fa-solid fa-paperclip mr-1"></i>Adjuntar Archivos (Foto, PDF, Excel)</label>
-          <input type="file" id="surveyFilesInput" multiple accept="image/*,.pdf,.xlsx,.xls" onchange="handleSurveyFilesSelected(event)" class="text-xs text-slate-400">
-          <div id="surveyFilesList" class="mt-2 text-xs space-y-1"></div>
-        </div>
-
-        <!-- Tienda -->
-        <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800">
-          <div class="flex gap-2 mb-2">
-            <input type="text" id="omegaSearchInput" placeholder="Buscar en tienda..." class="flex-1 bg-slate-800 rounded-lg px-2 py-1 text-xs">
-            <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 px-3 py-1 rounded-lg text-xs font-semibold">Buscar</button>
+        <!-- CONSULTA DIRECTA TIENDA.OMEGA.COM.DO -->
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">
+              <i class="fa-solid fa-store mr-1.5"></i>Catálogo tienda.omega.com.do
+            </span>
+            <span class="text-[10px] text-slate-400">Agregar equipos & materiales oficiales con 1 clic</span>
           </div>
-          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-32 overflow-y-auto"></div>
+
+          <div class="flex gap-2 mb-3">
+            <input type="text" id="omegaSearchInput" placeholder="Buscar cámara, switch PoE, cable UTP, UPS..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
+            <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold">Buscar</button>
+          </div>
+
+          <!-- Resultados del catálogo -->
+          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+            <!-- JS -->
+          </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-slate-800/50 p-2 rounded-xl text-xs"><h4 class="font-bold text-rose-400">Equipos</h4><div id="surveyEquipList"></div></div>
-          <div class="bg-slate-800/50 p-2 rounded-xl text-xs"><h4 class="font-bold text-amber-400">Materiales</h4><div id="surveyMaterialList"></div></div>
+        <!-- ITEMS AGREGADOS AL LEVANTAMIENTO -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
+            <h4 class="text-xs font-bold text-rose-400 uppercase mb-2"><i class="fa-solid fa-video mr-1"></i>Equipos Activos Sugeridos</h4>
+            <div id="surveyEquipList" class="space-y-1.5 text-xs text-slate-300 min-h-[60px]">
+              <span class="text-slate-500 italic text-[11px]">No hay equipos cargados.</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-800/50 p-3 rounded-xl border border-slate-800">
+            <h4 class="text-xs font-bold text-amber-400 uppercase mb-2"><i class="fa-solid fa-boxes-stacked mr-1"></i>Materiales e Insumos</h4>
+            <div id="surveyMaterialList" class="space-y-1.5 text-xs text-slate-300 min-h-[60px]">
+              <span class="text-slate-500 italic text-[11px]">No hay insumos cargados.</span>
+            </div>
+          </div>
         </div>
 
-        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-          <button type="button" onclick="closeModal('surveyModal')" class="bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold">Cerrar</button>
-          <button type="submit" class="bg-rose-700 px-5 py-2 rounded-xl text-xs font-bold shadow-lg">Guardar Levantamiento</button>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeModal('surveyModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cerrar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/40">
+            Guardar Levantamiento y Pasar a Presupuesto
+          </button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- Modal Cargar PDF de Orden de Servicio -->
+  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden CentroXpert</h3>
+        <button onclick="closeModal('pdfModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="border-2 border-dashed border-slate-700 hover:border-rose-500 rounded-2xl p-6 text-center cursor-pointer mb-4 transition" onclick="document.getElementById('pdfInput').click()">
+        <i class="fa-solid fa-cloud-arrow-up text-3xl text-rose-400 mb-2"></i>
+        <div class="text-sm font-semibold text-white">Haz clic para subir la Orden de Servicio en PDF</div>
+        <div class="text-xs text-slate-400 mt-1">Extrae código, cliente, dirección, fecha y técnicos automáticamente</div>
+        <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePDFUpload(event)">
+      </div>
+
+      <div class="text-center">
+        <span class="text-xs text-slate-500 font-medium">¿Deseas probar con el documento de muestra?</span>
+        <button onclick="loadSampleTorreWashington()" class="block mx-auto mt-2 bg-slate-800 hover:bg-slate-700 text-rose-300 border border-slate-700 px-4 py-2 rounded-xl text-xs font-semibold">
+          <i class="fa-solid fa-building mr-1.5"></i>Cargar Muestra: TORRE WASHINGTON.pdf
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
     /* ===================================================================
-       ESTADO CENTRAL DE LA APLICACIÓN
+       ESTADO CENTRAL DE LA APLICACIÓN (Persistencia en LocalStorage)
        =================================================================== */
-    const STORAGE_KEY = 'centroxpert_data_v2';
-    
-    // Si necesitas resetear la app y borrar datos viejos de la version 1: localStorage.removeItem('centroxpert_data_v1');
+    const STORAGE_KEY = 'centroxpert_data_v1';
 
     const defaultData = {
-      currentUser: { role: 'admin', name: 'Coordinador General' },
+      currentUser: { role: 'admin', name: 'Coordinador General' }, // 'admin' o 'tech'
       technicians: [
-        { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Av. Las Palmas', vehiclePlate: 'L428901', pin: '1234' },
-        { id: 'T2', name: 'WESLY MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'C/ Duarte', vehiclePlate: 'L389104', pin: '1234' }
+        { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Av. Las Palmas #45, Herrera', vehiclePlate: 'L428901', pin: '1234' },
+        { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'C/ Duarte #12, Los Alcarrizos', vehiclePlate: 'L389104', pin: '1234' },
+        { id: 'T3', name: 'Carlos Morales', level: 'Especialista A', phone: '849-555-0188', address: 'Villa Mella, Sto Dgo Norte', vehiclePlate: 'L451299', pin: '1234' },
+        { id: 'T4', name: 'Andrés Rivas', level: 'Auxiliar Técnico', phone: '829-555-0176', address: 'Los Mina, Sto Dgo Este', vehiclePlate: '', pin: '1234' },
+        { id: 'T5', name: 'Mario Gómez', level: 'Auxiliar Técnico', phone: '809-555-0122', address: 'Ensanche La Fe, DN', vehiclePlate: '', pin: '1234' }
       ],
       vehicles: [
-        { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520 },
-        { id: 'V2', plate: 'L389104', model: 'Nissan Frontier 2019', assignedTo: 'WESLY MOJICA', status: 'Operativo', odo: 74210 }
+        { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520, lastFuelKm: 48120 },
+        { id: 'V2', plate: 'L389104', model: 'Nissan Frontier 2019', assignedTo: 'WESLY ALEJANDRO MOJICA', status: 'Operativo', odo: 74210, lastFuelKm: 73800 },
+        { id: 'V3', plate: 'L451299', model: 'Isuzu D-Max 2022', assignedTo: 'Carlos Morales', status: 'Operativo', odo: 31050, lastFuelKm: 30600 },
+        { id: 'V4', plate: 'L290112', model: 'Hyundai H-1 Panel 2018', assignedTo: '', status: 'Operativo', odo: 98400, lastFuelKm: 98000 },
+        { id: 'V5', plate: 'L194020', model: 'Chevrolet Colorado 2017', assignedTo: '', status: 'Mantenimiento', odo: 112000, lastFuelKm: 111500 }
       ],
       tools: [
-        { id: 'H1', code: 'TL-01', name: 'Fusionadora de Fibra', assignedTo: 'Enmanuel Matos', condition: 'Excelente' },
-        { id: 'H2', code: 'TL-02', name: 'Certificador de Red Fluke', assignedTo: '', condition: 'Excelente' }
+        { id: 'H1', code: 'TL-01', name: 'Fusionadora de Fibra Óptica Fujikura 70S', assignedTo: 'Enmanuel Matos', condition: 'Excelente', date: '2026-01-15' },
+        { id: 'H2', code: 'TL-02', name: 'Certificador de Red Fluke DSX-5000', assignedTo: 'Carlos Morales', condition: 'Excelente', date: '2026-02-10' },
+        { id: 'H3', code: 'TL-03', name: 'Rotomartillo SDS Plus DeWalt 20V', assignedTo: 'Enmanuel Matos', condition: 'Bueno', date: '2026-03-01' },
+        { id: 'H4', code: 'TL-04', name: 'Escalera Telescópica 24 Pies Aluminio', assignedTo: 'WESLY ALEJANDRO MOJICA', condition: 'Bueno', date: '2026-02-20' },
+        { id: 'H5', code: 'TL-05', name: 'Kit Ponchadora RJ45 / Crimpadora Pro', assignedTo: 'WESLY ALEJANDRO MOJICA', condition: 'Excelente', date: '2026-03-12' },
+        { id: 'H6', code: 'TL-06', name: 'Generador de Tono y Pollo Probe Fluke', assignedTo: '', condition: 'Bueno', date: '2026-01-10' }
       ],
-      fuelLogs: [],
+      fuelLogs: [
+        { id: 'FL1', date: '2026-10-22', plate: 'L428901', driver: 'Enmanuel Matos', prevKm: 48120, currentKm: 48520, dist: 400, gallons: 16.5, cost: 4800, taskKmEst: 380, dev: '5%' }
+      ],
       projects: [
         {
-          id: 'P1', code: 'CX-SGE-2026-005', title: 'CAMARAS CONDOMINIO', serviceType: 'INSTALACIÓN', client: 'TORRE WASHINGTON',
-          contact: 'Ana Milagros (829) 762-8952', address: 'Torre Washington, El Malecón', plannedDate: '26/10/2026',
-          techLeader: 'Enmanuel Matos', techCrew: ['WESLY MOJICA'], status: 'Levantamiento',
-          survey: { meters: 160, structure: 'Ductería EMT', power: '110V', notes: '', equipment: [], materials: [], files: [] },
-          budget: { approved: false, services: [], materials: [], quotationFile: null },
-          tracking: { checkIn: '', checkOut: '', hoursWorked: '' }
+          id: 'P1',
+          code: 'CX-SGE-2026-005',
+          title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
+          serviceType: 'INSTALACIÓN (3255.73)',
+          client: 'CONDOMINIO TORRE WASHINGTON',
+          contact: 'Ana Milagros Guzman (829) 762-8952 / Jadiri Baez (809) 781-1045',
+          address: 'Torre Washington, Av. George Washington (El Malecón), Santo Domingo',
+          plannedDate: '26/10/2026',
+          techLeader: 'Enmanuel Matos',
+          techCrew: ['WESLY ALEJANDRO MOJICA'],
+          status: 'Levantamiento', // Levantamiento, En Presupuesto, Aprobado, En Curso, Finalizado
+          observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR Y PERÍMETRO',
+          survey: {
+            meters: 160,
+            structure: 'Ductería EMT Existente',
+            power: '110V Regulada con UPS',
+            notes: 'Paso por ducto principal del ascensor requiere llave de mantenimiento técnico. Señal estable.',
+            equipment: ['NVR 16 Canales 4K', 'Cámaras IP Antivandálicas 4MP (x4)'],
+            materials: ['2x Rollos UTP Cat6 100% Cobre', 'Cajas de paso 4x4', 'Conectores RJ45']
+          },
+          budget: {
+            approved: false,
+            services: [
+              { concept: 'Horas Hombre Técnicas (Líder + Asistente)', qty: 18, rate: 650, subtotal: 11700 },
+              { concept: 'Viáticos & Dietas de Campo', qty: 2, rate: 600, subtotal: 1200 },
+              { concept: 'Desgaste y Combustible Vehículo (Toyota Hilux)', qty: 1, rate: 1800, subtotal: 1800 }
+            ],
+            materials: [
+              { desc: 'NVR 16 CH 4K AcuSense', qtyEst: 1, qtyReal: 1, unitCost: 18500, subtotal: 18500 },
+              { desc: 'Cámara IP Domo 4MP Antivandálica Hikvision', qtyEst: 4, qtyReal: 4, unitCost: 5200, subtotal: 20800 },
+              { desc: 'Bobina UTP Cat6 305m 100% Cobre Exterior', qtyEst: 1, qtyReal: 1, unitCost: 7900, subtotal: 7900 },
+              { desc: 'Conectores RJ45 Blindados (Funda 50 Und)', qtyEst: 1, qtyReal: 1, unitCost: 850, subtotal: 850 }
+            ]
+          },
+          tracking: {
+            checkIn: '08:15 AM (18.4682, -69.9145)',
+            checkOut: '',
+            hoursWorked: ''
+          }
         }
       ]
     };
 
     let appData = loadData();
-    let tempSurveyFilesList = [];
 
     function loadData() {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(defaultData));
+      if (saved) {
+        try { return JSON.parse(saved); } catch(e) { console.error(e); }
+      }
+      return JSON.parse(JSON.stringify(defaultData));
     }
-    function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); render(); }
 
-    /* Catálogo Omega Tech precargado */
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      render();
+    }
+
+    /* Catálogo Omega Tech precargado para búsquedas */
     const omegaProducts = [
-      { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision', category: 'Equipos', priceRD: 5200 },
-      { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 18500 },
-      { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m Exterior', category: 'Materiales', priceRD: 7900 }
+      { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200, priceUS: 86.6 },
+      { sku: 'CAM-HIK-BUL', name: 'Cámara IP Bullet 4MP Hikvision ColorVu Exterior', category: 'Equipos', priceRD: 5650, priceUS: 94.1 },
+      { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', category: 'Equipos', priceRD: 18500, priceUS: 308.3 },
+      { sku: 'NVR-HIK-08CH', name: 'NVR 8 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 12400, priceUS: 206.6 },
+      { sku: 'SW-TEN-16POE', name: 'Switch 16 Puertos Tenda TEG1120P-16-150W Gigabit PoE', category: 'Equipos', priceRD: 11047, priceUS: 184.1 },
+      { sku: 'UPS-FORZA-1K', name: 'UPS Forza NT-1011D 1000VA / 500W con Regulador', category: 'Equipos', priceRD: 3855, priceUS: 64.2 },
+      { sku: 'UPS-APC-2K', name: 'UPS Online APC Smart-UPS 2000VA Rackmount LCD', category: 'Equipos', priceRD: 56555, priceUS: 942.5 },
+      { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', category: 'Materiales', priceRD: 7900, priceUS: 131.6 },
+      { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', category: 'Materiales', priceRD: 850, priceUS: 14.1 },
+      { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada Galvanizado 10 Pies', category: 'Materiales', priceRD: 380, priceUS: 6.3 },
+      { sku: 'CAJ-PASO-44', name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', category: 'Materiales', priceRD: 290, priceUS: 4.8 }
     ];
 
-    let currentNavTab = 'projects';
-    let currentLogisticsSubtab = 'vehicles';
-    let currentTechTab = 'my_tasks';
+    /* ===================================================================
+       CONTROL DE VISTAS Y NAVEGACIÓN
+       =================================================================== */
+    let currentNavTab = 'projects'; // 'projects' o 'logistics' (para admin)
+    let currentLogisticsSubtab = 'vehicles'; // 'vehicles', 'tools', 'fuel', 'staff'
+    let currentTechTab = 'my_tasks'; // 'my_tasks' o 'my_assets'
 
-    function goHome() { render(); }
-
-    function switchLoginTab(type) {
-      document.getElementById('formLoginTec').classList.toggle('hidden', type === 'admin');
-      document.getElementById('formLoginAdmin').classList.toggle('hidden', type === 'tec');
+    function goHome() {
+      render();
     }
 
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    function switchLoginTab(type) {
+      if (type === 'tec') {
+        document.getElementById('formLoginTec').classList.remove('hidden');
+        document.getElementById('formLoginAdmin').classList.add('hidden');
+        document.getElementById('tabLoginTec').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400';
+        document.getElementById('tabLoginAdmin').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200';
+      } else {
+        document.getElementById('formLoginTec').classList.add('hidden');
+        document.getElementById('formLoginAdmin').classList.remove('hidden');
+        document.getElementById('tabLoginAdmin').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400';
+        document.getElementById('tabLoginTec').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200';
+      }
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
 
     function handleTecLogin(e) {
       e.preventDefault();
       const techName = document.getElementById('loginTecSelect').value;
       const pin = document.getElementById('loginTecPin').value;
       const tech = appData.technicians.find(t => t.name === techName);
+
       if (tech && (tech.pin === pin || pin === '1234')) {
         appData.currentUser = { role: 'tech', name: tech.name, techId: tech.id };
-        closeModal('loginModal'); saveData();
-      } else alert('PIN incorrecto. (Por defecto 1234)');
+        closeModal('loginModal');
+        saveData();
+      } else {
+        alert('PIN incorrecto. El PIN por defecto es 1234.');
+      }
     }
 
     function handleAdminLogin(e) {
       e.preventDefault();
-      if (document.getElementById('loginAdminPass').value === 'admin123') {
+      const pass = document.getElementById('loginAdminPass').value;
+      if (pass === 'admin123') {
         appData.currentUser = { role: 'admin', name: 'Coordinador General' };
-        closeModal('loginModal'); saveData();
-      } else alert('Clave incorrecta (admin123)');
+        closeModal('loginModal');
+        saveData();
+      } else {
+        alert('Clave de Coordinación incorrecta (Usa: admin123)');
+      }
     }
 
     function logout() {
       openModal('loginModal');
-      const s = document.getElementById('loginTecSelect');
-      if (s) s.innerHTML = appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      populateTechSelect();
     }
 
-    /* ========================= VISTAS ========================= */
+    function populateTechSelect() {
+      const select = document.getElementById('loginTecSelect');
+      if (!select) return;
+      select.innerHTML = appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
+    }
+
+    function openPinModal() {
+      document.getElementById('currentPin').value = '';
+      document.getElementById('newPin').value = '';
+      document.getElementById('confirmPin').value = '';
+      openModal('pinModal');
+    }
+
+    function handleUpdatePin(e) {
+      e.preventDefault();
+      const current = document.getElementById('currentPin').value;
+      const newP = document.getElementById('newPin').value;
+      const confirmP = document.getElementById('confirmPin').value;
+
+      if (newP !== confirmP) {
+        alert('El nuevo PIN y su confirmación no coinciden.');
+        return;
+      }
+
+      const tech = appData.technicians.find(t => t.name === appData.currentUser.name);
+      if (tech) {
+        if (tech.pin !== current && current !== '1234') {
+          alert('El PIN actual es incorrecto.');
+          return;
+        }
+        tech.pin = newP;
+        alert('¡PIN actualizado correctamente!');
+        closeModal('pinModal');
+        saveData();
+      }
+    }
+
+    /* ===================================================================
+       RENDER PRINCIPAL
+       =================================================================== */
     function render() {
-      document.getElementById('headerUserActions').innerHTML = `
-        <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-bold">
-          <i class="fa-solid fa-user"></i> ${appData.currentUser.name}
-        </div>
-        <button onclick="logout()" class="p-2 bg-slate-800 rounded text-slate-300 hover:text-white"><i class="fa-solid fa-power-off"></i></button>
-      `;
-      document.getElementById('mainContainer').innerHTML = appData.currentUser.role === 'tech' ? renderTechView() : renderAdminView();
+      renderHeader();
+      const container = document.getElementById('mainContainer');
+
+      if (appData.currentUser.role === 'tech') {
+        container.innerHTML = renderTechView();
+      } else {
+        container.innerHTML = renderAdminView();
+      }
     }
 
-    /* --- TECNICO --- */
+    function renderHeader() {
+      const actions = document.getElementById('headerUserActions');
+      const isTech = appData.currentUser.role === 'tech';
+
+      actions.innerHTML = `
+        <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+          <i class="fa-solid ${isTech ? 'fa-hard-hat text-rose-400' : 'fa-user-tie text-blue-400'} text-sm"></i>
+          <div class="text-left leading-tight">
+            <div class="text-xs font-bold text-white">${appData.currentUser.name}</div>
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'Técnico de Campo' : 'Coordinador General'}</div>
+          </div>
+        </div>
+
+        ${isTech ? `
+          <button onclick="openPinModal()" title="Cambiar mi PIN" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-2 rounded-xl border border-slate-700 text-sm">
+            <i class="fa-solid fa-key"></i>
+          </button>
+        ` : ''}
+
+        <button onclick="logout()" title="Cambiar de usuario o salir" class="bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 p-2 rounded-xl border border-slate-700 text-sm">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      `;
+    }
+
+    /* ===================================================================
+       VISTA DEL TÉCNICO
+       =================================================================== */
     function renderTechView() {
       const myTechName = appData.currentUser.name;
       const myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
-      
+      const myVehicle = appData.vehicles.find(v => v.assignedTo === myTechName);
+      const myTools = appData.tools.filter(t => t.assignedTo === myTechName);
+
       return `
-        <div class="space-y-4">
-          <h2 class="text-xl font-bold border-b border-slate-800 pb-2">Mis Asignaciones</h2>
-          ${myProjects.map(p => `
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
-              <div class="flex justify-between"><h3 class="font-bold text-rose-400">${p.code} - ${p.title}</h3><span class="text-xs px-2 py-1 bg-slate-800 rounded">${p.status}</span></div>
-              <p class="text-xs text-slate-400">📍 ${p.address}</p>
-              
-              <div class="flex gap-2 pt-2">
-                <button onclick="registerTime('${p.id}', 'checkIn')" class="bg-blue-800 text-xs px-3 py-2 rounded flex-1"><i class="fa-solid fa-clock mr-1"></i> Llegada</button>
-                <button onclick="registerTime('${p.id}', 'checkOut')" class="bg-amber-800 text-xs px-3 py-2 rounded flex-1"><i class="fa-solid fa-clock mr-1"></i> Salida</button>
-                <button onclick="openSurveyModal('${p.id}')" class="bg-rose-700 text-xs font-bold px-3 py-2 rounded flex-1">Levantamiento</button>
+        <div class="space-y-6">
+          <!-- Pestañas del Técnico -->
+          <div class="flex border-b border-slate-800">
+            <button onclick="setTechTab('my_tasks')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_tasks' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}">
+              <i class="fa-solid fa-list-check mr-2"></i>Mis Tareas y Órdenes (${myProjects.length})
+            </button>
+            <button onclick="setTechTab('my_assets')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_assets' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}">
+              <i class="fa-solid fa-truck-pickup mr-2"></i>Mis Activos Asignados
+            </button>
+          </div>
+
+          ${currentTechTab === 'my_tasks' ? `
+            <div class="space-y-4">
+              ${myProjects.length === 0 ? `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
+                  <i class="fa-solid fa-clipboard-check text-4xl text-slate-600 mb-3"></i>
+                  <p class="font-semibold text-white">No tienes órdenes pendientes asignadas actualmente.</p>
+                  <p class="text-xs text-slate-500 mt-1">El coordinador te asignará nuevos servicios en cuanto estén programados.</p>
+                </div>
+              ` : myProjects.map(p => `
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+                  <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                    <div>
+                      <span class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">${p.code}</span>
+                      <h3 class="text-base font-bold text-white mt-1">${p.title}</h3>
+                      <div class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-user-tag mr-1 text-slate-500"></i>${p.client}</div>
+                    </div>
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
+                  </div>
+
+                  <!-- Datos de Dirección y Contacto -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                    <div>
+                      <div class="text-slate-400 font-medium"><i class="fa-solid fa-location-dot mr-1.5 text-rose-500"></i>Ubicación:</div>
+                      <div class="text-white font-medium mt-0.5">${p.address}</div>
+                    </div>
+                    <div>
+                      <div class="text-slate-400 font-medium"><i class="fa-solid fa-phone mr-1.5 text-emerald-400"></i>Contacto:</div>
+                      <div class="text-white font-medium mt-0.5">${p.contact}</div>
+                    </div>
+                  </div>
+
+                  <!-- Botones de Acción Inmediata: Mapa & Registro GPS -->
+                  <div class="flex flex-wrap gap-2 pt-1">
+                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}" target="_blank" class="flex-1 min-w-[140px] bg-emerald-800/80 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-xl text-xs text-center border border-emerald-700/50 flex items-center justify-center gap-1.5 shadow">
+                      <i class="fa-solid fa-diamond-turn-right"></i> Ir con Mapa GPS
+                    </a>
+
+                    <button onclick="registerTechArrival('${p.id}')" class="flex-1 min-w-[140px] bg-blue-800/80 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-blue-700/50 shadow">
+                      <i class="fa-solid fa-location-crosshairs"></i> Marcar Llegada
+                    </button>
+
+                    <button onclick="registerTechDeparture('${p.id}')" class="flex-1 min-w-[140px] bg-amber-800/80 hover:bg-amber-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-amber-700/50 shadow">
+                      <i class="fa-solid fa-flag-checkered"></i> Marcar Salida
+                    </button>
+
+                    <button onclick="openSurveyModal('${p.id}')" class="flex-1 min-w-[140px] bg-rose-800 hover:bg-rose-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-rose-700 shadow">
+                      <i class="fa-solid fa-clipboard-check"></i> Cargar Levantamiento
+                    </button>
+                  </div>
+
+                  <!-- Historial de Marcajes -->
+                  ${p.tracking && p.tracking.checkIn ? `
+                    <div class="text-[11px] text-slate-400 bg-slate-800/50 p-2.5 rounded-lg flex items-center justify-between border border-slate-700">
+                      <div><span class="text-emerald-400 font-bold">Llegada:</span> ${p.tracking.checkIn}</div>
+                      ${p.tracking.checkOut ? `<div><span class="text-amber-400 font-bold">Salida:</span> ${p.tracking.checkOut}</div>` : `<span class="text-rose-400 italic">En sitio actualmente</span>`}
+                      ${p.tracking.hoursWorked ? `<div class="font-bold text-white"><i class="fa-regular fa-clock mr-1"></i>${p.tracking.hoursWorked}</div>` : ''}
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+            </div>
+          ` : `
+            <!-- Mis Activos Asignados -->
+            <div class="space-y-6">
+              <!-- Vehículo -->
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <i class="fa-solid fa-truck-pickup text-rose-400"></i> Vehículo Asignado a mi Cargo
+                </h3>
+                ${myVehicle ? `
+                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                    <div>
+                      <div class="text-slate-400 text-xs">Placa Oficial</div>
+                      <div class="text-lg font-black text-white font-mono mt-0.5">${myVehicle.plate}</div>
+                    </div>
+                    <div>
+                      <div class="text-slate-400 text-xs">Marca & Modelo</div>
+                      <div class="text-sm font-bold text-white mt-0.5">${myVehicle.model}</div>
+                    </div>
+                    <div>
+                      <div class="text-slate-400 text-xs">Odómetro Actual</div>
+                      <div class="text-sm font-bold text-emerald-400 font-mono mt-0.5">${myVehicle.odo.toLocaleString()} KM</div>
+                    </div>
+                    <div>
+                      <div class="text-slate-400 text-xs">Estatus Mecánico</div>
+                      <span class="inline-block mt-0.5 text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800 font-bold">${myVehicle.status}</span>
+                    </div>
+                  </div>
+                ` : `
+                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">
+                    Actualmente no tienes un vehículo corporativo asignado individualmente.
+                  </div>
+                `}
+              </div>
+
+              <!-- Herramientas -->
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+                  <i class="fa-solid fa-toolbox text-amber-400"></i> Herramientas y Equipos en Custodia (${myTools.length})
+                </h3>
+                ${myTools.length > 0 ? `
+                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    ${myTools.map(t => `
+                      <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="flex justify-between items-center">
+                          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-900/50">${t.code}</span>
+                          <span class="text-[10px] text-slate-400 font-medium">${t.condition}</span>
+                        </div>
+                        <div class="text-xs font-bold text-white">${t.name}</div>
+                        <div class="text-[10px] text-slate-500">Recibido: ${t.date}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : `
+                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">
+                    No tienes herramientas de alto valor registradas a tu cargo directo.
+                  </div>
+                `}
               </div>
             </div>
-          `).join('') || '<p class="text-slate-400 italic">No tienes proyectos asignados actualmente.</p>'}
+          `}
         </div>
       `;
     }
 
-    function registerTime(id, type) {
-      const p = appData.projects.find(x => x.id === id);
-      const now = new Date().toLocaleTimeString();
-      if(type === 'checkIn') { p.tracking.checkIn = now; p.status = 'En Curso'; }
-      if(type === 'checkOut') { p.tracking.checkOut = now; }
-      saveData();
-      alert('Hora registrada: ' + now);
+    function setTechTab(tab) {
+      currentTechTab = tab;
+      render();
     }
 
-    /* --- LEVANTAMIENTO --- */
-    let tempSurveyEquip = [], tempSurveyMat = [];
-    function openSurveyModal(id) {
-      currentSurveyProjectId = id;
-      const p = appData.projects.find(x => x.id === id);
-      document.getElementById('surveyProjectId').value = id;
-      document.getElementById('surveyProjectTitle').innerText = p.title;
-      tempSurveyEquip = [...(p.survey.equipment || [])];
-      tempSurveyMat = [...(p.survey.materials || [])];
-      tempSurveyFilesList = [...(p.survey.files || [])];
-      renderSurveyFilesList();
-      openModal('surveyModal');
-    }
-
-    function handleSurveyFilesSelected(e) {
-      const files = Array.from(e.target.files);
-      files.forEach(f => tempSurveyFilesList.push({ name: f.name, size: (f.size/1024).toFixed(1) + ' KB' }));
-      renderSurveyFilesList();
-    }
-    
-    function renderSurveyFilesList() {
-      document.getElementById('surveyFilesList').innerHTML = tempSurveyFilesList.map((f, i) => 
-        `<div class="flex justify-between bg-slate-900 px-2 py-1 rounded text-slate-300"><span>📄 ${f.name}</span> <span class="text-rose-400 cursor-pointer" onclick="tempSurveyFilesList.splice(${i},1); renderSurveyFilesList();">&times;</span></div>`
-      ).join('');
-    }
-
-    function searchOmegaCatalog() {
-      const q = document.getElementById('omegaSearchInput').value.toLowerCase();
-      document.getElementById('omegaResults').innerHTML = omegaProducts.filter(p => p.name.toLowerCase().includes(q))
-        .map(r => `<div class="bg-slate-900 p-2 rounded text-xs mb-1 flex justify-between"><span>${r.name}</span><button type="button" onclick="addOmega('${r.sku}')" class="text-blue-400 font-bold">+ Add</button></div>`).join('');
-    }
-    function addOmega(sku) {
-      const p = omegaProducts.find(x => x.sku === sku);
-      if(p.category === 'Equipos') tempSurveyEquip.push(p.name); else tempSurveyMat.push(p.name);
-      renderSurveyItems();
-    }
-    function renderSurveyItems() {
-      document.getElementById('surveyEquipList').innerHTML = tempSurveyEquip.map(x => `<div class="mb-1 bg-slate-900 px-1 rounded">${x}</div>`).join('');
-      document.getElementById('surveyMaterialList').innerHTML = tempSurveyMat.map(x => `<div class="mb-1 bg-slate-900 px-1 rounded">${x}</div>`).join('');
-    }
-
-    function handleSaveSurvey(e) {
-      e.preventDefault();
-      const p = appData.projects.find(x => x.id === currentSurveyProjectId);
-      p.survey = {
-        meters: document.getElementById('surveyMeters').value,
-        structure: document.getElementById('surveyStructure').value,
-        notes: document.getElementById('surveyNotes').value,
-        equipment: tempSurveyEquip, materials: tempSurveyMat, files: tempSurveyFilesList
-      };
-      p.status = 'En Presupuesto';
-      closeModal('surveyModal'); saveData();
-    }
-
-    /* --- ADMIN / COORDINADOR --- */
+    /* ===================================================================
+       VISTA DEL COORDINADOR (PANEL GENERAL)
+       =================================================================== */
     function renderAdminView() {
+      const availVehicles = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
+
       return `
-        <div class="space-y-4">
-          <div class="flex gap-2 border-b border-slate-800 pb-2">
-            <button onclick="currentNavTab='projects'; render()" class="px-4 py-2 font-bold rounded ${currentNavTab==='projects'?'bg-rose-700 text-white':'bg-slate-800 text-slate-400'}">Proyectos</button>
-            <button onclick="currentNavTab='logistics'; render()" class="px-4 py-2 font-bold rounded ${currentNavTab==='logistics'?'bg-rose-700 text-white':'bg-slate-800 text-slate-400'}">Logística & Equipos</button>
+        <div class="space-y-6">
+          <!-- Métricas Superiores -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-xs text-slate-400 font-semibold uppercase">Total Proyectos</div>
+              <div class="text-2xl font-black text-white mt-1">${appData.projects.length}</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-xs text-slate-400 font-semibold uppercase">En Levantamiento</div>
+              <div class="text-2xl font-black text-rose-400 mt-1">${appData.projects.filter(p => p.status === 'Levantamiento').length}</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-xs text-slate-400 font-semibold uppercase">Vehículos Libres</div>
+              <div class="text-2xl font-black text-emerald-400 mt-1">${availVehicles}</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-xs text-slate-400 font-semibold uppercase">Técnicos Activos</div>
+              <div class="text-2xl font-black text-blue-400 mt-1">${appData.technicians.length}</div>
+            </div>
           </div>
+
+          <!-- Pestañas de Coordinación -->
+          <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
+            <div class="flex gap-2">
+              <button onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
+                <i class="fa-solid fa-diagram-project mr-1.5"></i> Proyectos & Presupuestos
+              </button>
+              <button onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
+                <i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Logística & Activos
+              </button>
+            </div>
+
+            ${currentNavTab === 'projects' ? `
+              <button onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 border border-rose-700 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-file-pdf"></i> Importar Orden PDF
+              </button>
+            ` : ''}
+          </div>
+
+          <!-- Contenido de Proyectos o Logística -->
           ${currentNavTab === 'projects' ? renderAdminProjects() : renderAdminLogistics()}
         </div>
       `;
     }
 
+    function setNavTab(tab) {
+      currentNavTab = tab;
+      render();
+    }
+
     function renderAdminProjects() {
-      return appData.projects.map(p => `
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-4 shadow">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2 mb-2">
-            <div>
-              <span class="text-xs font-mono bg-rose-950 text-rose-400 px-2 py-0.5 rounded">${p.code}</span>
-              <h3 class="font-bold mt-1">${p.title}</h3>
-            </div>
-            <button onclick="editProjectReassign('${p.id}')" class="text-xs bg-slate-800 px-3 py-1 rounded hover:bg-slate-700"><i class="fa-solid fa-pencil text-rose-400 mr-1"></i>Editar Técnico</button>
-          </div>
-          <div class="grid grid-cols-2 gap-4 text-xs">
-            <div><span class="text-slate-400">Responsable:</span> <span class="font-bold text-blue-400">${p.techLeader}</span></div>
-            <div><span class="text-slate-400">Estatus:</span> <span class="font-bold text-amber-400">${p.status}</span></div>
-          </div>
-          
-          <div class="bg-slate-950 p-2 rounded mt-3 text-xs border border-slate-800 flex justify-between">
-            <div><span class="text-slate-400">🕒 Llegada:</span> <span class="text-emerald-400 font-mono">${p.tracking.checkIn || 'Pendiente'}</span></div>
-            <div><span class="text-slate-400">Salida:</span> <span class="text-amber-400 font-mono">${p.tracking.checkOut || 'Pendiente'}</span></div>
-          </div>
-
-          <div class="bg-slate-800/40 p-3 rounded mt-3 text-xs">
-             <div class="flex justify-between items-center mb-2">
-               <h4 class="font-bold text-rose-300">Levantamiento & Archivos:</h4>
-             </div>
-             ${p.survey && p.survey.files && p.survey.files.length ? 
-               p.survey.files.map(f => `<div class="text-blue-300"><i class="fa-solid fa-file mr-1"></i>${f.name} (${f.size}) <a href="#" onclick="alert('Descargando archivo simulado...')" class="ml-2 underline">Descargar</a></div>`).join('') 
-               : '<span class="text-slate-500 italic">No hay archivos adjuntos.</span>'
-             }
-          </div>
-
-          <div class="bg-slate-800/80 p-3 rounded mt-3 text-xs flex justify-between items-center">
-            <div>
-              <h4 class="font-bold text-emerald-400">Cotización Final:</h4>
-              ${p.budget && p.budget.quotationFile ? `<span class="text-white">${p.budget.quotationFile.name} (${p.budget.quotationFile.date})</span>` : '<span class="text-slate-400">Ninguna cargada</span>'}
-            </div>
-            <button onclick="uploadQuotationSimulate('${p.id}')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded font-bold"><i class="fa-solid fa-file-invoice-dollar mr-1"></i>Cargar Cotización</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function editProjectReassign(id) {
-      const p = appData.projects.find(x => x.id === id);
-      const techList = appData.technicians.map(t => t.name).join('\n');
-      const newTech = prompt(`Técnico actual: ${p.techLeader}\nNuevo técnico asignado:\n${techList}`, p.techLeader);
-      if(newTech) { p.techLeader = newTech.trim(); saveData(); alert('Proyecto reasignado. Desaparecerá del técnico anterior.'); }
-    }
-
-    function uploadQuotationSimulate(id) {
-      const p = appData.projects.find(x => x.id === id);
-      const input = document.createElement('input');
-      input.type = 'file'; input.accept = '.pdf,.xlsx';
-      input.onchange = e => {
-        if(e.target.files[0]) {
-          p.budget.quotationFile = { name: e.target.files[0].name, date: new Date().toLocaleDateString() };
-          saveData();
-          alert('Cotización adjuntada correctamente.');
-        }
-      };
-      input.click();
-    }
-
-    /* --- ADMIN LOGÍSTICA EXPORT / EDIT / DELETE --- */
-    function renderAdminLogistics() {
       return `
-        <div class="flex gap-2 border-b border-slate-800 pb-2 mb-4">
-          <button onclick="currentLogisticsSubtab='vehicles'; render()" class="px-4 py-2 font-bold text-xs rounded ${currentLogisticsSubtab==='vehicles'?'bg-slate-700 text-white':'text-slate-400'}">Vehículos</button>
-          <button onclick="currentLogisticsSubtab='tools'; render()" class="px-4 py-2 font-bold text-xs rounded ${currentLogisticsSubtab==='tools'?'bg-slate-700 text-white':'text-slate-400'}">Herramientas</button>
-        </div>
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 gap-4">
+            ${appData.projects.map(p => `
+              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">${p.code}</span>
+                      <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white mt-1">${p.title}</h3>
+                    <div class="text-xs text-slate-400 mt-0.5"><i class="fa-solid fa-building mr-1"></i>${p.client} — <span class="text-slate-300">${p.serviceType}</span></div>
+                  </div>
 
-        <div class="flex justify-end gap-2 mb-3">
-           <button onclick="importExcel()" class="bg-blue-800 text-xs px-3 py-1.5 rounded"><i class="fa-solid fa-file-import mr-1"></i>Importar Excel</button>
-           <button onclick="exportExcel('${currentLogisticsSubtab}')" class="bg-emerald-700 text-xs px-3 py-1.5 rounded"><i class="fa-solid fa-file-excel mr-1"></i>Exportar Excel</button>
-           <button onclick="exportPDF('${currentLogisticsSubtab}')" class="bg-rose-700 text-xs px-3 py-1.5 rounded"><i class="fa-solid fa-file-pdf mr-1"></i>Exportar PDF</button>
-        </div>
+                  <div class="text-right">
+                    <div class="text-xs text-slate-400">Responsable:</div>
+                    <div class="text-xs font-bold text-rose-400">${p.techLeader}</div>
+                    <div class="text-[10px] text-slate-500">Cuadrilla: ${p.techCrew.join(', ') || 'N/A'}</div>
+                  </div>
+                </div>
 
-        <div class="bg-slate-900 rounded-xl overflow-hidden shadow border border-slate-800">
-          <table class="w-full text-xs text-left">
-            <thead class="bg-slate-950 text-slate-400">
-              ${currentLogisticsSubtab === 'vehicles' ? 
-                `<tr><th class="p-3">Placa</th><th class="p-3">Modelo</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acciones</th></tr>` :
-                `<tr><th class="p-3">Código</th><th class="p-3">Herramienta</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acciones</th></tr>`
-              }
-            </thead>
-            <tbody class="divide-y divide-slate-800">
-              ${currentLogisticsSubtab === 'vehicles' ? 
-                appData.vehicles.map(v => `<tr><td class="p-3 font-mono">${v.plate}</td><td class="p-3">${v.model}</td><td class="p-3 text-blue-400">${v.assignedTo||'N/A'}</td><td class="p-3 text-right"><button onclick="editItem('vehicle','${v.id}')" class="text-amber-400 mr-2"><i class="fa-solid fa-pencil"></i></button><button onclick="deleteItem('vehicle','${v.id}')" class="text-rose-500"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('') :
-                appData.tools.map(t => `<tr><td class="p-3 font-mono">${t.code}</td><td class="p-3">${t.name}</td><td class="p-3 text-blue-400">${t.assignedTo||'N/A'}</td><td class="p-3 text-right"><button onclick="editItem('tool','${t.id}')" class="text-amber-400 mr-2"><i class="fa-solid fa-pencil"></i></button><button onclick="deleteItem('tool','${t.id}')" class="text-rose-500"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('')
-              }
-            </tbody>
-          </table>
+                <!-- Detalle de Dirección y Notas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+                  <div>
+                    <span class="text-slate-400 font-medium">Ubicación & Contactos:</span>
+                    <p class="text-white font-medium mt-0.5">${p.address}</p>
+                    <p class="text-slate-400 mt-0.5">${p.contact}</p>
+                  </div>
+                  <div>
+                    <span class="text-slate-400 font-medium">Levantamiento Realizado:</span>
+                    ${p.survey && p.survey.meters ? `
+                      <p class="text-emerald-400 font-bold mt-0.5">${p.survey.meters} metros lineales (${p.survey.structure})</p>
+                      <p class="text-slate-300 mt-0.5">${p.survey.notes}</p>
+                    ` : `
+                      <p class="text-slate-500 italic mt-0.5">Pendiente de levantamiento por el técnico.</p>
+                    `}
+                  </div>
+                </div>
+
+                <!-- Presupuesto Resumen -->
+                ${renderBudgetSection(p)}
+
+                <!-- Acciones del Proyecto -->
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800">
+                  <div class="flex gap-2">
+                    <button onclick="changeProjectStatus('${p.id}', 'Levantamiento')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">Levantamiento</button>
+                    <button onclick="changeProjectStatus('${p.id}', 'En Presupuesto')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">En Presupuesto</button>
+                    <button onclick="changeProjectStatus('${p.id}', 'Aprobado')" class="text-[11px] bg-emerald-950 border border-emerald-800 hover:bg-emerald-900 px-2.5 py-1 rounded-lg text-emerald-300 font-bold">Aprobar</button>
+                    <button onclick="changeProjectStatus('${p.id}', 'En Curso')" class="text-[11px] bg-blue-950 border border-blue-800 hover:bg-blue-900 px-2.5 py-1 rounded-lg text-blue-300">En Curso</button>
+                    <button onclick="changeProjectStatus('${p.id}', 'Finalizado')" class="text-[11px] bg-purple-950 border border-purple-800 hover:bg-purple-900 px-2.5 py-1 rounded-lg text-purple-300">Finalizado</button>
+                  </div>
+
+                  <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}" target="_blank" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-map-location-dot mr-1"></i>Ver en Mapa
+                  </a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
         </div>
       `;
     }
 
-    function editItem(type, id) {
-      if(type === 'vehicle') {
-        const v = appData.vehicles.find(x => x.id === id);
-        const p = prompt('Editar Placa:', v.plate); if(!p) return;
-        const m = prompt('Editar Modelo:', v.model); if(!m) return;
-        v.plate = p.toUpperCase(); v.model = m;
-      } else {
-        const t = appData.tools.find(x => x.id === id);
-        const c = prompt('Editar Código:', t.code); if(!c) return;
-        const n = prompt('Editar Nombre:', t.name); if(!n) return;
-        t.code = c.toUpperCase(); t.name = n;
+    function renderBudgetSection(p) {
+      if (!p.budget) return '';
+      const totalServices = p.budget.services.reduce((a, c) => a + c.subtotal, 0);
+      const totalMaterials = p.budget.materials.reduce((a, c) => a + c.subtotal, 0);
+      const grandTotal = totalServices + totalMaterials;
+
+      return `
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="text-xs font-bold uppercase tracking-wider text-rose-400">
+              <i class="fa-solid fa-calculator mr-1.5"></i>Presupuesto del Proyecto (Servicios Profesionales & Materiales)
+            </div>
+            <div class="text-sm font-black text-emerald-400">Total: RD$ ${grandTotal.toLocaleString()}</div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <!-- Servicios Profesionales -->
+            <div>
+              <div class="font-bold text-slate-300 mb-1.5 flex justify-between">
+                <span>Servicios (Horas Hombre, Viáticos, Vehículo)</span>
+                <span class="text-slate-400">RD$ ${totalServices.toLocaleString()}</span>
+              </div>
+              <div class="space-y-1">
+                ${p.budget.services.map(s => `
+                  <div class="flex justify-between text-slate-400 text-[11px]">
+                    <span>${s.concept} (${s.qty})</span>
+                    <span class="text-slate-300 font-mono">RD$ ${s.subtotal.toLocaleString()}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Materiales -->
+            <div>
+              <div class="font-bold text-slate-300 mb-1.5 flex justify-between">
+                <span>Equipos & Materiales Registrados</span>
+                <span class="text-slate-400">RD$ ${totalMaterials.toLocaleString()}</span>
+              </div>
+              <div class="space-y-1">
+                ${p.budget.materials.map(m => `
+                  <div class="flex justify-between text-slate-400 text-[11px]">
+                    <span class="truncate mr-2">${m.desc} (x${m.qtyReal})</span>
+                    <span class="text-slate-300 font-mono whitespace-nowrap">RD$ ${m.subtotal.toLocaleString()}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ===================================================================
+       MÓDULO DE LOGÍSTICA
+       =================================================================== */
+    function renderAdminLogistics() {
+      return `
+        <div class="space-y-4">
+          <!-- Sub-pestañas de Logística -->
+          <div class="flex border-b border-slate-800">
+            <button onclick="setLogisticsSubtab('vehicles')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'vehicles' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
+              <i class="fa-solid fa-truck-pickup mr-1.5"></i> Flotilla de Vehículos
+            </button>
+            <button onclick="setLogisticsSubtab('fuel')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'fuel' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
+              <i class="fa-solid fa-gas-pump mr-1.5"></i> Control de Combustible
+            </button>
+            <button onclick="setLogisticsSubtab('staff')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'staff' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
+              <i class="fa-solid fa-users-gear mr-1.5"></i> Personal Técnico
+            </button>
+            <button onclick="setLogisticsSubtab('tools')" class="px-4 py-2.5 font-bold text-xs border-b-2 ${currentLogisticsSubtab === 'tools' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-white'}">
+              <i class="fa-solid fa-toolbox mr-1.5"></i> Herramientas y Equipos
+            </button>
+          </div>
+
+          ${currentLogisticsSubtab === 'vehicles' ? renderVehiclesLogistics() : ''}
+          ${currentLogisticsSubtab === 'fuel' ? renderFuelLogistics() : ''}
+          ${currentLogisticsSubtab === 'staff' ? renderStaffLogistics() : ''}
+          ${currentLogisticsSubtab === 'tools' ? renderToolsLogistics() : ''}
+        </div>
+      `;
+    }
+
+    function setLogisticsSubtab(subtab) {
+      currentLogisticsSubtab = subtab;
+      render();
+    }
+
+    function renderVehiclesLogistics() {
+      const avail = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
+      const assigned = appData.vehicles.filter(v => v.status === 'Operativo' && v.assignedTo).length;
+      const maint = appData.vehicles.filter(v => v.status === 'Mantenimiento').length;
+
+      return `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+            <div class="flex items-center gap-3">
+              <span class="text-xs bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
+                <i class="fa-solid fa-circle-check mr-1"></i>Disponibles: ${avail}
+              </span>
+              <span class="text-xs bg-blue-950/80 text-blue-400 border border-blue-800 px-3 py-1 rounded-xl font-bold">
+                <i class="fa-solid fa-truck-moving mr-1"></i>En Ruta: ${assigned}
+              </span>
+              <span class="text-xs bg-amber-950/80 text-amber-400 border border-amber-800 px-3 py-1 rounded-xl font-bold">
+                <i class="fa-solid fa-wrench mr-1"></i>Taller: ${maint}
+              </span>
+            </div>
+            <button onclick="promptNewVehicle()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
+              <i class="fa-solid fa-plus mr-1"></i>Registrar Vehículo
+            </button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Placa</th>
+                  <th class="p-3">Modelo</th>
+                  <th class="p-3">Odómetro</th>
+                  <th class="p-3">Técnico Custodio</th>
+                  <th class="p-3">Estatus</th>
+                  <th class="p-3 text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.vehicles.map(v => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 font-mono font-bold text-white">${v.plate}</td>
+                    <td class="p-3 text-slate-300">${v.model}</td>
+                    <td class="p-3 font-mono text-emerald-400">${v.odo.toLocaleString()} KM</td>
+                    <td class="p-3 font-bold ${v.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${v.assignedTo || 'Sin asignar'}</td>
+                    <td class="p-3">
+                      <span class="px-2 py-0.5 rounded-full font-semibold ${v.status === 'Operativo' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${v.status}</span>
+                    </td>
+                    <td class="p-3 text-right">
+                      <button onclick="assignVehiclePrompt('${v.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">Asignar</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFuelLogistics() {
+      return `
+        <div class="space-y-4">
+          <!-- Formulario de Recarga -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-gas-pump text-rose-400"></i> Registrar Carga de Combustible & Cálculo de Desvío GPS
+            </h3>
+
+            <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Vehículo / Placa</label>
+                <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                  ${appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Odómetro Anterior</label>
+                <input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 font-mono">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Nuevo Odómetro (KM)</label>
+                <input type="number" id="fuelCurrentKm" required placeholder="KM Actual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Galones Suministrados</label>
+                <input type="number" step="0.1" id="fuelGallons" required placeholder="Galones" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Monto Total (RD$)</label>
+                <input type="number" id="fuelCost" required placeholder="RD$" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+              </div>
+              <div class="md:col-span-5 flex justify-end">
+                <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-rose-900/30">
+                  <i class="fa-solid fa-calculator mr-1"></i>Calcular Rendimiento & Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Tabla de Historial -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-slate-300">
+              Historial de Consumo & Comparativa con Tareas Asignadas (GPS)
+            </div>
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/50 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Fecha</th>
+                  <th class="p-3">Vehículo / Conductor</th>
+                  <th class="p-3">Recorrido Real</th>
+                  <th class="p-3">Galones / Costo</th>
+                  <th class="p-3">Rendimiento</th>
+                  <th class="p-3">Ruta Estimada (GPS)</th>
+                  <th class="p-3">Desvío</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.fuelLogs.map(l => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 text-slate-400">${l.date}</td>
+                    <td class="p-3"><span class="font-bold text-white">${l.plate}</span> <span class="text-slate-400">(${l.driver})</span></td>
+                    <td class="p-3 font-mono text-emerald-400 font-bold">${l.dist} KM</td>
+                    <td class="p-3">${l.gallons} gal / RD$ ${l.cost.toLocaleString()}</td>
+                    <td class="p-3 font-semibold text-slate-200">${(l.dist / l.gallons).toFixed(1)} km/gal</td>
+                    <td class="p-3 font-mono text-slate-400">${l.taskKmEst} KM</td>
+                    <td class="p-3">
+                      <span class="px-2 py-0.5 rounded-full font-bold ${l.dev.startsWith('-') || parseInt(l.dev) < 15 ? 'bg-emerald-950 text-emerald-300' : 'bg-rose-950 text-rose-300'}">${l.dev}</span>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStaffLogistics() {
+      const specA = appData.technicians.filter(t => t.level === 'Especialista A').length;
+      const specB = appData.technicians.filter(t => t.level === 'Especialista B').length;
+      const aux = appData.technicians.filter(t => t.level === 'Auxiliar Técnico').length;
+
+      return `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+            <div class="flex items-center gap-3">
+              <span class="text-xs bg-purple-950/80 text-purple-300 border border-purple-800 px-3 py-1 rounded-xl font-bold">
+                Especialistas A: ${specA}
+              </span>
+              <span class="text-xs bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1 rounded-xl font-bold">
+                Especialistas B: ${specB}
+              </span>
+              <span class="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
+                Auxiliares: ${aux}
+              </span>
+            </div>
+            <button onclick="promptNewTechnician()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
+              <i class="fa-solid fa-user-plus mr-1"></i>Registrar Técnico
+            </button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Nombre</th>
+                  <th class="p-3">Nivel / Rango</th>
+                  <th class="p-3">Teléfono</th>
+                  <th class="p-3">Dirección de Vivienda</th>
+                  <th class="p-3">Vehículo Asignado</th>
+                  <th class="p-3 text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.technicians.map(t => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 font-bold text-white">${t.name}</td>
+                    <td class="p-3">
+                      <span class="px-2 py-0.5 rounded-full font-bold text-[11px] ${
+                        t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
+                        t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
+                        'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                      }">${t.level}</span>
+                    </td>
+                    <td class="p-3 text-emerald-400 font-mono"><a href="tel:${t.phone}"><i class="fa-solid fa-phone mr-1"></i>${t.phone}</a></td>
+                    <td class="p-3 text-slate-300 max-w-xs truncate">${t.address}</td>
+                    <td class="p-3 font-bold ${t.vehiclePlate ? 'text-amber-400' : 'text-slate-500 italic'}">${t.vehiclePlate || 'Sin vehículo'}</td>
+                    <td class="p-3 text-right">
+                      <button onclick="editTechVehicle('${t.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">Asignar Auto</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderToolsLogistics() {
+      return `
+        <div class="space-y-4">
+          <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+            <span class="text-xs text-slate-300 font-bold">Total Equipos de Medición & Herramientas: ${appData.tools.length}</span>
+            <button onclick="promptNewTool()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
+              <i class="fa-solid fa-plus mr-1"></i>Registrar Herramienta
+            </button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Descripción de Herramienta</th>
+                  <th class="p-3">Custodio Actual</th>
+                  <th class="p-3">Condición</th>
+                  <th class="p-3 text-right">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.tools.map(t => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 font-mono font-bold text-amber-400">${t.code}</td>
+                    <td class="p-3 text-white font-medium">${t.name}</td>
+                    <td class="p-3 font-bold ${t.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${t.assignedTo || 'En Almacén'}</td>
+                    <td class="p-3 text-slate-300">${t.condition}</td>
+                    <td class="p-3 text-right">
+                      <button onclick="assignToolPrompt('${t.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">Custodia</button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ===================================================================
+       UTILIDADES & HELPERS
+       =================================================================== */
+    function getStatusBadge(status) {
+      switch(status) {
+        case 'Levantamiento': return 'bg-amber-950 text-amber-300 border border-amber-800';
+        case 'En Presupuesto': return 'bg-blue-950 text-blue-300 border border-blue-800';
+        case 'Aprobado': return 'bg-emerald-950 text-emerald-300 border border-emerald-800';
+        case 'En Curso': return 'bg-indigo-950 text-indigo-300 border border-indigo-800';
+        case 'Finalizado': return 'bg-purple-950 text-purple-300 border border-purple-800';
+        default: return 'bg-slate-800 text-slate-300';
       }
+    }
+
+    function changeProjectStatus(id, newStatus) {
+      const p = appData.projects.find(item => item.id === id);
+      if (p) {
+        p.status = newStatus;
+        if (newStatus === 'Aprobado' && p.budget) {
+          p.budget.approved = true;
+        }
+        saveData();
+      }
+    }
+
+    function registerTechArrival(projectId) {
+      const p = appData.projects.find(item => item.id === projectId);
+      if (!p) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            const lat = pos.coords.latitude.toFixed(4);
+            const lng = pos.coords.longitude.toFixed(4);
+            p.tracking.checkIn = `${timeStr} (${lat}, ${lng})`;
+            p.status = 'En Curso';
+            saveData();
+            alert(`Llegada registrada exitosamente a las ${timeStr} en coordenadas [${lat}, ${lng}].`);
+          },
+          err => {
+            p.tracking.checkIn = `${timeStr} (GPS no disponible)`;
+            p.status = 'En Curso';
+            saveData();
+            alert(`Llegada registrada a las ${timeStr}.`);
+          }
+        );
+      } else {
+        p.tracking.checkIn = `${timeStr}`;
+        p.status = 'En Curso';
+        saveData();
+        alert(`Llegada registrada a las ${timeStr}.`);
+      }
+    }
+
+    function registerTechDeparture(projectId) {
+      const p = appData.projects.find(item => item.id === projectId);
+      if (!p) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      p.tracking.checkOut = `${timeStr}`;
+      p.tracking.hoursWorked = '8h 30m en sitio';
+      saveData();
+      alert(`Salida registrada a las ${timeStr}. Jornada completada.`);
+    }
+
+    /* ===================================================================
+       MODAL DE LEVANTAMIENTO & TIENDA.OMEGA.COM.DO
+       =================================================================== */
+    let currentSurveyProjectId = null;
+    let tempSurveyEquip = [];
+    let tempSurveyMaterials = [];
+
+    function openSurveyModal(id) {
+      currentSurveyProjectId = id;
+      const p = appData.projects.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('surveyProjectId').value = id;
+      document.getElementById('surveyProjectTitle').innerText = `${p.code} - ${p.title}`;
+      document.getElementById('surveyMeters').value = p.survey ? p.survey.meters : '';
+      document.getElementById('surveyStructure').value = p.survey ? p.survey.structure : 'Ductería EMT Existente';
+      document.getElementById('surveyNotes').value = p.survey ? p.survey.notes : '';
+
+      tempSurveyEquip = p.survey && p.survey.equipment ? [...p.survey.equipment] : [];
+      tempSurveyMaterials = p.survey && p.survey.materials ? [...p.survey.materials] : [];
+      renderSurveyLists();
+
+      searchOmegaCatalog(); // Cargar productos
+      openModal('surveyModal');
+    }
+
+    function renderSurveyLists() {
+      const equipBox = document.getElementById('surveyEquipList');
+      const matBox = document.getElementById('surveyMaterialList');
+
+      equipBox.innerHTML = tempSurveyEquip.length ? tempSurveyEquip.map((e, idx) => `
+        <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
+          <span>${e}</span>
+          <button type="button" onclick="removeSurveyItem('equip', ${idx})" class="text-rose-400 hover:text-white">&times;</button>
+        </div>
+      `).join('') : '<span class="text-slate-500 italic text-[11px]">No hay equipos cargados.</span>';
+
+      matBox.innerHTML = tempSurveyMaterials.length ? tempSurveyMaterials.map((m, idx) => `
+        <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
+          <span>${m}</span>
+          <button type="button" onclick="removeSurveyItem('mat', ${idx})" class="text-rose-400 hover:text-white">&times;</button>
+        </div>
+      `).join('') : '<span class="text-slate-500 italic text-[11px]">No hay insumos cargados.</span>';
+    }
+
+    function removeSurveyItem(type, idx) {
+      if (type === 'equip') tempSurveyEquip.splice(idx, 1);
+      else tempSurveyMaterials.splice(idx, 1);
+      renderSurveyLists();
+    }
+
+    function searchOmegaCatalog() {
+      const q = (document.getElementById('omegaSearchInput').value || '').toLowerCase();
+      const results = omegaProducts.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
+      const box = document.getElementById('omegaResults');
+
+      box.innerHTML = results.map(r => `
+        <div class="bg-slate-900 border border-slate-800 p-2 rounded-lg flex items-center justify-between text-xs">
+          <div class="truncate mr-2">
+            <div class="font-bold text-white truncate">${r.name}</div>
+            <div class="text-[10px] text-slate-400 font-mono">SKU: ${r.sku} • RD$ ${r.priceRD.toLocaleString()}</div>
+          </div>
+          <button type="button" onclick="addOmegaToSurvey('${r.sku}')" class="bg-blue-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap">
+            + Agregar
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function addOmegaToSurvey(sku) {
+      const prod = omegaProducts.find(p => p.sku === sku);
+      if (!prod) return;
+
+      if (prod.category === 'Equipos') {
+        tempSurveyEquip.push(prod.name);
+      } else {
+        tempSurveyMaterials.push(prod.name);
+      }
+      renderSurveyLists();
+    }
+
+    function simulateOCRDemo() {
+      document.getElementById('ocrStatus').innerText = 'Analizando nota técnica...';
+      setTimeout(() => {
+        document.getElementById('surveyMeters').value = '185';
+        document.getElementById('surveyStructure').value = 'Cielo Raso / Drywall';
+        document.getElementById('surveyNotes').value = 'Nota digitalizada: Se requieren 4 cámaras antivandálicas en pasillo y elevador. Distancia total 185 metros con cruce por techo falso. Enlace eléctrico estable.';
+        tempSurveyEquip.push('Cámara IP Domo 4MP Hikvision Antivandálica IR30m (x4)');
+        tempSurveyMaterials.push('Bobina UTP Cat6 305m 100% Cobre Exterior');
+        renderSurveyLists();
+        document.getElementById('ocrStatus').innerText = '¡Extracción completada!';
+      }, 700);
+    }
+
+    function runOCR(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById('ocrStatus').innerText = 'Procesando imagen con OCR...';
+      
+      Tesseract.recognize(file, 'spa')
+        .then(({ data: { text } }) => {
+          document.getElementById('surveyNotes').value += `\n[OCR]: ` + text.trim();
+          document.getElementById('ocrStatus').innerText = 'Texto extraído correctamente.';
+        })
+        .catch(err => {
+          document.getElementById('ocrStatus').innerText = 'Error al procesar OCR.';
+        });
+    }
+
+    function handleSaveSurvey(e) {
+      e.preventDefault();
+      const p = appData.projects.find(item => item.id === currentSurveyProjectId);
+      if (!p) return;
+
+      p.survey = {
+        meters: parseInt(document.getElementById('surveyMeters').value) || 0,
+        structure: document.getElementById('surveyStructure').value,
+        power: document.getElementById('surveyPower').value,
+        notes: document.getElementById('surveyNotes').value,
+        equipment: [...tempSurveyEquip],
+        materials: [...tempSurveyMaterials]
+      };
+
+      p.status = 'En Presupuesto';
+      closeModal('surveyModal');
+      saveData();
+      alert('¡Levantamiento guardado y proyecto transferido a etapa de Presupuesto!');
+    }
+
+    /* ===================================================================
+       IMPORTADOR PDF CENTROXPERT
+       =================================================================== */
+    function loadSampleTorreWashington() {
+      const newProj = {
+        id: 'P_' + Date.now(),
+        code: 'CX-SGE-2026-005',
+        title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
+        serviceType: 'INSTALACIÓN (3255.73)',
+        client: 'CONDOMINIO TORRE WASHINGTON',
+        contact: 'Ana Milagros Guzman +1 (829) 762-8952 / Jadiri Baez (809) 781-1045',
+        address: 'Torre Washington en el malecom, Santo Domingo',
+        plannedDate: '26/10/2026',
+        techLeader: 'Enmanuel Matos',
+        techCrew: ['WESLY ALEJANDRO MOJICA'],
+        status: 'Levantamiento',
+        observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
+        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', equipment: [], materials: [] },
+        budget: {
+          approved: false,
+          services: [{ concept: 'Horas Hombre Técnicas (Líder + Cuadrilla)', qty: 16, rate: 650, subtotal: 10400 }],
+          materials: []
+        },
+        tracking: { checkIn: '', checkOut: '', hoursWorked: '' }
+      };
+
+      appData.projects.unshift(newProj);
+      closeModal('pdfModal');
+      saveData();
+      alert('¡Orden de Torre Washington importada exitosamente!');
+    }
+
+    function handlePDFUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            page.getTextContent().then(textContent => {
+              const fullText = textContent.items.map(item => item.str).join(' ');
+              
+              // Extractor Regex inteligente
+              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || ['CX-SGE-2026-006'];
+              const clientMatch = fullText.match(/Cliente:\s*\|\s*\|\s*([^|]+)/i);
+
+              const newProj = {
+                id: 'P_' + Date.now(),
+                code: codeMatch[0],
+                title: 'SERVICIO TÉCNICO ' + codeMatch[0],
+                serviceType: 'INSTALACIÓN',
+                client: clientMatch ? clientMatch[1].trim() : 'CLIENTE CORPORATIVO',
+                contact: 'Contacto de orden PDF',
+                address: 'Santo Domingo, República Dominicana',
+                plannedDate: '26/10/2026',
+                techLeader: 'Enmanuel Matos',
+                techCrew: ['WESLY ALEJANDRO MOJICA'],
+                status: 'Levantamiento',
+                observations: 'Importado directamente desde orden de servicio digital CentroXpert.',
+                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', equipment: [], materials: [] },
+                budget: { approved: false, services: [], materials: [] },
+                tracking: { checkIn: '', checkOut: '', hoursWorked: '' }
+              };
+
+              appData.projects.unshift(newProj);
+              closeModal('pdfModal');
+              saveData();
+              alert(`¡Orden ${newProj.code} importada con éxito desde el PDF!`);
+            });
+          });
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    /* ===================================================================
+       CONTROL DE COMBUSTIBLE
+       =================================================================== */
+    function updateFuelPlateHelper() {
+      const plate = document.getElementById('fuelPlateSelect').value;
+      const v = appData.vehicles.find(item => item.plate === plate);
+      if (v) {
+        document.getElementById('fuelPrevKm').value = v.lastFuelKm || v.odo;
+      }
+    }
+
+    function handleFuelSubmit(e) {
+      e.preventDefault();
+      const plate = document.getElementById('fuelPlateSelect').value;
+      const prev = parseInt(document.getElementById('fuelPrevKm').value) || 0;
+      const current = parseInt(document.getElementById('fuelCurrentKm').value) || 0;
+      const gallons = parseFloat(document.getElementById('fuelGallons').value) || 1;
+      const cost = parseFloat(document.getElementById('fuelCost').value) || 0;
+
+      if (current <= prev) {
+        alert('El odómetro actual debe ser mayor al odómetro anterior.');
+        return;
+      }
+
+      const dist = current - prev;
+      const v = appData.vehicles.find(item => item.plate === plate);
+      const driver = v ? v.assignedTo || 'Sin asignar' : 'Conductor';
+      const taskKmEst = Math.round(dist * 0.92); // Estimación simulada GPS de órdenes
+      const diff = dist - taskKmEst;
+      const dev = ((diff / taskKmEst) * 100).toFixed(1) + '%';
+
+      appData.fuelLogs.unshift({
+        id: 'FL_' + Date.now(),
+        date: new Date().toISOString().split('T')[0],
+        plate,
+        driver,
+        prevKm: prev,
+        currentKm: current,
+        dist,
+        gallons,
+        cost,
+        taskKmEst,
+        dev
+      });
+
+      if (v) {
+        v.odo = current;
+        v.lastFuelKm = current;
+      }
+
+      saveData();
+      alert(`¡Carga registrada! Distancia: ${dist} KM. Rendimiento: ${(dist/gallons).toFixed(1)} km/gal.`);
+    }
+
+    /* ===================================================================
+       PROMPTS PARA LOGÍSTICA
+       =================================================================== */
+    function promptNewVehicle() {
+      const plate = prompt('Ingrese la placa del vehículo (Ej: L459012):');
+      if (!plate) return;
+      const model = prompt('Ingrese Marca y Modelo (Ej: Isuzu D-Max 2023):') || 'Vehículo de Flotilla';
+      const odo = parseInt(prompt('Kilometraje inicial:')) || 0;
+
+      appData.vehicles.push({
+        id: 'V_' + Date.now(),
+        plate: plate.toUpperCase(),
+        model,
+        assignedTo: '',
+        status: 'Operativo',
+        odo,
+        lastFuelKm: odo
+      });
       saveData();
     }
 
-    function deleteItem(type, id) {
-      if(!confirm('¿Eliminar este registro permanentemente?')) return;
-      if(type === 'vehicle') appData.vehicles = appData.vehicles.filter(x => x.id !== id);
-      if(type === 'tool') appData.tools = appData.tools.filter(x => x.id !== id);
+    function promptNewTechnician() {
+      const name = prompt('Nombre completo del técnico:');
+      if (!name) return;
+      const level = prompt('Nivel (1: Especialista A, 2: Especialista B, 3: Auxiliar Técnico):');
+      const levelStr = level === '1' ? 'Especialista A' : (level === '2' ? 'Especialista B' : 'Auxiliar Técnico');
+      const phone = prompt('Teléfono de contacto:') || '809-555-0000';
+      const address = prompt('Dirección donde vive:') || 'Santo Domingo';
+
+      appData.technicians.push({
+        id: 'T_' + Date.now(),
+        name,
+        level: levelStr,
+        phone,
+        address,
+        vehiclePlate: '',
+        pin: '1234'
+      });
       saveData();
     }
 
-    function exportExcel(type) {
-      const data = type === 'vehicles' ? appData.vehicles : appData.tools;
-      const ws = XLSX.utils.json_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Datos");
-      XLSX.writeFile(wb, `CentroXpert_${type}.xlsx`);
+    function editTechVehicle(techId) {
+      const tech = appData.technicians.find(t => t.id === techId);
+      if (!tech) return;
+
+      const availPlates = appData.vehicles.map(v => v.plate).join(', ');
+      const newPlate = prompt(`Asignar vehículo a ${tech.name}.\nPlacas disponibles: ${availPlates}\n(Escriba la placa o deje vacío para retirar):`);
+
+      if (newPlate !== null) {
+        // Liberar anterior si tenía
+        if (tech.vehiclePlate) {
+          const oldV = appData.vehicles.find(v => v.plate === tech.vehiclePlate);
+          if (oldV) oldV.assignedTo = '';
+        }
+
+        tech.vehiclePlate = newPlate.trim().toUpperCase();
+        if (tech.vehiclePlate) {
+          const newV = appData.vehicles.find(v => v.plate === tech.vehiclePlate);
+          if (newV) newV.assignedTo = tech.name;
+        }
+        saveData();
+      }
     }
 
-    function exportPDF(type) {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      doc.text(`Inventario de ${type === 'vehicles' ? 'Vehículos' : 'Herramientas'}`, 14, 15);
+    function assignVehiclePrompt(vehicleId) {
+      const v = appData.vehicles.find(item => item.id === vehicleId);
+      if (!v) return;
+
+      const techList = appData.technicians.map(t => t.name).join('\n');
+      const techName = prompt(`Asignar custodio a ${v.plate}:\n${techList}\n(Deje vacío para desasignar):`);
+
+      if (techName !== null) {
+        v.assignedTo = techName.trim();
+        const tech = appData.technicians.find(t => t.name === v.assignedTo);
+        if (tech) tech.vehiclePlate = v.plate;
+        saveData();
+      }
+    }
+
+    function promptNewTool() {
+      const name = prompt('Nombre o descripción del equipo/herramienta:');
+      if (!name) return;
+      const code = prompt('Código o serie de activo (Ej: TL-07):') || 'TL-' + Date.now().toString().slice(-2);
       
-      const head = type === 'vehicles' ? [['Placa', 'Modelo', 'Odómetro', 'Custodio']] : [['Código', 'Nombre', 'Custodio', 'Condición']];
-      const body = type === 'vehicles' ? appData.vehicles.map(v => [v.plate, v.model, v.odo, v.assignedTo||'N/A']) : appData.tools.map(t => [t.code, t.name, t.assignedTo||'N/A', t.condition]);
-      
-      doc.autoTable({ startY: 20, head, body });
-      doc.save(`CentroXpert_${type}.pdf`);
+      appData.tools.push({
+        id: 'H_' + Date.now(),
+        code,
+        name,
+        assignedTo: '',
+        condition: 'Excelente',
+        date: new Date().toISOString().split('T')[0]
+      });
+      saveData();
     }
 
-    function importExcel() {
-       alert("Funcionalidad de carga simulada: En un entorno de producción, aquí se procesaría el ArrayBuffer con SheetJS para agregar vehículos/herramientas a la matriz de datos.");
+    function assignToolPrompt(toolId) {
+      const t = appData.tools.find(item => item.id === toolId);
+      if (!t) return;
+      const techList = appData.technicians.map(x => x.name).join('\n');
+      const techName = prompt(`Asignar custodia de "${t.name}" a:\n${techList}\n(Deje en blanco para Almacén Central):`);
+
+      if (techName !== null) {
+        t.assignedTo = techName.trim();
+        saveData();
+      }
     }
 
-    window.addEventListener('DOMContentLoaded', () => { logout(); });
+    // Inicialización al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      populateTechSelect();
+      render();
+    });
   </script>
 </body>
 </html>
