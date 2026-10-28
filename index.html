@@ -4,27 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CentroXpert - Ingeniería y Servicios | Control Operativo en Tiempo Real</title>
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
-  <!-- SheetJS para Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- Mammoth.js para documentos Word (.docx) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-  <!-- Tesseract.js para OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Ubuntu:wght@400;500;700&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b1120; color: #f8fafc; }
     .centroxpert-font { font-family: 'Ubuntu', 'Plus Jakarta Sans', sans-serif; }
-    .wine-brand { color: #8b1524; }
-    .bg-wine-brand { background-color: #8b1524; }
-    .border-wine-brand { border-color: #8b1524; }
     
     @keyframes pulse-dot {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -47,8 +38,6 @@
   <!-- ================= TOPBAR ================= -->
   <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-      
-      <!-- LOGO CENTROXPERT ORIGINAL -->
       <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
         <div class="bg-white px-3 py-1.5 rounded-lg flex items-center shadow-sm">
           <svg viewBox="0 0 280 60" class="h-8 md:h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
@@ -76,16 +65,12 @@
           <div class="text-sm font-semibold text-rose-400">Control Operativo & Rendimiento Técnico</div>
         </div>
       </div>
-
-      <!-- ACCIONES DE SESIÓN Y VISTA -->
-      <div class="flex items-center gap-3" id="headerUserActions">
-      </div>
+      <div class="flex items-center gap-3" id="headerUserActions"></div>
     </div>
   </header>
 
   <!-- ================= CONTENEDOR PRINCIPAL ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer">
-  </main>
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer"></main>
 
   <!-- ================= MODAL LOGIN OBLIGATORIO AL INICIAR ================= -->
   <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -93,16 +78,9 @@
       <div class="text-center mb-6">
         <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3 shadow">
           <svg viewBox="0 0 280 60" class="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
-              <text x="2" y="38" fill="#111827">centr</text>
-            </g>
-            <g transform="translate(103, 9)">
-              <circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" />
-              <line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" />
-            </g>
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5">
-              <text x="138" y="38" fill="#8b1524">xpert</text>
-            </g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1"><text x="2" y="38" fill="#111827">centr</text></g>
+            <g transform="translate(103, 9)"><circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" /><line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" /></g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5"><text x="138" y="38" fill="#8b1524">xpert</text></g>
             <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text>
             <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
           </svg>
@@ -120,12 +98,10 @@
         </button>
       </div>
 
-      <!-- Form Técnico -->
       <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Selecciona tu Nombre</label>
-          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
-          </select>
+          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"></select>
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Clave inicial: 1234)</label>
@@ -137,7 +113,6 @@
         </button>
       </form>
 
-      <!-- Form Coordinador -->
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinación (admin123)</label>
@@ -155,7 +130,6 @@
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
       <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-key mr-2 text-rose-400"></i>Cambiar mi PIN</h3>
       <p class="text-xs text-slate-400 mb-4">Actualiza tu código de acceso para mayor seguridad.</p>
-      
       <form onsubmit="handleUpdatePin(event)" class="space-y-3">
         <div>
           <label class="block text-xs text-slate-300 mb-1">PIN Actual</label>
@@ -177,7 +151,59 @@
     </div>
   </div>
 
-  <!-- ================= MODAL DETALLE COMPLETO DEL PROYECTO (AL HACER CLIC EN LA LISTA) ================= -->
+  <!-- Modal Registrar / Editar Técnico -->
+  <div id="techModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
+        <button onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
+        <input type="hidden" id="techEditId">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Nombre Completo</label>
+          <input type="text" id="techName" required placeholder="Ej: Ramón Valdez" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Rango / Categoría</label>
+            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Especialista A">Especialista A</option>
+              <option value="Especialista B">Especialista B</option>
+              <option value="Auxiliar Técnico">Auxiliar Técnico</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Teléfono</label>
+            <input type="text" id="techPhone" required placeholder="809-555-0100" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Dirección de Vivienda</label>
+          <input type="text" id="techAddress" required placeholder="Ej: C/ Duarte #15, Los Alcarrizos" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Vehículo Asignado</label>
+          <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </select>
+        </div>
+        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">
+          <i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i>Clave inicial de acceso: <strong>1234</strong>. Al ingresar, el técnico puede cambiarla desde su cuenta.
+        </div>
+        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs px-3 py-2 rounded-xl border border-slate-700 font-semibold">
+            <i class="fa-solid fa-rotate-left mr-1"></i> Resetear a 1234
+          </button>
+          <div class="flex gap-2 ml-auto">
+            <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+            <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">Guardar Técnico</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Detalle del Proyecto -->
   <div id="projectDetailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6 space-y-5">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
@@ -195,7 +221,6 @@
         <button onclick="closeModal('projectDetailModal')" class="text-slate-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- PANELES DE INFORMACIÓN -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
         <!-- Panel Ubicación y Contacto -->
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-2">
@@ -207,7 +232,7 @@
           <div class="flex items-center justify-between pt-1">
             <span id="detailProjCoords" class="text-[10px] font-mono text-slate-400"></span>
             <a id="detailProjMapBtn" href="#" target="_blank" class="bg-emerald-800 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow">
-              <i class="fa-solid fa-diamond-turn-right"></i> Abrir en Google Maps
+              <i class="fa-solid fa-diamond-turn-right"></i> Ver en Google Maps
             </a>
           </div>
         </div>
@@ -215,7 +240,7 @@
         <!-- Panel Cuadrilla y Monitoreo GPS -->
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-2">
           <div class="font-bold text-slate-300 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-            <i class="fa-solid fa-satellite text-blue-400"></i> Personal & Monitoreo en Tiempo Real
+            <i class="fa-solid fa-satellite text-blue-400"></i> Personal & Monitoreo GPS
           </div>
           <div><span class="text-slate-400">Técnico Líder:</span> <span id="detailProjLeader" class="text-rose-400 font-bold"></span></div>
           <div><span class="text-slate-400">Cuadrilla:</span> <span id="detailProjCrew" class="text-slate-300"></span></div>
@@ -227,10 +252,8 @@
         </div>
       </div>
 
-      <!-- SECCIÓN DOCUMENTOS SEPARADOS: LEVANTAMIENTO VS PLANO TÉCNICO -->
+      <!-- SECCIÓN DOCUMENTOS -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        
-        <!-- Tarjeta Levantamiento -->
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
@@ -239,35 +262,25 @@
             <span id="detailProjSurveyMeters" class="text-[11px] font-bold text-emerald-400 font-mono"></span>
           </div>
           <p id="detailProjSurveyNotes" class="text-xs text-slate-300 italic min-h-[30px]"></p>
-          <div id="detailProjSurveyDocBox" class="pt-2 border-t border-slate-800">
-            <!-- Inyectado dinámicamente -->
-          </div>
+          <div id="detailProjSurveyDocBox" class="pt-2 border-t border-slate-800"></div>
         </div>
 
-        <!-- Tarjeta Plano / Croquis -->
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
               <i class="fa-solid fa-compass-drafting"></i> Plano Técnico / Croquis
             </span>
-            <span class="text-[10px] text-slate-500">Documento Gráfico</span>
           </div>
-          <div id="detailProjPlanBox" class="min-h-[60px] flex items-center justify-center">
-            <!-- Inyectado dinámicamente -->
-          </div>
+          <div id="detailProjPlanBox" class="min-h-[60px] flex items-center justify-center"></div>
         </div>
-
       </div>
 
-      <!-- SECCIÓN COTIZACIÓN & PRESUPUESTO -->
-      <div id="detailProjBudgetContainer" class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3">
-        <!-- Render dinámico del presupuesto y cotización -->
-      </div>
+      <!-- COTIZACIÓN -->
+      <div id="detailProjBudgetContainer" class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3"></div>
 
       <!-- BOTONES DE ACCIÓN RÁPIDA -->
       <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800">
-        <div id="detailProjStatusChangeBtns" class="flex flex-wrap gap-1.5">
-        </div>
+        <div id="detailProjStatusChangeBtns" class="flex flex-wrap gap-1.5"></div>
         <div class="flex gap-2">
           <button id="detailProjEditBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1">
             <i class="fa-solid fa-pen-to-square"></i> Editar Proyecto
@@ -280,65 +293,7 @@
     </div>
   </div>
 
-  <!-- Modal Registrar / Editar Técnico -->
-  <div id="techModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
-        <button onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
-        <input type="hidden" id="techEditId">
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Nombre Completo</label>
-          <input type="text" id="techName" required placeholder="Ej: Ramón Valdez" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Rango / Categoría</label>
-            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-              <option value="Especialista A">Especialista A</option>
-              <option value="Especialista B">Especialista B</option>
-              <option value="Auxiliar Técnico">Auxiliar Técnico</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Teléfono</label>
-            <input type="text" id="techPhone" required placeholder="809-555-0100" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Dirección de Vivienda</label>
-          <input type="text" id="techAddress" required placeholder="Ej: C/ Duarte #15, Los Alcarrizos" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-        </div>
-
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Vehículo Asignado</label>
-          <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-          </select>
-        </div>
-
-        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">
-          <i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i>Clave inicial de acceso: <strong>1234</strong>. Al ingresar, el técnico puede cambiarla desde su cuenta.
-        </div>
-
-        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
-          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs px-3 py-2 rounded-xl border border-slate-700 font-semibold">
-            <i class="fa-solid fa-rotate-left mr-1"></i> Resetear a 1234
-          </button>
-          <div class="flex gap-2 ml-auto">
-            <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-            <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">Guardar Técnico</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ================= MODAL LEVANTAMIENTO TÉCNICO (CON DOS BOTONES SEPARADOS: LEVANTAMIENTO VS PLANO) ================= -->
+  <!-- Modal Levantamiento Técnico (Documentos + Canvas) -->
   <div id="surveyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
@@ -349,25 +304,18 @@
         <button onclick="closeModal('surveyModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- BOTONES SEPARADOS: UNO PARA EL LEVANTAMIENTO Y OTRO PARA EL PLANO/CROQUIS -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        
-        <!-- 1. BOTÓN EXCLUSIVO: ADJUNTAR LEVANTAMIENTO TÉCNICO -->
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
               <i class="fa-solid fa-file-lines"></i> 1. Documento de Levantamiento
             </span>
-            <span class="text-[10px] text-slate-500">Notas / Foto / Word / PDF</span>
           </div>
           <p class="text-[11px] text-slate-400">Sube apuntes de campo, mediciones escritas o fotos de libretas para digitalizar por OCR.</p>
-          
           <label class="block w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2.5 rounded-xl cursor-pointer border border-slate-700 font-semibold text-center transition">
-            <i class="fa-solid fa-cloud-arrow-up text-amber-400 mr-1.5"></i> Adjuntar Documento de Levantamiento
+            <i class="fa-solid fa-cloud-arrow-up text-amber-400 mr-1.5"></i> Adjuntar Documento
             <input type="file" id="surveyDocFileInput" accept="image/*,application/pdf,.docx,.doc,.xlsx" class="hidden" onchange="handleSurveyDocUpload(event)">
           </label>
-
-          <!-- Archivo de levantamiento actual -->
           <div id="surveyAttachedDocCard" class="hidden bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2 truncate max-w-[200px]">
               <i id="surveyDocIcon" class="fa-solid fa-file-lines text-amber-400 text-base"></i>
@@ -380,27 +328,22 @@
           </div>
         </div>
 
-        <!-- 2. BOTÓN EXCLUSIVO: ADJUNTAR PLANO O CROQUIS TÉCNICO -->
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
               <i class="fa-solid fa-compass-drafting"></i> 2. Plano o Croquis de Instalación
             </span>
-            <span class="text-[10px] text-slate-500">Imagen / PDF / DWG / Canvas</span>
           </div>
           <p class="text-[11px] text-slate-400">Sube el plano arquitectónico o dibuja un croquis con las cámaras y tuberías en sitio.</p>
-
           <div class="flex gap-2">
             <label class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2.5 rounded-xl cursor-pointer border border-slate-700 font-semibold text-center transition truncate">
-              <i class="fa-solid fa-file-image text-rose-400 mr-1"></i> Adjuntar Plano / Crocker
+              <i class="fa-solid fa-file-image text-rose-400 mr-1"></i> Subir Plano
               <input type="file" id="surveyPlanFileInput" accept="image/*,application/pdf,.dwg,.dxf" class="hidden" onchange="handleSurveyPlanUpload(event)">
             </label>
             <button type="button" onclick="openPlanCanvasModal()" class="bg-blue-950/80 hover:bg-blue-900 border border-blue-800 text-blue-300 text-xs px-3 py-2.5 rounded-xl font-bold flex items-center gap-1">
               <i class="fa-solid fa-pen-ruler"></i> Dibujar
             </button>
           </div>
-
-          <!-- Archivo de plano actual -->
           <div id="surveyAttachedPlanCard" class="hidden bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2 truncate max-w-[200px]">
               <i class="fa-solid fa-map-location-dot text-rose-400 text-base"></i>
@@ -412,7 +355,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <!-- FORMULARIO DE DETALLES TÉCNICOS -->
@@ -446,8 +388,8 @@
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas en Sitio / Texto Extraído por OCR</label>
-          <textarea id="surveyNotes" rows="3" placeholder="Detalles de pasos de muro, puntos de cámara o red, dificultades encontradas o texto del OCR..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas en Sitio / Texto OCR</label>
+          <textarea id="surveyNotes" rows="3" placeholder="Detalles de pasos de muro, puntos de cámara o texto del OCR..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
         </div>
 
         <!-- CONSULTA DIRECTA TIENDA.OMEGA.COM.DO -->
@@ -456,19 +398,14 @@
             <span class="text-xs font-bold uppercase tracking-wider text-blue-400">
               <i class="fa-solid fa-store mr-1.5"></i>Catálogo tienda.omega.com.do
             </span>
-            <span class="text-[10px] text-slate-400">Buscar equipos y materiales</span>
           </div>
-
           <div class="flex gap-2 mb-3">
             <input type="text" id="omegaSearchInput" placeholder="Buscar cámara, NVR, switch, bobina UTP..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
             <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold">Buscar</button>
           </div>
-
-          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1">
-          </div>
+          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- ITEMS AGREGADOS AL LEVANTAMIENTO CON CANTIDAD, EDICIÓN Y ELIMINACIÓN -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800">
             <div class="flex justify-between items-center mb-2">
@@ -490,20 +427,19 @@
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
           <button type="button" onclick="closeModal('surveyModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
           <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/40">
-            Guardar Levantamiento & Enviar
+            Guardar Levantamiento
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL DIBUJAR PLANOS Y CROQUIS (CANVAS TÉCNICO) -->
+  <!-- Modal Canvas -->
   <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
         <div>
-          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis y Planos en Sitio</h3>
-          <p class="text-xs text-slate-400">Dibuja muros, canalizaciones, cámaras, puntos de red o distancias.</p>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis y Planos</h3>
         </div>
         <button onclick="closeModal('planCanvasModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -554,19 +490,19 @@
       </div>
 
       <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-800">
-        <span class="text-[11px] text-slate-400">El plano se guardará como documento gráfico de soporte.</span>
-        <div class="flex gap-2">
+        <div class="flex gap-2 ml-auto">
           <button type="button" onclick="closeModal('planCanvasModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cerrar</button>
           <button type="button" onclick="savePlanDrawing()" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">
-            <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar y Adjuntar Plano
+            <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Croquis
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Coordinador: Cargar Cotización Oficial -->
+  <!-- Otros modales (Cotización, Edición de Proyecto, Vehículo, Herramienta, Visor, Importar) siguen la misma estructura... -->
   <div id="quoteModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <!-- Contenido modal cotización -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <div>
@@ -578,12 +514,10 @@
 
       <form onsubmit="handleSaveQuotation(event)" class="space-y-4">
         <input type="hidden" id="quoteProjectId">
-
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Número de Cotización Oficial</label>
           <input type="text" id="quoteNumber" required placeholder="Ej: COT-2026-089" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500 font-mono">
         </div>
-
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1">Monto Total Cotizado (RD$)</label>
@@ -594,7 +528,6 @@
             <input type="date" id="quoteDate" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
           </div>
         </div>
-
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Subir Archivo de Cotización (PDF / Excel)</label>
           <div class="border border-dashed border-slate-700 rounded-xl p-3 text-center cursor-pointer hover:border-emerald-500 transition" onclick="document.getElementById('quoteFileInput').click()">
@@ -603,12 +536,10 @@
             <input type="file" id="quoteFileInput" accept=".pdf,.xlsx,.xls" class="hidden" onchange="handleQuoteFileUpload(event)">
           </div>
         </div>
-
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Notas o Condiciones de Pago</label>
           <textarea id="quoteNotes" rows="2" placeholder="50% de anticipo, 50% contra entrega..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
         </div>
-
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
           <button type="button" onclick="closeModal('quoteModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
           <button type="submit" class="bg-emerald-700 hover:bg-emerald-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-emerald-900/30">
@@ -619,7 +550,6 @@
     </div>
   </div>
 
-  <!-- Modal Coordinador: Editar Proyecto, Coordenadas Destino & Reasignar Técnico -->
   <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
@@ -679,11 +609,10 @@
           <input type="text" id="editProjectAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
         </div>
 
-        <!-- COORDENADAS DESTINO GPS PARA GEOFENCING REAL -->
         <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-satellite"></i> Coordenadas GPS de la Obra (Geofencing)
+              <i class="fa-solid fa-satellite"></i> Coordenadas GPS (Para Geofencing Real)
             </span>
             <button type="button" onclick="captureProjectGPSCurrentLocation()" class="text-[11px] bg-emerald-950 text-emerald-300 border border-emerald-800 hover:bg-emerald-900 px-2 py-0.5 rounded font-bold">
               <i class="fa-solid fa-crosshairs mr-1"></i> Fijar mi GPS actual como destino
@@ -699,10 +628,8 @@
               <input type="number" step="0.000001" id="editProjectLng" placeholder="-69.905600" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
             </div>
           </div>
-          <p class="text-[10px] text-slate-500">Mide con precisión si el técnico realmente está en el lugar de la obra al marcar llegada.</p>
         </div>
 
-        <!-- REASIGNACIÓN DE PERSONAL: LÍDER Y CUADRILLA -->
         <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl space-y-3">
           <div class="text-xs font-bold text-rose-400 uppercase tracking-wider">
             <i class="fa-solid fa-users mr-1"></i> Asignación de Personal Técnico
@@ -724,7 +651,7 @@
 
         <div class="flex justify-between items-center pt-3 border-t border-slate-800">
           <button type="button" onclick="deleteProjectPrompt()" class="bg-red-950 border border-red-800 hover:bg-red-900 text-red-300 px-3 py-2 rounded-xl text-xs font-semibold">
-            <i class="fa-solid fa-trash-can mr-1"></i> Eliminar Proyecto
+            <i class="fa-solid fa-trash-can mr-1"></i> Eliminar
           </button>
           <div class="flex gap-2">
             <button type="button" onclick="closeModal('editProjectModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
@@ -735,95 +662,6 @@
     </div>
   </div>
 
-  <!-- Modal Coordinador: Editar/Registrar Vehículo -->
-  <div id="vehicleModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white" id="vehicleModalTitle"><i class="fa-solid fa-truck-pickup mr-2 text-rose-400"></i>Vehículo</h3>
-        <button onclick="closeModal('vehicleModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <form onsubmit="handleSaveVehicle(event)" class="space-y-3">
-        <input type="hidden" id="vehicleEditId">
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Placa Oficial</label>
-          <input type="text" id="vehiclePlate" required placeholder="Ej: L458901" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Marca y Modelo</label>
-          <input type="text" id="vehicleModel" required placeholder="Ej: Toyota Hilux 2022" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Odómetro (KM)</label>
-            <input type="number" id="vehicleOdo" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
-          </div>
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Estatus</label>
-            <select id="vehicleStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-              <option value="Operativo">Operativo</option>
-              <option value="Mantenimiento">Mantenimiento</option>
-              <option value="Fuera de Servicio">Fuera de Servicio</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Técnico Custodio Asignado</label>
-          <select id="vehicleAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-          </select>
-        </div>
-
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
-          <button type="button" onclick="closeModal('vehicleModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Coordinador: Editar/Registrar Herramienta -->
-  <div id="toolModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white" id="toolModalTitle"><i class="fa-solid fa-toolbox mr-2 text-amber-400"></i>Herramienta / Equipo</h3>
-        <button onclick="closeModal('toolModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <form onsubmit="handleSaveTool(event)" class="space-y-3">
-        <input type="hidden" id="toolEditId">
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Código / Serie</label>
-            <input type="text" id="toolCode" required placeholder="Ej: TL-08" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase">
-          </div>
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Condición Física</label>
-            <select id="toolCondition" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-              <option value="Excelente">Excelente</option>
-              <option value="Bueno">Bueno</option>
-              <option value="Requiere Revisión">Requiere Revisión</option>
-            </select>
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Descripción del Equipo</label>
-          <input type="text" id="toolName" required placeholder="Ej: Certificador de Red Fluke DSX-5000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Técnico Custodio</label>
-          <select id="toolAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-          </select>
-        </div>
-
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
-          <button type="button" onclick="closeModal('toolModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Visor de Plano / Archivo -->
   <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
@@ -843,7 +681,6 @@
     </div>
   </div>
 
-  <!-- Modal Cargar PDF de Orden de Servicio -->
   <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center mb-4">
@@ -871,9 +708,9 @@
 
   <script>
     /* ===================================================================
-       ESTADO CENTRAL & MIGRACIÓN LIMPIA DE DATOS
+       ESTADO CENTRAL & MIGRACIÓN LIMPIA DE DATOS (VERSIÓN 8)
        =================================================================== */
-    const STORAGE_KEY = 'centroxpert_data_v7';
+    const STORAGE_KEY = 'centroxpert_data_v8';
 
     const defaultData = {
       technicians: [
@@ -932,7 +769,6 @@
               { name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', qty: 1, sku: 'CON-RJ45-50P', price: 850 },
               { name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', qty: 6, sku: 'CAJ-PASO-44', price: 290 }
             ],
-            // SEPARADOS: docFile (levantamiento) y planFile (plano). Ninguno contiene el PDF viejo.
             docFile: null,
             planFile: null
           },
@@ -975,53 +811,64 @@
       ]
     };
 
-    let appData = loadData();
-
-    // Sesión activa (Siempre inicia desconectado para forzar Login por seguridad)
+    let appData;
     let currentAuthUser = null;
     let activeStatusFilter = 'all';
 
     function loadData() {
       const saved = localStorage.getItem(STORAGE_KEY);
+      const cloneDef = JSON.parse(JSON.stringify(defaultData));
+      
       if (saved) {
         try { 
           const parsed = JSON.parse(saved);
-          if (parsed.projects) {
-            parsed.projects.forEach(p => {
-              if (!p.survey) p.survey = {};
-              // Limpiar cualquier PDF de prueba viejo en el plano
-              if (p.survey.planFile && p.survey.planFile.name && p.survey.planFile.name.toLowerCase().includes('washington')) {
-                p.survey.planFile = null;
-              }
-              if (p.survey.file) {
-                delete p.survey.file; // eliminar propiedad antigua
-              }
-            });
-          }
-          return parsed;
+          // Fusión profunda segura para evitar crasheos (undefined)
+          const merged = {
+            technicians: parsed.technicians || cloneDef.technicians,
+            vehicles: parsed.vehicles || cloneDef.vehicles,
+            tools: parsed.tools || cloneDef.tools,
+            fuelLogs: parsed.fuelLogs || cloneDef.fuelLogs,
+            projects: parsed.projects || cloneDef.projects
+          };
+
+          // Limpieza de datos antiguos
+          merged.projects.forEach(p => {
+            p.survey = p.survey || {};
+            p.tracking = p.tracking || {};
+            p.budget = p.budget || { approved: false, services: [], materials: [] };
+            p.techCrew = p.techCrew || [];
+            if (p.survey.planFile && p.survey.planFile.name && p.survey.planFile.name.toLowerCase().includes('washington')) {
+              p.survey.planFile = null;
+            }
+            if (p.survey.file) delete p.survey.file;
+          });
+
+          return merged;
         } catch(e) { console.error(e); }
       }
-      return JSON.parse(JSON.stringify(defaultData));
+      return cloneDef;
     }
+
+    appData = loadData();
 
     function saveData() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
       render();
     }
 
-    /* Catálogo Omega Tech */
+    // Catálogo Omega Tech
     const omegaProducts = [
-      { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200, priceUS: 86.6 },
-      { sku: 'CAM-HIK-BUL', name: 'Cámara IP Bullet 4MP Hikvision ColorVu Exterior', category: 'Equipos', priceRD: 5650, priceUS: 94.1 },
-      { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', category: 'Equipos', priceRD: 18500, priceUS: 308.3 },
-      { sku: 'NVR-HIK-08CH', name: 'NVR 8 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 12400, priceUS: 206.6 },
-      { sku: 'SW-TEN-16POE', name: 'Switch 16 Puertos Tenda TEG1120P-16-150W Gigabit PoE', category: 'Equipos', priceRD: 11047, priceUS: 184.1 },
-      { sku: 'UPS-FORZA-1K', name: 'UPS Forza NT-1011D 1000VA / 500W con Regulador', category: 'Equipos', priceRD: 3855, priceUS: 64.2 },
-      { sku: 'UPS-APC-2K', name: 'UPS Online APC Smart-UPS 2000VA Rackmount LCD', category: 'Equipos', priceRD: 56555, priceUS: 942.5 },
-      { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', category: 'Materiales', priceRD: 7900, priceUS: 131.6 },
-      { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', category: 'Materiales', priceRD: 850, priceUS: 14.1 },
-      { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada Galvanizado 10 Pies', category: 'Materiales', priceRD: 380, priceUS: 6.3 },
-      { sku: 'CAJ-PASO-44', name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', category: 'Materiales', priceRD: 290, priceUS: 4.8 }
+      { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200 },
+      { sku: 'CAM-HIK-BUL', name: 'Cámara IP Bullet 4MP Hikvision ColorVu Exterior', category: 'Equipos', priceRD: 5650 },
+      { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', category: 'Equipos', priceRD: 18500 },
+      { sku: 'NVR-HIK-08CH', name: 'NVR 8 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 12400 },
+      { sku: 'SW-TEN-16POE', name: 'Switch 16 Puertos Tenda TEG1120P-16-150W Gigabit PoE', category: 'Equipos', priceRD: 11047 },
+      { sku: 'UPS-FORZA-1K', name: 'UPS Forza NT-1011D 1000VA / 500W con Regulador', category: 'Equipos', priceRD: 3855 },
+      { sku: 'UPS-APC-2K', name: 'UPS Online APC Smart-UPS 2000VA Rackmount LCD', category: 'Equipos', priceRD: 56555 },
+      { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', category: 'Materiales', priceRD: 7900 },
+      { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', category: 'Materiales', priceRD: 850 },
+      { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada Galvanizado 10 Pies', category: 'Materiales', priceRD: 380 },
+      { sku: 'CAJ-PASO-44', name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', category: 'Materiales', priceRD: 290 }
     ];
 
     let currentNavTab = 'projects';
@@ -1032,9 +879,7 @@
       render();
     }
 
-    /* ===================================================================
-       FÓRMULA HAVERSINE: DISTANCIA GPS EXACTA EN METROS
-       =================================================================== */
+    // FÓRMULA HAVERSINE (GEOFENCING)
     function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
       if (!lat1 || !lon1 || !lat2 || !lon2) return null;
       const R = 6371e3;
@@ -1042,18 +887,12 @@
       const φ2 = (lat2 * Math.PI) / 180;
       const Δφ = ((lat2 - lat1) * Math.PI) / 180;
       const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-
-      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
       return Math.round(R * c);
     }
 
-    /* ===================================================================
-       CONTROL DE SESIÓN Y LOGIN OBLIGATORIO
-       =================================================================== */
+    // CONTROL DE SESIÓN
     function switchLoginTab(type) {
       if (type === 'tec') {
         document.getElementById('formLoginTec').classList.remove('hidden');
@@ -1132,18 +971,11 @@
       const current = document.getElementById('currentPin').value;
       const newP = document.getElementById('newPin').value;
       const confirmP = document.getElementById('confirmPin').value;
-
-      if (newP !== confirmP) {
-        alert('El nuevo PIN y su confirmación no coinciden.');
-        return;
-      }
-
+      if (newP !== confirmP) { alert('El nuevo PIN y su confirmación no coinciden.'); return; }
+      
       const tech = appData.technicians.find(t => t.name === currentAuthUser.name);
       if (tech) {
-        if (tech.pin && tech.pin !== current && current !== '1234') {
-          alert('El PIN actual es incorrecto.');
-          return;
-        }
+        if (tech.pin && tech.pin !== current && current !== '1234') { alert('El PIN actual es incorrecto.'); return; }
         tech.pin = newP;
         alert('¡PIN actualizado correctamente! Ahora debes usar tu nueva clave.');
         closeModal('pinModal');
@@ -1151,9 +983,7 @@
       }
     }
 
-    /* ===================================================================
-       RENDERIZADO PRINCIPAL
-       =================================================================== */
+    // RENDER PRINCIPAL
     function render() {
       renderHeader();
       const container = document.getElementById('mainContainer');
@@ -1178,6 +1008,8 @@
         container.innerHTML = renderTechView();
       } else {
         container.innerHTML = renderAdminView();
+        // Restaura los colores de filtro correctos al renderizar
+        updateFilterButtonStyles();
       }
     }
 
@@ -1193,7 +1025,6 @@
       }
 
       const isTech = currentAuthUser.role === 'tech';
-
       actions.innerHTML = `
         <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
           <i class="fa-solid ${isTech ? 'fa-hard-hat text-rose-400' : 'fa-user-tie text-blue-400'} text-sm"></i>
@@ -1202,22 +1033,18 @@
             <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'Técnico de Campo' : 'Coordinador General'}</div>
           </div>
         </div>
-
         ${isTech ? `
           <button onclick="openPinModal()" title="Cambiar mi PIN" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-2 rounded-xl border border-slate-700 text-sm">
             <i class="fa-solid fa-key"></i>
           </button>
         ` : ''}
-
         <button onclick="logout()" title="Cerrar sesión" class="bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 p-2 rounded-xl border border-slate-700 text-sm">
           <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       `;
     }
 
-    /* ===================================================================
-       VISTA DEL TÉCNICO
-       =================================================================== */
+    // VISTA TÉCNICO
     function renderTechView() {
       const myTechName = currentAuthUser.name;
       const myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
@@ -1237,18 +1064,15 @@
 
           ${currentTechTab === 'my_tasks' ? `
             <div class="space-y-4">
-              <!-- BUSCADOR PARA TÉCNICO -->
               <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
                 <input type="text" id="techProjectSearchInput" oninput="filterTechProjects()" placeholder="Buscar orden por código o cliente..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
               </div>
-
               <div id="techProjectsContainer" class="space-y-3">
                 ${renderTechProjectsList(myProjects)}
               </div>
             </div>
           ` : `
-            <!-- Mis Activos Asignados -->
             <div class="space-y-6">
               <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
                 <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
@@ -1256,27 +1080,13 @@
                 </h3>
                 ${myVehicle ? `
                   <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                    <div>
-                      <div class="text-slate-400 text-xs">Placa Oficial</div>
-                      <div class="text-lg font-black text-white font-mono mt-0.5">${myVehicle.plate}</div>
-                    </div>
-                    <div>
-                      <div class="text-slate-400 text-xs">Marca & Modelo</div>
-                      <div class="text-sm font-bold text-white mt-0.5">${myVehicle.model}</div>
-                    </div>
-                    <div>
-                      <div class="text-slate-400 text-xs">Odómetro Actual</div>
-                      <div class="text-sm font-bold text-emerald-400 font-mono mt-0.5">${myVehicle.odo.toLocaleString()} KM</div>
-                    </div>
-                    <div>
-                      <div class="text-slate-400 text-xs">Estatus Mecánico</div>
-                      <span class="inline-block mt-0.5 text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800 font-bold">${myVehicle.status}</span>
-                    </div>
+                    <div><div class="text-slate-400 text-xs">Placa Oficial</div><div class="text-lg font-black text-white font-mono mt-0.5">${myVehicle.plate}</div></div>
+                    <div><div class="text-slate-400 text-xs">Marca & Modelo</div><div class="text-sm font-bold text-white mt-0.5">${myVehicle.model}</div></div>
+                    <div><div class="text-slate-400 text-xs">Odómetro Actual</div><div class="text-sm font-bold text-emerald-400 font-mono mt-0.5">${myVehicle.odo.toLocaleString()} KM</div></div>
+                    <div><div class="text-slate-400 text-xs">Estatus Mecánico</div><span class="inline-block mt-0.5 text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800 font-bold">${myVehicle.status}</span></div>
                   </div>
                 ` : `
-                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">
-                    Actualmente no tienes un vehículo corporativo asignado individualmente.
-                  </div>
+                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">Actualmente no tienes un vehículo corporativo asignado individualmente.</div>
                 `}
               </div>
 
@@ -1288,19 +1098,14 @@
                   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     ${myTools.map(t => `
                       <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                        <div class="flex justify-between items-center">
-                          <span class="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-900/50">${t.code}</span>
-                          <span class="text-[10px] text-slate-400 font-medium">${t.condition}</span>
-                        </div>
+                        <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-900/50">${t.code}</span><span class="text-[10px] text-slate-400 font-medium">${t.condition}</span></div>
                         <div class="text-xs font-bold text-white">${t.name}</div>
                         <div class="text-[10px] text-slate-500">Recibido: ${t.date}</div>
                       </div>
                     `).join('')}
                   </div>
                 ` : `
-                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">
-                    No tienes herramientas registradas bajo tu custodia directa.
-                  </div>
+                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">No tienes herramientas registradas bajo tu custodia directa.</div>
                 `}
               </div>
             </div>
@@ -1311,14 +1116,8 @@
 
     function renderTechProjectsList(projectsList) {
       if (projectsList.length === 0) {
-        return `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
-            <i class="fa-solid fa-clipboard-check text-4xl text-slate-600 mb-3"></i>
-            <p class="font-semibold text-white">No tienes órdenes asignadas pendientes con ese filtro.</p>
-          </div>
-        `;
+        return `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400"><i class="fa-solid fa-clipboard-check text-4xl text-slate-600 mb-3"></i><p class="font-semibold text-white">No tienes órdenes asignadas pendientes con ese filtro.</p></div>`;
       }
-
       return projectsList.map(p => `
         <div onclick="openProjectDetailModal('${p.id}')" class="bg-slate-900 border ${p.tracking && p.tracking.isVerifiedOnSite ? 'border-emerald-600/70 shadow-emerald-950/40' : 'border-slate-800'} hover:border-rose-700/60 rounded-xl p-4 shadow cursor-pointer transition flex flex-wrap items-center justify-between gap-3">
           <div class="space-y-1">
@@ -1335,7 +1134,6 @@
             <h4 class="text-sm font-bold text-white">${p.title}</h4>
             <div class="text-xs text-slate-400"><i class="fa-solid fa-user-tag mr-1 text-slate-500"></i>${p.client} — <i class="fa-solid fa-location-dot ml-2 mr-1 text-rose-400"></i>${p.address}</div>
           </div>
-
           <div class="flex items-center gap-2 text-right">
             <div class="text-[11px] text-slate-400">
               ${p.survey && p.survey.docFile ? '<i class="fa-solid fa-file-lines text-amber-400 mr-1" title="Levantamiento adjunto"></i>' : ''}
@@ -1352,13 +1150,7 @@
       const q = (document.getElementById('techProjectSearchInput').value || '').toLowerCase().trim();
       const myTechName = currentAuthUser.name;
       const myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
-      
-      const filtered = myProjects.filter(p => 
-        p.code.toLowerCase().includes(q) || 
-        p.title.toLowerCase().includes(q) || 
-        p.client.toLowerCase().includes(q)
-      );
-
+      const filtered = myProjects.filter(p => (p.code||'').toLowerCase().includes(q) || (p.title||'').toLowerCase().includes(q) || (p.client||'').toLowerCase().includes(q));
       document.getElementById('techProjectsContainer').innerHTML = renderTechProjectsList(filtered);
     }
 
@@ -1367,9 +1159,7 @@
       render();
     }
 
-    /* ===================================================================
-       VISTA DEL COORDINADOR (PANEL GENERAL, LISTA DE PROYECTOS & KPIS)
-       =================================================================== */
+    // VISTA COORDINADOR
     function renderAdminView() {
       const availVehicles = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
       const techInSite = appData.projects.filter(p => p.tracking && p.tracking.checkIn && !p.tracking.checkOut && p.tracking.isVerifiedOnSite).length;
@@ -1397,7 +1187,6 @@
             </div>
           </div>
 
-          <!-- NAVEGACIÓN PRINCIPAL: PROYECTOS, LOGÍSTICA E INFORMES KPIS -->
           <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
             <div class="flex flex-wrap gap-2">
               <button onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
@@ -1417,11 +1206,11 @@
                   <i class="fa-solid fa-file-pdf"></i> Importar Orden PDF
                 </button>
                 <button onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
-                  <i class="fa-solid fa-file-excel"></i> Exportar Excel
+                  <i class="fa-solid fa-file-excel"></i> Exportar Proyectos Excel
                 </button>
               </div>
             ` : ''}
-
+            
             ${currentNavTab === 'kpis' ? `
               <div class="flex gap-2">
                 <button onclick="exportKPIReportToPDF()" class="bg-rose-950/80 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
@@ -1446,34 +1235,25 @@
       render();
     }
 
-    /* ===================================================================
-       VISTA TIPO LISTA / TABLA DE PROYECTOS CON BUSCADOR INTELIGENTE
-       =================================================================== */
+    // LISTA DE PROYECTOS
     function renderAdminProjectsListView() {
       return `
         <div class="space-y-4">
-          
-          <!-- BARRA DE BÚSQUEDA Y FILTROS POR ESTADO -->
           <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-3.5 rounded-2xl shadow">
-            
-            <!-- BUSCADOR POR CÓDIGO O CLIENTE -->
             <div class="relative flex-1 min-w-[240px]">
               <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
               <input type="text" id="projectSearchInput" oninput="filterAdminProjectsTable()" placeholder="Buscar por código de proyecto (ej: CX-SGE) o cliente..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
             </div>
-
-            <!-- FILTRO DE ESTADO PILL -->
             <div class="flex flex-wrap items-center gap-1.5">
-              <button onclick="setStatusFilter('all')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${activeStatusFilter === 'all' ? 'bg-rose-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}">Todos</button>
-              <button onclick="setStatusFilter('Levantamiento')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${activeStatusFilter === 'Levantamiento' ? 'bg-amber-800 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}">Levantamiento</button>
-              <button onclick="setStatusFilter('En Presupuesto')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${activeStatusFilter === 'En Presupuesto' ? 'bg-blue-800 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}">En Presupuesto</button>
-              <button onclick="setStatusFilter('Aprobado')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${activeStatusFilter === 'Aprobado' ? 'bg-emerald-800 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}">Aprobado</button>
-              <button onclick="setStatusFilter('En Curso')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${activeStatusFilter === 'En Curso' ? 'bg-indigo-800 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}">En Curso</button>
-              <button onclick="setStatusFilter('Finalizado')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${activeStatusFilter === 'Finalizado' ? 'bg-purple-800 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}">Finalizado</button>
+              <button id="btnFilter_all" onclick="setStatusFilter('all')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Todos</button>
+              <button id="btnFilter_Levantamiento" onclick="setStatusFilter('Levantamiento')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Levantamiento</button>
+              <button id="btnFilter_EnPresupuesto" onclick="setStatusFilter('En Presupuesto')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">En Presupuesto</button>
+              <button id="btnFilter_Aprobado" onclick="setStatusFilter('Aprobado')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Aprobado</button>
+              <button id="btnFilter_EnCurso" onclick="setStatusFilter('En Curso')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">En Curso</button>
+              <button id="btnFilter_Finalizado" onclick="setStatusFilter('Finalizado')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Finalizado</button>
             </div>
           </div>
 
-          <!-- TABLA LISTA DE PROYECTOS -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
             <div class="overflow-x-auto">
               <table class="w-full text-xs text-left" id="adminProjectsTable">
@@ -1495,46 +1275,31 @@
               </table>
             </div>
           </div>
-
         </div>
       `;
     }
 
     function renderAdminProjectsTableRows(projectsList) {
       if (projectsList.length === 0) {
-        return `
-          <tr>
-            <td colspan="8" class="p-8 text-center text-slate-400 italic">
-              No se encontraron proyectos u órdenes con los filtros seleccionados.
-            </td>
-          </tr>
-        `;
+        return `<tr><td colspan="8" class="p-8 text-center text-slate-400 italic">No se encontraron proyectos con los filtros seleccionados.</td></tr>`;
       }
-
       return projectsList.map(p => {
         const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
         const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
-
         return `
           <tr onclick="openProjectDetailModal('${p.id}')" class="hover:bg-slate-800/50 cursor-pointer transition">
-            <td class="p-3 font-mono font-bold text-rose-400 whitespace-nowrap">
-              ${p.code}
-            </td>
+            <td class="p-3 font-mono font-bold text-rose-400 whitespace-nowrap">${p.code}</td>
             <td class="p-3">
               <div class="font-bold text-white">${p.title}</div>
               <div class="text-[11px] text-slate-400 truncate max-w-xs">${p.client}</div>
             </td>
-            <td class="p-3 text-slate-300">
-              ${p.serviceType || 'INSTALACIÓN'}
-            </td>
+            <td class="p-3 text-slate-300">${p.serviceType || 'INSTALACIÓN'}</td>
             <td class="p-3">
               <span class="font-bold text-white">${p.techLeader}</span>
-              <div class="text-[10px] text-slate-500">${p.techCrew.join(', ') || 'Sin cuadrilla'}</div>
+              <div class="text-[10px] text-slate-500">${(p.techCrew||[]).join(', ') || 'Sin cuadrilla'}</div>
             </td>
             <td class="p-3 text-center whitespace-nowrap">
-              <span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] ${getStatusBadge(p.status)}">
-                ${p.status}
-              </span>
+              <span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] ${getStatusBadge(p.status)}">${p.status}</span>
             </td>
             <td class="p-3 text-center whitespace-nowrap">
               ${isInSite ? `
@@ -1544,9 +1309,7 @@
                 </span>
               ` : p.tracking && p.tracking.checkOut ? `
                 <span class="text-slate-400 text-[10px] font-mono">Completado (${p.tracking.hoursWorked || 'Jornada'})</span>
-              ` : `
-                <span class="text-slate-500 text-[10px] italic">Pendiente</span>
-              `}
+              ` : `<span class="text-slate-500 text-[10px] italic">Pendiente</span>`}
             </td>
             <td class="p-3 text-center whitespace-nowrap space-x-1">
               ${p.survey && p.survey.docFile ? '<i class="fa-solid fa-file-lines text-amber-400" title="Levantamiento adjunto"></i>' : ''}
@@ -1564,32 +1327,46 @@
       }).join('');
     }
 
+    function updateFilterButtonStyles() {
+      document.querySelectorAll('.status-filter-btn').forEach(btn => {
+        btn.className = 'status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white';
+      });
+      const activeBtnId = 'btnFilter_' + activeStatusFilter.replace(/\s+/g, '');
+      const activeBtn = document.getElementById(activeBtnId);
+      if(activeBtn) {
+        let colorClass = 'bg-rose-700 text-white';
+        if(activeStatusFilter === 'Levantamiento') colorClass = 'bg-amber-800 text-white';
+        else if(activeStatusFilter === 'En Presupuesto') colorClass = 'bg-blue-800 text-white';
+        else if(activeStatusFilter === 'Aprobado') colorClass = 'bg-emerald-800 text-white';
+        else if(activeStatusFilter === 'En Curso') colorClass = 'bg-indigo-800 text-white';
+        else if(activeStatusFilter === 'Finalizado') colorClass = 'bg-purple-800 text-white';
+        activeBtn.className = `status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${colorClass}`;
+      }
+    }
+
     function setStatusFilter(status) {
       activeStatusFilter = status;
+      updateFilterButtonStyles();
       filterAdminProjectsTable();
     }
 
     function filterAdminProjectsTable() {
-      const q = (document.getElementById('projectSearchInput').value || '').toLowerCase().trim();
-      
+      const q = (document.getElementById('projectSearchInput') ? document.getElementById('projectSearchInput').value : '').toLowerCase().trim();
       const filtered = appData.projects.filter(p => {
-        const matchesQuery = p.code.toLowerCase().includes(q) || 
-                             p.title.toLowerCase().includes(q) || 
-                             p.client.toLowerCase().includes(q) ||
-                             p.techLeader.toLowerCase().includes(q);
+        const matchesQuery = (p.code||'').toLowerCase().includes(q) || 
+                             (p.title||'').toLowerCase().includes(q) || 
+                             (p.client||'').toLowerCase().includes(q) ||
+                             (p.techLeader||'').toLowerCase().includes(q);
         const matchesStatus = (activeStatusFilter === 'all') || (p.status === activeStatusFilter);
         return matchesQuery && matchesStatus;
       });
-
       const body = document.getElementById('adminProjectsTableBody');
       if (body) {
         body.innerHTML = renderAdminProjectsTableRows(filtered);
       }
     }
 
-    /* ===================================================================
-       MODAL DE DETALLE DEL PROYECTO (ABRIR CON 1 CLIC)
-       =================================================================== */
+    // MODAL DETALLE DE PROYECTO
     let currentDetailProjectId = null;
 
     function openProjectDetailModal(id) {
@@ -1606,9 +1383,8 @@
       document.getElementById('detailProjAddress').innerText = p.address;
       document.getElementById('detailProjContact').innerText = p.contact || 'No especificado';
       document.getElementById('detailProjLeader').innerText = p.techLeader;
-      document.getElementById('detailProjCrew').innerText = p.techCrew.join(', ') || 'Sin cuadrilla adicional';
+      document.getElementById('detailProjCrew').innerText = (p.techCrew||[]).join(', ') || 'Sin cuadrilla adicional';
 
-      // Coordenadas
       if (p.targetLat && p.targetLng) {
         document.getElementById('detailProjCoords').innerText = `GPS de la Obra: [${p.targetLat.toFixed(5)}, ${p.targetLng.toFixed(5)}]`;
         document.getElementById('detailProjMapBtn').href = `https://www.google.com/maps/search/?api=1&query=${p.targetLat},${p.targetLng}`;
@@ -1617,7 +1393,6 @@
         document.getElementById('detailProjMapBtn').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}`;
       }
 
-      // Live GPS
       const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
       const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
       const liveBadge = document.getElementById('detailProjLiveGPSBadge');
@@ -1640,11 +1415,9 @@
         diagBox.innerHTML = '';
       }
 
-      // Levantamiento
       document.getElementById('detailProjSurveyMeters').innerText = p.survey && p.survey.meters ? `${p.survey.meters} m (${p.survey.structure || 'EMT'})` : 'Sin metrado';
       document.getElementById('detailProjSurveyNotes').innerText = p.survey && p.survey.notes ? p.survey.notes : 'Sin observaciones técnicas cargadas.';
 
-      // Doc Levantamiento Box
       const docBox = document.getElementById('detailProjSurveyDocBox');
       if (p.survey && p.survey.docFile) {
         docBox.innerHTML = `
@@ -1661,7 +1434,6 @@
         docBox.innerHTML = '<span class="text-slate-500 italic text-[11px]">No se ha adjuntado documento de levantamiento.</span>';
       }
 
-      // Plano Box
       const planBox = document.getElementById('detailProjPlanBox');
       if (p.survey && p.survey.planFile) {
         planBox.innerHTML = `
@@ -1678,7 +1450,6 @@
         planBox.innerHTML = '<span class="text-slate-500 italic text-[11px]">No se ha adjuntado plano o croquis aún.</span>';
       }
 
-      // Cotización y Presupuesto
       const budgetContainer = document.getElementById('detailProjBudgetContainer');
       const totalServices = p.budget && p.budget.services ? p.budget.services.reduce((a, c) => a + c.subtotal, 0) : 0;
       const totalMaterials = p.budget && p.budget.materials ? p.budget.materials.reduce((a, c) => a + c.subtotal, 0) : 0;
@@ -1698,7 +1469,6 @@
             </button>
           ` : ''}
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-1">
           <div>
             <div class="font-bold text-slate-300 flex justify-between mb-1">
@@ -1712,7 +1482,6 @@
               </div>
             `).join('') : '<span class="text-slate-500 italic text-[11px]">Sin servicios</span>'}
           </div>
-
           <div>
             <div class="font-bold text-slate-300 flex justify-between mb-1">
               <span>Equipos & Materiales Registrados</span>
@@ -1731,7 +1500,6 @@
         </div>
       `;
 
-      // Botones de cambio de estado
       const statusBtns = document.getElementById('detailProjStatusChangeBtns');
       if (currentAuthUser.role === 'admin') {
         statusBtns.innerHTML = `
@@ -1761,47 +1529,196 @@
       openProjectDetailModal(id);
     }
 
-    /* Acciones directas para archivos */
+    // INFORMES Y KPIS
+    function renderAdminKPIs() {
+      const totalProjects = appData.projects.length;
+      const completedProjects = appData.projects.filter(p => p.status === 'Finalizado').length;
+      const completionRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
+
+      const checkInProjects = appData.projects.filter(p => p.tracking && p.tracking.checkIn);
+      const verifiedOnSite = checkInProjects.filter(p => p.tracking && p.tracking.isVerifiedOnSite).length;
+      const gpsComplianceRate = checkInProjects.length > 0 ? Math.round((verifiedOnSite / checkInProjects.length) * 100) : 100;
+
+      const totalFuelTickets = appData.fuelLogs.reduce((acc, l) => acc + (l.tickets500 || 0), 0);
+      const totalFuelMoney = totalFuelTickets * 500;
+      const totalKmLogged = appData.fuelLogs.reduce((acc, l) => acc + (l.dist || 0), 0);
+      const avgCostPerKm = totalKmLogged > 0 ? (totalFuelMoney / totalKmLogged).toFixed(2) : '0.00';
+
+      let totalBudgetHours = 0;
+      appData.projects.forEach(p => {
+        if (p.budget && p.budget.services) {
+          p.budget.services.forEach(s => {
+            if ((s.concept||'').toLowerCase().includes('horas') || (s.concept||'').toLowerCase().includes('técnicas')) {
+              totalBudgetHours += (s.qty || 0);
+            }
+          });
+        }
+      });
+
+      const techStats = appData.technicians.map(t => {
+        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || (p.techCrew||[]).includes(t.name));
+        const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
+        const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
+        const onSiteVerified = checkedIn.filter(p => p.tracking && p.tracking.isVerifiedOnSite).length;
+        const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
+
+        const fuelEntries = appData.fuelLogs.filter(f => f.driver === t.name || (t.vehiclePlate && f.plate === t.vehiclePlate));
+        let avgDev = 0;
+        if (fuelEntries.length > 0) {
+          const sumDev = fuelEntries.reduce((acc, f) => acc + parseFloat(f.dev || 0), 0);
+          avgDev = (sumDev / fuelEntries.length).toFixed(1);
+        }
+
+        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 40 : 25;
+        const gpsScore = (gpsRate / 100) * 40;
+        const fuelScore = Math.max(0, (1 - (avgDev / 50))) * 20;
+        const performanceScore = Math.min(100, Math.round(closeScore + gpsScore + fuelScore));
+
+        return { ...t, assignedCount: assignedProj.length, completedCount: completed, gpsRate, avgDev, performanceScore };
+      });
+
+      return `
+        <div class="space-y-6">
+          <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-rose-950/40 border border-slate-800 p-5 rounded-2xl shadow-xl">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <span class="text-xs uppercase tracking-wider text-rose-400 font-bold"><i class="fa-solid fa-gauge-high mr-1.5"></i>Tablero de Control de Productividad</span>
+                <h2 class="text-xl font-black text-white mt-0.5">Métricas Clave de Rendimiento Técnico</h2>
+                <p class="text-xs text-slate-400 mt-1">Evaluación en tiempo real de cuadrillas en campo, cumplimiento GPS y optimización vehicular.</p>
+              </div>
+              <div class="flex items-center gap-3 bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800">
+                <i class="fa-solid fa-award text-amber-400 text-2xl"></i>
+                <div>
+                  <div class="text-[11px] text-slate-400 font-medium">Cumplimiento Operativo General</div>
+                  <div class="text-lg font-black text-white">${completionRate}% <span class="text-xs text-emerald-400 font-semibold">Tasa de Entrega</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold"><span>Puntualidad & GPS Geofencing</span><i class="fa-solid fa-location-dot text-emerald-400"></i></div>
+              <div class="text-2xl font-black text-emerald-400 mt-2">${gpsComplianceRate}%</div>
+              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden"><div class="bg-emerald-500 h-full rounded-full" style="width: ${gpsComplianceRate}%"></div></div>
+              <div class="text-[10px] text-slate-400 mt-2">Llegadas validadas a menos de 300m de la obra</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold"><span>Inversión en Combustible</span><i class="fa-solid fa-gas-pump text-rose-400"></i></div>
+              <div class="text-2xl font-black text-white mt-2">RD$ ${totalFuelMoney.toLocaleString()}</div>
+              <div class="text-xs text-rose-400 font-bold mt-0.5">${totalFuelTickets} Tickets de RD$ 500</div>
+              <div class="text-[10px] text-slate-400 mt-1">Costo promedio: RD$ ${avgCostPerKm} / KM recorrido</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold"><span>Horas Hombre Cotizadas</span><i class="fa-solid fa-clock text-blue-400"></i></div>
+              <div class="text-2xl font-black text-blue-400 mt-2">${totalBudgetHours} HH</div>
+              <div class="text-xs text-slate-300 font-medium mt-0.5">${checkInProjects.length} visitas con tiempo registrado</div>
+              <div class="text-[10px] text-slate-400 mt-1">Rendimiento según presupuesto aprobado</div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold"><span>Planos Técnicos en Obra</span><i class="fa-solid fa-compass-drafting text-purple-400"></i></div>
+              <div class="text-2xl font-black text-purple-400 mt-2">${appData.projects.filter(p => p.survey && p.survey.planFile).length}</div>
+              <div class="text-xs text-slate-300 font-medium mt-0.5">Levantamientos con croquis</div>
+              <div class="text-[10px] text-slate-400 mt-1">Soporte gráfico para instalación inmediata</div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking de Rendimiento y Cumplimiento Técnico</h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Puntaje basado en efectividad de cierre, geolocalización en sitio y desvío vehicular.</p>
+              </div>
+              <span class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">Total Evaluados: ${techStats.length} Técnicos</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left" id="kpiTableExport">
+                <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                  <tr>
+                    <th class="p-3">Técnico</th>
+                    <th class="p-3">Categoría</th>
+                    <th class="p-3 text-center">Tareas (Total / Cierre)</th>
+                    <th class="p-3 text-center">Cumplimiento GPS</th>
+                    <th class="p-3 text-center">Desvío Combustible</th>
+                    <th class="p-3">Score de Eficiencia</th>
+                    <th class="p-3 text-right">Diagnóstico Operativo</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  ${techStats.sort((a,b) => b.performanceScore - a.performanceScore).map((t, idx) => `
+                    <tr class="hover:bg-slate-800/40">
+                      <td class="p-3">
+                        <div class="flex items-center gap-2">
+                          <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${idx === 0 ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300'}">${idx + 1}</span>
+                          <div>
+                            <span class="font-bold text-white">${t.name}</span>
+                            <div class="text-[10px] text-slate-500">${t.vehiclePlate ? `Vehículo: ${t.vehiclePlate}` : 'Sin auto'}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${
+                          t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
+                          t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
+                          'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                        }">${t.level}</span>
+                      </td>
+                      <td class="p-3 text-center">
+                        <span class="font-bold text-white">${t.completedCount}</span> / <span class="text-slate-400">${t.assignedCount}</span>
+                      </td>
+                      <td class="p-3 text-center">
+                        <span class="font-bold font-mono ${t.gpsRate >= 80 ? 'text-emerald-400' : 'text-amber-400'}">${t.gpsRate}%</span>
+                      </td>
+                      <td class="p-3 text-center">
+                        <span class="font-mono ${parseFloat(t.avgDev) < 15 ? 'text-emerald-400' : 'text-rose-400'}">${t.avgDev}%</span>
+                      </td>
+                      <td class="p-3">
+                        <div class="flex items-center gap-2">
+                          <div class="w-24 bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full ${t.performanceScore >= 80 ? 'bg-emerald-500' : (t.performanceScore >= 60 ? 'bg-blue-500' : 'bg-amber-500')}" style="width: ${t.performanceScore}%"></div>
+                          </div>
+                          <span class="font-bold font-mono text-white">${t.performanceScore}/100</span>
+                        </div>
+                      </td>
+                      <td class="p-3 text-right">
+                        ${t.performanceScore >= 80 ? `<span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-star mr-1 text-amber-400"></i> Desempeño Sobresaliente</span>` : t.performanceScore >= 60 ? `<span class="bg-blue-950/80 text-blue-300 border border-blue-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-check mr-1 text-blue-400"></i> Rendimiento Adecuado</span>` : `<span class="bg-rose-950/80 text-rose-300 border border-rose-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-triangle-exclamation mr-1 text-rose-400"></i> Supervisar en Campo</span>`}
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ACCIONES DIRECTAS DE ARCHIVOS DESDE EL DETALLE (VER, DESCARGAR, ELIMINAR)
     function viewFileDirect(projId, type) {
       const p = appData.projects.find(x => x.id === projId);
       if (!p || !p.survey) return;
       const file = type === 'doc' ? p.survey.docFile : p.survey.planFile;
       if (!file) return;
-
       document.getElementById('viewerTitle').innerText = file.name;
       document.getElementById('viewerSubtitle').innerText = `${p.code} - ${p.title}`;
-      
       const downloadBtn = document.getElementById('viewerDownloadBtn');
       downloadBtn.href = file.data || '#';
       downloadBtn.download = file.name;
-
       const body = document.getElementById('viewerBody');
       body.innerHTML = '';
 
       if (file.type && file.type.includes('image')) {
         body.innerHTML = `<img src="${file.data}" alt="Evidencia" class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-md" />`;
       } else if (file.type && file.type.includes('word')) {
-        body.innerHTML = `
-          <div class="text-center p-8 text-slate-300">
-            <i class="fa-solid fa-file-word text-6xl text-blue-500 mb-3"></i>
-            <h4 class="text-sm font-bold text-white">${file.name}</h4>
-            <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">Documento de Word procesado con éxito.</p>
-            ${file.text ? `<div class="mt-4 p-3 bg-slate-900 border border-slate-800 rounded text-left text-xs text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap">${file.text}</div>` : ''}
-          </div>
-        `;
+        body.innerHTML = `<div class="text-center p-8 text-slate-300"><i class="fa-solid fa-file-word text-6xl text-blue-500 mb-3"></i><h4 class="text-sm font-bold text-white">${file.name}</h4><p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">Documento procesado con éxito.</p>${file.text ? `<div class="mt-4 p-3 bg-slate-900 border border-slate-800 rounded text-left text-xs text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap">${file.text}</div>` : ''}</div>`;
       } else if (file.type && file.type.includes('pdf')) {
-        body.innerHTML = file.data ? 
-          `<iframe src="${file.data}" class="w-full h-[70vh] rounded-lg border border-slate-700"></iframe>` :
-          `<div class="text-center p-8 text-slate-400"><i class="fa-solid fa-file-pdf text-5xl text-rose-500 mb-3"></i><p class="font-bold text-white">${file.name}</p></div>`;
+        body.innerHTML = file.data ? `<iframe src="${file.data}" class="w-full h-[70vh] rounded-lg border border-slate-700"></iframe>` : `<div class="text-center p-8 text-slate-400"><i class="fa-solid fa-file-pdf text-5xl text-rose-500 mb-3"></i><p class="font-bold text-white">${file.name}</p></div>`;
       } else {
-        body.innerHTML = `
-          <div class="text-center p-8 text-slate-400">
-            <i class="fa-solid fa-file text-5xl text-emerald-500 mb-3"></i>
-            <p class="font-bold text-white">${file.name}</p>
-          </div>
-        `;
+        body.innerHTML = `<div class="text-center p-8 text-slate-400"><i class="fa-solid fa-file text-5xl text-emerald-500 mb-3"></i><p class="font-bold text-white">${file.name}</p></div>`;
       }
-
       openModal('fileViewerModal');
     }
 
@@ -1810,7 +1727,6 @@
       if (!p || !p.survey) return;
       const file = type === 'doc' ? p.survey.docFile : p.survey.planFile;
       if (!file) return;
-
       if (file.data) {
         const a = document.createElement('a');
         a.href = file.data;
@@ -1826,862 +1742,15 @@
     function deleteFileDirect(projId, type) {
       const p = appData.projects.find(x => x.id === projId);
       if (!p || !p.survey) return;
-
       const label = type === 'doc' ? 'el documento de levantamiento' : 'el plano técnico';
       if (confirm(`¿Estás seguro de eliminar ${label}?`)) {
         if (type === 'doc') p.survey.docFile = null;
         else p.survey.planFile = null;
         saveData();
-        openProjectDetailModal(projId);
+        openProjectDetailModal(projId); // Actualiza la vista de detalle
         alert('Archivo eliminado exitosamente.');
       }
     }
-
-    /* ===================================================================
-       MODAL DE LEVANTAMIENTO CON CARGA SEPARADA DE ARCHIVOS
-       =================================================================== */
-    let currentSurveyProjectId = null;
-    let tempSurveyItemsEquip = [];
-    let tempSurveyItemsMat = [];
-    let tempSurveyDocFile = null;
-    let tempSurveyPlanFile = null;
-
-    function openSurveyModal(id) {
-      currentSurveyProjectId = id;
-      const p = appData.projects.find(item => item.id === id);
-      if (!p) return;
-
-      document.getElementById('surveyProjectId').value = id;
-      document.getElementById('surveyProjectTitle').innerText = `${p.code} - ${p.title}`;
-      document.getElementById('surveyMeters').value = p.survey ? (p.survey.meters || '') : '';
-      document.getElementById('surveyStructure').value = p.survey ? (p.survey.structure || 'Ductería EMT Existente') : 'Ductería EMT Existente';
-      document.getElementById('surveyPower').value = p.survey ? (p.survey.power || '110V Regulada con UPS') : '110V Regulada con UPS';
-      document.getElementById('surveyNotes').value = p.survey ? (p.survey.notes || '') : '';
-
-      if (p.survey && p.survey.itemsEquip) {
-        tempSurveyItemsEquip = JSON.parse(JSON.stringify(p.survey.itemsEquip));
-      } else {
-        tempSurveyItemsEquip = [];
-      }
-
-      if (p.survey && p.survey.itemsMat) {
-        tempSurveyItemsMat = JSON.parse(JSON.stringify(p.survey.itemsMat));
-      } else {
-        tempSurveyItemsMat = [];
-      }
-
-      // Separación estricta y limpia
-      tempSurveyDocFile = p.survey && p.survey.docFile ? { ...p.survey.docFile } : null;
-      tempSurveyPlanFile = p.survey && p.survey.planFile ? { ...p.survey.planFile } : null;
-
-      updateSurveyCardsUI();
-      renderSurveyItemLists();
-      searchOmegaCatalog();
-      openModal('surveyModal');
-    }
-
-    /* Carga del Documento de Levantamiento */
-    function handleSurveyDocUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const fileNameLower = file.name.toLowerCase();
-
-      if (fileNameLower.endsWith('.docx') || fileNameLower.endsWith('.doc')) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          mammoth.extractRawText({ arrayBuffer: evt.target.result })
-            .then(result => {
-              const docText = result.value;
-              processExtractedSurveyText(docText);
-              tempSurveyDocFile = {
-                name: file.name,
-                type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                data: evt.target.result,
-                isDocx: true,
-                text: docText
-              };
-              updateSurveyCardsUI();
-              alert('¡Documento Word de levantamiento digitalizado!');
-            });
-        };
-        reader.readAsArrayBuffer(file);
-      } else if (fileNameLower.endsWith('.pdf')) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const typedarray = new Uint8Array(evt.target.result);
-          pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-            let pagesPromises = [];
-            for (let i = 1; i <= Math.min(pdf.numPages, 3); i++) {
-              pagesPromises.push(pdf.getPage(i).then(page => {
-                return page.getTextContent().then(tc => tc.items.map(s => s.str).join(' '));
-              }));
-            }
-            Promise.all(pagesPromises).then(pagesText => {
-              const fullText = pagesText.join('\n');
-              processExtractedSurveyText(fullText);
-              tempSurveyDocFile = {
-                name: file.name,
-                type: 'application/pdf',
-                data: URL.createObjectURL(file),
-                text: fullText
-              };
-              updateSurveyCardsUI();
-              alert('¡Texto extraído del PDF de levantamiento!');
-            });
-          });
-        };
-        reader.readAsArrayBuffer(file);
-      } else if (file.type && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const base64Data = evt.target.result;
-          tempSurveyDocFile = {
-            name: file.name,
-            type: file.type,
-            data: base64Data
-          };
-          updateSurveyCardsUI();
-
-          Tesseract.recognize(base64Data, 'spa')
-            .then(({ data: { text } }) => {
-              processExtractedSurveyText(text);
-              alert('¡OCR completado en foto de levantamiento!');
-            });
-        };
-        reader.readAsDataURL(file);
-      } else {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          tempSurveyDocFile = {
-            name: file.name,
-            type: file.type || 'application/octet-stream',
-            data: evt.target.result
-          };
-          updateSurveyCardsUI();
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    /* Carga del Plano o Crocker */
-    function handleSurveyPlanUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        tempSurveyPlanFile = {
-          name: file.name,
-          type: file.type || 'image/png',
-          data: evt.target.result
-        };
-        updateSurveyCardsUI();
-        alert('¡Plano o croquis técnico adjuntado exitosamente!');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function updateSurveyCardsUI() {
-      // Card Levantamiento
-      const docCard = document.getElementById('surveyAttachedDocCard');
-      if (tempSurveyDocFile) {
-        docCard.classList.remove('hidden');
-        document.getElementById('surveyDocName').innerText = tempSurveyDocFile.name;
-      } else {
-        docCard.classList.add('hidden');
-      }
-
-      // Card Plano
-      const planCard = document.getElementById('surveyAttachedPlanCard');
-      if (tempSurveyPlanFile) {
-        planCard.classList.remove('hidden');
-        document.getElementById('surveyPlanName').innerText = tempSurveyPlanFile.name;
-      } else {
-        planCard.classList.add('hidden');
-      }
-    }
-
-    function previewSurveyDocFile() {
-      if (!tempSurveyDocFile) return;
-      viewFileDirectMock(tempSurveyDocFile, 'Documento de Levantamiento');
-    }
-
-    function previewSurveyPlanFile() {
-      if (!tempSurveyPlanFile) return;
-      viewFileDirectMock(tempSurveyPlanFile, 'Plano Técnico / Croquis');
-    }
-
-    function removeSurveyDocFile() {
-      tempSurveyDocFile = null;
-      updateSurveyCardsUI();
-    }
-
-    function removeSurveyPlanFile() {
-      tempSurveyPlanFile = null;
-      updateSurveyCardsUI();
-    }
-
-    function viewFileDirectMock(file, title) {
-      document.getElementById('viewerTitle').innerText = file.name;
-      document.getElementById('viewerSubtitle').innerText = title;
-      
-      const downloadBtn = document.getElementById('viewerDownloadBtn');
-      downloadBtn.href = file.data || '#';
-      downloadBtn.download = file.name;
-
-      const body = document.getElementById('viewerBody');
-      body.innerHTML = '';
-
-      if (file.type && file.type.includes('image')) {
-        body.innerHTML = `<img src="${file.data}" alt="Vista Previa" class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-md" />`;
-      } else {
-        body.innerHTML = `
-          <div class="text-center p-8 text-slate-300">
-            <i class="fa-solid fa-file text-6xl text-rose-500 mb-3"></i>
-            <h4 class="text-sm font-bold text-white">${file.name}</h4>
-          </div>
-        `;
-      }
-
-      openModal('fileViewerModal');
-    }
-
-    function processExtractedSurveyText(text) {
-      if (!text || !text.trim()) return;
-
-      const notesField = document.getElementById('surveyNotes');
-      notesField.value += (notesField.value ? '\n\n' : '') + '[Digitalizado]: ' + text.trim();
-
-      const metersMatch = text.match(/(\d{2,4})\s*(?:metros?|mts?|m\b)/i);
-      if (metersMatch && !document.getElementById('surveyMeters').value) {
-        document.getElementById('surveyMeters').value = metersMatch[1];
-      }
-
-      const camMatch = text.match(/(\d+)\s*(?:c[aá]maras?|cam)/i);
-      if (camMatch) {
-        const qty = parseInt(camMatch[1]) || 1;
-        tempSurveyItemsEquip.push({
-          name: `Cámara IP Antivandálica 4MP (Detectada OCR)`,
-          qty: qty,
-          sku: 'CAM-HIK-4MP',
-          price: 5200
-        });
-      }
-
-      const cableMatch = text.match(/(\d+)\s*(?:rollos?|bobinas?|cajas?)\s*(?:de\s*)?(?:cable|utp)/i);
-      if (cableMatch) {
-        const qty = parseInt(cableMatch[1]) || 1;
-        tempSurveyItemsMat.push({
-          name: `Bobina UTP Cat6 305m (Detectada OCR)`,
-          qty: qty,
-          sku: 'CAB-UTP-CAT6',
-          price: 7900
-        });
-      }
-
-      renderSurveyItemLists();
-    }
-
-    function simulateSurveyFileDemo() {
-      tempSurveyPlanFile = {
-        name: 'Croquis_Instalacion_CCTV.png',
-        type: 'image/png',
-        data: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1000&q=80'
-      };
-      document.getElementById('surveyMeters').value = '175';
-      document.getElementById('surveyStructure').value = 'Ductería EMT Existente';
-      document.getElementById('surveyNotes').value = 'Muestra: 4 cámaras en ducto de elevador y pasillos. Cruce por montante principal. Distancia aproximada 175 metros.';
-      
-      tempSurveyItemsEquip = [
-        { name: 'NVR 16 Canales 4K AcuSense', qty: 1, sku: 'NVR-HIK-16CH', price: 18500 },
-        { name: 'Cámara IP Domo 4MP Antivandálica', qty: 4, sku: 'CAM-HIK-4MP', price: 5200 }
-      ];
-
-      tempSurveyItemsMat = [
-        { name: 'Bobina UTP Cat6 305m Cobre', qty: 2, sku: 'CAB-UTP-CAT6', price: 7900 },
-        { name: 'Conectores RJ45 Blindados Paquete 50', qty: 1, sku: 'CON-RJ45-50P', price: 850 }
-      ];
-
-      updateSurveyCardsUI();
-      renderSurveyItemLists();
-      alert('¡Muestra de plano y datos cargada con éxito!');
-    }
-
-    function renderSurveyItemLists() {
-      const equipBox = document.getElementById('surveyEquipList');
-      const matBox = document.getElementById('surveyMaterialList');
-
-      equipBox.innerHTML = tempSurveyItemsEquip.length ? tempSurveyItemsEquip.map((item, idx) => `
-        <div class="bg-slate-900 border border-slate-700/80 p-2 rounded-lg flex items-center justify-between gap-2 shadow-sm">
-          <div class="flex-1 truncate">
-            <span class="font-bold text-white">${item.name}</span>
-            <div class="text-[10px] text-slate-400 font-mono">SKU: ${item.sku || 'N/A'} • RD$ ${(item.price || 0).toLocaleString()} c/u</div>
-          </div>
-          <div class="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-700">
-            <button type="button" onclick="changeSurveyItemQty('equip', ${idx}, -1)" class="text-slate-400 hover:text-white px-1 font-bold">-</button>
-            <input type="number" min="1" value="${item.qty}" onchange="setSurveyItemQty('equip', ${idx}, this.value)" class="w-10 bg-transparent text-center font-bold text-white text-xs focus:outline-none">
-            <button type="button" onclick="changeSurveyItemQty('equip', ${idx}, 1)" class="text-slate-400 hover:text-white px-1 font-bold">+</button>
-          </div>
-          <div class="flex items-center gap-1">
-            <button type="button" onclick="editSurveyItemName('equip', ${idx})" class="text-slate-400 hover:text-blue-300 p-1" title="Editar nombre"><i class="fa-solid fa-pen"></i></button>
-            <button type="button" onclick="removeSurveyItem('equip', ${idx})" class="text-rose-400 hover:text-white p-1" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
-          </div>
-        </div>
-      `).join('') : '<span class="text-slate-500 italic text-[11px]">No hay equipos cargados.</span>';
-
-      matBox.innerHTML = tempSurveyItemsMat.length ? tempSurveyItemsMat.map((item, idx) => `
-        <div class="bg-slate-900 border border-slate-700/80 p-2 rounded-lg flex items-center justify-between gap-2 shadow-sm">
-          <div class="flex-1 truncate">
-            <span class="font-bold text-white">${item.name}</span>
-            <div class="text-[10px] text-slate-400 font-mono">SKU: ${item.sku || 'N/A'} • RD$ ${(item.price || 0).toLocaleString()} c/u</div>
-          </div>
-          <div class="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-700">
-            <button type="button" onclick="changeSurveyItemQty('mat', ${idx}, -1)" class="text-slate-400 hover:text-white px-1 font-bold">-</button>
-            <input type="number" min="1" value="${item.qty}" onchange="setSurveyItemQty('mat', ${idx}, this.value)" class="w-10 bg-transparent text-center font-bold text-white text-xs focus:outline-none">
-            <button type="button" onclick="changeSurveyItemQty('mat', ${idx}, 1)" class="text-slate-400 hover:text-white px-1 font-bold">+</button>
-          </div>
-          <div class="flex items-center gap-1">
-            <button type="button" onclick="editSurveyItemName('mat', ${idx})" class="text-slate-400 hover:text-blue-300 p-1" title="Editar nombre"><i class="fa-solid fa-pen"></i></button>
-            <button type="button" onclick="removeSurveyItem('mat', ${idx})" class="text-rose-400 hover:text-white p-1" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
-          </div>
-        </div>
-      `).join('') : '<span class="text-slate-500 italic text-[11px]">No hay insumos cargados.</span>';
-    }
-
-    function changeSurveyItemQty(type, idx, delta) {
-      const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
-      if (arr[idx]) {
-        arr[idx].qty = Math.max(1, (arr[idx].qty || 1) + delta);
-        renderSurveyItemLists();
-      }
-    }
-
-    function setSurveyItemQty(type, idx, val) {
-      const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
-      if (arr[idx]) {
-        arr[idx].qty = Math.max(1, parseInt(val) || 1);
-        renderSurveyItemLists();
-      }
-    }
-
-    function editSurveyItemName(type, idx) {
-      const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
-      if (!arr[idx]) return;
-      const newName = prompt('Editar descripción del ítem:', arr[idx].name);
-      if (newName && newName.trim()) {
-        arr[idx].name = newName.trim();
-        renderSurveyItemLists();
-      }
-    }
-
-    function removeSurveyItem(type, idx) {
-      if (type === 'equip') tempSurveyItemsEquip.splice(idx, 1);
-      else tempSurveyItemsMat.splice(idx, 1);
-      renderSurveyItemLists();
-    }
-
-    function promptAddManualItem(type) {
-      const name = prompt(type === 'equip' ? 'Nombre del Equipo (ej: Switch PoE 24 Puertos):' : 'Nombre del Material (ej: Tubería EMT 3/4"):');
-      if (!name || !name.trim()) return;
-      const qty = parseInt(prompt('Cantidad:', '1')) || 1;
-      const target = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
-      target.push({
-        name: name.trim(),
-        qty: qty,
-        sku: 'MANUAL',
-        price: 0
-      });
-      renderSurveyItemLists();
-    }
-
-    function searchOmegaCatalog() {
-      const q = (document.getElementById('omegaSearchInput').value || '').toLowerCase();
-      const results = omegaProducts.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
-      const box = document.getElementById('omegaResults');
-
-      box.innerHTML = results.map(r => `
-        <div class="bg-slate-900 border border-slate-800 p-2 rounded-lg flex items-center justify-between text-xs">
-          <div class="truncate mr-2">
-            <div class="font-bold text-white truncate">${r.name}</div>
-            <div class="text-[10px] text-slate-400 font-mono">SKU: ${r.sku} • RD$ ${r.priceRD.toLocaleString()}</div>
-          </div>
-          <button type="button" onclick="addOmegaToSurvey('${r.sku}')" class="bg-blue-700 hover:bg-blue-600 text-white px-2 py-1 rounded text-[10px] font-bold whitespace-nowrap">
-            + Agregar
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function addOmegaToSurvey(sku) {
-      const prod = omegaProducts.find(p => p.sku === sku);
-      if (!prod) return;
-
-      const target = prod.category === 'Equipos' ? tempSurveyItemsEquip : tempSurveyItemsMat;
-      const existing = target.find(x => x.sku === prod.sku);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        target.push({
-          name: prod.name,
-          qty: 1,
-          sku: prod.sku,
-          price: prod.priceRD
-        });
-      }
-      renderSurveyItemLists();
-    }
-
-    function handleSaveSurvey(e) {
-      e.preventDefault();
-      const p = appData.projects.find(item => item.id === currentSurveyProjectId);
-      if (!p) return;
-
-      p.survey = {
-        meters: parseInt(document.getElementById('surveyMeters').value) || 0,
-        structure: document.getElementById('surveyStructure').value,
-        power: document.getElementById('surveyPower').value,
-        notes: document.getElementById('surveyNotes').value,
-        itemsEquip: [...tempSurveyItemsEquip],
-        itemsMat: [...tempSurveyItemsMat],
-        docFile: tempSurveyDocFile,
-        planFile: tempSurveyPlanFile
-      };
-
-      if (p.budget) {
-        p.budget.materials = [];
-        tempSurveyItemsEquip.forEach(item => {
-          p.budget.materials.push({
-            desc: item.name,
-            qtyEst: item.qty,
-            qtyReal: item.qty,
-            unitCost: item.price || 1500,
-            subtotal: item.qty * (item.price || 1500)
-          });
-        });
-        tempSurveyItemsMat.forEach(item => {
-          p.budget.materials.push({
-            desc: item.name,
-            qtyEst: item.qty,
-            qtyReal: item.qty,
-            unitCost: item.price || 500,
-            subtotal: item.qty * (item.price || 500)
-          });
-        });
-      }
-
-      p.status = 'En Presupuesto';
-      closeModal('surveyModal');
-      saveData();
-      alert('¡Levantamiento y planos guardados con éxito!');
-    }
-
-    /* ===================================================================
-       CANVAS PARA DIBUJAR PLANOS Y CROQUIS TÉCNICOS
-       =================================================================== */
-    let canvas, ctx;
-    let isDrawing = false;
-    let canvasTool = 'pen';
-    let startX = 0, startY = 0;
-    let canvasSnapshot = null;
-
-    function openPlanCanvasModal() {
-      openModal('planCanvasModal');
-      setTimeout(initPlanCanvas, 50);
-    }
-
-    function initPlanCanvas() {
-      canvas = document.getElementById('planCanvas');
-      if (!canvas) return;
-      ctx = canvas.getContext('2d');
-
-      if (!canvasSnapshot) {
-        clearPlanCanvas();
-      }
-
-      canvas.onmousedown = startCanvasDraw;
-      canvas.onmousemove = drawCanvasMove;
-      canvas.onmouseup = stopCanvasDraw;
-
-      canvas.ontouchstart = (e) => {
-        const touch = e.touches[0];
-        startCanvasDraw({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} });
-      };
-      canvas.ontouchmove = (e) => {
-        const touch = e.touches[0];
-        drawCanvasMove({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} });
-      };
-      canvas.ontouchend = stopCanvasDraw;
-    }
-
-    function clearPlanCanvas() {
-      if (!ctx) return;
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.strokeStyle = '#1e293b';
-      ctx.lineWidth = 1;
-      for (let x = 0; x < canvas.width; x += 30) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, canvas.height);
-        ctx.stroke();
-      }
-      for (let y = 0; y < canvas.height; y += 30) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(canvas.width, y);
-        ctx.stroke();
-      }
-
-      ctx.fillStyle = '#64748b';
-      ctx.font = '12px "Plus Jakarta Sans", sans-serif';
-      ctx.fillText('CentroXpert - Croquis Técnico de Instalación', 15, 25);
-    }
-
-    function setCanvasTool(tool) {
-      canvasTool = tool;
-      ['pen', 'line', 'rect', 'camera', 'text', 'eraser'].forEach(t => {
-        const btn = document.getElementById('toolBtn_' + t);
-        if (btn) {
-          if (t === tool) {
-            btn.className = 'bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 shadow';
-          } else {
-            btn.className = 'bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg flex items-center gap-1 hover:text-white';
-          }
-        }
-      });
-    }
-
-    function getCanvasCoords(e) {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      return {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY
-      };
-    }
-
-    function startCanvasDraw(e) {
-      isDrawing = true;
-      const coords = getCanvasCoords(e);
-      startX = coords.x;
-      startY = coords.y;
-
-      canvasSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-      if (canvasTool === 'camera') {
-        drawCameraSymbol(startX, startY);
-        isDrawing = false;
-      } else if (canvasTool === 'text') {
-        const txt = prompt('Texto para el plano (ej: Cámara 1, NVR, 45m):');
-        if (txt) {
-          ctx.fillStyle = document.getElementById('canvasColor').value;
-          ctx.font = 'bold 14px Arial';
-          ctx.fillText(txt, startX, startY);
-        }
-        isDrawing = false;
-      } else {
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-      }
-    }
-
-    function drawCanvasMove(e) {
-      if (!isDrawing) return;
-      const coords = getCanvasCoords(e);
-      const color = document.getElementById('canvasColor').value;
-      const width = parseInt(document.getElementById('canvasLineWidth').value) || 3;
-
-      if (canvasTool === 'pen') {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = width;
-        ctx.lineCap = 'round';
-        ctx.lineTo(coords.x, coords.y);
-        ctx.stroke();
-      } else if (canvasTool === 'eraser') {
-        ctx.strokeStyle = '#0f172a';
-        ctx.lineWidth = 20;
-        ctx.lineCap = 'round';
-        ctx.lineTo(coords.x, coords.y);
-        ctx.stroke();
-      } else if (canvasTool === 'line') {
-        ctx.putImageData(canvasSnapshot, 0, 0);
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = width;
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(coords.x, coords.y);
-        ctx.stroke();
-      } else if (canvasTool === 'rect') {
-        ctx.putImageData(canvasSnapshot, 0, 0);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = width;
-        ctx.strokeRect(startX, startY, coords.x - startX, coords.y - startY);
-      }
-    }
-
-    function stopCanvasDraw() {
-      isDrawing = false;
-    }
-
-    function drawCameraSymbol(x, y) {
-      ctx.fillStyle = '#8b1524';
-      ctx.beginPath();
-      ctx.arc(x, y, 8, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#ef4444';
-      ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + 25, y - 15);
-      ctx.moveTo(x, y);
-      ctx.lineTo(x + 25, y + 15);
-      ctx.stroke();
-
-      ctx.fillStyle = '#f8fafc';
-      ctx.font = '10px Arial';
-      ctx.fillText('CAM', x - 10, y - 12);
-    }
-
-    function savePlanDrawing() {
-      const dataUrl = canvas.toDataURL('image/png');
-      tempSurveyPlanFile = {
-        name: 'Plano_Croquis_' + new Date().toISOString().slice(0, 10) + '.png',
-        type: 'image/png',
-        data: dataUrl
-      };
-      updateSurveyCardsUI();
-      closeModal('planCanvasModal');
-      alert('¡Croquis técnico guardado en el levantamiento!');
-    }
-
-    /* ===================================================================
-       GEO-ASISTENCIA GPS CON GEOFENCING Y ALERTA DE DISTANCIA
-       =================================================================== */
-    function registerTechArrivalWithGeofence(projectId) {
-      const p = appData.projects.find(item => item.id === projectId);
-      if (!p) return;
-
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          pos => {
-            const userLat = pos.coords.latitude;
-            const userLng = pos.coords.longitude;
-            p.tracking.checkInCoords = { lat: userLat, lng: userLng };
-            p.tracking.checkInRaw = Date.now();
-
-            let distanceMeters = null;
-            let isVerified = false;
-
-            if (p.targetLat && p.targetLng) {
-              distanceMeters = calculateHaversineDistance(userLat, userLng, p.targetLat, p.targetLng);
-              const allowedRadius = p.geofenceRadiusMeters || 300;
-              isVerified = distanceMeters <= allowedRadius;
-            } else {
-              p.targetLat = userLat;
-              p.targetLng = userLng;
-              distanceMeters = 0;
-              isVerified = true;
-            }
-
-            p.tracking.distanceFromTargetMeters = distanceMeters;
-            p.tracking.isVerifiedOnSite = isVerified;
-            p.tracking.checkIn = `${timeStr} (${userLat.toFixed(4)}, ${userLng.toFixed(4)})`;
-            p.status = 'En Curso';
-
-            saveData();
-
-            if (isVerified) {
-              alert(`🟢 ¡LLEGADA CONFIRMADA EN SITIO!\n\nHora: ${timeStr}\nDistancia a la obra: ${distanceMeters} metros (Dentro del radio permitido).`);
-            } else {
-              const km = (distanceMeters / 1000).toFixed(2);
-              alert(`⚠️ ADVERTENCIA DE DISTANCIA:\n\nTu GPS actual indica que estás a ${km} KM de la obra.\n\nLa llegada fue registrada con advertencia para revisión del Coordinador.`);
-            }
-          },
-          err => {
-            p.tracking.checkIn = `${timeStr} (GPS sin señal precisa)`;
-            p.tracking.checkInRaw = Date.now();
-            p.tracking.isVerifiedOnSite = false;
-            p.status = 'En Curso';
-            saveData();
-            alert(`Llegada registrada a las ${timeStr} (Sin señal de satélite GPS precisa).`);
-          },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
-      } else {
-        p.tracking.checkIn = `${timeStr}`;
-        p.tracking.checkInRaw = Date.now();
-        p.status = 'En Curso';
-        saveData();
-        alert(`Llegada registrada a las ${timeStr}.`);
-      }
-    }
-
-    function registerTechDeparture(projectId) {
-      const p = appData.projects.find(item => item.id === projectId);
-      if (!p) return;
-
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      p.tracking.checkOut = `${timeStr}`;
-      
-      if (p.tracking.checkInRaw) {
-        const diffMs = Date.now() - p.tracking.checkInRaw;
-        const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
-        const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-        p.tracking.hoursWorked = `${diffHrs > 0 ? diffHrs + 'h ' : ''}${diffMins}m en obra`;
-      } else {
-        p.tracking.hoursWorked = 'Jornada completada';
-      }
-
-      saveData();
-      alert(`Salida registrada a las ${timeStr}. Jornada finalizada.`);
-    }
-
-    function changeProjectStatus(id, newStatus) {
-      const p = appData.projects.find(item => item.id === id);
-      if (p) {
-        p.status = newStatus;
-        if (newStatus === 'Aprobado' && p.budget) {
-          p.budget.approved = true;
-        }
-        saveData();
-      }
-    }
-
-    function getStatusBadge(status) {
-      switch(status) {
-        case 'Levantamiento': return 'bg-amber-950 text-amber-300 border border-amber-800';
-        case 'En Presupuesto': return 'bg-blue-950 text-blue-300 border border-blue-800';
-        case 'Aprobado': return 'bg-emerald-950 text-emerald-300 border border-emerald-800';
-        case 'En Curso': return 'bg-indigo-950 text-indigo-300 border border-indigo-800';
-        case 'Finalizado': return 'bg-purple-950 text-purple-300 border border-purple-800';
-        default: return 'bg-slate-800 text-slate-300';
-      }
-    }
-
-    /* EXPORTACIÓN PROYECTOS A EXCEL */
-    function exportProjectsToExcel() {
-      const wb = XLSX.utils.book_new();
-      const projData = appData.projects.map(p => ({
-        Codigo: p.code,
-        Proyecto: p.title,
-        Cliente: p.client,
-        Servicio: p.serviceType,
-        Tecnico_Lider: p.techLeader,
-        Estado: p.status,
-        CheckIn_GPS: p.tracking ? p.tracking.checkIn : '',
-        CheckOut_GPS: p.tracking ? p.tracking.checkOut : '',
-        Horas_Trabajadas: p.tracking ? p.tracking.hoursWorked : '',
-        Cotizacion_No: p.quotation ? p.quotation.number : 'Sin cotizar',
-        Cotizacion_Monto: p.quotation ? p.quotation.amount : 0
-      }));
-
-      const ws = XLSX.utils.json_to_sheet(projData);
-      XLSX.utils.book_append_sheet(wb, ws, "Proyectos");
-      XLSX.writeFile(wb, "CentroXpert_Proyectos_Control.xlsx");
-    }
-
-    function loadSampleTorreWashington() {
-      const newProj = {
-        id: 'P_' + Date.now(),
-        code: 'CX-SGE-2026-005',
-        title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-        serviceType: 'INSTALACIÓN (3255.73)',
-        client: 'CONDOMINIO TORRE WASHINGTON',
-        contact: 'Ana Milagros Guzman +1 (829) 762-8952 / Jadiri Baez (809) 781-1045',
-        address: 'Torre Washington en el malecom, Santo Domingo',
-        targetLat: 18.463200,
-        targetLng: -69.905600,
-        geofenceRadiusMeters: 300,
-        plannedDate: '26/10/2026',
-        techLeader: 'Enmanuel Matos',
-        techCrew: ['WESLY ALEJANDRO MOJICA'],
-        status: 'En Curso',
-        observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
-        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], docFile: null, planFile: null },
-        serviceOrderFile: { name: 'TORRE WASHINGTON.pdf', type: 'application/pdf' },
-        quotation: null,
-        budget: {
-          approved: false,
-          services: [{ concept: 'Horas Hombre Técnicas (Líder + Cuadrilla)', qty: 16, rate: 650, subtotal: 10400 }],
-          materials: []
-        },
-        tracking: { checkIn: '08:15 AM (18.4633, -69.9055)', checkInCoords: { lat: 18.4633, lng: -69.9055 }, checkInRaw: Date.now(), checkOut: '', hoursWorked: '', isVerifiedOnSite: true, distanceFromTargetMeters: 22 }
-      };
-
-      appData.projects.unshift(newProj);
-      closeModal('pdfModal');
-      saveData();
-      alert('¡Orden de Torre Washington importada exitosamente!');
-    }
-
-    function handlePDFUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const fileReader = new FileReader();
-      fileReader.onload = function() {
-        const typedarray = new Uint8Array(this.result);
-        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-          pdf.getPage(1).then(page => {
-            page.getTextContent().then(textContent => {
-              const fullText = textContent.items.map(item => item.str).join(' ');
-              
-              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || ['CX-SGE-2026-006'];
-              const clientMatch = fullText.match(/Cliente:\s*\|\s*\|\s*([^|]+)/i);
-
-              const newProj = {
-                id: 'P_' + Date.now(),
-                code: codeMatch[0],
-                title: 'SERVICIO TÉCNICO ' + codeMatch[0],
-                serviceType: 'INSTALACIÓN',
-                client: clientMatch ? clientMatch[1].trim() : 'CLIENTE CORPORATIVO',
-                contact: 'Contacto de orden PDF',
-                address: 'Santo Domingo, República Dominicana',
-                targetLat: 18.463200,
-                targetLng: -69.905600,
-                geofenceRadiusMeters: 300,
-                plannedDate: '26/10/2026',
-                techLeader: 'Enmanuel Matos',
-                techCrew: ['WESLY ALEJANDRO MOJICA'],
-                status: 'Levantamiento',
-                observations: 'Importado directamente desde orden de servicio digital CentroXpert.',
-                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], docFile: null, planFile: null },
-                serviceOrderFile: { name: file.name, type: 'application/pdf' },
-                quotation: null,
-                budget: { approved: false, services: [], materials: [] },
-                tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
-              };
-
-              appData.projects.unshift(newProj);
-              closeModal('pdfModal');
-              saveData();
-              alert(`¡Orden ${newProj.code} importada con éxito desde el PDF!`);
-            });
-          });
-        });
-      };
-      fileReader.readAsArrayBuffer(file);
-    }
-
-    // Al cargar la página SIEMPRE se muestra el Login y se cargan los técnicos
-    window.addEventListener('DOMContentLoaded', () => {
-      populateTechSelect();
-      openModal('loginModal');
-      render();
-    });
   </script>
 </body>
 </html>
