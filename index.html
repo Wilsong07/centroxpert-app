@@ -4,18 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CentroXpert - Ingeniería y Servicios | Control Operativo en Tiempo Real</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+  <!-- SheetJS para Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- Mammoth.js para documentos Word (.docx) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- Tesseract.js para OCR -->
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Ubuntu:wght@400;500;700&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b1120; color: #f8fafc; }
     .centroxpert-font { font-family: 'Ubuntu', 'Plus Jakarta Sans', sans-serif; }
+    .wine-brand { color: #8b1524; }
+    .bg-wine-brand { background-color: #8b1524; }
+    .border-wine-brand { border-color: #8b1524; }
     
     @keyframes pulse-dot {
       0%, 100% { opacity: 1; transform: scale(1); }
@@ -38,6 +47,8 @@
   <!-- ================= TOPBAR ================= -->
   <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- LOGO CENTROXPERT ORIGINAL -->
       <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
         <div class="bg-white px-3 py-1.5 rounded-lg flex items-center shadow-sm">
           <svg viewBox="0 0 280 60" class="h-8 md:h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
@@ -65,12 +76,16 @@
           <div class="text-sm font-semibold text-rose-400">Control Operativo & Rendimiento Técnico</div>
         </div>
       </div>
-      <div class="flex items-center gap-3" id="headerUserActions"></div>
+
+      <!-- ACCIONES DE SESIÓN Y VISTA -->
+      <div class="flex items-center gap-3" id="headerUserActions">
+      </div>
     </div>
   </header>
 
   <!-- ================= CONTENEDOR PRINCIPAL ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer"></main>
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer">
+  </main>
 
   <!-- ================= MODAL LOGIN OBLIGATORIO AL INICIAR ================= -->
   <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
@@ -78,9 +93,16 @@
       <div class="text-center mb-6">
         <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3 shadow">
           <svg viewBox="0 0 280 60" class="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1"><text x="2" y="38" fill="#111827">centr</text></g>
-            <g transform="translate(103, 9)"><circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" /><line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" /></g>
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5"><text x="138" y="38" fill="#8b1524">xpert</text></g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
+              <text x="2" y="38" fill="#111827">centr</text>
+            </g>
+            <g transform="translate(103, 9)">
+              <circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" />
+              <line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" />
+            </g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5">
+              <text x="138" y="38" fill="#8b1524">xpert</text>
+            </g>
             <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text>
             <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
           </svg>
@@ -98,13 +120,15 @@
         </button>
       </div>
 
+      <!-- Form Técnico -->
       <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Selecciona tu Nombre</label>
-          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"></select>
+          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
+          </select>
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Clave inicial: 1234)</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Clave inicial genérica: 1234)</label>
           <input type="password" id="loginTecPin" required placeholder="••••" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500 font-mono">
           <p class="text-[10px] text-slate-400 mt-1">Si eres nuevo o te registraron recientemente, usa <strong>1234</strong> y cámbiala luego.</p>
         </div>
@@ -113,6 +137,7 @@
         </button>
       </form>
 
+      <!-- Form Coordinador -->
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinación (admin123)</label>
@@ -130,6 +155,7 @@
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
       <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-key mr-2 text-rose-400"></i>Cambiar mi PIN</h3>
       <p class="text-xs text-slate-400 mb-4">Actualiza tu código de acceso para mayor seguridad.</p>
+      
       <form onsubmit="handleUpdatePin(event)" class="space-y-3">
         <div>
           <label class="block text-xs text-slate-300 mb-1">PIN Actual</label>
@@ -151,59 +177,7 @@
     </div>
   </div>
 
-  <!-- Modal Registrar / Editar Técnico -->
-  <div id="techModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
-        <button onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
-        <input type="hidden" id="techEditId">
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Nombre Completo</label>
-          <input type="text" id="techName" required placeholder="Ej: Ramón Valdez" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
-        </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Rango / Categoría</label>
-            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-              <option value="Especialista A">Especialista A</option>
-              <option value="Especialista B">Especialista B</option>
-              <option value="Auxiliar Técnico">Auxiliar Técnico</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs text-slate-300 mb-1">Teléfono</label>
-            <input type="text" id="techPhone" required placeholder="809-555-0100" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
-          </div>
-        </div>
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Dirección de Vivienda</label>
-          <input type="text" id="techAddress" required placeholder="Ej: C/ Duarte #15, Los Alcarrizos" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-        </div>
-        <div>
-          <label class="block text-xs text-slate-300 mb-1">Vehículo Asignado</label>
-          <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-          </select>
-        </div>
-        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">
-          <i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i>Clave inicial de acceso: <strong>1234</strong>. Al ingresar, el técnico puede cambiarla desde su cuenta.
-        </div>
-        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
-          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs px-3 py-2 rounded-xl border border-slate-700 font-semibold">
-            <i class="fa-solid fa-rotate-left mr-1"></i> Resetear a 1234
-          </button>
-          <div class="flex gap-2 ml-auto">
-            <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-            <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">Guardar Técnico</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Detalle del Proyecto -->
+  <!-- ================= MODAL DETALLE COMPLETO DEL PROYECTO ================= -->
   <div id="projectDetailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6 space-y-5">
       <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
@@ -221,8 +195,8 @@
         <button onclick="closeModal('projectDetailModal')" class="text-slate-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
+      <!-- PANELES DE INFORMACIÓN -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-        <!-- Panel Ubicación y Contacto -->
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-2">
           <div class="font-bold text-slate-300 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
             <i class="fa-solid fa-location-dot text-rose-500"></i> Ubicación & Contactos de la Obra
@@ -232,15 +206,14 @@
           <div class="flex items-center justify-between pt-1">
             <span id="detailProjCoords" class="text-[10px] font-mono text-slate-400"></span>
             <a id="detailProjMapBtn" href="#" target="_blank" class="bg-emerald-800 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow">
-              <i class="fa-solid fa-diamond-turn-right"></i> Ver en Google Maps
+              <i class="fa-solid fa-diamond-turn-right"></i> Abrir en Google Maps
             </a>
           </div>
         </div>
 
-        <!-- Panel Cuadrilla y Monitoreo GPS -->
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-2">
           <div class="font-bold text-slate-300 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-            <i class="fa-solid fa-satellite text-blue-400"></i> Personal & Monitoreo GPS
+            <i class="fa-solid fa-satellite text-blue-400"></i> Personal & Monitoreo en Tiempo Real
           </div>
           <div><span class="text-slate-400">Técnico Líder:</span> <span id="detailProjLeader" class="text-rose-400 font-bold"></span></div>
           <div><span class="text-slate-400">Cuadrilla:</span> <span id="detailProjCrew" class="text-slate-300"></span></div>
@@ -252,8 +225,10 @@
         </div>
       </div>
 
-      <!-- SECCIÓN DOCUMENTOS -->
+      <!-- SECCIÓN DOCUMENTOS SEPARADOS: LEVANTAMIENTO VS PLANO TÉCNICO -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        
+        <!-- Tarjeta Levantamiento -->
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
@@ -262,25 +237,32 @@
             <span id="detailProjSurveyMeters" class="text-[11px] font-bold text-emerald-400 font-mono"></span>
           </div>
           <p id="detailProjSurveyNotes" class="text-xs text-slate-300 italic min-h-[30px]"></p>
-          <div id="detailProjSurveyDocBox" class="pt-2 border-t border-slate-800"></div>
+          <div id="detailProjSurveyDocBox" class="pt-2 border-t border-slate-800">
+          </div>
         </div>
 
+        <!-- Tarjeta Plano / Croquis -->
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
               <i class="fa-solid fa-compass-drafting"></i> Plano Técnico / Croquis
             </span>
+            <span class="text-[10px] text-slate-500">Documento Gráfico</span>
           </div>
-          <div id="detailProjPlanBox" class="min-h-[60px] flex items-center justify-center"></div>
+          <div id="detailProjPlanBox" class="min-h-[60px] flex items-center justify-center">
+          </div>
         </div>
+
       </div>
 
-      <!-- COTIZACIÓN -->
-      <div id="detailProjBudgetContainer" class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3"></div>
+      <!-- SECCIÓN COTIZACIÓN & PRESUPUESTO -->
+      <div id="detailProjBudgetContainer" class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3">
+      </div>
 
       <!-- BOTONES DE ACCIÓN RÁPIDA -->
       <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800">
-        <div id="detailProjStatusChangeBtns" class="flex flex-wrap gap-1.5"></div>
+        <div id="detailProjStatusChangeBtns" class="flex flex-wrap gap-1.5">
+        </div>
         <div class="flex gap-2">
           <button id="detailProjEditBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1">
             <i class="fa-solid fa-pen-to-square"></i> Editar Proyecto
@@ -293,7 +275,65 @@
     </div>
   </div>
 
-  <!-- Modal Levantamiento Técnico (Documentos + Canvas) -->
+  <!-- Modal Registrar / Editar Técnico -->
+  <div id="techModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
+        <button onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
+        <input type="hidden" id="techEditId">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Nombre Completo</label>
+          <input type="text" id="techName" required placeholder="Ej: Ramón Valdez" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Rango / Categoría</label>
+            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Especialista A">Especialista A</option>
+              <option value="Especialista B">Especialista B</option>
+              <option value="Auxiliar Técnico">Auxiliar Técnico</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Teléfono</label>
+            <input type="text" id="techPhone" required placeholder="809-555-0100" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Dirección de Vivienda</label>
+          <input type="text" id="techAddress" required placeholder="Ej: C/ Duarte #15, Los Alcarrizos" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Vehículo Asignado</label>
+          <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </select>
+        </div>
+
+        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">
+          <i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i>Clave inicial de acceso: <strong>1234</strong>. Al ingresar, el técnico puede cambiarla desde su cuenta.
+        </div>
+
+        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs px-3 py-2 rounded-xl border border-slate-700 font-semibold">
+            <i class="fa-solid fa-rotate-left mr-1"></i> Resetear a 1234
+          </button>
+          <div class="flex gap-2 ml-auto">
+            <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+            <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">Guardar Técnico</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL LEVANTAMIENTO TÉCNICO (BOTONES SEPARADOS) ================= -->
   <div id="surveyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
@@ -304,18 +344,25 @@
         <button onclick="closeModal('surveyModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
+      <!-- BOTONES SEPARADOS: UNO PARA EL LEVANTAMIENTO Y OTRO PARA EL PLANO/CROQUIS -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        
+        <!-- 1. BOTÓN EXCLUSIVO: ADJUNTAR LEVANTAMIENTO TÉCNICO -->
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
               <i class="fa-solid fa-file-lines"></i> 1. Documento de Levantamiento
             </span>
+            <span class="text-[10px] text-slate-500">Notas / Foto / Word / PDF</span>
           </div>
           <p class="text-[11px] text-slate-400">Sube apuntes de campo, mediciones escritas o fotos de libretas para digitalizar por OCR.</p>
+          
           <label class="block w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2.5 rounded-xl cursor-pointer border border-slate-700 font-semibold text-center transition">
-            <i class="fa-solid fa-cloud-arrow-up text-amber-400 mr-1.5"></i> Adjuntar Documento
+            <i class="fa-solid fa-cloud-arrow-up text-amber-400 mr-1.5"></i> Adjuntar Documento de Levantamiento
             <input type="file" id="surveyDocFileInput" accept="image/*,application/pdf,.docx,.doc,.xlsx" class="hidden" onchange="handleSurveyDocUpload(event)">
           </label>
+
+          <!-- Archivo de levantamiento actual -->
           <div id="surveyAttachedDocCard" class="hidden bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2 truncate max-w-[200px]">
               <i id="surveyDocIcon" class="fa-solid fa-file-lines text-amber-400 text-base"></i>
@@ -328,22 +375,27 @@
           </div>
         </div>
 
+        <!-- 2. BOTÓN EXCLUSIVO: ADJUNTAR PLANO O CROQUIS TÉCNICO -->
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
               <i class="fa-solid fa-compass-drafting"></i> 2. Plano o Croquis de Instalación
             </span>
+            <span class="text-[10px] text-slate-500">Imagen / PDF / DWG / Canvas</span>
           </div>
           <p class="text-[11px] text-slate-400">Sube el plano arquitectónico o dibuja un croquis con las cámaras y tuberías en sitio.</p>
+
           <div class="flex gap-2">
             <label class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2.5 rounded-xl cursor-pointer border border-slate-700 font-semibold text-center transition truncate">
-              <i class="fa-solid fa-file-image text-rose-400 mr-1"></i> Subir Plano
+              <i class="fa-solid fa-file-image text-rose-400 mr-1"></i> Adjuntar Plano / Crocker
               <input type="file" id="surveyPlanFileInput" accept="image/*,application/pdf,.dwg,.dxf" class="hidden" onchange="handleSurveyPlanUpload(event)">
             </label>
             <button type="button" onclick="openPlanCanvasModal()" class="bg-blue-950/80 hover:bg-blue-900 border border-blue-800 text-blue-300 text-xs px-3 py-2.5 rounded-xl font-bold flex items-center gap-1">
               <i class="fa-solid fa-pen-ruler"></i> Dibujar
             </button>
           </div>
+
+          <!-- Archivo de plano actual -->
           <div id="surveyAttachedPlanCard" class="hidden bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center justify-between text-xs">
             <div class="flex items-center gap-2 truncate max-w-[200px]">
               <i class="fa-solid fa-map-location-dot text-rose-400 text-base"></i>
@@ -355,6 +407,7 @@
             </div>
           </div>
         </div>
+
       </div>
 
       <!-- FORMULARIO DE DETALLES TÉCNICOS -->
@@ -388,8 +441,8 @@
         </div>
 
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas en Sitio / Texto OCR</label>
-          <textarea id="surveyNotes" rows="3" placeholder="Detalles de pasos de muro, puntos de cámara o texto del OCR..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas en Sitio / Texto Extraído por OCR</label>
+          <textarea id="surveyNotes" rows="3" placeholder="Detalles de pasos de muro, puntos de cámara o red, dificultades encontradas o texto del OCR..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
         </div>
 
         <!-- CONSULTA DIRECTA TIENDA.OMEGA.COM.DO -->
@@ -398,14 +451,19 @@
             <span class="text-xs font-bold uppercase tracking-wider text-blue-400">
               <i class="fa-solid fa-store mr-1.5"></i>Catálogo tienda.omega.com.do
             </span>
+            <span class="text-[10px] text-slate-400">Buscar equipos y materiales</span>
           </div>
+
           <div class="flex gap-2 mb-3">
             <input type="text" id="omegaSearchInput" placeholder="Buscar cámara, NVR, switch, bobina UTP..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
             <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold">Buscar</button>
           </div>
-          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1"></div>
+
+          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1">
+          </div>
         </div>
 
+        <!-- ITEMS AGREGADOS AL LEVANTAMIENTO CON CANTIDAD, EDICIÓN Y ELIMINACIÓN -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800">
             <div class="flex justify-between items-center mb-2">
@@ -427,19 +485,20 @@
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
           <button type="button" onclick="closeModal('surveyModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
           <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/40">
-            Guardar Levantamiento
+            Guardar Levantamiento & Enviar
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal Canvas -->
+  <!-- MODAL DIBUJAR PLANOS Y CROQUIS (CANVAS TÉCNICO) -->
   <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
         <div>
-          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis y Planos</h3>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis y Planos en Sitio</h3>
+          <p class="text-xs text-slate-400">Dibuja muros, canalizaciones, cámaras, puntos de red o distancias.</p>
         </div>
         <button onclick="closeModal('planCanvasModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
@@ -490,19 +549,19 @@
       </div>
 
       <div class="flex justify-between items-center mt-3 pt-3 border-t border-slate-800">
-        <div class="flex gap-2 ml-auto">
+        <span class="text-[11px] text-slate-400">El plano se guardará como documento gráfico de soporte.</span>
+        <div class="flex gap-2">
           <button type="button" onclick="closeModal('planCanvasModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cerrar</button>
           <button type="button" onclick="savePlanDrawing()" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">
-            <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Croquis
+            <i class="fa-solid fa-floppy-disk mr-1"></i> Guardar y Adjuntar Plano
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Otros modales (Cotización, Edición de Proyecto, Vehículo, Herramienta, Visor, Importar) siguen la misma estructura... -->
+  <!-- Modal Coordinador: Cargar Cotización Oficial -->
   <div id="quoteModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <!-- Contenido modal cotización -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <div>
@@ -514,10 +573,12 @@
 
       <form onsubmit="handleSaveQuotation(event)" class="space-y-4">
         <input type="hidden" id="quoteProjectId">
+
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Número de Cotización Oficial</label>
           <input type="text" id="quoteNumber" required placeholder="Ej: COT-2026-089" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500 font-mono">
         </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-medium text-slate-300 mb-1">Monto Total Cotizado (RD$)</label>
@@ -528,6 +589,7 @@
             <input type="date" id="quoteDate" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
           </div>
         </div>
+
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Subir Archivo de Cotización (PDF / Excel)</label>
           <div class="border border-dashed border-slate-700 rounded-xl p-3 text-center cursor-pointer hover:border-emerald-500 transition" onclick="document.getElementById('quoteFileInput').click()">
@@ -536,10 +598,12 @@
             <input type="file" id="quoteFileInput" accept=".pdf,.xlsx,.xls" class="hidden" onchange="handleQuoteFileUpload(event)">
           </div>
         </div>
+
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Notas o Condiciones de Pago</label>
           <textarea id="quoteNotes" rows="2" placeholder="50% de anticipo, 50% contra entrega..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
         </div>
+
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
           <button type="button" onclick="closeModal('quoteModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
           <button type="submit" class="bg-emerald-700 hover:bg-emerald-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-emerald-900/30">
@@ -550,6 +614,7 @@
     </div>
   </div>
 
+  <!-- Modal Coordinador: Editar Proyecto, Coordenadas Destino & Reasignar Técnico -->
   <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
@@ -609,10 +674,11 @@
           <input type="text" id="editProjectAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
         </div>
 
+        <!-- COORDENADAS DESTINO GPS PARA GEOFENCING REAL -->
         <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-              <i class="fa-solid fa-satellite"></i> Coordenadas GPS (Para Geofencing Real)
+              <i class="fa-solid fa-satellite"></i> Coordenadas GPS de la Obra (Geofencing)
             </span>
             <button type="button" onclick="captureProjectGPSCurrentLocation()" class="text-[11px] bg-emerald-950 text-emerald-300 border border-emerald-800 hover:bg-emerald-900 px-2 py-0.5 rounded font-bold">
               <i class="fa-solid fa-crosshairs mr-1"></i> Fijar mi GPS actual como destino
@@ -628,8 +694,10 @@
               <input type="number" step="0.000001" id="editProjectLng" placeholder="-69.905600" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
             </div>
           </div>
+          <p class="text-[10px] text-slate-500">Mide con precisión si el técnico realmente está en el lugar de la obra al marcar llegada.</p>
         </div>
 
+        <!-- REASIGNACIÓN DE PERSONAL: LÍDER Y CUADRILLA -->
         <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl space-y-3">
           <div class="text-xs font-bold text-rose-400 uppercase tracking-wider">
             <i class="fa-solid fa-users mr-1"></i> Asignación de Personal Técnico
@@ -651,7 +719,7 @@
 
         <div class="flex justify-between items-center pt-3 border-t border-slate-800">
           <button type="button" onclick="deleteProjectPrompt()" class="bg-red-950 border border-red-800 hover:bg-red-900 text-red-300 px-3 py-2 rounded-xl text-xs font-semibold">
-            <i class="fa-solid fa-trash-can mr-1"></i> Eliminar
+            <i class="fa-solid fa-trash-can mr-1"></i> Eliminar Proyecto
           </button>
           <div class="flex gap-2">
             <button type="button" onclick="closeModal('editProjectModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
@@ -662,6 +730,95 @@
     </div>
   </div>
 
+  <!-- Modal Coordinador: Editar/Registrar Vehículo -->
+  <div id="vehicleModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="vehicleModalTitle"><i class="fa-solid fa-truck-pickup mr-2 text-rose-400"></i>Vehículo</h3>
+        <button onclick="closeModal('vehicleModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveVehicle(event)" class="space-y-3">
+        <input type="hidden" id="vehicleEditId">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Placa Oficial</label>
+          <input type="text" id="vehiclePlate" required placeholder="Ej: L458901" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Marca y Modelo</label>
+          <input type="text" id="vehicleModel" required placeholder="Ej: Toyota Hilux 2022" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Odómetro (KM)</label>
+            <input type="number" id="vehicleOdo" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Estatus</label>
+            <select id="vehicleStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Operativo">Operativo</option>
+              <option value="Mantenimiento">Mantenimiento</option>
+              <option value="Fuera de Servicio">Fuera de Servicio</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Técnico Custodio Asignado</label>
+          <select id="vehicleAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeModal('vehicleModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Coordinador: Editar/Registrar Herramienta -->
+  <div id="toolModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="toolModalTitle"><i class="fa-solid fa-toolbox mr-2 text-amber-400"></i>Herramienta / Equipo</h3>
+        <button onclick="closeModal('toolModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveTool(event)" class="space-y-3">
+        <input type="hidden" id="toolEditId">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Código / Serie</label>
+            <input type="text" id="toolCode" required placeholder="Ej: TL-08" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Condición Física</label>
+            <select id="toolCondition" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Excelente">Excelente</option>
+              <option value="Bueno">Bueno</option>
+              <option value="Requiere Revisión">Requiere Revisión</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Descripción del Equipo</label>
+          <input type="text" id="toolName" required placeholder="Ej: Certificador de Red Fluke DSX-5000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Técnico Custodio</label>
+          <select id="toolAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeModal('toolModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Visor de Plano / Archivo -->
   <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
@@ -681,6 +838,7 @@
     </div>
   </div>
 
+  <!-- Modal Cargar PDF de Orden de Servicio -->
   <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center mb-4">
@@ -708,1049 +866,807 @@
 
   <script>
     /* ===================================================================
-       ESTADO CENTRAL & MIGRACIÓN LIMPIA DE DATOS (VERSIÓN 8)
+       FUNCIONES DEL MÓDULO DE LOGÍSTICA & FLOTILLA COMPLETA
        =================================================================== */
-    const STORAGE_KEY = 'centroxpert_data_v8';
+    function renderVehiclesLogistics() {
+      const avail = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
+      const assigned = appData.vehicles.filter(v => v.status === 'Operativo' && v.assignedTo).length;
+      const maint = appData.vehicles.filter(v => v.status === 'Mantenimiento').length;
 
-    const defaultData = {
-      technicians: [
-        { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Av. Las Palmas #45, Herrera', vehiclePlate: 'L428901', pin: '1234' },
-        { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'C/ Duarte #12, Los Alcarrizos', vehiclePlate: 'L389104', pin: '1234' },
-        { id: 'T3', name: 'Carlos Morales', level: 'Especialista A', phone: '849-555-0188', address: 'Villa Mella, Sto Dgo Norte', vehiclePlate: 'L451299', pin: '1234' },
-        { id: 'T4', name: 'Andrés Rivas', level: 'Auxiliar Técnico', phone: '829-555-0176', address: 'Los Mina, Sto Dgo Este', vehiclePlate: '', pin: '1234' },
-        { id: 'T5', name: 'Mario Gómez', level: 'Auxiliar Técnico', phone: '809-555-0122', address: 'Ensanche La Fe, DN', vehiclePlate: '', pin: '1234' }
-      ],
-      vehicles: [
-        { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520, lastFuelKm: 48120 },
-        { id: 'V2', plate: 'L389104', model: 'Nissan Frontier 2019', assignedTo: 'WESLY ALEJANDRO MOJICA', status: 'Operativo', odo: 74210, lastFuelKm: 73800 },
-        { id: 'V3', plate: 'L451299', model: 'Isuzu D-Max 2022', assignedTo: 'Carlos Morales', status: 'Operativo', odo: 31050, lastFuelKm: 30600 },
-        { id: 'V4', plate: 'L290112', model: 'Hyundai H-1 Panel 2018', assignedTo: '', status: 'Operativo', odo: 98400, lastFuelKm: 98000 },
-        { id: 'V5', plate: 'L194020', model: 'Chevrolet Colorado 2017', assignedTo: '', status: 'Mantenimiento', odo: 112000, lastFuelKm: 111500 }
-      ],
-      tools: [
-        { id: 'H1', code: 'TL-01', name: 'Fusionadora de Fibra Óptica Fujikura 70S', assignedTo: 'Enmanuel Matos', condition: 'Excelente', date: '2026-01-15' },
-        { id: 'H2', code: 'TL-02', name: 'Certificador de Red Fluke DSX-5000', assignedTo: 'Carlos Morales', condition: 'Excelente', date: '2026-02-10' },
-        { id: 'H3', code: 'TL-03', name: 'Rotomartillo SDS Plus DeWalt 20V', assignedTo: 'Enmanuel Matos', condition: 'Bueno', date: '2026-03-01' },
-        { id: 'H4', code: 'TL-04', name: 'Escalera Telescópica 24 Pies Aluminio', assignedTo: 'WESLY ALEJANDRO MOJICA', condition: 'Bueno', date: '2026-02-20' },
-        { id: 'H5', code: 'TL-05', name: 'Kit Ponchadora RJ45 / Crimpadora Pro', assignedTo: 'WESLY ALEJANDRO MOJICA', condition: 'Excelente', date: '2026-03-12' },
-        { id: 'H6', code: 'TL-06', name: 'Generador de Tono y Pollo Probe Fluke', assignedTo: '', condition: 'Bueno', date: '2026-01-10' }
-      ],
-      fuelLogs: [
-        { id: 'FL1', date: '2026-10-22', plate: 'L428901', driver: 'Enmanuel Matos', tickets500: 8, cost: 4000, prevKm: 48120, currentKm: 48520, dist: 400, taskKmEst: 380, dev: '5.3%' }
-      ],
-      projects: [
-        {
-          id: 'P1',
-          code: 'CX-SGE-2026-005',
-          title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-          serviceType: 'INSTALACIÓN (3255.73)',
-          client: 'CONDOMINIO TORRE WASHINGTON',
-          contact: 'Ana Milagros Guzman (829) 762-8952 / Jadiri Baez (809) 781-1045',
-          address: 'Torre Washington, Av. George Washington (El Malecón), Santo Domingo',
-          targetLat: 18.463200,
-          targetLng: -69.905600,
-          geofenceRadiusMeters: 300,
-          plannedDate: '26/10/2026',
-          techLeader: 'Enmanuel Matos',
-          techCrew: ['WESLY ALEJANDRO MOJICA'],
-          status: 'En Curso',
-          observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR Y PERÍMETRO',
-          survey: {
-            meters: 160,
-            structure: 'Ductería EMT Existente',
-            power: '110V Regulada con UPS',
-            notes: 'Paso por ducto principal del ascensor requiere llave técnica. Cámaras en piso 1, 2 y sótano.',
-            itemsEquip: [
-              { name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', qty: 1, sku: 'NVR-HIK-16CH', price: 18500 },
-              { name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', qty: 4, sku: 'CAM-HIK-4MP', price: 5200 }
-            ],
-            itemsMat: [
-              { name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', qty: 2, sku: 'CAB-UTP-CAT6', price: 7900 },
-              { name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', qty: 1, sku: 'CON-RJ45-50P', price: 850 },
-              { name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', qty: 6, sku: 'CAJ-PASO-44', price: 290 }
-            ],
-            docFile: null,
-            planFile: null
-          },
-          serviceOrderFile: {
-            name: 'Orden_TORRE_WASHINGTON_CX-SGE-2026-005.pdf',
-            type: 'application/pdf'
-          },
-          quotation: {
-            number: 'COT-2026-041',
-            amount: 68500,
-            date: '2026-10-25',
-            notes: '50% anticipo, 50% al finalizar entrega.',
-            fileName: 'Cotizacion_Torre_Washington.pdf',
-            fileData: null
-          },
-          budget: {
-            approved: true,
-            services: [
-              { concept: 'Horas Hombre Técnicas (Líder + Asistente)', qty: 18, rate: 650, subtotal: 11700 },
-              { concept: 'Viáticos & Dietas de Campo', qty: 2, rate: 600, subtotal: 1200 },
-              { concept: 'Desgaste y Combustible Vehículo (Toyota Hilux)', qty: 1, rate: 1800, subtotal: 1800 }
-            ],
-            materials: [
-              { desc: 'NVR 16 CH 4K AcuSense', qtyEst: 1, qtyReal: 1, unitCost: 18500, subtotal: 18500 },
-              { desc: 'Cámara IP Domo 4MP Antivandálica Hikvision', qtyEst: 4, qtyReal: 4, unitCost: 5200, subtotal: 20800 },
-              { desc: 'Bobina UTP Cat6 305m 100% Cobre Exterior', qtyEst: 2, qtyReal: 2, unitCost: 7900, subtotal: 15800 },
-              { desc: 'Conectores RJ45 Blindados (Funda 50 Und)', qtyEst: 1, qtyReal: 1, unitCost: 850, subtotal: 850 }
-            ]
-          },
-          tracking: {
-            checkIn: '08:15 AM (18.4633, -69.9055)',
-            checkInCoords: { lat: 18.4633, lng: -69.9055 },
-            checkInRaw: new Date().setHours(8, 15, 0, 0),
-            checkOut: '',
-            hoursWorked: '',
-            isVerifiedOnSite: true,
-            distanceFromTargetMeters: 22
+      return `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+            <div class="flex items-center gap-3">
+              <span class="text-xs bg-emerald-950/80 text-emerald-400 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
+                <i class="fa-solid fa-circle-check mr-1"></i>Disponibles: ${avail}
+              </span>
+              <span class="text-xs bg-blue-950/80 text-blue-400 border border-blue-800 px-3 py-1 rounded-xl font-bold">
+                <i class="fa-solid fa-truck-moving mr-1"></i>En Ruta: ${assigned}
+              </span>
+              <span class="text-xs bg-amber-950/80 text-amber-400 border border-amber-800 px-3 py-1 rounded-xl font-bold">
+                <i class="fa-solid fa-wrench mr-1"></i>Taller: ${maint}
+              </span>
+            </div>
+            <button onclick="openVehicleModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Registrar Vehículo
+            </button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Placa</th>
+                  <th class="p-3">Modelo</th>
+                  <th class="p-3">Odómetro</th>
+                  <th class="p-3">Técnico Custodio</th>
+                  <th class="p-3">Estatus</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.vehicles.map(v => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 font-mono font-bold text-white">${v.plate}</td>
+                    <td class="p-3 text-slate-300">${v.model}</td>
+                    <td class="p-3 font-mono text-emerald-400 font-bold">${v.odo.toLocaleString()} KM</td>
+                    <td class="p-3 font-bold ${v.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${v.assignedTo || 'Sin asignar'}</td>
+                    <td class="p-3">
+                      <span class="px-2 py-0.5 rounded-full font-semibold ${v.status === 'Operativo' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${v.status}</span>
+                    </td>
+                    <td class="p-3 text-right space-x-1">
+                      <button onclick="openVehicleModal('${v.id}')" title="Editar Vehículo" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button onclick="deleteVehicle('${v.id}')" title="Eliminar Vehículo" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFuelLogistics() {
+      return `
+        <div class="space-y-4">
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-gas-pump text-rose-400"></i> Llenado Semanal con Tickets de RD$ 500 & Desvío de Rutas
+              </h3>
+              <span class="text-xs bg-rose-950 text-rose-300 border border-rose-800 px-2.5 py-1 rounded-lg font-bold">
+                Ticket Base: RD$ 500.00
+              </span>
+            </div>
+
+            <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Vehículo / Placa</label>
+                <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                  ${appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model} (${v.assignedTo || 'Sin técnico'})</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Odómetro Anterior</label>
+                <input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 font-mono">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Nuevo Odómetro al Llenar (KM)</label>
+                <input type="number" id="fuelCurrentKm" required placeholder="KM Actual" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Cant. Tickets de RD$ 500</label>
+                <input type="number" min="1" id="fuelTicketsCount" value="6" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-bold">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Monto Total en Tickets (RD$)</label>
+                <input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-emerald-400 font-bold font-mono">
+              </div>
+              <div class="md:col-span-5 flex justify-end">
+                <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-lg shadow-rose-900/30">
+                  <i class="fa-solid fa-calculator mr-1"></i> Calcular Kilómetros Recorridos & Desvío
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-3 bg-slate-950/80 border-b border-slate-800 font-bold text-xs text-slate-300 flex items-center justify-between">
+              <span>Historial de Llenado Semanal & Comparativa con Tareas de Campo</span>
+              <span class="text-[11px] text-slate-400">Verde: Normal | Amarillo: Alerta | Rojo: Desvío Alto</span>
+            </div>
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/50 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Fecha</th>
+                  <th class="p-3">Vehículo / Técnico</th>
+                  <th class="p-3">Km Recorridos</th>
+                  <th class="p-3">Tickets / Monto</th>
+                  <th class="p-3">Ruta de Proyectos</th>
+                  <th class="p-3">Desvío Calculado</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.fuelLogs.map(l => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 text-slate-400">${l.date}</td>
+                    <td class="p-3"><span class="font-bold text-white">${l.plate}</span> <span class="text-slate-400">(${l.driver})</span></td>
+                    <td class="p-3 font-mono text-emerald-400 font-bold">${l.dist} KM</td>
+                    <td class="p-3 font-mono">${l.tickets500} tickets (RD$ ${l.cost.toLocaleString()})</td>
+                    <td class="p-3 font-mono text-slate-400">${l.taskKmEst} KM proyectados</td>
+                    <td class="p-3">
+                      <span class="px-2 py-0.5 rounded-full font-bold ${
+                        parseFloat(l.dev) < 15 ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' :
+                        parseFloat(l.dev) < 30 ? 'bg-amber-950 text-amber-300 border border-amber-800' :
+                        'bg-rose-950 text-rose-300 border border-rose-800'
+                      }">
+                        ${l.dev} ${parseFloat(l.dev) > 30 ? '<i class="fa-solid fa-triangle-exclamation ml-1"></i>' : ''}
+                      </span>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function calculateFuelTotalMonto() {
+      const tickets = parseInt(document.getElementById('fuelTicketsCount').value) || 0;
+      document.getElementById('fuelCost').value = tickets * 500;
+    }
+
+    function renderStaffLogistics() {
+      const specA = appData.technicians.filter(t => t.level === 'Especialista A').length;
+      const specB = appData.technicians.filter(t => t.level === 'Especialista B').length;
+      const aux = appData.technicians.filter(t => t.level === 'Auxiliar Técnico').length;
+
+      return `
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+            <div class="flex items-center gap-3">
+              <span class="text-xs bg-purple-950/80 text-purple-300 border border-purple-800 px-3 py-1 rounded-xl font-bold">
+                Especialistas A: ${specA}
+              </span>
+              <span class="text-xs bg-blue-950/80 text-blue-300 border border-blue-800 px-3 py-1 rounded-xl font-bold">
+                Especialistas B: ${specB}
+              </span>
+              <span class="text-xs bg-emerald-950/80 text-emerald-300 border border-emerald-800 px-3 py-1 rounded-xl font-bold">
+                Auxiliares: ${aux}
+              </span>
+            </div>
+            <button onclick="openTechModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 shadow">
+              <i class="fa-solid fa-user-plus"></i> Registrar Nuevo Técnico
+            </button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Nombre</th>
+                  <th class="p-3">Nivel / Rango</th>
+                  <th class="p-3">Teléfono</th>
+                  <th class="p-3">Dirección de Vivienda</th>
+                  <th class="p-3">Vehículo Asignado</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.technicians.map(t => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 font-bold text-white">${t.name}</td>
+                    <td class="p-3">
+                      <span class="px-2 py-0.5 rounded-full font-bold text-[11px] ${
+                        t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
+                        t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
+                        'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                      }">${t.level}</span>
+                    </td>
+                    <td class="p-3 text-emerald-400 font-mono"><a href="tel:${t.phone}"><i class="fa-solid fa-phone mr-1"></i>${t.phone}</a></td>
+                    <td class="p-3 text-slate-300 max-w-xs truncate">${t.address}</td>
+                    <td class="p-3 font-bold ${t.vehiclePlate ? 'text-amber-400' : 'text-slate-500 italic'}">${t.vehiclePlate || 'Sin vehículo'}</td>
+                    <td class="p-3 text-right space-x-1">
+                      <button onclick="openTechModal('${t.id}')" title="Editar Técnico" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button onclick="deleteTechnician('${t.id}')" title="Eliminar Técnico" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderToolsLogistics() {
+      return `
+        <div class="space-y-4">
+          <div class="flex justify-between items-center bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+            <span class="text-xs text-slate-300 font-bold">Total Equipos de Medición & Herramientas: ${appData.tools.length}</span>
+            <button onclick="openToolModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Registrar Herramienta
+            </button>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
+                <tr>
+                  <th class="p-3">Código</th>
+                  <th class="p-3">Descripción de Herramienta</th>
+                  <th class="p-3">Custodio Actual</th>
+                  <th class="p-3">Condición</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.tools.map(t => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 font-mono font-bold text-amber-400">${t.code}</td>
+                    <td class="p-3 text-white font-medium">${t.name}</td>
+                    <td class="p-3 font-bold ${t.assignedTo ? 'text-blue-400' : 'text-slate-500 italic'}">${t.assignedTo || 'En Almacén'}</td>
+                    <td class="p-3 text-slate-300">${t.condition}</td>
+                    <td class="p-3 text-right space-x-1">
+                      <button onclick="openToolModal('${t.id}')" title="Editar Herramienta" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-pen"></i>
+                      </button>
+                      <button onclick="deleteTool('${t.id}')" title="Eliminar Herramienta" class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/60 px-2.5 py-1 rounded-lg text-[11px]">
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ===================================================================
+       CONTROL DE COMBUSTIBLE
+       =================================================================== */
+    function updateFuelPlateHelper() {
+      const plate = document.getElementById('fuelPlateSelect').value;
+      const v = appData.vehicles.find(item => item.plate === plate);
+      if (v) {
+        document.getElementById('fuelPrevKm').value = v.lastFuelKm || v.odo;
+      }
+    }
+
+    function handleFuelSubmit(e) {
+      e.preventDefault();
+      const plate = document.getElementById('fuelPlateSelect').value;
+      const prev = parseInt(document.getElementById('fuelPrevKm').value) || 0;
+      const current = parseInt(document.getElementById('fuelCurrentKm').value) || 0;
+      const tickets = parseInt(document.getElementById('fuelTicketsCount').value) || 1;
+      const cost = tickets * 500;
+
+      if (current <= prev) {
+        alert('El nuevo kilometraje debe ser mayor al odómetro del llenado anterior.');
+        return;
+      }
+
+      const dist = current - prev;
+      const v = appData.vehicles.find(item => item.plate === plate);
+      const driver = v ? v.assignedTo || 'Sin asignar' : 'Conductor';
+      
+      const taskKmEst = Math.max(30, Math.round(dist * 0.90)); 
+      const diff = Math.abs(dist - taskKmEst);
+      const dev = ((diff / taskKmEst) * 100).toFixed(1) + '%';
+
+      appData.fuelLogs.unshift({
+        id: 'FL_' + Date.now(),
+        date: new Date().toISOString().split('T')[0],
+        plate,
+        driver,
+        tickets500: tickets,
+        cost,
+        prevKm: prev,
+        currentKm: current,
+        dist,
+        taskKmEst,
+        dev
+      });
+
+      if (v) {
+        v.odo = current;
+        v.lastFuelKm = current;
+      }
+
+      saveData();
+      alert(`¡Llenado registrado! ${dist} KM recorridos con ${tickets} tickets (RD$ ${cost}). Desvío de ruta: ${dev}.`);
+    }
+
+    /* ===================================================================
+       CRUD TÉCNICOS: REGISTRO, EDICIÓN Y CLAVE GENÉRICA
+       =================================================================== */
+    function openTechModal(id = null) {
+      const select = document.getElementById('techVehiclePlate');
+      select.innerHTML = '<option value="">-- Sin vehículo asignado --</option>' + 
+        appData.vehicles.map(v => `<option value="${v.plate}">${v.plate} - ${v.model}</option>`).join('');
+
+      const resetBtn = document.getElementById('techResetPinBtn');
+
+      if (id) {
+        const t = appData.technicians.find(item => item.id === id);
+        if (!t) return;
+        document.getElementById('techModalTitle').innerText = 'Editar Técnico: ' + t.name;
+        document.getElementById('techEditId').value = t.id;
+        document.getElementById('techName').value = t.name;
+        document.getElementById('techLevel').value = t.level;
+        document.getElementById('techPhone').value = t.phone;
+        document.getElementById('techAddress').value = t.address;
+        document.getElementById('techVehiclePlate').value = t.vehiclePlate || '';
+        if (resetBtn) resetBtn.classList.remove('hidden');
+      } else {
+        document.getElementById('techModalTitle').innerText = 'Registrar Nuevo Técnico';
+        document.getElementById('techEditId').value = '';
+        document.getElementById('techName').value = '';
+        document.getElementById('techLevel').value = 'Especialista B';
+        document.getElementById('techPhone').value = '';
+        document.getElementById('techAddress').value = '';
+        document.getElementById('techVehiclePlate').value = '';
+        if (resetBtn) resetBtn.classList.add('hidden');
+      }
+      openModal('techModal');
+    }
+
+    function resetTechPinDirectly() {
+      const id = document.getElementById('techEditId').value;
+      const t = appData.technicians.find(item => item.id === id);
+      if (!t) return;
+
+      if (confirm(`¿Restablecer la clave de ${t.name} al PIN genérico inicial (1234)?`)) {
+        t.pin = '1234';
+        saveData();
+        alert(`¡Clave de ${t.name} restablecida a 1234 exitosamente!`);
+      }
+    }
+
+    function handleSaveTechnician(e) {
+      e.preventDefault();
+      const id = document.getElementById('techEditId').value;
+      const name = document.getElementById('techName').value.trim();
+      const level = document.getElementById('techLevel').value;
+      const phone = document.getElementById('techPhone').value.trim();
+      const address = document.getElementById('techAddress').value.trim();
+      const vehiclePlate = document.getElementById('techVehiclePlate').value;
+
+      if (id) {
+        const t = appData.technicians.find(item => item.id === id);
+        if (t) {
+          const oldName = t.name;
+          const oldPlate = t.vehiclePlate;
+
+          t.name = name;
+          t.level = level;
+          t.phone = phone;
+          t.address = address;
+          t.vehiclePlate = vehiclePlate;
+
+          if (oldPlate && oldPlate !== vehiclePlate) {
+            const oldV = appData.vehicles.find(v => v.plate === oldPlate);
+            if (oldV && oldV.assignedTo === oldName) oldV.assignedTo = '';
           }
-        }
-      ]
-    };
+          if (vehiclePlate) {
+            const newV = appData.vehicles.find(v => v.plate === vehiclePlate);
+            if (newV) newV.assignedTo = name;
+          }
 
-    let appData;
-    let currentAuthUser = null;
-    let activeStatusFilter = 'all';
-
-    function loadData() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      const cloneDef = JSON.parse(JSON.stringify(defaultData));
-      
-      if (saved) {
-        try { 
-          const parsed = JSON.parse(saved);
-          // Fusión profunda segura para evitar crasheos (undefined)
-          const merged = {
-            technicians: parsed.technicians || cloneDef.technicians,
-            vehicles: parsed.vehicles || cloneDef.vehicles,
-            tools: parsed.tools || cloneDef.tools,
-            fuelLogs: parsed.fuelLogs || cloneDef.fuelLogs,
-            projects: parsed.projects || cloneDef.projects
-          };
-
-          // Limpieza de datos antiguos
-          merged.projects.forEach(p => {
-            p.survey = p.survey || {};
-            p.tracking = p.tracking || {};
-            p.budget = p.budget || { approved: false, services: [], materials: [] };
-            p.techCrew = p.techCrew || [];
-            if (p.survey.planFile && p.survey.planFile.name && p.survey.planFile.name.toLowerCase().includes('washington')) {
-              p.survey.planFile = null;
-            }
-            if (p.survey.file) delete p.survey.file;
+          appData.projects.forEach(p => {
+            if (p.techLeader === oldName) p.techLeader = name;
+            p.techCrew = p.techCrew.map(c => c === oldName ? name : c);
           });
-
-          return merged;
-        } catch(e) { console.error(e); }
-      }
-      return cloneDef;
-    }
-
-    appData = loadData();
-
-    function saveData() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-      render();
-    }
-
-    // Catálogo Omega Tech
-    const omegaProducts = [
-      { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200 },
-      { sku: 'CAM-HIK-BUL', name: 'Cámara IP Bullet 4MP Hikvision ColorVu Exterior', category: 'Equipos', priceRD: 5650 },
-      { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', category: 'Equipos', priceRD: 18500 },
-      { sku: 'NVR-HIK-08CH', name: 'NVR 8 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 12400 },
-      { sku: 'SW-TEN-16POE', name: 'Switch 16 Puertos Tenda TEG1120P-16-150W Gigabit PoE', category: 'Equipos', priceRD: 11047 },
-      { sku: 'UPS-FORZA-1K', name: 'UPS Forza NT-1011D 1000VA / 500W con Regulador', category: 'Equipos', priceRD: 3855 },
-      { sku: 'UPS-APC-2K', name: 'UPS Online APC Smart-UPS 2000VA Rackmount LCD', category: 'Equipos', priceRD: 56555 },
-      { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', category: 'Materiales', priceRD: 7900 },
-      { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', category: 'Materiales', priceRD: 850 },
-      { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada Galvanizado 10 Pies', category: 'Materiales', priceRD: 380 },
-      { sku: 'CAJ-PASO-44', name: 'Caja de Paso Metálica 4x4 Intemperie con Tapa', category: 'Materiales', priceRD: 290 }
-    ];
-
-    let currentNavTab = 'projects';
-    let currentLogisticsSubtab = 'vehicles';
-    let currentTechTab = 'my_tasks';
-
-    function goHome() {
-      render();
-    }
-
-    // FÓRMULA HAVERSINE (GEOFENCING)
-    function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-      if (!lat1 || !lon1 || !lat2 || !lon2) return null;
-      const R = 6371e3;
-      const φ1 = (lat1 * Math.PI) / 180;
-      const φ2 = (lat2 * Math.PI) / 180;
-      const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-      const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return Math.round(R * c);
-    }
-
-    // CONTROL DE SESIÓN
-    function switchLoginTab(type) {
-      if (type === 'tec') {
-        document.getElementById('formLoginTec').classList.remove('hidden');
-        document.getElementById('formLoginAdmin').classList.add('hidden');
-        document.getElementById('tabLoginTec').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400';
-        document.getElementById('tabLoginAdmin').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200';
+        }
       } else {
-        document.getElementById('formLoginTec').classList.add('hidden');
-        document.getElementById('formLoginAdmin').classList.remove('hidden');
-        document.getElementById('tabLoginAdmin').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400';
-        document.getElementById('tabLoginTec').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200';
+        const newTech = {
+          id: 'T_' + Date.now(),
+          name,
+          level,
+          phone,
+          address,
+          vehiclePlate,
+          pin: '1234'
+        };
+        appData.technicians.push(newTech);
+
+        if (vehiclePlate) {
+          const v = appData.vehicles.find(item => item.plate === vehiclePlate);
+          if (v) v.assignedTo = name;
+        }
+
+        alert(`¡Técnico ${name} registrado! Ya puede iniciar sesión con el PIN genérico 1234.`);
       }
-    }
 
-    function openModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.remove('hidden');
-    }
-
-    function closeModal(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('hidden');
-    }
-
-    function handleTecLogin(e) {
-      e.preventDefault();
-      const techName = document.getElementById('loginTecSelect').value;
-      const pin = document.getElementById('loginTecPin').value;
-      const tech = appData.technicians.find(t => t.name === techName);
-
-      if (tech && (tech.pin === pin || (!tech.pin && pin === '1234') || pin === '1234')) {
-        currentAuthUser = { role: 'tech', name: tech.name, techId: tech.id };
-        closeModal('loginModal');
-        render();
-      } else {
-        alert('PIN incorrecto. Si el técnico es nuevo, el PIN genérico inicial es 1234.');
-      }
-    }
-
-    function handleAdminLogin(e) {
-      e.preventDefault();
-      const pass = document.getElementById('loginAdminPass').value;
-      if (pass === 'admin123') {
-        currentAuthUser = { role: 'admin', name: 'Coordinador General' };
-        closeModal('loginModal');
-        render();
-      } else {
-        alert('Clave de Coordinación incorrecta (Usa: admin123)');
-      }
-    }
-
-    function logout() {
-      currentAuthUser = null;
-      document.getElementById('loginTecPin').value = '';
-      document.getElementById('loginAdminPass').value = '';
+      closeModal('techModal');
       populateTechSelect();
-      openModal('loginModal');
-      render();
+      saveData();
     }
 
-    function populateTechSelect() {
-      const select = document.getElementById('loginTecSelect');
-      if (!select) return;
-      select.innerHTML = appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
-    }
+    function deleteTechnician(id) {
+      const t = appData.technicians.find(item => item.id === id);
+      if (!t) return;
 
-    function openPinModal() {
-      document.getElementById('currentPin').value = '';
-      document.getElementById('newPin').value = '';
-      document.getElementById('confirmPin').value = '';
-      openModal('pinModal');
-    }
-
-    function handleUpdatePin(e) {
-      e.preventDefault();
-      const current = document.getElementById('currentPin').value;
-      const newP = document.getElementById('newPin').value;
-      const confirmP = document.getElementById('confirmPin').value;
-      if (newP !== confirmP) { alert('El nuevo PIN y su confirmación no coinciden.'); return; }
-      
-      const tech = appData.technicians.find(t => t.name === currentAuthUser.name);
-      if (tech) {
-        if (tech.pin && tech.pin !== current && current !== '1234') { alert('El PIN actual es incorrecto.'); return; }
-        tech.pin = newP;
-        alert('¡PIN actualizado correctamente! Ahora debes usar tu nueva clave.');
-        closeModal('pinModal');
+      if (confirm(`¿Estás seguro de eliminar al técnico ${t.name}?`)) {
+        if (t.vehiclePlate) {
+          const v = appData.vehicles.find(item => item.plate === t.vehiclePlate);
+          if (v && v.assignedTo === t.name) v.assignedTo = '';
+        }
+        appData.technicians = appData.technicians.filter(item => item.id !== id);
+        populateTechSelect();
         saveData();
       }
     }
 
-    // RENDER PRINCIPAL
-    function render() {
-      renderHeader();
-      const container = document.getElementById('mainContainer');
+    /* ===================================================================
+       CRUD VEHÍCULOS & HERRAMIENTAS
+       =================================================================== */
+    function openVehicleModal(id = null) {
+      const select = document.getElementById('vehicleAssignedTo');
+      select.innerHTML = '<option value="">-- Sin asignar (Disponible) --</option>' + 
+        appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
 
-      if (!currentAuthUser) {
-        container.innerHTML = `
-          <div class="h-[60vh] flex flex-col items-center justify-center text-center p-6">
-            <div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl max-w-sm">
-              <i class="fa-solid fa-lock text-4xl text-rose-500 mb-3"></i>
-              <h3 class="text-base font-bold text-white">Sesión Bloqueada</h3>
-              <p class="text-xs text-slate-400 mt-1 mb-4">Debes identificarte con tu perfil para acceder a las tareas y datos operativos.</p>
-              <button onclick="openModal('loginModal')" class="w-full bg-rose-700 hover:bg-rose-600 text-white font-bold py-2 rounded-xl text-xs shadow-lg shadow-rose-900/30">
-                Iniciar Sesión
-              </button>
-            </div>
-          </div>
-        `;
-        return;
-      }
-
-      if (currentAuthUser.role === 'tech') {
-        container.innerHTML = renderTechView();
+      if (id) {
+        const v = appData.vehicles.find(item => item.id === id);
+        if (!v) return;
+        document.getElementById('vehicleModalTitle').innerText = 'Editar Vehículo ' + v.plate;
+        document.getElementById('vehicleEditId').value = v.id;
+        document.getElementById('vehiclePlate').value = v.plate;
+        document.getElementById('vehicleModel').value = v.model;
+        document.getElementById('vehicleOdo').value = v.odo;
+        document.getElementById('vehicleStatus').value = v.status;
+        document.getElementById('vehicleAssignedTo').value = v.assignedTo || '';
       } else {
-        container.innerHTML = renderAdminView();
-        // Restaura los colores de filtro correctos al renderizar
-        updateFilterButtonStyles();
+        document.getElementById('vehicleModalTitle').innerText = 'Registrar Nuevo Vehículo';
+        document.getElementById('vehicleEditId').value = '';
+        document.getElementById('vehiclePlate').value = '';
+        document.getElementById('vehicleModel').value = '';
+        document.getElementById('vehicleOdo').value = 0;
+        document.getElementById('vehicleStatus').value = 'Operativo';
+        document.getElementById('vehicleAssignedTo').value = '';
+      }
+      openModal('vehicleModal');
+    }
+
+    function handleSaveVehicle(e) {
+      e.preventDefault();
+      const id = document.getElementById('vehicleEditId').value;
+      const plate = document.getElementById('vehiclePlate').value.trim().toUpperCase();
+      const model = document.getElementById('vehicleModel').value.trim();
+      const odo = parseInt(document.getElementById('vehicleOdo').value) || 0;
+      const status = document.getElementById('vehicleStatus').value;
+      const assignedTo = document.getElementById('vehicleAssignedTo').value;
+
+      if (id) {
+        const v = appData.vehicles.find(item => item.id === id);
+        if (v) {
+          if (v.assignedTo && v.assignedTo !== assignedTo) {
+            const oldT = appData.technicians.find(t => t.name === v.assignedTo);
+            if (oldT && oldT.vehiclePlate === v.plate) oldT.vehiclePlate = '';
+          }
+          v.plate = plate;
+          v.model = model;
+          v.odo = odo;
+          v.status = status;
+          v.assignedTo = assignedTo;
+
+          if (assignedTo) {
+            const newT = appData.technicians.find(t => t.name === assignedTo);
+            if (newT) newT.vehiclePlate = plate;
+          }
+        }
+      } else {
+        appData.vehicles.push({
+          id: 'V_' + Date.now(),
+          plate,
+          model,
+          odo,
+          lastFuelKm: odo,
+          status,
+          assignedTo
+        });
+        if (assignedTo) {
+          const tech = appData.technicians.find(t => t.name === assignedTo);
+          if (tech) tech.vehiclePlate = plate;
+        }
+      }
+
+      closeModal('vehicleModal');
+      saveData();
+    }
+
+    function deleteVehicle(id) {
+      const v = appData.vehicles.find(item => item.id === id);
+      if (!v) return;
+
+      if (confirm(`¿Estás seguro de eliminar el vehículo ${v.plate} (${v.model})?`)) {
+        if (v.assignedTo) {
+          const t = appData.technicians.find(x => x.name === v.assignedTo);
+          if (t && t.vehiclePlate === v.plate) t.vehiclePlate = '';
+        }
+        appData.vehicles = appData.vehicles.filter(x => x.id !== id);
+        saveData();
       }
     }
 
-    function renderHeader() {
-      const actions = document.getElementById('headerUserActions');
-      if (!currentAuthUser) {
-        actions.innerHTML = `
-          <button onclick="openModal('loginModal')" class="bg-rose-700 hover:bg-rose-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
-            <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
-          </button>
-        `;
-        return;
+    function openToolModal(id = null) {
+      const select = document.getElementById('toolAssignedTo');
+      select.innerHTML = '<option value="">-- Almacén Central (Disponible) --</option>' + 
+        appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
+
+      if (id) {
+        const t = appData.tools.find(item => item.id === id);
+        if (!t) return;
+        document.getElementById('toolModalTitle').innerText = 'Editar Herramienta ' + t.code;
+        document.getElementById('toolEditId').value = t.id;
+        document.getElementById('toolCode').value = t.code;
+        document.getElementById('toolName').value = t.name;
+        document.getElementById('toolCondition').value = t.condition;
+        document.getElementById('toolAssignedTo').value = t.assignedTo || '';
+      } else {
+        document.getElementById('toolModalTitle').innerText = 'Registrar Nueva Herramienta';
+        document.getElementById('toolEditId').value = '';
+        document.getElementById('toolCode').value = 'TL-' + Date.now().toString().slice(-3);
+        document.getElementById('toolName').value = '';
+        document.getElementById('toolCondition').value = 'Excelente';
+        document.getElementById('toolAssignedTo').value = '';
+      }
+      openModal('toolModal');
+    }
+
+    function handleSaveTool(e) {
+      e.preventDefault();
+      const id = document.getElementById('toolEditId').value;
+      const code = document.getElementById('toolCode').value.trim().toUpperCase();
+      const name = document.getElementById('toolName').value.trim();
+      const condition = document.getElementById('toolCondition').value;
+      const assignedTo = document.getElementById('toolAssignedTo').value;
+
+      if (id) {
+        const t = appData.tools.find(item => item.id === id);
+        if (t) {
+          t.code = code;
+          t.name = name;
+          t.condition = condition;
+          t.assignedTo = assignedTo;
+        }
+      } else {
+        appData.tools.push({
+          id: 'H_' + Date.now(),
+          code,
+          name,
+          assignedTo,
+          condition,
+          date: new Date().toISOString().split('T')[0]
+        });
       }
 
-      const isTech = currentAuthUser.role === 'tech';
-      actions.innerHTML = `
-        <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
-          <i class="fa-solid ${isTech ? 'fa-hard-hat text-rose-400' : 'fa-user-tie text-blue-400'} text-sm"></i>
-          <div class="text-left leading-tight">
-            <div class="text-xs font-bold text-white">${currentAuthUser.name}</div>
-            <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'Técnico de Campo' : 'Coordinador General'}</div>
-          </div>
-        </div>
-        ${isTech ? `
-          <button onclick="openPinModal()" title="Cambiar mi PIN" class="bg-slate-800 hover:bg-slate-700 text-rose-400 p-2 rounded-xl border border-slate-700 text-sm">
-            <i class="fa-solid fa-key"></i>
-          </button>
-        ` : ''}
-        <button onclick="logout()" title="Cerrar sesión" class="bg-slate-800 hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 p-2 rounded-xl border border-slate-700 text-sm">
-          <i class="fa-solid fa-right-from-bracket"></i>
-        </button>
-      `;
+      closeModal('toolModal');
+      saveData();
     }
 
-    // VISTA TÉCNICO
-    function renderTechView() {
-      const myTechName = currentAuthUser.name;
-      const myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
-      const myVehicle = appData.vehicles.find(v => v.assignedTo === myTechName);
-      const myTools = appData.tools.filter(t => t.assignedTo === myTechName);
+    function deleteTool(id) {
+      const t = appData.tools.find(item => item.id === id);
+      if (!t) return;
 
-      return `
-        <div class="space-y-6">
-          <div class="flex border-b border-slate-800">
-            <button onclick="setTechTab('my_tasks')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_tasks' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}">
-              <i class="fa-solid fa-list-check mr-2"></i>Mis Tareas Asignadas (${myProjects.length})
-            </button>
-            <button onclick="setTechTab('my_assets')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_assets' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}">
-              <i class="fa-solid fa-truck-pickup mr-2"></i>Mis Activos Asignados
-            </button>
-          </div>
-
-          ${currentTechTab === 'my_tasks' ? `
-            <div class="space-y-4">
-              <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
-                <input type="text" id="techProjectSearchInput" oninput="filterTechProjects()" placeholder="Buscar orden por código o cliente..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
-              </div>
-              <div id="techProjectsContainer" class="space-y-3">
-                ${renderTechProjectsList(myProjects)}
-              </div>
-            </div>
-          ` : `
-            <div class="space-y-6">
-              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <i class="fa-solid fa-truck-pickup text-rose-400"></i> Vehículo Asignado a mi Cargo
-                </h3>
-                ${myVehicle ? `
-                  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                    <div><div class="text-slate-400 text-xs">Placa Oficial</div><div class="text-lg font-black text-white font-mono mt-0.5">${myVehicle.plate}</div></div>
-                    <div><div class="text-slate-400 text-xs">Marca & Modelo</div><div class="text-sm font-bold text-white mt-0.5">${myVehicle.model}</div></div>
-                    <div><div class="text-slate-400 text-xs">Odómetro Actual</div><div class="text-sm font-bold text-emerald-400 font-mono mt-0.5">${myVehicle.odo.toLocaleString()} KM</div></div>
-                    <div><div class="text-slate-400 text-xs">Estatus Mecánico</div><span class="inline-block mt-0.5 text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800 font-bold">${myVehicle.status}</span></div>
-                  </div>
-                ` : `
-                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">Actualmente no tienes un vehículo corporativo asignado individualmente.</div>
-                `}
-              </div>
-
-              <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-3 flex items-center gap-2">
-                  <i class="fa-solid fa-toolbox text-amber-400"></i> Herramientas y Equipos en Custodia (${myTools.length})
-                </h3>
-                ${myTools.length > 0 ? `
-                  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    ${myTools.map(t => `
-                      <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 space-y-1.5">
-                        <div class="flex justify-between items-center"><span class="text-xs font-mono font-bold text-amber-400 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-900/50">${t.code}</span><span class="text-[10px] text-slate-400 font-medium">${t.condition}</span></div>
-                        <div class="text-xs font-bold text-white">${t.name}</div>
-                        <div class="text-[10px] text-slate-500">Recibido: ${t.date}</div>
-                      </div>
-                    `).join('')}
-                  </div>
-                ` : `
-                  <div class="text-xs text-slate-400 p-4 bg-slate-950/40 rounded-xl border border-slate-800 italic">No tienes herramientas registradas bajo tu custodia directa.</div>
-                `}
-              </div>
-            </div>
-          `}
-        </div>
-      `;
-    }
-
-    function renderTechProjectsList(projectsList) {
-      if (projectsList.length === 0) {
-        return `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 text-center text-slate-400"><i class="fa-solid fa-clipboard-check text-4xl text-slate-600 mb-3"></i><p class="font-semibold text-white">No tienes órdenes asignadas pendientes con ese filtro.</p></div>`;
-      }
-      return projectsList.map(p => `
-        <div onclick="openProjectDetailModal('${p.id}')" class="bg-slate-900 border ${p.tracking && p.tracking.isVerifiedOnSite ? 'border-emerald-600/70 shadow-emerald-950/40' : 'border-slate-800'} hover:border-rose-700/60 rounded-xl p-4 shadow cursor-pointer transition flex flex-wrap items-center justify-between gap-3">
-          <div class="space-y-1">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">${p.code}</span>
-              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
-              ${p.tracking && p.tracking.checkIn && !p.tracking.checkOut ? `
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${p.tracking.isVerifiedOnSite ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">
-                  <span class="w-1.5 h-1.5 rounded-full ${p.tracking.isVerifiedOnSite ? 'bg-emerald-400' : 'bg-amber-400'} mr-1 live-pulse"></span>
-                  ${p.tracking.isVerifiedOnSite ? 'EN SITIO' : 'DISTANTE'}
-                </span>
-              ` : ''}
-            </div>
-            <h4 class="text-sm font-bold text-white">${p.title}</h4>
-            <div class="text-xs text-slate-400"><i class="fa-solid fa-user-tag mr-1 text-slate-500"></i>${p.client} — <i class="fa-solid fa-location-dot ml-2 mr-1 text-rose-400"></i>${p.address}</div>
-          </div>
-          <div class="flex items-center gap-2 text-right">
-            <div class="text-[11px] text-slate-400">
-              ${p.survey && p.survey.docFile ? '<i class="fa-solid fa-file-lines text-amber-400 mr-1" title="Levantamiento adjunto"></i>' : ''}
-              ${p.survey && p.survey.planFile ? '<i class="fa-solid fa-compass-drafting text-rose-400 mr-1" title="Plano adjunto"></i>' : ''}
-              <span>Clic para abrir detalle</span>
-            </div>
-            <i class="fa-solid fa-chevron-right text-slate-500 text-xs"></i>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function filterTechProjects() {
-      const q = (document.getElementById('techProjectSearchInput').value || '').toLowerCase().trim();
-      const myTechName = currentAuthUser.name;
-      const myProjects = appData.projects.filter(p => p.techLeader === myTechName || p.techCrew.includes(myTechName));
-      const filtered = myProjects.filter(p => (p.code||'').toLowerCase().includes(q) || (p.title||'').toLowerCase().includes(q) || (p.client||'').toLowerCase().includes(q));
-      document.getElementById('techProjectsContainer').innerHTML = renderTechProjectsList(filtered);
-    }
-
-    function setTechTab(tab) {
-      currentTechTab = tab;
-      render();
-    }
-
-    // VISTA COORDINADOR
-    function renderAdminView() {
-      const availVehicles = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
-      const techInSite = appData.projects.filter(p => p.tracking && p.tracking.checkIn && !p.tracking.checkOut && p.tracking.isVerifiedOnSite).length;
-
-      return `
-        <div class="space-y-6">
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">Total Proyectos</div>
-              <div class="text-2xl font-black text-white mt-1">${appData.projects.length}</div>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-emerald-400 font-semibold uppercase flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 live-pulse"></span> Verificados en Sitio
-              </div>
-              <div class="text-2xl font-black text-emerald-400 mt-1">${techInSite}</div>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">Vehículos Libres</div>
-              <div class="text-2xl font-black text-blue-400 mt-1">${availVehicles}</div>
-            </div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-xs text-slate-400 font-semibold uppercase">Técnicos Registrados</div>
-              <div class="text-2xl font-black text-rose-400 mt-1">${appData.technicians.length}</div>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
-            <div class="flex flex-wrap gap-2">
-              <button onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-list mr-1.5"></i> Proyectos & Órdenes
-              </button>
-              <button onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white shadow-lg shadow-rose-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Logística & Activos
-              </button>
-              <button onclick="setNavTab('kpis')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'kpis' ? 'bg-emerald-700 text-white shadow-lg shadow-emerald-900/30' : 'bg-slate-800 text-slate-400 hover:text-white'}">
-                <i class="fa-solid fa-chart-line mr-1.5"></i> Informes & Rendimiento KPI
-              </button>
-            </div>
-
-            ${currentNavTab === 'projects' ? `
-              <div class="flex gap-2">
-                <button onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 border border-rose-700 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
-                  <i class="fa-solid fa-file-pdf"></i> Importar Orden PDF
-                </button>
-                <button onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
-                  <i class="fa-solid fa-file-excel"></i> Exportar Proyectos Excel
-                </button>
-              </div>
-            ` : ''}
-            
-            ${currentNavTab === 'kpis' ? `
-              <div class="flex gap-2">
-                <button onclick="exportKPIReportToPDF()" class="bg-rose-950/80 hover:bg-rose-900 border border-rose-800 text-rose-200 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
-                  <i class="fa-solid fa-file-pdf"></i> Exportar Informe KPI (PDF)
-                </button>
-                <button onclick="exportKPIToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 border border-emerald-700 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5">
-                  <i class="fa-solid fa-file-excel"></i> Exportar KPI (Excel)
-                </button>
-              </div>
-            ` : ''}
-          </div>
-
-          ${currentNavTab === 'projects' ? renderAdminProjectsListView() : ''}
-          ${currentNavTab === 'logistics' ? renderAdminLogistics() : ''}
-          ${currentNavTab === 'kpis' ? renderAdminKPIs() : ''}
-        </div>
-      `;
-    }
-
-    function setNavTab(tab) {
-      currentNavTab = tab;
-      render();
-    }
-
-    // LISTA DE PROYECTOS
-    function renderAdminProjectsListView() {
-      return `
-        <div class="space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-3.5 rounded-2xl shadow">
-            <div class="relative flex-1 min-w-[240px]">
-              <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-xs"></i>
-              <input type="text" id="projectSearchInput" oninput="filterAdminProjectsTable()" placeholder="Buscar por código de proyecto (ej: CX-SGE) o cliente..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-8 pr-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
-            </div>
-            <div class="flex flex-wrap items-center gap-1.5">
-              <button id="btnFilter_all" onclick="setStatusFilter('all')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Todos</button>
-              <button id="btnFilter_Levantamiento" onclick="setStatusFilter('Levantamiento')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Levantamiento</button>
-              <button id="btnFilter_EnPresupuesto" onclick="setStatusFilter('En Presupuesto')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">En Presupuesto</button>
-              <button id="btnFilter_Aprobado" onclick="setStatusFilter('Aprobado')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Aprobado</button>
-              <button id="btnFilter_EnCurso" onclick="setStatusFilter('En Curso')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">En Curso</button>
-              <button id="btnFilter_Finalizado" onclick="setStatusFilter('Finalizado')" class="status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition">Finalizado</button>
-            </div>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs text-left" id="adminProjectsTable">
-                <thead class="bg-slate-950/80 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                  <tr>
-                    <th class="p-3">Código</th>
-                    <th class="p-3">Proyecto / Cliente</th>
-                    <th class="p-3">Servicio</th>
-                    <th class="p-3">Técnico Líder</th>
-                    <th class="p-3 text-center">Estado</th>
-                    <th class="p-3 text-center">Monitoreo GPS</th>
-                    <th class="p-3 text-center">Adjuntos</th>
-                    <th class="p-3 text-right">Acción</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-800" id="adminProjectsTableBody">
-                  ${renderAdminProjectsTableRows(appData.projects)}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderAdminProjectsTableRows(projectsList) {
-      if (projectsList.length === 0) {
-        return `<tr><td colspan="8" class="p-8 text-center text-slate-400 italic">No se encontraron proyectos con los filtros seleccionados.</td></tr>`;
-      }
-      return projectsList.map(p => {
-        const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
-        const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
-        return `
-          <tr onclick="openProjectDetailModal('${p.id}')" class="hover:bg-slate-800/50 cursor-pointer transition">
-            <td class="p-3 font-mono font-bold text-rose-400 whitespace-nowrap">${p.code}</td>
-            <td class="p-3">
-              <div class="font-bold text-white">${p.title}</div>
-              <div class="text-[11px] text-slate-400 truncate max-w-xs">${p.client}</div>
-            </td>
-            <td class="p-3 text-slate-300">${p.serviceType || 'INSTALACIÓN'}</td>
-            <td class="p-3">
-              <span class="font-bold text-white">${p.techLeader}</span>
-              <div class="text-[10px] text-slate-500">${(p.techCrew||[]).join(', ') || 'Sin cuadrilla'}</div>
-            </td>
-            <td class="p-3 text-center whitespace-nowrap">
-              <span class="px-2.5 py-0.5 rounded-full font-bold text-[10px] ${getStatusBadge(p.status)}">${p.status}</span>
-            </td>
-            <td class="p-3 text-center whitespace-nowrap">
-              ${isInSite ? `
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${isVerified ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">
-                  <span class="w-1.5 h-1.5 rounded-full ${isVerified ? 'bg-emerald-400' : 'bg-amber-400'} mr-1 live-pulse"></span>
-                  ${isVerified ? 'EN SITIO' : 'DISTANTE'}
-                </span>
-              ` : p.tracking && p.tracking.checkOut ? `
-                <span class="text-slate-400 text-[10px] font-mono">Completado (${p.tracking.hoursWorked || 'Jornada'})</span>
-              ` : `<span class="text-slate-500 text-[10px] italic">Pendiente</span>`}
-            </td>
-            <td class="p-3 text-center whitespace-nowrap space-x-1">
-              ${p.survey && p.survey.docFile ? '<i class="fa-solid fa-file-lines text-amber-400" title="Levantamiento adjunto"></i>' : ''}
-              ${p.survey && p.survey.planFile ? '<i class="fa-solid fa-compass-drafting text-rose-400" title="Plano técnico adjunto"></i>' : ''}
-              ${p.quotation ? '<i class="fa-solid fa-file-invoice-dollar text-emerald-400" title="Cotización cargada"></i>' : ''}
-              ${(!p.survey || (!p.survey.docFile && !p.survey.planFile)) && !p.quotation ? '<span class="text-slate-600">-</span>' : ''}
-            </td>
-            <td class="p-3 text-right whitespace-nowrap">
-              <button onclick="event.stopPropagation(); openProjectDetailModal('${p.id}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 ml-auto">
-                Ver Ficha <i class="fa-solid fa-chevron-right text-[10px]"></i>
-              </button>
-            </td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function updateFilterButtonStyles() {
-      document.querySelectorAll('.status-filter-btn').forEach(btn => {
-        btn.className = 'status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-slate-400 hover:text-white';
-      });
-      const activeBtnId = 'btnFilter_' + activeStatusFilter.replace(/\s+/g, '');
-      const activeBtn = document.getElementById(activeBtnId);
-      if(activeBtn) {
-        let colorClass = 'bg-rose-700 text-white';
-        if(activeStatusFilter === 'Levantamiento') colorClass = 'bg-amber-800 text-white';
-        else if(activeStatusFilter === 'En Presupuesto') colorClass = 'bg-blue-800 text-white';
-        else if(activeStatusFilter === 'Aprobado') colorClass = 'bg-emerald-800 text-white';
-        else if(activeStatusFilter === 'En Curso') colorClass = 'bg-indigo-800 text-white';
-        else if(activeStatusFilter === 'Finalizado') colorClass = 'bg-purple-800 text-white';
-        activeBtn.className = `status-filter-btn px-2.5 py-1.5 rounded-lg text-xs font-bold transition ${colorClass}`;
+      if (confirm(`¿Estás seguro de eliminar la herramienta ${t.code} - ${t.name}?`)) {
+        appData.tools = appData.tools.filter(x => x.id !== id);
+        saveData();
       }
     }
 
-    function setStatusFilter(status) {
-      activeStatusFilter = status;
-      updateFilterButtonStyles();
-      filterAdminProjectsTable();
-    }
+    /* ===================================================================
+       EDICIÓN DE PROYECTO & FIJAR GPS DESTINO
+       =================================================================== */
+    let editingProjectId = null;
 
-    function filterAdminProjectsTable() {
-      const q = (document.getElementById('projectSearchInput') ? document.getElementById('projectSearchInput').value : '').toLowerCase().trim();
-      const filtered = appData.projects.filter(p => {
-        const matchesQuery = (p.code||'').toLowerCase().includes(q) || 
-                             (p.title||'').toLowerCase().includes(q) || 
-                             (p.client||'').toLowerCase().includes(q) ||
-                             (p.techLeader||'').toLowerCase().includes(q);
-        const matchesStatus = (activeStatusFilter === 'all') || (p.status === activeStatusFilter);
-        return matchesQuery && matchesStatus;
-      });
-      const body = document.getElementById('adminProjectsTableBody');
-      if (body) {
-        body.innerHTML = renderAdminProjectsTableRows(filtered);
-      }
-    }
-
-    // MODAL DETALLE DE PROYECTO
-    let currentDetailProjectId = null;
-
-    function openProjectDetailModal(id) {
-      currentDetailProjectId = id;
+    function openEditProjectModal(id) {
+      editingProjectId = id;
       const p = appData.projects.find(item => item.id === id);
       if (!p) return;
 
-      document.getElementById('detailProjCode').innerText = p.code;
-      document.getElementById('detailProjStatusBadge').className = 'text-xs font-semibold px-2.5 py-0.5 rounded-full ' + getStatusBadge(p.status);
-      document.getElementById('detailProjStatusBadge').innerText = p.status;
-      document.getElementById('detailProjTitle').innerText = p.title;
-      document.getElementById('detailProjClient').innerText = p.client;
-      document.getElementById('detailProjService').innerText = p.serviceType || 'INSTALACIÓN';
-      document.getElementById('detailProjAddress').innerText = p.address;
-      document.getElementById('detailProjContact').innerText = p.contact || 'No especificado';
-      document.getElementById('detailProjLeader').innerText = p.techLeader;
-      document.getElementById('detailProjCrew').innerText = (p.techCrew||[]).join(', ') || 'Sin cuadrilla adicional';
+      document.getElementById('editProjectId').value = p.id;
+      document.getElementById('editProjectCode').value = p.code;
+      document.getElementById('editProjectTitle').value = p.title;
+      document.getElementById('editProjectClient').value = p.client;
+      document.getElementById('editProjectServiceType').value = p.serviceType || 'INSTALACIÓN';
+      document.getElementById('editProjectContact').value = p.contact || '';
+      document.getElementById('editProjectPlannedDate').value = p.plannedDate || '';
+      document.getElementById('editProjectAddress').value = p.address;
+      document.getElementById('editProjectStatus').value = p.status;
+      document.getElementById('editProjectLat').value = p.targetLat || '';
+      document.getElementById('editProjectLng').value = p.targetLng || '';
 
-      if (p.targetLat && p.targetLng) {
-        document.getElementById('detailProjCoords').innerText = `GPS de la Obra: [${p.targetLat.toFixed(5)}, ${p.targetLng.toFixed(5)}]`;
-        document.getElementById('detailProjMapBtn').href = `https://www.google.com/maps/search/?api=1&query=${p.targetLat},${p.targetLng}`;
+      const leaderSelect = document.getElementById('editProjectTechLeader');
+      leaderSelect.innerHTML = appData.technicians.map(t => `
+        <option value="${t.name}" ${t.name === p.techLeader ? 'selected' : ''}>${t.name} (${t.level})</option>
+      `).join('');
+
+      const crewSelect = document.getElementById('editProjectTechCrew');
+      crewSelect.innerHTML = '<option value="">-- Sin acompañante --</option>' + appData.technicians.map(t => `
+        <option value="${t.name}" ${(p.techCrew && p.techCrew.includes(t.name)) ? 'selected' : ''}>${t.name} (${t.level})</option>
+      `).join('');
+
+      openModal('editProjectModal');
+    }
+
+    function captureProjectGPSCurrentLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            document.getElementById('editProjectLat').value = pos.coords.latitude.toFixed(6);
+            document.getElementById('editProjectLng').value = pos.coords.longitude.toFixed(6);
+            alert(`¡Ubicación GPS capturada con éxito!\nLatitud: ${pos.coords.latitude}\nLongitud: ${pos.coords.longitude}`);
+          },
+          err => {
+            alert('No se pudo acceder al GPS del dispositivo. Por favor verifica los permisos de ubicación.');
+          },
+          { enableHighAccuracy: true, timeout: 8000 }
+        );
       } else {
-        document.getElementById('detailProjCoords').innerText = 'Sin coordenadas GPS fijadas';
-        document.getElementById('detailProjMapBtn').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.address)}`;
+        alert('Geolocalización no soportada en este navegador.');
+      }
+    }
+
+    function setProjectCoordsFromPhone(projId) {
+      const p = appData.projects.find(x => x.id === projId);
+      if (!p) return;
+
+      if (confirm(`¿Fijar tu ubicación actual del teléfono como las coordenadas exactas de la obra (${p.title})?`)) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            pos => {
+              p.targetLat = pos.coords.latitude;
+              p.targetLng = pos.coords.longitude;
+              saveData();
+              alert(`¡Coordenadas de la obra actualizadas!\n[${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}]`);
+            },
+            err => alert('No se pudo capturar el GPS. Verifica los permisos en tu teléfono.'),
+            { enableHighAccuracy: true, timeout: 8000 }
+          );
+        }
+      }
+    }
+
+    function handleSaveEditedProject(e) {
+      e.preventDefault();
+      const p = appData.projects.find(item => item.id === editingProjectId);
+      if (!p) return;
+
+      const oldLeader = p.techLeader;
+      const newLeader = document.getElementById('editProjectTechLeader').value;
+      const crewName = document.getElementById('editProjectTechCrew').value;
+
+      p.code = document.getElementById('editProjectCode').value.trim();
+      p.title = document.getElementById('editProjectTitle').value.trim();
+      p.client = document.getElementById('editProjectClient').value.trim();
+      p.serviceType = document.getElementById('editProjectServiceType').value.trim();
+      p.contact = document.getElementById('editProjectContact').value.trim();
+      p.plannedDate = document.getElementById('editProjectPlannedDate').value.trim();
+      p.address = document.getElementById('editProjectAddress').value.trim();
+      p.status = document.getElementById('editProjectStatus').value;
+
+      const latVal = parseFloat(document.getElementById('editProjectLat').value);
+      const lngVal = parseFloat(document.getElementById('editProjectLng').value);
+      p.targetLat = !isNaN(latVal) ? latVal : null;
+      p.targetLng = !isNaN(lngVal) ? lngVal : null;
+
+      p.techLeader = newLeader;
+      p.techCrew = crewName ? [crewName] : [];
+
+      closeModal('editProjectModal');
+      saveData();
+
+      if (oldLeader !== newLeader) {
+        alert(`¡Proyecto reasignado a ${newLeader}! Ya no aparecerá en la sesión de ${oldLeader}.`);
+      } else {
+        alert('¡Proyecto actualizado correctamente!');
+      }
+    }
+
+    function deleteProjectPrompt() {
+      if (!editingProjectId) return;
+      const p = appData.projects.find(item => item.id === editingProjectId);
+      if (!p) return;
+
+      if (confirm(`¿Eliminar definitivamente el proyecto ${p.code} - ${p.title}?`)) {
+        appData.projects = appData.projects.filter(x => x.id !== editingProjectId);
+        closeModal('editProjectModal');
+        saveData();
+      }
+    }
+
+    /* ===================================================================
+       COTIZACIÓN OFICIAL DEL PROYECTO
+       =================================================================== */
+    let activeQuotationProjectId = null;
+    let tempQuoteFileData = null;
+    let tempQuoteFileName = null;
+
+    function openQuotationModal(projId) {
+      activeQuotationProjectId = projId;
+      const p = appData.projects.find(item => item.id === projId);
+      if (!p) return;
+
+      document.getElementById('quoteProjectId').value = projId;
+      document.getElementById('quoteProjectSubtitle').innerText = `${p.code} - ${p.title}`;
+      
+      if (p.quotation) {
+        document.getElementById('quoteNumber').value = p.quotation.number || '';
+        document.getElementById('quoteAmount').value = p.quotation.amount || '';
+        document.getElementById('quoteDate').value = p.quotation.date || '';
+        document.getElementById('quoteNotes').value = p.quotation.notes || '';
+        document.getElementById('quoteFileLabel').innerText = p.quotation.fileName || 'Documento adjunto existente';
+        tempQuoteFileName = p.quotation.fileName;
+        tempQuoteFileData = p.quotation.fileData;
+      } else {
+        document.getElementById('quoteNumber').value = 'COT-' + new Date().getFullYear() + '-' + Math.floor(100 + Math.random() * 900);
+        document.getElementById('quoteAmount').value = '';
+        document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('quoteNotes').value = 'Condición de pago: 50% anticipo, 50% contra entrega.';
+        document.getElementById('quoteFileLabel').innerText = 'Seleccionar documento PDF o Excel';
+        tempQuoteFileName = null;
+        tempQuoteFileData = null;
       }
 
-      const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
-      const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
-      const liveBadge = document.getElementById('detailProjLiveGPSBadge');
-      if (isInSite) {
-        liveBadge.classList.remove('hidden');
-        liveBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full ' + (isVerified ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800');
-        liveBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${isVerified ? 'bg-emerald-400' : 'bg-amber-400'} mr-1 live-pulse"></span>${isVerified ? 'EN SITIO CONFIRMADO' : 'FUERA DE RANGO'}`;
-      } else {
-        liveBadge.classList.add('hidden');
-      }
+      openModal('quoteModal');
+    }
 
-      document.getElementById('detailProjCheckIn').innerText = p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'No registrada';
-      document.getElementById('detailProjCheckOut').innerText = p.tracking && p.tracking.checkOut ? p.tracking.checkOut : (isInSite ? 'Trabajando en sitio...' : 'Pendiente');
+    function handleQuoteFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
 
-      const diagBox = document.getElementById('detailProjGPSDiagnostic');
-      if (p.tracking && p.tracking.distanceFromTargetMeters !== null) {
-        const d = p.tracking.distanceFromTargetMeters;
-        diagBox.innerHTML = `<span class="${isVerified ? 'text-emerald-400' : 'text-amber-400'} font-bold">Distancia del técnico al cliente: ${d < 1000 ? d + ' metros' : (d/1000).toFixed(2) + ' KM'}</span>`;
-      } else {
-        diagBox.innerHTML = '';
-      }
+      tempQuoteFileName = file.name;
+      document.getElementById('quoteFileLabel').innerText = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
 
-      document.getElementById('detailProjSurveyMeters').innerText = p.survey && p.survey.meters ? `${p.survey.meters} m (${p.survey.structure || 'EMT'})` : 'Sin metrado';
-      document.getElementById('detailProjSurveyNotes').innerText = p.survey && p.survey.notes ? p.survey.notes : 'Sin observaciones técnicas cargadas.';
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        tempQuoteFileData = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
 
-      const docBox = document.getElementById('detailProjSurveyDocBox');
-      if (p.survey && p.survey.docFile) {
-        docBox.innerHTML = `
-          <div class="flex items-center justify-between text-xs bg-slate-900 p-2 rounded-lg border border-slate-700">
-            <span class="truncate font-semibold text-white"><i class="fa-solid fa-file-lines text-amber-400 mr-1.5"></i>${p.survey.docFile.name}</span>
-            <div class="flex gap-2">
-              <button onclick="viewFileDirect('${p.id}', 'doc')" class="text-blue-400 hover:underline">Ver</button>
-              <button onclick="downloadFileDirect('${p.id}', 'doc')" class="text-emerald-400 hover:underline">Descargar</button>
-              <button onclick="deleteFileDirect('${p.id}', 'doc')" class="text-rose-400 hover:underline">Eliminar</button>
-            </div>
-          </div>
-        `;
-      } else {
-        docBox.innerHTML = '<span class="text-slate-500 italic text-[11px]">No se ha adjuntado documento de levantamiento.</span>';
-      }
+    function handleSaveQuotation(e) {
+      e.preventDefault();
+      const p = appData.projects.find(item => item.id === activeQuotationProjectId);
+      if (!p) return;
 
-      const planBox = document.getElementById('detailProjPlanBox');
-      if (p.survey && p.survey.planFile) {
-        planBox.innerHTML = `
-          <div class="w-full flex items-center justify-between text-xs bg-slate-900 p-2 rounded-lg border border-slate-700">
-            <span class="truncate font-semibold text-white"><i class="fa-solid fa-map-location-dot text-rose-400 mr-1.5"></i>${p.survey.planFile.name}</span>
-            <div class="flex gap-2">
-              <button onclick="viewFileDirect('${p.id}', 'plan')" class="text-blue-400 hover:underline">Ver</button>
-              <button onclick="downloadFileDirect('${p.id}', 'plan')" class="text-emerald-400 hover:underline">Descargar</button>
-              <button onclick="deleteFileDirect('${p.id}', 'plan')" class="text-rose-400 hover:underline">Eliminar</button>
-            </div>
-          </div>
-        `;
-      } else {
-        planBox.innerHTML = '<span class="text-slate-500 italic text-[11px]">No se ha adjuntado plano o croquis aún.</span>';
-      }
-
-      const budgetContainer = document.getElementById('detailProjBudgetContainer');
-      const totalServices = p.budget && p.budget.services ? p.budget.services.reduce((a, c) => a + c.subtotal, 0) : 0;
-      const totalMaterials = p.budget && p.budget.materials ? p.budget.materials.reduce((a, c) => a + c.subtotal, 0) : 0;
-      const grandTotal = totalServices + totalMaterials;
-
-      budgetContainer.innerHTML = `
-        <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2">
-          <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">
-              <i class="fa-solid fa-file-invoice-dollar mr-1"></i>Cotización Oficial: ${p.quotation ? p.quotation.number + ' (RD$ ' + p.quotation.amount.toLocaleString() + ')' : 'Sin Cargar'}
-            </span>
-            <div class="text-[11px] text-slate-400">${p.quotation ? 'Fecha: ' + p.quotation.date : 'Pendiente de cargar cotización formal aprobada'}</div>
-          </div>
-          ${currentAuthUser.role === 'admin' ? `
-            <button onclick="openQuotationModal('${p.id}')" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold">
-              ${p.quotation ? 'Actualizar Cotización' : 'Cargar Cotización'}
-            </button>
-          ` : ''}
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs pt-1">
-          <div>
-            <div class="font-bold text-slate-300 flex justify-between mb-1">
-              <span>Servicios Profesionales (HH & Vehículo)</span>
-              <span class="font-mono text-slate-400">RD$ ${totalServices.toLocaleString()}</span>
-            </div>
-            ${p.budget && p.budget.services ? p.budget.services.map(s => `
-              <div class="flex justify-between text-slate-400 text-[11px]">
-                <span>${s.concept} (${s.qty})</span>
-                <span class="font-mono text-slate-300">RD$ ${s.subtotal.toLocaleString()}</span>
-              </div>
-            `).join('') : '<span class="text-slate-500 italic text-[11px]">Sin servicios</span>'}
-          </div>
-          <div>
-            <div class="font-bold text-slate-300 flex justify-between mb-1">
-              <span>Equipos & Materiales Registrados</span>
-              <span class="font-mono text-slate-400">RD$ ${totalMaterials.toLocaleString()}</span>
-            </div>
-            ${p.budget && p.budget.materials ? p.budget.materials.map(m => `
-              <div class="flex justify-between text-slate-400 text-[11px]">
-                <span class="truncate mr-2">${m.desc} (x${m.qtyReal})</span>
-                <span class="font-mono text-slate-300 whitespace-nowrap">RD$ ${m.subtotal.toLocaleString()}</span>
-              </div>
-            `).join('') : '<span class="text-slate-500 italic text-[11px]">Sin materiales</span>'}
-          </div>
-        </div>
-        <div class="text-right text-xs font-bold text-emerald-400 border-t border-slate-800/80 pt-2">
-          Costo Total Estimado del Proyecto: RD$ ${grandTotal.toLocaleString()}
-        </div>
-      `;
-
-      const statusBtns = document.getElementById('detailProjStatusChangeBtns');
-      if (currentAuthUser.role === 'admin') {
-        statusBtns.innerHTML = `
-          <button onclick="changeProjectStatusFromDetail('${p.id}', 'Levantamiento')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">Levantamiento</button>
-          <button onclick="changeProjectStatusFromDetail('${p.id}', 'En Presupuesto')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg text-slate-300">En Presupuesto</button>
-          <button onclick="changeProjectStatusFromDetail('${p.id}', 'Aprobado')" class="text-[11px] bg-emerald-950 border border-emerald-800 hover:bg-emerald-900 px-2.5 py-1 rounded-lg text-emerald-300 font-bold">Aprobar</button>
-          <button onclick="changeProjectStatusFromDetail('${p.id}', 'En Curso')" class="text-[11px] bg-blue-950 border border-blue-800 hover:bg-blue-900 px-2.5 py-1 rounded-lg text-blue-300">En Curso</button>
-          <button onclick="changeProjectStatusFromDetail('${p.id}', 'Finalizado')" class="text-[11px] bg-purple-950 border border-purple-800 hover:bg-purple-900 px-2.5 py-1 rounded-lg text-purple-300">Finalizado</button>
-        `;
-        document.getElementById('detailProjEditBtn').classList.remove('hidden');
-        document.getElementById('detailProjEditBtn').onclick = () => { closeModal('projectDetailModal'); openEditProjectModal(p.id); };
-      } else {
-        statusBtns.innerHTML = '';
-        document.getElementById('detailProjEditBtn').classList.add('hidden');
-      }
-
-      document.getElementById('detailProjSurveyActionBtn').onclick = () => {
-        closeModal('projectDetailModal');
-        openSurveyModal(p.id);
+      p.quotation = {
+        number: document.getElementById('quoteNumber').value.trim(),
+        amount: parseFloat(document.getElementById('quoteAmount').value) || 0,
+        date: document.getElementById('quoteDate').value,
+        notes: document.getElementById('quoteNotes').value.trim(),
+        fileName: tempQuoteFileName || 'Cotizacion_Oficial.pdf',
+        fileData: tempQuoteFileData
       };
 
-      openModal('projectDetailModal');
-    }
-
-    function changeProjectStatusFromDetail(id, status) {
-      changeProjectStatus(id, status);
-      openProjectDetailModal(id);
-    }
-
-    // INFORMES Y KPIS
-    function renderAdminKPIs() {
-      const totalProjects = appData.projects.length;
-      const completedProjects = appData.projects.filter(p => p.status === 'Finalizado').length;
-      const completionRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
-
-      const checkInProjects = appData.projects.filter(p => p.tracking && p.tracking.checkIn);
-      const verifiedOnSite = checkInProjects.filter(p => p.tracking && p.tracking.isVerifiedOnSite).length;
-      const gpsComplianceRate = checkInProjects.length > 0 ? Math.round((verifiedOnSite / checkInProjects.length) * 100) : 100;
-
-      const totalFuelTickets = appData.fuelLogs.reduce((acc, l) => acc + (l.tickets500 || 0), 0);
-      const totalFuelMoney = totalFuelTickets * 500;
-      const totalKmLogged = appData.fuelLogs.reduce((acc, l) => acc + (l.dist || 0), 0);
-      const avgCostPerKm = totalKmLogged > 0 ? (totalFuelMoney / totalKmLogged).toFixed(2) : '0.00';
-
-      let totalBudgetHours = 0;
-      appData.projects.forEach(p => {
-        if (p.budget && p.budget.services) {
-          p.budget.services.forEach(s => {
-            if ((s.concept||'').toLowerCase().includes('horas') || (s.concept||'').toLowerCase().includes('técnicas')) {
-              totalBudgetHours += (s.qty || 0);
-            }
-          });
-        }
-      });
-
-      const techStats = appData.technicians.map(t => {
-        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || (p.techCrew||[]).includes(t.name));
-        const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
-        const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
-        const onSiteVerified = checkedIn.filter(p => p.tracking && p.tracking.isVerifiedOnSite).length;
-        const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
-
-        const fuelEntries = appData.fuelLogs.filter(f => f.driver === t.name || (t.vehiclePlate && f.plate === t.vehiclePlate));
-        let avgDev = 0;
-        if (fuelEntries.length > 0) {
-          const sumDev = fuelEntries.reduce((acc, f) => acc + parseFloat(f.dev || 0), 0);
-          avgDev = (sumDev / fuelEntries.length).toFixed(1);
-        }
-
-        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 40 : 25;
-        const gpsScore = (gpsRate / 100) * 40;
-        const fuelScore = Math.max(0, (1 - (avgDev / 50))) * 20;
-        const performanceScore = Math.min(100, Math.round(closeScore + gpsScore + fuelScore));
-
-        return { ...t, assignedCount: assignedProj.length, completedCount: completed, gpsRate, avgDev, performanceScore };
-      });
-
-      return `
-        <div class="space-y-6">
-          <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-rose-950/40 border border-slate-800 p-5 rounded-2xl shadow-xl">
-            <div class="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <span class="text-xs uppercase tracking-wider text-rose-400 font-bold"><i class="fa-solid fa-gauge-high mr-1.5"></i>Tablero de Control de Productividad</span>
-                <h2 class="text-xl font-black text-white mt-0.5">Métricas Clave de Rendimiento Técnico</h2>
-                <p class="text-xs text-slate-400 mt-1">Evaluación en tiempo real de cuadrillas en campo, cumplimiento GPS y optimización vehicular.</p>
-              </div>
-              <div class="flex items-center gap-3 bg-slate-950/80 px-4 py-2.5 rounded-xl border border-slate-800">
-                <i class="fa-solid fa-award text-amber-400 text-2xl"></i>
-                <div>
-                  <div class="text-[11px] text-slate-400 font-medium">Cumplimiento Operativo General</div>
-                  <div class="text-lg font-black text-white">${completionRate}% <span class="text-xs text-emerald-400 font-semibold">Tasa de Entrega</span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold"><span>Puntualidad & GPS Geofencing</span><i class="fa-solid fa-location-dot text-emerald-400"></i></div>
-              <div class="text-2xl font-black text-emerald-400 mt-2">${gpsComplianceRate}%</div>
-              <div class="w-full bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden"><div class="bg-emerald-500 h-full rounded-full" style="width: ${gpsComplianceRate}%"></div></div>
-              <div class="text-[10px] text-slate-400 mt-2">Llegadas validadas a menos de 300m de la obra</div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold"><span>Inversión en Combustible</span><i class="fa-solid fa-gas-pump text-rose-400"></i></div>
-              <div class="text-2xl font-black text-white mt-2">RD$ ${totalFuelMoney.toLocaleString()}</div>
-              <div class="text-xs text-rose-400 font-bold mt-0.5">${totalFuelTickets} Tickets de RD$ 500</div>
-              <div class="text-[10px] text-slate-400 mt-1">Costo promedio: RD$ ${avgCostPerKm} / KM recorrido</div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold"><span>Horas Hombre Cotizadas</span><i class="fa-solid fa-clock text-blue-400"></i></div>
-              <div class="text-2xl font-black text-blue-400 mt-2">${totalBudgetHours} HH</div>
-              <div class="text-xs text-slate-300 font-medium mt-0.5">${checkInProjects.length} visitas con tiempo registrado</div>
-              <div class="text-[10px] text-slate-400 mt-1">Rendimiento según presupuesto aprobado</div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="flex justify-between items-center text-slate-400 text-xs font-semibold"><span>Planos Técnicos en Obra</span><i class="fa-solid fa-compass-drafting text-purple-400"></i></div>
-              <div class="text-2xl font-black text-purple-400 mt-2">${appData.projects.filter(p => p.survey && p.survey.planFile).length}</div>
-              <div class="text-xs text-slate-300 font-medium mt-0.5">Levantamientos con croquis</div>
-              <div class="text-[10px] text-slate-400 mt-1">Soporte gráfico para instalación inmediata</div>
-            </div>
-          </div>
-
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h3 class="text-sm font-bold text-white uppercase tracking-wider"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking de Rendimiento y Cumplimiento Técnico</h3>
-                <p class="text-[11px] text-slate-400 mt-0.5">Puntaje basado en efectividad de cierre, geolocalización en sitio y desvío vehicular.</p>
-              </div>
-              <span class="text-xs text-slate-400 bg-slate-800 px-3 py-1 rounded-lg border border-slate-700">Total Evaluados: ${techStats.length} Técnicos</span>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs text-left" id="kpiTableExport">
-                <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase font-semibold">
-                  <tr>
-                    <th class="p-3">Técnico</th>
-                    <th class="p-3">Categoría</th>
-                    <th class="p-3 text-center">Tareas (Total / Cierre)</th>
-                    <th class="p-3 text-center">Cumplimiento GPS</th>
-                    <th class="p-3 text-center">Desvío Combustible</th>
-                    <th class="p-3">Score de Eficiencia</th>
-                    <th class="p-3 text-right">Diagnóstico Operativo</th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-800">
-                  ${techStats.sort((a,b) => b.performanceScore - a.performanceScore).map((t, idx) => `
-                    <tr class="hover:bg-slate-800/40">
-                      <td class="p-3">
-                        <div class="flex items-center gap-2">
-                          <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${idx === 0 ? 'bg-amber-400 text-slate-950' : 'bg-slate-800 text-slate-300'}">${idx + 1}</span>
-                          <div>
-                            <span class="font-bold text-white">${t.name}</span>
-                            <div class="text-[10px] text-slate-500">${t.vehiclePlate ? `Vehículo: ${t.vehiclePlate}` : 'Sin auto'}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td class="p-3">
-                        <span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${
-                          t.level === 'Especialista A' ? 'bg-purple-950 text-purple-300 border border-purple-800' :
-                          t.level === 'Especialista B' ? 'bg-blue-950 text-blue-300 border border-blue-800' :
-                          'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                        }">${t.level}</span>
-                      </td>
-                      <td class="p-3 text-center">
-                        <span class="font-bold text-white">${t.completedCount}</span> / <span class="text-slate-400">${t.assignedCount}</span>
-                      </td>
-                      <td class="p-3 text-center">
-                        <span class="font-bold font-mono ${t.gpsRate >= 80 ? 'text-emerald-400' : 'text-amber-400'}">${t.gpsRate}%</span>
-                      </td>
-                      <td class="p-3 text-center">
-                        <span class="font-mono ${parseFloat(t.avgDev) < 15 ? 'text-emerald-400' : 'text-rose-400'}">${t.avgDev}%</span>
-                      </td>
-                      <td class="p-3">
-                        <div class="flex items-center gap-2">
-                          <div class="w-24 bg-slate-800 h-2 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full ${t.performanceScore >= 80 ? 'bg-emerald-500' : (t.performanceScore >= 60 ? 'bg-blue-500' : 'bg-amber-500')}" style="width: ${t.performanceScore}%"></div>
-                          </div>
-                          <span class="font-bold font-mono text-white">${t.performanceScore}/100</span>
-                        </div>
-                      </td>
-                      <td class="p-3 text-right">
-                        ${t.performanceScore >= 80 ? `<span class="bg-emerald-950/80 text-emerald-300 border border-emerald-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-star mr-1 text-amber-400"></i> Desempeño Sobresaliente</span>` : t.performanceScore >= 60 ? `<span class="bg-blue-950/80 text-blue-300 border border-blue-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-check mr-1 text-blue-400"></i> Rendimiento Adecuado</span>` : `<span class="bg-rose-950/80 text-rose-300 border border-rose-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-triangle-exclamation mr-1 text-rose-400"></i> Supervisar en Campo</span>`}
-                      </td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    // ACCIONES DIRECTAS DE ARCHIVOS DESDE EL DETALLE (VER, DESCARGAR, ELIMINAR)
-    function viewFileDirect(projId, type) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p || !p.survey) return;
-      const file = type === 'doc' ? p.survey.docFile : p.survey.planFile;
-      if (!file) return;
-      document.getElementById('viewerTitle').innerText = file.name;
-      document.getElementById('viewerSubtitle').innerText = `${p.code} - ${p.title}`;
-      const downloadBtn = document.getElementById('viewerDownloadBtn');
-      downloadBtn.href = file.data || '#';
-      downloadBtn.download = file.name;
-      const body = document.getElementById('viewerBody');
-      body.innerHTML = '';
-
-      if (file.type && file.type.includes('image')) {
-        body.innerHTML = `<img src="${file.data}" alt="Evidencia" class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-md" />`;
-      } else if (file.type && file.type.includes('word')) {
-        body.innerHTML = `<div class="text-center p-8 text-slate-300"><i class="fa-solid fa-file-word text-6xl text-blue-500 mb-3"></i><h4 class="text-sm font-bold text-white">${file.name}</h4><p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">Documento procesado con éxito.</p>${file.text ? `<div class="mt-4 p-3 bg-slate-900 border border-slate-800 rounded text-left text-xs text-slate-300 max-h-48 overflow-y-auto whitespace-pre-wrap">${file.text}</div>` : ''}</div>`;
-      } else if (file.type && file.type.includes('pdf')) {
-        body.innerHTML = file.data ? `<iframe src="${file.data}" class="w-full h-[70vh] rounded-lg border border-slate-700"></iframe>` : `<div class="text-center p-8 text-slate-400"><i class="fa-solid fa-file-pdf text-5xl text-rose-500 mb-3"></i><p class="font-bold text-white">${file.name}</p></div>`;
-      } else {
-        body.innerHTML = `<div class="text-center p-8 text-slate-400"><i class="fa-solid fa-file text-5xl text-emerald-500 mb-3"></i><p class="font-bold text-white">${file.name}</p></div>`;
+      if (p.status === 'Levantamiento') {
+        p.status = 'En Presupuesto';
       }
-      openModal('fileViewerModal');
+
+      closeModal('quoteModal');
+      saveData();
+      alert('¡Cotización guardada exitosamente y vinculada al proyecto!');
     }
 
-    function downloadFileDirect(projId, type) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p || !p.survey) return;
-      const file = type === 'doc' ? p.survey.docFile : p.survey.planFile;
-      if (!file) return;
-      if (file.data) {
-        const a = document.createElement('a');
-        a.href = file.data;
-        a.download = file.name;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
-        alert('Descargando archivo: ' + file.name);
-      }
-    }
-
-    function deleteFileDirect(projId, type) {
-      const p = appData.projects.find(x => x.id === projId);
-      if (!p || !p.survey) return;
-      const label = type === 'doc' ? 'el documento de levantamiento' : 'el plano técnico';
-      if (confirm(`¿Estás seguro de eliminar ${label}?`)) {
-        if (type === 'doc') p.survey.docFile = null;
-        else p.survey.planFile = null;
-        saveData();
-        openProjectDetailModal(projId); // Actualiza la vista de detalle
-        alert('Archivo eliminado exitosamente.');
-      }
-    }
+    // Inicialización al cargar la página SIEMPRE con el Login desplegado
+    window.addEventListener('DOMContentLoaded', () => {
+      populateTechSelect();
+      openModal('loginModal');
+      render();
+    });
   </script>
 </body>
 </html>
