@@ -33,12 +33,7 @@
     .live-pulse { animation: pulse-dot 1.5s infinite ease-in-out; }
 
     .table-row-hover:hover {
-      background-color: rgba(30, 41, 59, 0.7) !important;
-      cursor: pointer;
-    }
-    
-    .card-hover:hover {
-      border-color: #f43f5e; /* rose-500 */
+      background-color: rgba(30, 41, 59, 0.7);
       cursor: pointer;
     }
 
@@ -61,21 +56,26 @@
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased selection:bg-rose-900 selection:text-white">
 
-  <!-- TOAST CONTAINER PARA NOTIFICACIONES -->
-  <div id="toast-container" class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-3"></div>
 
   <!-- ================= TOPBAR ================= -->
   <header class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-0 z-40 px-4 py-3">
     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
       <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
         <div class="bg-white px-3 py-1.5 rounded-lg flex items-center shadow-sm">
           <svg viewBox="0 0 280 60" class="h-8 md:h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1"><text x="2" y="38" fill="#111827">centr</text></g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
+              <text x="2" y="38" fill="#111827">centr</text>
+            </g>
             <g transform="translate(103, 9)">
               <circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" />
               <line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" />
             </g>
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5"><text x="138" y="38" fill="#8b1524">xpert</text></g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5">
+              <text x="138" y="38" fill="#8b1524">xpert</text>
+            </g>
             <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text>
             <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
           </svg>
@@ -90,46 +90,65 @@
           <div class="text-sm font-semibold text-rose-400">Control Operativo & Rendimiento Técnico</div>
         </div>
       </div>
-      <div class="flex items-center gap-3" id="headerUserActions"></div>
+
+      <div class="flex items-center gap-3" id="headerUserActions">
+        <!-- Inyectado dinámicamente -->
+      </div>
     </div>
   </header>
 
   <!-- ================= CONTENEDOR PRINCIPAL ================= -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer"></main>
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6" id="mainContainer">
+  </main>
 
-  <!-- ================= MODALES ÚNICOS DEL SISTEMA ================= -->
+  <!-- ================= MODALES DEL SISTEMA ================= -->
 
   <!-- Modal Login -->
-  <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
+  <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
       <div class="text-center mb-6">
         <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3 shadow">
           <svg viewBox="0 0 280 60" class="h-10 w-auto" xmlns="http://www.w3.org/2000/svg">
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1"><text x="2" y="38" fill="#111827">centr</text></g>
-            <g transform="translate(103, 9)"><circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" /><line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" /></g>
-            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5"><text x="138" y="38" fill="#8b1524">xpert</text></g>
-            <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text><line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="700" font-size="34" letter-spacing="-1">
+              <text x="2" y="38" fill="#111827">centr</text>
+            </g>
+            <g transform="translate(103, 9)">
+              <circle cx="16" cy="18" r="14" fill="none" stroke="#111827" stroke-width="4.5" stroke-dasharray="72 25" stroke-dashoffset="-7" />
+              <line x1="16" y1="3" x2="16" y2="18" stroke="#8b1524" stroke-width="5" stroke-linecap="round" />
+            </g>
+            <g font-family="'Ubuntu', 'Arial', sans-serif" font-weight="400" font-size="34" letter-spacing="-0.5">
+              <text x="138" y="38" fill="#8b1524">xpert</text>
+            </g>
+            <text x="2" y="54" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="1">SERVICIOS TECNOLOGICOS ESPECIALIZADOS</text>
+            <line x1="156" y1="52" x2="275" y2="52" stroke="#64748b" stroke-width="2.5" stroke-linecap="round" />
           </svg>
         </div>
         <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3>
-        <p class="text-xs text-slate-400 mt-1">Identifícate para acceder a tu panel</p>
+        <p class="text-xs text-slate-400 mt-1">Acceso seguro para técnicos y coordinación</p>
       </div>
 
       <div class="flex border-b border-slate-800 mb-5">
-        <button id="tabLoginTec" onclick="switchLoginTab('tec')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400"><i class="fa-solid fa-hard-hat mr-1.5"></i> Técnico</button>
-        <button id="tabLoginAdmin" onclick="switchLoginTab('admin')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200"><i class="fa-solid fa-user-shield mr-1.5"></i> Coordinación</button>
+        <button id="tabLoginTec" onclick="switchLoginTab('tec')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400">
+          <i class="fa-solid fa-hard-hat mr-1.5"></i> Técnico
+        </button>
+        <button id="tabLoginAdmin" onclick="switchLoginTab('admin')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200">
+          <i class="fa-solid fa-user-shield mr-1.5"></i> Coordinación
+        </button>
       </div>
 
       <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Selecciona tu Nombre</label>
-          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"></select>
+          <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500">
+          </select>
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Clave genérica: 1234)</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">PIN / Contraseña (Clave inicial: 1234)</label>
           <input type="password" id="loginTecPin" required placeholder="••••" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500 font-mono">
         </div>
-        <button type="submit" class="w-full bg-rose-700 hover:bg-rose-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-rose-900/30">Entrar como Técnico</button>
+        <button type="submit" class="w-full bg-rose-700 hover:bg-rose-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-rose-900/30">
+          Entrar como Técnico
+        </button>
       </form>
 
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
@@ -137,7 +156,9 @@
           <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinación (admin123)</label>
           <input type="password" id="loginAdminPass" required placeholder="Clave administrativa" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500 font-mono">
         </div>
-        <button type="submit" class="w-full bg-blue-700 hover:bg-blue-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-blue-900/30">Entrar a Panel Central</button>
+        <button type="submit" class="w-full bg-blue-700 hover:bg-blue-600 font-bold py-2.5 rounded-xl text-sm transition shadow-lg shadow-blue-900/30">
+          Entrar a Panel Central
+        </button>
       </form>
     </div>
   </div>
@@ -147,11 +168,24 @@
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl">
       <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-key mr-2 text-rose-400"></i>Cambiar mi PIN</h3>
       <p class="text-xs text-slate-400 mb-4">Actualiza tu código de acceso para mayor seguridad.</p>
+      
       <form onsubmit="handleUpdatePin(event)" class="space-y-3">
-        <div><label class="block text-xs text-slate-300 mb-1">PIN Actual</label><input type="password" id="currentPin" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
-        <div><label class="block text-xs text-slate-300 mb-1">Nuevo PIN</label><input type="password" id="newPin" required maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
-        <div><label class="block text-xs text-slate-300 mb-1">Confirmar Nuevo PIN</label><input type="password" id="confirmPin" required maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
-        <div class="flex gap-2 pt-2"><button type="button" onclick="closeModal('pinModal')" class="flex-1 bg-slate-800 hover:bg-slate-700 py-2 rounded-xl text-xs font-semibold">Cancelar</button><button type="submit" class="flex-1 bg-rose-700 hover:bg-rose-600 py-2 rounded-xl text-xs font-bold text-white">Guardar</button></div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">PIN Actual</label>
+          <input type="password" id="currentPin" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500 font-mono">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Nuevo PIN</label>
+          <input type="password" id="newPin" required maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500 font-mono">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Confirmar Nuevo PIN</label>
+          <input type="password" id="confirmPin" required maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500 font-mono">
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeModal('pinModal')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs font-semibold">Cancelar</button>
+          <button type="submit" class="flex-1 bg-rose-700 hover:bg-rose-600 text-white py-2 rounded-xl text-xs font-bold">Guardar</button>
+        </div>
       </form>
     </div>
   </div>
@@ -163,7 +197,11 @@
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-bell mr-2 text-rose-400"></i>Centro de Notificaciones</h3>
         <button onclick="closeModal('notificationsModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div id="notificationsList" class="flex-1 overflow-y-auto space-y-2 pr-1"></div>
+      
+      <div id="notificationsList" class="flex-1 overflow-y-auto space-y-2 pr-1">
+        <!-- JS inyecta notificaciones -->
+      </div>
+      
       <div class="pt-3 border-t border-slate-800 mt-3 text-right">
         <button onclick="clearNotifications()" class="text-xs text-slate-400 hover:text-rose-400 font-semibold"><i class="fa-solid fa-trash-can mr-1"></i> Borrar Todas</button>
       </div>
@@ -177,75 +215,58 @@
         <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
         <button onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
+
       <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
         <input type="hidden" id="techEditId">
-        <div><label class="text-xs text-slate-300">Nombre Completo</label><input type="text" id="techName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="text-xs text-slate-300">Categoría</label><select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option value="Especialista A">Especialista A</option><option value="Especialista B">Especialista B</option><option value="Auxiliar Técnico">Auxiliar Técnico</option></select></div>
-          <div><label class="text-xs text-slate-300">Teléfono</label><input type="text" id="techPhone" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Nombre Completo</label>
+          <input type="text" id="techName" required placeholder="Ej: Ramón Valdez" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
         </div>
-        <div><label class="text-xs text-slate-300">Dirección de Vivienda</label><input type="text" id="techAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
-        <div><label class="text-xs text-slate-300">Vehículo Asignado</label><select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select></div>
-        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">Clave inicial: <strong>1234</strong>.</div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Rango / Categoría</label>
+            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Especialista A">Especialista A</option>
+              <option value="Especialista B">Especialista B</option>
+              <option value="Auxiliar Técnico">Auxiliar Técnico</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Teléfono</label>
+            <input type="text" id="techPhone" required placeholder="809-555-0100" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Dirección de Vivienda (Ruta)</label>
+          <input type="text" id="techAddress" required placeholder="Ej: C/ Duarte #15, Los Alcarrizos" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Vehículo Asignado</label>
+          <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </select>
+        </div>
+
+        <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400">
+          <i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i>Clave inicial de acceso: <strong>1234</strong>.
+        </div>
+
         <div class="flex justify-between items-center pt-3 border-t border-slate-800">
-          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs px-3 py-2 rounded-xl font-semibold"><i class="fa-solid fa-rotate-left"></i> Reset a 1234</button>
+          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs px-3 py-2 rounded-xl border border-slate-700 font-semibold">
+            <i class="fa-solid fa-rotate-left mr-1"></i> Resetear a 1234
+          </button>
           <div class="flex gap-2 ml-auto">
-            <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-            <button type="submit" class="bg-rose-700 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg">Guardar</button>
+            <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+            <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30">Guardar Técnico</button>
           </div>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modal Vehículo -->
-  <div id="vehicleModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white" id="vehicleModalTitle"><i class="fa-solid fa-truck-pickup mr-2 text-rose-400"></i>Vehículo</h3>
-        <button onclick="closeModal('vehicleModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <form onsubmit="handleSaveVehicle(event)" class="space-y-3">
-        <input type="hidden" id="vehicleEditId">
-        <div><label class="text-xs text-slate-300">Placa</label><input type="text" id="vehiclePlate" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white uppercase font-mono"></div>
-        <div><label class="text-xs text-slate-300">Modelo</label><input type="text" id="vehicleModel" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="text-xs text-slate-300">Odómetro</label><input type="number" id="vehicleOdo" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-          <div><label class="text-xs text-slate-300">Estatus</label><select id="vehicleStatus" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"><option value="Operativo">Operativo</option><option value="Mantenimiento">Mantenimiento</option></select></div>
-        </div>
-        <div><label class="text-xs text-slate-300">Custodio</label><select id="vehicleAssignedTo" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></select></div>
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
-          <button type="button" onclick="closeModal('vehicleModal')" class="bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-          <button type="submit" class="bg-rose-700 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Herramienta -->
-  <div id="toolModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white" id="toolModalTitle"><i class="fa-solid fa-toolbox mr-2 text-amber-400"></i>Herramienta</h3>
-        <button onclick="closeModal('toolModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <form onsubmit="handleSaveTool(event)" class="space-y-3">
-        <input type="hidden" id="toolEditId">
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="text-xs text-slate-300">Código</label><input type="text" id="toolCode" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white uppercase font-mono"></div>
-          <div><label class="text-xs text-slate-300">Condición</label><select id="toolCondition" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"><option>Excelente</option><option>Bueno</option><option>Requiere Revisión</option></select></div>
-        </div>
-        <div><label class="text-xs text-slate-300">Descripción</label><input type="text" id="toolName" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-        <div><label class="text-xs text-slate-300">Custodio</label><select id="toolAssignedTo" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></select></div>
-        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
-          <button type="button" onclick="closeModal('toolModal')" class="bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-          <button type="submit" class="bg-rose-700 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Levantamiento Técnico -->
+  <!-- Modal Levantamiento Técnico (Carga de Plano, Foto, PDF, Word, OCR y Dibujo) -->
   <div id="surveyModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
@@ -256,973 +277,598 @@
         <button onclick="closeModal('surveyModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <!-- SECCIÓN SEPARADA DE ARCHIVOS -->
+      <!-- SECCIÓN 1: ADJUNTAR DOCUMENTO / FOTO DE LEVANTAMIENTO SEPARADO -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         
-        <!-- A: DOCUMENTO LEVANTAMIENTO -->
+        <!-- BLOQUE A: DOCUMENTO DE LEVANTAMIENTO (FOTO, WORD, PDF, EXCEL) -->
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase text-rose-400 flex items-center gap-1.5"><i class="fa-solid fa-camera"></i> 1. Evidencia Levantamiento</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-camera"></i> 1. Documento de Levantamiento
+              </span>
               <span id="ocrStatusBadge" class="text-[10px] text-slate-400 italic">OCR activo</span>
             </div>
-            <button type="button" onclick="document.getElementById('surveyDocInput').click()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs px-3 py-2.5 rounded-xl border border-slate-700 w-full mb-2"><i class="fa-solid fa-file-arrow-up mr-1 text-rose-400"></i> Adjuntar Evidencia / Word / PDF</button>
-            <input type="file" id="surveyDocInput" accept="image/*,application/pdf,.docx,.doc,.xlsx,.xls" class="hidden" onchange="handleSurveyDocUpload(event)">
+            <p class="text-[11px] text-slate-400 mb-3">Sube fotos de libretas, notas de campo, Word (.docx), PDF o Excel.</p>
+            
+            <label class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2.5 rounded-xl cursor-pointer border border-slate-700 font-medium text-center flex items-center justify-center gap-2 mb-2 transition shadow">
+              <i class="fa-solid fa-file-arrow-up text-rose-400 text-sm"></i> Adjuntar Levantamiento (Foto/Word/PDF)
+              <input type="file" id="surveyDocInput" accept="image/*,application/pdf,.docx,.doc,.xlsx,.xls" class="hidden" onchange="handleSurveyDocUpload(event)">
+            </label>
           </div>
+
+          <!-- Card de documento de levantamiento adjunto -->
           <div id="surveyDocCard" class="hidden bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center justify-between text-xs mt-2 shadow-inner">
-            <div class="flex items-center gap-2 truncate max-w-[70%]">
+            <div class="flex items-center gap-2 truncate max-w-[65%]">
               <i id="surveyDocIcon" class="fa-solid fa-file-lines text-rose-400 text-lg"></i>
-              <div class="truncate"><div id="surveyDocName" class="font-bold text-white truncate text-xs"></div><div class="text-[10px] text-slate-400">Documento cargado</div></div>
+              <div class="truncate">
+                <div id="surveyDocName" class="font-bold text-white truncate text-xs">levantamiento.pdf</div>
+                <div class="text-[10px] text-slate-400">Documento cargado</div>
+              </div>
             </div>
-            <div class="flex gap-1"><button type="button" onclick="previewSurveyDoc()" class="text-blue-400 p-1"><i class="fa-solid fa-eye"></i></button><button type="button" onclick="removeSurveyDoc()" class="text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button></div>
+            <div class="flex items-center gap-1.5 ml-2">
+              <button type="button" onclick="previewSurveyDoc()" class="bg-slate-800 hover:bg-slate-700 text-blue-400 p-1.5 rounded" title="Ver documento"><i class="fa-solid fa-eye"></i></button>
+              <button type="button" onclick="removeSurveyDoc()" class="bg-red-950 hover:bg-red-900 text-red-400 p-1.5 rounded border border-red-800/50" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
           </div>
         </div>
 
-        <!-- B: PLANO / CROQUIS -->
+        <!-- BLOQUE B: ADJUNTAR PLANO O CROQUIS SEPARADO -->
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase text-blue-400 flex items-center gap-1.5"><i class="fa-solid fa-map-location-dot"></i> 2. Plano Técnico</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-map-location-dot"></i> 2. Plano o Croquis Técnico
+              </span>
+              <span class="text-[10px] text-slate-400 italic">Imagen, PDF, DWG</span>
             </div>
+            <p class="text-[11px] text-slate-400 mb-3">Sube el plano arquitectónico, diagrama o dibújalo directamente.</p>
+            
             <div class="grid grid-cols-2 gap-2 mb-2">
-              <button type="button" onclick="document.getElementById('planFileInput').click()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs px-2.5 py-2.5 rounded-xl border border-slate-700"><i class="fa-solid fa-cloud-arrow-up text-blue-400"></i> Subir Archivo</button>
-              <input type="file" id="planFileInput" accept="image/*,application/pdf,.dwg,.dxf" class="hidden" onchange="handlePlanDocUpload(event)">
-              <button type="button" onclick="openPlanCanvasModal()" class="bg-blue-950/70 border border-blue-800 hover:bg-blue-900 text-blue-300 text-xs px-2.5 py-2.5 rounded-xl font-bold"><i class="fa-solid fa-compass-drafting"></i> Dibujar Croquis</button>
+              <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-2.5 py-2.5 rounded-xl cursor-pointer border border-slate-700 font-medium text-center flex items-center justify-center gap-1.5 transition shadow">
+                <i class="fa-solid fa-cloud-arrow-up text-blue-400"></i> Subir Plano
+                <input type="file" id="planFileInput" accept="image/*,application/pdf,.dwg,.dxf" class="hidden" onchange="handlePlanDocUpload(event)">
+              </label>
+
+              <button type="button" onclick="openPlanCanvasModal()" class="bg-blue-950/70 border border-blue-800 hover:bg-blue-900 text-blue-300 text-xs px-2.5 py-2.5 rounded-xl font-bold flex items-center justify-center gap-1.5 transition shadow">
+                <i class="fa-solid fa-compass-drafting text-blue-400"></i> Dibujar Croquis
+              </button>
             </div>
           </div>
+
+          <!-- Card de plano adjunto -->
           <div id="surveyPlanCard" class="hidden bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center justify-between text-xs mt-2 shadow-inner">
-            <div class="flex items-center gap-2 truncate max-w-[70%]">
+            <div class="flex items-center gap-2 truncate max-w-[65%]">
               <i id="surveyPlanIcon" class="fa-solid fa-map-location-dot text-blue-400 text-lg"></i>
-              <div class="truncate"><div id="surveyPlanName" class="font-bold text-white truncate text-xs"></div><div class="text-[10px] text-slate-400">Plano Adjunto</div></div>
+              <div class="truncate">
+                <div id="surveyPlanName" class="font-bold text-white truncate text-xs">plano.png</div>
+                <div class="text-[10px] text-slate-400">Plano Técnico Guardado</div>
+              </div>
             </div>
-            <div class="flex gap-1"><button type="button" onclick="previewPlanDoc()" class="text-blue-400 p-1"><i class="fa-solid fa-eye"></i></button><button type="button" onclick="removePlanDoc()" class="text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button></div>
+            <div class="flex items-center gap-1.5 ml-2">
+              <button type="button" onclick="previewPlanDoc()" class="bg-slate-800 hover:bg-slate-700 text-blue-400 p-1.5 rounded" title="Ver plano"><i class="fa-solid fa-eye"></i></button>
+              <button type="button" onclick="removePlanDoc()" class="bg-red-950 hover:bg-red-900 text-red-400 p-1.5 rounded border border-red-800/50" title="Eliminar"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
           </div>
         </div>
+
       </div>
 
-      <!-- FORMULARIO DETALLES -->
+      <!-- FORMULARIO DE DETALLES TÉCNICOS -->
       <form onsubmit="handleSaveSurvey(event)" class="space-y-4">
+        <input type="hidden" id="surveyProjectId">
+
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div><label class="text-xs text-slate-300">Metros Medidos</label><input type="number" id="surveyMeters" class="w-full bg-slate-800 border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
-          <div><label class="text-xs text-slate-300">Estructura</label><select id="surveyStructure" class="w-full bg-slate-800 border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Ductería EMT Existente</option><option>Cielo Raso / Drywall</option><option>Estructura Abierta / Techo Industrial</option><option>Zanja Exterior / Soterrado</option><option>Canaleta Plástica Superficial</option></select></div>
-          <div><label class="text-xs text-slate-300">Respaldo Eléctrico</label><select id="surveyPower" class="w-full bg-slate-800 border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>110V Regulada con UPS</option><option>110V Línea Directa</option><option>220V Bifásica</option><option>Requiere Acometida Nueva</option></select></div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Metros Lineales Medidos</label>
+            <input type="number" id="surveyMeters" placeholder="Ej: 160" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Tipo de Estructura / Canalización</label>
+            <select id="surveyStructure" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+              <option value="Ductería EMT Existente">Ductería EMT Existente</option>
+              <option value="Cielo Raso / Drywall">Cielo Raso / Drywall</option>
+              <option value="Estructura Abierta / Techo Industrial">Estructura Abierta / Techo Industrial</option>
+              <option value="Zanja Exterior / Soterrado">Zanja Exterior / Soterrado</option>
+              <option value="Canaleta Plástica Superficial">Canaleta Plástica Superficial</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Respaldo Eléctrico</label>
+            <select id="surveyPower" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+              <option value="110V Regulada con UPS">110V Regulada con UPS</option>
+              <option value="110V Línea Directa">110V Línea Directa</option>
+              <option value="220V Bifásica">220V Bifásica</option>
+              <option value="Requiere Acometida Nueva">Requiere Acometida Nueva</option>
+            </select>
+          </div>
         </div>
-        <div><label class="text-xs text-slate-300">Notas / OCR Inteligente</label><textarea id="surveyNotes" rows="3" class="w-full bg-slate-800 border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></textarea></div>
 
-        <!-- OMEGA -->
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones Técnicas en Sitio / Texto Extraído por OCR</label>
+          <textarea id="surveyNotes" rows="3" placeholder="Detalles de pasos de muro, puntos de cámara o red, dificultades encontradas o texto del OCR..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
+        </div>
+
+        <!-- CONSULTA DIRECTA TIENDA.OMEGA.COM.DO -->
         <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
-          <div class="flex items-center justify-between mb-2"><span class="text-xs font-bold uppercase text-blue-400"><i class="fa-solid fa-store mr-1.5"></i>Catálogo tienda.omega.com.do</span></div>
-          <div class="flex gap-2 mb-3"><input type="text" id="omegaSearchInput" placeholder="Buscar cámara, NVR, switch..." class="flex-1 bg-slate-800 rounded-lg px-3 py-1.5 text-xs text-white"><button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 px-3 py-1.5 rounded-lg text-xs font-semibold text-white">Buscar</button></div>
-          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1"></div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">
+              <i class="fa-solid fa-store mr-1.5"></i>Catálogo tienda.omega.com.do
+            </span>
+            <span class="text-[10px] text-slate-400">Buscar equipos y materiales</span>
+          </div>
+
+          <div class="flex gap-2 mb-3">
+            <input type="text" id="omegaSearchInput" placeholder="Buscar cámara, NVR, switch, bobina UTP..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
+            <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold shadow">Buscar</button>
+          </div>
+
+          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-40 overflow-y-auto pr-1">
+          </div>
         </div>
 
+        <!-- ITEMS AGREGADOS AL LEVANTAMIENTO CON CANTIDAD, EDICIÓN Y ELIMINACIÓN -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800"><div class="flex justify-between items-center mb-2"><h4 class="text-xs font-bold text-rose-400 uppercase"><i class="fa-solid fa-video mr-1"></i>Equipos Activos</h4><button type="button" onclick="promptAddManualItem('equip')" class="text-[11px] bg-rose-950 text-rose-300 px-2 py-0.5 rounded border border-rose-800">+ Manual</button></div><div id="surveyEquipList" class="space-y-2 text-xs min-h-[60px]"></div></div>
-          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800"><div class="flex justify-between items-center mb-2"><h4 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-boxes-stacked mr-1"></i>Materiales e Insumos</h4><button type="button" onclick="promptAddManualItem('mat')" class="text-[11px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded border border-amber-800">+ Manual</button></div><div id="surveyMaterialList" class="space-y-2 text-xs min-h-[60px]"></div></div>
+          <!-- EQUIPOS -->
+          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-center mb-2">
+              <h4 class="text-xs font-bold text-rose-400 uppercase"><i class="fa-solid fa-video mr-1"></i>Equipos Activos</h4>
+              <button type="button" onclick="promptAddManualItem('equip')" class="text-[11px] bg-rose-950 text-rose-300 px-2 py-0.5 rounded border border-rose-800 hover:bg-rose-900">+ Manual</button>
+            </div>
+            <div id="surveyEquipList" class="space-y-2 text-xs min-h-[60px]"></div>
+          </div>
+
+          <!-- MATERIALES -->
+          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-center mb-2">
+              <h4 class="text-xs font-bold text-amber-400 uppercase"><i class="fa-solid fa-boxes-stacked mr-1"></i>Materiales e Insumos</h4>
+              <button type="button" onclick="promptAddManualItem('mat')" class="text-[11px] bg-amber-950 text-amber-300 px-2 py-0.5 rounded border border-amber-800 hover:bg-amber-900">+ Manual</button>
+            </div>
+            <div id="surveyMaterialList" class="space-y-2 text-xs min-h-[60px]"></div>
+          </div>
         </div>
+
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800">
           <button type="button" onclick="closeModal('surveyModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg">Guardar y Enviar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/40">
+            Guardar y Enviar al Coordinador
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL DIBUJAR PLANOS Y CROQUIS -->
-  <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
-        <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis Técnico</h3>
-        <button onclick="closeModal('planCanvasModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 mb-3 text-xs">
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="setCanvasTool('pen')" id="toolBtn_pen" class="bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-pencil"></i> Lápiz</button>
-          <button type="button" onclick="setCanvasTool('line')" id="toolBtn_line" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-slash"></i> Línea</button>
-          <button type="button" onclick="setCanvasTool('rect')" id="toolBtn_rect" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-regular fa-square"></i> Cuadro</button>
-          <button type="button" onclick="setCanvasTool('camera')" id="toolBtn_camera" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-video text-rose-400"></i> Cámara</button>
-          <button type="button" onclick="setCanvasTool('text')" id="toolBtn_text" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-font"></i> Texto</button>
-          <button type="button" onclick="setCanvasTool('eraser')" id="toolBtn_eraser" class="bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-eraser"></i> Borrador</button>
-        </div>
-        <div class="flex items-center gap-3">
-          <input type="color" id="canvasColor" value="#8b1524" class="w-7 h-7 rounded border border-slate-700 bg-transparent cursor-pointer">
-          <select id="canvasLineWidth" class="bg-slate-800 text-white rounded px-2 py-1 border border-slate-700"><option value="2">Fino</option><option value="4" selected>Medio</option><option value="8">Grueso</option></select>
-          <button type="button" onclick="clearPlanCanvas()" class="bg-slate-800 text-red-300 px-2.5 py-1.5 rounded-lg border border-slate-700"><i class="fa-solid fa-trash-can mr-1"></i> Limpiar</button>
-        </div>
-      </div>
-      <div class="relative w-full bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex items-center justify-center">
-        <canvas id="planCanvas" width="850" height="480" class="cursor-crosshair bg-slate-950 touch-none max-w-full h-auto"></canvas>
-      </div>
-      <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-slate-800">
-        <button type="button" onclick="closeModal('planCanvasModal')" class="bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cerrar</button>
-        <button type="button" onclick="savePlanDrawing()" class="bg-rose-700 px-5 py-2 rounded-xl text-xs font-bold text-white"><i class="fa-solid fa-floppy-disk mr-1"></i> Adjuntar Plano</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Detalle Proyecto (Clic en Row/Card) -->
-  <div id="projectDetailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-8 space-y-5">
-      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
-        <div>
-          <div class="flex items-center gap-2">
-            <span id="detailProjectCode" class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50"></span>
-            <span id="detailProjectStatusBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300"></span>
-            <span id="detailProjectGpsBadge" class="hidden text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800"></span>
-          </div>
-          <h2 id="detailProjectTitle" class="text-xl font-bold text-white mt-1"></h2>
-          <div id="detailProjectClient" class="text-xs text-slate-400 mt-0.5"></div>
-        </div>
-        <button onclick="closeModal('projectDetailModal')" class="text-slate-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-          <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Ubicación & Contactos</span>
-          <p id="detailProjectAddress" class="text-white font-medium"></p><p id="detailProjectContact" class="text-slate-400 mt-1"></p>
-          <div class="mt-2.5 flex items-center"><a id="detailProjectMapBtn" href="#" target="_blank" class="bg-emerald-800/80 text-white px-2.5 py-1 rounded-lg font-bold"><i class="fa-solid fa-diamond-turn-right mr-1"></i> Ver en Mapa</a></div>
-        </div>
-        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-          <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Personal Asignado</span>
-          <div class="mt-1"><span class="text-slate-400">Líder:</span> <p id="detailProjectLeader" class="text-rose-400 font-bold text-sm"></p></div>
-          <div class="mt-1.5"><span class="text-slate-400">Cuadrilla:</span> <p id="detailProjectCrew" class="text-white font-medium"></p></div>
-        </div>
-        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-          <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Marcaje GPS en Sitio</span>
-          <div class="space-y-1 mt-1">
-            <div><span class="text-slate-400">Llegada:</span> <span id="detailProjectCheckIn" class="text-white font-bold"></span></div>
-            <div><span class="text-slate-400">Salida:</span> <span id="detailProjectCheckOut" class="text-white font-bold"></span></div>
-            <div id="detailProjectDuration" class="text-emerald-400 font-bold text-[11px]"></div>
-            <div id="detailProjectDistance" class="text-slate-400 font-mono text-[10px]"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3">
-        <h3 class="text-xs font-bold uppercase text-slate-300 flex items-center gap-2"><i class="fa-solid fa-folder-open text-rose-400"></i> Documentación del Proyecto</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
-            <div><div class="flex items-center gap-2 text-rose-400 mb-1"><i class="fa-solid fa-file-pdf"></i><span class="font-bold text-xs">Orden Servicio Oficial</span></div><p id="detailProjectOrderFileName" class="text-[11px] text-slate-300 truncate font-mono"></p></div>
-            <button onclick="downloadOrderServicePDF()" class="mt-2 text-[11px] bg-slate-800 text-slate-200 py-1 px-2 rounded-lg font-semibold"><i class="fa-solid fa-download mr-1"></i> Descargar</button>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
-            <div><div class="flex items-center gap-2 text-amber-400 mb-1"><i class="fa-solid fa-camera"></i><span class="font-bold text-xs">Evidencia Levantamiento</span></div><p id="detailProjectSurveyDocName" class="text-[11px] text-slate-300 truncate font-mono"></p></div>
-            <div id="detailProjectSurveyDocActions" class="mt-2 flex gap-1.5 hidden"><button onclick="viewSurveyDocFromDetail()" class="flex-1 text-[11px] bg-slate-800 text-blue-400 py-1 rounded-lg font-semibold">Ver</button><button onclick="downloadSurveyDocFromDetail()" class="flex-1 text-[11px] bg-emerald-950 text-emerald-300 border border-emerald-800 py-1 rounded-lg font-semibold">Descargar</button></div>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
-            <div><div class="flex items-center gap-2 text-blue-400 mb-1"><i class="fa-solid fa-map-location-dot"></i><span class="font-bold text-xs">Plano / Croquis</span></div><p id="detailProjectPlanDocName" class="text-[11px] text-slate-300 truncate font-mono"></p></div>
-            <div id="detailProjectPlanDocActions" class="mt-2 flex gap-1.5 hidden"><button onclick="viewPlanDocFromDetail()" class="flex-1 text-[11px] bg-slate-800 text-blue-400 py-1 rounded-lg font-semibold">Ver</button><button onclick="downloadPlanDocFromDetail()" class="flex-1 text-[11px] bg-emerald-950 text-emerald-300 border border-emerald-800 py-1 rounded-lg font-semibold">Descargar</button></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="detailProjectBudgetContainer" class="space-y-3"></div>
-
-      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800">
-        <div class="flex flex-wrap gap-1.5" id="detailProjectStatusButtons"></div>
-        <div class="flex gap-2">
-          <button id="detailProjectEditBtn" onclick="editCurrentDetailProject()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-700 font-semibold"><i class="fa-solid fa-user-pen mr-1"></i> Editar/Reasignar</button>
-          <button id="detailProjectQuoteBtn" onclick="quoteCurrentDetailProject()" class="text-xs bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold"><i class="fa-solid fa-file-invoice-dollar mr-1"></i> Cotización</button>
-          <button onclick="printCurrentDetailProjectPDF()" class="text-xs bg-rose-900 hover:bg-rose-800 text-white px-3 py-1.5 rounded-xl font-bold"><i class="fa-solid fa-file-pdf mr-1"></i> Ficha PDF</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Editar Proyecto (Coordinador) -->
-  <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-to-square mr-2 text-rose-400"></i>Editar Proyecto, GPS & Técnico</h3>
-        <button onclick="closeModal('editProjectModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <form onsubmit="handleSaveEditedProject(event)" class="space-y-4">
-        <input type="hidden" id="editProjectId">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div><label class="text-xs text-slate-300">Código</label><input type="text" id="editProjectCode" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
-          <div><label class="text-xs text-slate-300">Estado</label><select id="editProjectStatus" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"><option value="Levantamiento">Levantamiento</option><option value="En Presupuesto">En Presupuesto</option><option value="Aprobado">Aprobado</option><option value="En Curso">En Curso</option><option value="Finalizado">Finalizado</option></select></div>
-        </div>
-        <div><label class="text-xs text-slate-300">Nombre / Título</label><input type="text" id="editProjectTitle" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div><label class="text-xs text-slate-300">Cliente</label><input type="text" id="editProjectClient" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-          <div><label class="text-xs text-slate-300">Servicio</label><input type="text" id="editProjectServiceType" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div><label class="text-xs text-slate-300">Contacto</label><input type="text" id="editProjectContact" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-          <div><label class="text-xs text-slate-300">Fecha Planificada</label><input type="text" id="editProjectPlannedDate" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-        </div>
-        <div><label class="text-xs text-slate-300">Dirección</label><input type="text" id="editProjectAddress" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-        <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl space-y-2">
-          <div class="flex items-center justify-between"><span class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-satellite"></i> Coordenadas GPS (Para Geofencing)</span><button type="button" onclick="captureProjectGPSCurrentLocation()" class="text-[11px] bg-emerald-950 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded font-bold"><i class="fa-solid fa-crosshairs mr-1"></i> Fijar GPS actual</button></div>
-          <div class="grid grid-cols-2 gap-3"><div><label class="text-[11px] text-slate-400">Latitud</label><input type="number" step="0.000001" id="editProjectLat" class="w-full bg-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono"></div><div><label class="text-[11px] text-slate-400">Longitud</label><input type="number" step="0.000001" id="editProjectLng" class="w-full bg-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono"></div></div>
-        </div>
-        <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl space-y-3">
-          <div class="text-xs font-bold text-rose-400"><i class="fa-solid fa-users mr-1"></i> Asignación de Personal Técnico</div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div><label class="text-xs text-slate-300">Líder</label><select id="editProjectTechLeader" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white font-bold text-rose-400"></select></div>
-            <div><label class="text-xs text-slate-300">Cuadrilla</label><select id="editProjectTechCrew" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></select></div>
-          </div>
-        </div>
-        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
-          <button type="button" onclick="deleteProjectPrompt()" class="bg-red-950 border border-red-800 text-red-300 px-3 py-2 rounded-xl text-xs font-semibold"><i class="fa-solid fa-trash-can mr-1"></i> Eliminar Proyecto</button>
-          <div class="flex gap-2"><button type="button" onclick="closeModal('editProjectModal')" class="bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button><button type="submit" class="bg-rose-700 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar Cambios</button></div>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Modal Visor de Documento / Plano General -->
-  <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
-      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
-        <div><h3 class="text-base font-bold text-white" id="viewerTitle">Documento</h3><p class="text-xs text-slate-400" id="viewerSubtitle"></p></div>
-        <div class="flex items-center gap-2">
-          <a id="viewerDownloadBtn" href="#" download class="bg-emerald-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-download mr-1"></i> Descargar</a>
-          <button onclick="closeModal('fileViewerModal')" class="text-slate-400 hover:text-white p-1 text-lg"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      </div>
-      <div id="viewerBody" class="flex-1 overflow-auto bg-slate-950 rounded-xl p-3 flex items-center justify-center text-slate-300 text-xs"></div>
-    </div>
-  </div>
-
-  <!-- Modal Cotización -->
+  <!-- Modal Coordinador: Cargar Cotización Oficial -->
   <div id="quoteModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <div><h3 class="text-base font-bold text-white"><i class="fa-solid fa-file-invoice-dollar mr-2 text-emerald-400"></i>Cargar Cotización</h3><p class="text-xs text-slate-400" id="quoteProjectSubtitle"></p></div>
+        <div>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-file-invoice-dollar mr-2 text-emerald-400"></i>Cargar Cotización del Proyecto</h3>
+          <p class="text-xs text-slate-400" id="quoteProjectSubtitle">Cargando...</p>
+        </div>
         <button onclick="closeModal('quoteModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
+
       <form onsubmit="handleSaveQuotation(event)" class="space-y-4">
         <input type="hidden" id="quoteProjectId">
-        <div><label class="text-xs text-slate-300">Número de Cotización Oficial</label><input type="text" id="quoteNumber" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
-        <div class="grid grid-cols-2 gap-3">
-          <div><label class="text-xs text-slate-300">Monto Total (RD$)</label><input type="number" id="quoteAmount" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
-          <div><label class="text-xs text-slate-300">Fecha</label><input type="date" id="quoteDate" required class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></div>
-        </div>
+
         <div>
-          <label class="text-xs text-slate-300 mb-1 block">Subir Archivo de Cotización (PDF / Excel)</label>
-          <div class="border border-dashed border-slate-700 rounded-xl p-3 text-center cursor-pointer" onclick="document.getElementById('quoteFileInput').click()">
-            <i class="fa-solid fa-file-arrow-up text-xl text-emerald-400 mb-1 block"></i><span id="quoteFileLabel" class="text-xs text-slate-300">Seleccionar PDF o Excel</span>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Número de Cotización Oficial</label>
+          <input type="text" id="quoteNumber" required placeholder="Ej: COT-2026-089" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500 font-mono">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Monto Total Cotizado (RD$)</label>
+            <input type="number" id="quoteAmount" required placeholder="Ej: 75000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Fecha de Cotización</label>
+            <input type="date" id="quoteDate" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Subir Archivo de Cotización (PDF / Excel)</label>
+          <div class="border border-dashed border-slate-700 rounded-xl p-3 text-center cursor-pointer hover:border-emerald-500 transition" onclick="document.getElementById('quoteFileInput').click()">
+            <i class="fa-solid fa-file-arrow-up text-xl text-emerald-400 mb-1"></i>
+            <div id="quoteFileLabel" class="text-xs text-slate-300">Seleccionar documento PDF o Excel</div>
             <input type="file" id="quoteFileInput" accept=".pdf,.xlsx,.xls" class="hidden" onchange="handleQuoteFileUpload(event)">
           </div>
         </div>
-        <div><label class="text-xs text-slate-300">Notas de Pago</label><textarea id="quoteNotes" rows="2" class="w-full bg-slate-800 rounded-xl px-3 py-2 text-sm text-white"></textarea></div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Notas o Condiciones de Pago</label>
+          <textarea id="quoteNotes" rows="2" placeholder="50% de anticipo, 50% contra entrega..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
+        </div>
+
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-          <button type="button" onclick="closeModal('quoteModal')" class="bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
-          <button type="submit" class="bg-emerald-700 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg">Guardar Cotización</button>
+          <button type="button" onclick="closeModal('quoteModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+          <button type="submit" class="bg-emerald-700 hover:bg-emerald-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-emerald-900/30">
+            Guardar Cotización
+          </button>
         </div>
       </form>
     </div>
   </div>
-  
-  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+
+  <!-- Modal Coordinador: Editar Proyecto, Coordenadas Destino & Reasignar Técnico -->
+  <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-to-square mr-2 text-rose-400"></i>Editar Proyecto, Ubicación GPS & Técnico</h3>
+        <button onclick="closeModal('editProjectModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveEditedProject(event)" class="space-y-4">
+        <input type="hidden" id="editProjectId">
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Código del Proyecto</label>
+            <input type="text" id="editProjectCode" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Estado del Proyecto</label>
+            <select id="editProjectStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Levantamiento">Levantamiento</option>
+              <option value="En Presupuesto">En Presupuesto</option>
+              <option value="Aprobado">Aprobado</option>
+              <option value="En Curso">En Curso</option>
+              <option value="Finalizado">Finalizado</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Nombre / Título del Proyecto</label>
+          <input type="text" id="editProjectTitle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Cliente</label>
+            <input type="text" id="editProjectClient" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Tipo de Servicio</label>
+            <input type="text" id="editProjectServiceType" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Persona de Contacto / Teléfono</label>
+            <input type="text" id="editProjectContact" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-300 mb-1">Fecha Planificada</label>
+            <input type="text" id="editProjectPlannedDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Dirección del Servicio</label>
+          <input type="text" id="editProjectAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+
+        <!-- COORDENADAS DESTINO GPS PARA GEOFENCING REAL -->
+        <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-satellite"></i> Coordenadas GPS de la Obra (Para Geofencing Real)
+            </span>
+            <button type="button" onclick="captureProjectGPSCurrentLocation()" class="text-[11px] bg-emerald-950 text-emerald-300 border border-emerald-800 hover:bg-emerald-900 px-2 py-0.5 rounded font-bold transition">
+              <i class="fa-solid fa-crosshairs mr-1"></i> Fijar mi GPS actual como destino
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-0.5">Latitud Destino</label>
+              <input type="number" step="0.000001" id="editProjectLat" placeholder="18.463200" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-0.5">Longitud Destino</label>
+              <input type="number" step="0.000001" id="editProjectLng" placeholder="-69.905600" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono">
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-500">Esto permite que el sistema mida si el técnico realmente está en el lugar de la obra al marcar su llegada.</p>
+        </div>
+
+        <!-- REASIGNACIÓN DE PERSONAL: LÍDER Y CUADRILLA -->
+        <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl space-y-3">
+          <div class="text-xs font-bold text-rose-400 uppercase tracking-wider">
+            <i class="fa-solid fa-users mr-1"></i> Asignación de Personal Técnico
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Líder Responsable</label>
+              <select id="editProjectTechLeader" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-bold text-rose-400">
+                <!-- Cargado por JS -->
+              </select>
+              <p class="text-[10px] text-slate-400 mt-1">Al cambiar el líder, el proyecto solo se mostrará en la sesión del nuevo técnico.</p>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Técnico Cuadrilla / Acompañante</label>
+              <select id="editProjectTechCrew" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                <!-- Cargado por JS -->
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+          <button type="button" onclick="deleteProjectPrompt()" class="bg-red-950 border border-red-800 hover:bg-red-900 text-red-300 px-3 py-2 rounded-xl text-xs font-semibold transition">
+            <i class="fa-solid fa-trash-can mr-1"></i> Eliminar Proyecto
+          </button>
+          <div class="flex gap-2">
+            <button type="button" onclick="closeModal('editProjectModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 transition">Cancelar</button>
+            <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white shadow-lg shadow-rose-900/30 transition">Guardar Cambios</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Coordinador: Editar/Registrar Vehículo -->
+  <div id="vehicleModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="vehicleModalTitle"><i class="fa-solid fa-truck-pickup mr-2 text-rose-400"></i>Vehículo</h3>
+        <button onclick="closeModal('vehicleModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveVehicle(event)" class="space-y-3">
+        <input type="hidden" id="vehicleEditId">
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Placa Oficial</label>
+          <input type="text" id="vehiclePlate" required placeholder="Ej: L458901" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Marca y Modelo</label>
+          <input type="text" id="vehicleModel" required placeholder="Ej: Toyota Hilux 2022" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Odómetro (KM)</label>
+            <input type="number" id="vehicleOdo" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Estatus</label>
+            <select id="vehicleStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Operativo">Operativo</option>
+              <option value="Mantenimiento">Mantenimiento</option>
+              <option value="Fuera de Servicio">Fuera de Servicio</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Técnico Custodio Asignado</label>
+          <select id="vehicleAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+            <!-- Cargado por JS -->
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800 mt-2">
+          <button type="button" onclick="closeModal('vehicleModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 transition">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white transition">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Coordinador: Editar/Registrar Herramienta -->
+  <div id="toolModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="toolModalTitle"><i class="fa-solid fa-toolbox mr-2 text-amber-400"></i>Herramienta / Equipo</h3>
+        <button onclick="closeModal('toolModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveTool(event)" class="space-y-3">
+        <input type="hidden" id="toolEditId">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Código / Serie</label>
+            <input type="text" id="toolCode" required placeholder="Ej: TL-08" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase">
+          </div>
+          <div>
+            <label class="block text-xs text-slate-300 mb-1">Condición Física</label>
+            <select id="toolCondition" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+              <option value="Excelente">Excelente</option>
+              <option value="Bueno">Bueno</option>
+              <option value="Requiere Revisión">Requiere Revisión</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Descripción del Equipo</label>
+          <input type="text" id="toolName" required placeholder="Ej: Certificador de Red Fluke DSX-5000" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+        </div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Técnico Custodio</label>
+          <select id="toolAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+            <!-- JS -->
+          </select>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800 mt-2">
+          <button type="button" onclick="closeModal('toolModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 transition">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white transition">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Visor de Documento / Plano -->
+  <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh]">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+        <div>
+          <h3 class="text-base font-bold text-white" id="viewerTitle">Documento</h3>
+          <p class="text-xs text-slate-400" id="viewerSubtitle"></p>
+        </div>
+        <div class="flex items-center gap-2">
+          <a id="viewerDownloadBtn" href="#" download class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 shadow transition">
+            <i class="fa-solid fa-download"></i> Descargar
+          </a>
+          <button onclick="closeModal('fileViewerModal')" class="text-slate-400 hover:text-white p-1 text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div id="viewerBody" class="flex-1 overflow-auto bg-slate-950 rounded-xl p-3 flex items-center justify-center text-slate-300 text-xs">
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Cargar PDF de Orden de Servicio -->
+  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden PDF</h3><button onclick="closeModal('pdfModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button></div>
-      <div class="border-2 border-dashed border-slate-700 rounded-2xl p-6 text-center cursor-pointer mb-4" onclick="document.getElementById('pdfInput').click()">
-        <i class="fa-solid fa-cloud-arrow-up text-3xl text-rose-400 mb-2"></i><div class="text-sm font-semibold text-white">Subir Orden CentroXpert (PDF)</div>
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden CentroXpert</h3>
+        <button onclick="closeModal('pdfModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="border-2 border-dashed border-slate-700 hover:border-rose-500 rounded-2xl p-6 text-center cursor-pointer mb-4 transition bg-slate-950/50" onclick="document.getElementById('pdfInput').click()">
+        <i class="fa-solid fa-cloud-arrow-up text-4xl text-rose-400 mb-3"></i>
+        <div class="text-sm font-semibold text-white">Haz clic para subir la Orden de Servicio en PDF</div>
+        <div class="text-xs text-slate-400 mt-1">Extrae código, cliente, dirección, fecha y técnicos automáticamente</div>
         <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePDFUpload(event)">
       </div>
-      <div class="text-center">
-        <button onclick="loadSampleTorreWashington()" class="bg-slate-800 text-rose-300 border border-slate-700 px-4 py-2 rounded-xl text-xs font-semibold"><i class="fa-solid fa-building mr-1.5"></i>Cargar Muestra: TORRE WASHINGTON</button>
+
+      <div class="text-center mt-2 border-t border-slate-800 pt-4">
+        <span class="text-xs text-slate-500 font-medium block mb-2">¿Deseas probar con el documento de muestra?</span>
+        <button onclick="loadSampleTorreWashington()" class="mx-auto bg-slate-800 hover:bg-slate-700 text-rose-300 border border-slate-700 px-4 py-2 rounded-xl text-xs font-semibold transition">
+          <i class="fa-solid fa-building mr-1.5"></i>Cargar Muestra: TORRE WASHINGTON.pdf
+        </button>
       </div>
     </div>
   </div>
 
   <div id="printContainer" class="hidden print-area"></div>
 
-  <!-- ======================= SCRIPTS ======================= -->
+  <!-- SCRIPTS CENTRALES DE LÓGICA -->
   <script>
-    const STORAGE_KEY = 'centroxpert_data_v9'; 
-    const defaultData = {
-      currentUser: null,
-      notifications: [],
-      technicians: [
-        { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Av. Las Palmas #45, Herrera', vehiclePlate: 'L428901', pin: '1234' },
-        { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'C/ Duarte #12, Los Alcarrizos', vehiclePlate: 'L389104', pin: '1234' },
-        { id: 'T3', name: 'Carlos Morales', level: 'Especialista A', phone: '849-555-0188', address: 'Villa Mella, Sto Dgo Norte', vehiclePlate: 'L451299', pin: '1234' }
-      ],
-      vehicles: [
-        { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520, lastFuelKm: 48120 },
-        { id: 'V2', plate: 'L389104', model: 'Nissan Frontier 2019', assignedTo: 'WESLY ALEJANDRO MOJICA', status: 'Operativo', odo: 74210, lastFuelKm: 73800 }
-      ],
-      tools: [], fuelLogs: [],
-      projects: [{
-        id: 'P1', code: 'CX-SGE-2026-005', title: 'CAMARAS CONDOMINIO TORRE WASHINGTON', serviceType: 'INSTALACIÓN (3255.73)', client: 'CONDOMINIO TORRE WASHINGTON', contact: 'Ana Guzman (829) 762-8952',
-        address: 'Torre Washington, Av. George Washington, Santo Domingo', targetLat: 18.463200, targetLng: -69.905600, geofenceRadiusMeters: 300,
-        plannedDate: '26/10/2026', techLeader: 'Enmanuel Matos', techCrew: ['WESLY ALEJANDRO MOJICA'], status: 'Levantamiento',
-        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
-        serviceOrderFile: { name: 'Orden_TORRE_WASHINGTON_CX-SGE-2026-005.pdf', type: 'application/pdf' }, quotation: null,
-        budget: { approved: false, services: [], materials: [] },
-        tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
-      }]
-    };
+    // -------------------------------------------------------------------------------------
+    // BLOQUE DE LÓGICA (Funciones base, modales detallados, y reportes)
+    // -------------------------------------------------------------------------------------
+    
+    // Visor Detalles de Proyecto
+    function openProjectDetailModal(projId) {
+      currentDetailProjectId = projId;
+      const p = appData.projects.find(x => x.id === projId);
+      if (!p) return;
 
-    let appData = loadData();
-    let currentAuthUser = null; 
-    let projectSearchQuery = '';
-    let projectStatusFilter = 'ALL';
-    let currentNavTab = 'projects';
-    let currentLogisticsSubtab = 'vehicles';
-    let currentTechTab = 'my_tasks';
+      const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
+      const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
 
-    function loadData() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try { const parsed = JSON.parse(saved); if (!parsed.notifications) parsed.notifications = []; return parsed; } 
-        catch(e) { console.error(e); }
-      }
-      return JSON.parse(JSON.stringify(defaultData));
-    }
-    function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); render(); }
-
-    const omegaProducts = [
-      { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200 },
-      { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', category: 'Equipos', priceRD: 18500 },
-      { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', category: 'Materiales', priceRD: 7900 }
-    ];
-
-    function goHome() { render(); }
-    function openModal(id) { const el = document.getElementById(id); if (el) el.classList.remove('hidden'); }
-    function closeModal(id) { const el = document.getElementById(id); if (el) el.classList.add('hidden'); }
-
-    function addNotification(toRoleOrName, message) {
-      appData.notifications.push({ id: Date.now() + Math.random(), to: toRoleOrName, message: message, date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}), read: false });
-      saveData();
-      if (currentAuthUser) { if ((toRoleOrName === 'admin' && currentAuthUser.role === 'admin') || (currentAuthUser.name === toRoleOrName)) showToast(message); }
-    }
-
-    function showToast(msg) {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = 'bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-2xl flex items-start gap-3 toast-anim text-xs w-72 pointer-events-auto';
-      toast.innerHTML = `<div class="bg-rose-950 text-rose-400 p-2 rounded-lg mt-0.5"><i class="fa-solid fa-bell"></i></div><div class="flex-1 text-slate-200 font-medium pt-1">${msg}</div><button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>`;
-      container.appendChild(toast); setTimeout(() => { if (toast.parentElement) toast.remove(); }, 6000);
-    }
-
-    function openNotifModal() { renderNotifications(); openModal('notificationsModal'); }
-    function renderNotifications() {
-      const list = document.getElementById('notificationsList');
-      if (!currentAuthUser) return;
-      const myNotifs = appData.notifications.filter(n => (currentAuthUser.role === 'admin' && n.to === 'admin') || (n.to === currentAuthUser.name)).reverse();
-      if (myNotifs.length === 0) { list.innerHTML = '<div class="text-center text-slate-500 py-4 italic">No tienes notificaciones recientes.</div>'; return; }
-      list.innerHTML = myNotifs.map(n => `<div class="bg-slate-800/50 p-3 rounded-xl border border-slate-700/50 flex justify-between gap-3 ${!n.read ? 'border-rose-900/50 bg-rose-950/10' : ''}"><div class="text-[11px] text-slate-300 leading-tight">${n.message}</div><div class="text-[9px] text-slate-500 whitespace-nowrap">${n.date}</div></div>`).join('');
-      appData.notifications.forEach(n => { if ((currentAuthUser.role === 'admin' && n.to === 'admin') || (n.to === currentAuthUser.name)) n.read = true; }); saveData();
-    }
-    function clearNotifications() {
-      if (!currentAuthUser) return;
-      appData.notifications = appData.notifications.filter(n => !((currentAuthUser.role === 'admin' && n.to === 'admin') || (n.to === currentAuthUser.name)));
-      saveData(); renderNotifications();
-    }
-
-    function switchLoginTab(type) {
-      if (type === 'tec') { document.getElementById('formLoginTec').classList.remove('hidden'); document.getElementById('formLoginAdmin').classList.add('hidden'); document.getElementById('tabLoginTec').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400'; document.getElementById('tabLoginAdmin').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200'; } 
-      else { document.getElementById('formLoginTec').classList.add('hidden'); document.getElementById('formLoginAdmin').classList.remove('hidden'); document.getElementById('tabLoginAdmin').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400'; document.getElementById('tabLoginTec').className = 'flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200'; }
-    }
-    function handleTecLogin(e) {
-      e.preventDefault();
-      const tech = appData.technicians.find(t => t.name === document.getElementById('loginTecSelect').value);
-      const pin = document.getElementById('loginTecPin').value;
-      if (tech && (tech.pin === pin || (!tech.pin && pin === '1234') || pin === '1234')) {
-        currentAuthUser = { role: 'tech', name: tech.name, techId: tech.id }; closeModal('loginModal'); render();
-      } else { alert('PIN incorrecto. Si eres nuevo, el PIN genérico es 1234.'); }
-    }
-    function handleAdminLogin(e) {
-      e.preventDefault();
-      if (document.getElementById('loginAdminPass').value === 'admin123') { currentAuthUser = { role: 'admin', name: 'Coordinador General' }; closeModal('loginModal'); render(); } 
-      else { alert('Clave de Coordinación incorrecta (Usa: admin123)'); }
-    }
-    function logout() { currentAuthUser = null; document.getElementById('loginTecPin').value = ''; document.getElementById('loginAdminPass').value = ''; populateTechSelect(); openModal('loginModal'); render(); }
-    function populateTechSelect() { const s = document.getElementById('loginTecSelect'); if (s) s.innerHTML = appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join(''); }
-    function openPinModal() { document.getElementById('currentPin').value=''; document.getElementById('newPin').value=''; document.getElementById('confirmPin').value=''; openModal('pinModal'); }
-    function handleUpdatePin(e) {
-      e.preventDefault();
-      const curr = document.getElementById('currentPin').value; const np = document.getElementById('newPin').value;
-      if (np !== document.getElementById('confirmPin').value) { alert('Confirmación no coincide.'); return; }
-      const tech = appData.technicians.find(t => t.name === currentAuthUser.name);
-      if (tech) {
-        if (tech.pin && tech.pin !== curr && curr !== '1234') { alert('PIN actual incorrecto.'); return; }
-        tech.pin = np; alert('¡PIN actualizado correctamente!'); closeModal('pinModal'); saveData();
-      }
-    }
-
-    function render() {
-      renderHeader(); const c = document.getElementById('mainContainer');
-      if (!currentAuthUser) {
-        c.innerHTML = `<div class="h-[60vh] flex flex-col items-center justify-center text-center p-6"><div class="p-4 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl max-w-sm"><i class="fa-solid fa-lock text-4xl text-rose-500 mb-3"></i><h3 class="text-base font-bold text-white">Sesión Bloqueada</h3><button onclick="openModal('loginModal')" class="w-full bg-rose-700 text-white font-bold py-2 rounded-xl text-xs mt-4">Iniciar Sesión</button></div></div>`;
-        return;
-      }
-      c.innerHTML = currentAuthUser.role === 'tech' ? renderTechView() : renderAdminView();
-    }
-    function renderHeader() {
-      const actions = document.getElementById('headerUserActions');
-      if (!currentAuthUser) { actions.innerHTML = `<button onclick="openModal('loginModal')" class="bg-rose-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow"><i class="fa-solid fa-right-to-bracket mr-1"></i> Entrar</button>`; return; }
-      const isTech = currentAuthUser.role === 'tech';
-      const unreadCount = appData.notifications.filter(n => ((isTech && n.to === currentAuthUser.name) || (!isTech && n.to === 'admin')) && !n.read).length;
-      actions.innerHTML = `
-        <div class="relative cursor-pointer mr-2" onclick="openNotifModal()"><i class="fa-solid fa-bell text-slate-300 hover:text-white text-lg"></i>${unreadCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-rose-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">${unreadCount}</span>` : ''}</div>
-        <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700"><i class="fa-solid ${isTech ? 'fa-hard-hat text-rose-400' : 'fa-user-tie text-blue-400'} text-sm"></i><div class="text-left leading-tight"><div class="text-xs font-bold text-white">${currentAuthUser.name}</div><div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'Técnico' : 'Coordinador'}</div></div></div>
-        ${isTech ? `<button onclick="openPinModal()" class="bg-slate-800 text-rose-400 p-2 rounded-xl border border-slate-700"><i class="fa-solid fa-key"></i></button>` : ''}
-        <button onclick="logout()" class="bg-slate-800 text-slate-300 p-2 rounded-xl border border-slate-700"><i class="fa-solid fa-right-from-bracket"></i></button>
-      `;
-    }
-
-    function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
-      if (!lat1 || !lon1 || !lat2 || !lon2) return null;
-      const R = 6371e3; const f1 = lat1 * Math.PI / 180; const f2 = lat2 * Math.PI / 180; const df = (lat2 - lat1) * Math.PI / 180; const dl = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(df/2)*Math.sin(df/2) + Math.cos(f1)*Math.cos(f2)*Math.sin(dl/2)*Math.sin(dl/2);
-      return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-    }
-
-    function getStatusBadge(s) {
-      switch(s) { case 'Levantamiento': return 'bg-amber-950 text-amber-300 border border-amber-800'; case 'En Presupuesto': return 'bg-blue-950 text-blue-300 border border-blue-800'; case 'Aprobado': return 'bg-emerald-950 text-emerald-300 border border-emerald-800'; case 'En Curso': return 'bg-indigo-950 text-indigo-300 border border-indigo-800'; case 'Finalizado': return 'bg-purple-950 text-purple-300 border border-purple-800'; default: return 'bg-slate-800 text-slate-300'; }
-    }
-
-    function handleSearchInput(val) { projectSearchQuery = val.trim(); render(); }
-    function handleStatusFilter(val) { projectStatusFilter = val; render(); }
-    function filterProjectsList(projects) {
-      return projects.filter(p => {
-        const mq = !projectSearchQuery || p.code.toLowerCase().includes(projectSearchQuery.toLowerCase()) || p.client.toLowerCase().includes(projectSearchQuery.toLowerCase());
-        const ms = projectStatusFilter === 'ALL' || p.status === projectStatusFilter;
-        return mq && ms;
-      });
-    }
-
-    function setTechTab(tab) { currentTechTab = tab; render(); }
-    function renderTechView() {
-      const pList = filterProjectsList(appData.projects.filter(p => p.techLeader === currentAuthUser.name || p.techCrew.includes(currentAuthUser.name)));
-      const v = appData.vehicles.find(v => v.assignedTo === currentAuthUser.name);
-      const t = appData.tools.filter(t => t.assignedTo === currentAuthUser.name);
-
-      return `
-        <div class="space-y-6">
-          <div class="flex border-b border-slate-800">
-            <button onclick="setTechTab('my_tasks')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab==='my_tasks'?'border-rose-600 text-rose-400':'border-transparent text-slate-400 hover:text-slate-200'}">Mis Tareas (${pList.length})</button>
-            <button onclick="setTechTab('my_assets')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab==='my_assets'?'border-rose-600 text-rose-400':'border-transparent text-slate-400 hover:text-slate-200'}">Mis Activos</button>
-          </div>
-          ${currentTechTab === 'my_tasks' ? `
-            <div class="space-y-4">
-              <div class="bg-slate-900 border border-slate-800 p-3.5 rounded-2xl flex flex-wrap gap-3 shadow"><input type="text" value="${projectSearchQuery}" oninput="handleSearchInput(this.value)" placeholder="Buscar CX-..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"><select onchange="handleStatusFilter(this.value)" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"><option value="ALL">Todos</option><option value="Levantamiento">Levantamiento</option><option value="En Curso">En Curso</option></select></div>
-              <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-                <div class="p-3.5 bg-slate-950/80 border-b border-slate-800 text-xs font-bold text-white uppercase"><i class="fa-solid fa-list mr-1.5 text-rose-400"></i>Órdenes Asignadas</div>
-                ${pList.length===0 ? `<div class="p-8 text-center text-slate-400 text-xs">No hay órdenes.</div>` : `<div class="divide-y divide-slate-800">
-                  ${pList.map(p => {
-                    const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
-                    const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
-                    return `
-                      <div class="p-4 table-row-hover transition flex flex-wrap items-center justify-between gap-3" onclick="openProjectDetailModal('${p.id}')">
-                        <div class="flex items-start gap-3 flex-1 min-w-[260px]">
-                          <div class="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-center"><i class="fa-solid fa-briefcase text-rose-400"></i></div>
-                          <div>
-                            <div class="flex items-center gap-2"><span class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">${p.code}</span><span class="text-[11px] text-slate-400">${p.plannedDate||'N/A'}</span></div>
-                            <h4 class="text-sm font-bold text-white mt-1">${p.title}</h4>
-                            <p class="text-[11px] text-slate-500 max-w-md mt-0.5"><i class="fa-solid fa-location-dot mr-1"></i>${p.address}</p>
-                          </div>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                          ${isInSite ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${isVerified ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}"><span class="w-1.5 h-1.5 rounded-full ${isVerified ? 'bg-emerald-400' : 'bg-amber-400'} mr-1 live-pulse"></span>${isVerified ? 'EN SITIO' : 'GPS LEJOS'}</span>` : ''}
-                          <span class="text-xs font-semibold px-2.5 py-1 rounded-full ${getStatusBadge(p.status)}">${p.status}</span>
-                          <button onclick="event.stopPropagation(); openProjectDetailModal('${p.id}')" class="bg-slate-800 text-slate-200 px-3 py-1.5 rounded-xl text-xs border border-slate-700 shadow">Ver <i class="fa-solid fa-chevron-right text-[10px]"></i></button>
-                        </div>
-                      </div>
-                    `;
-                  }).join('')}
-                </div>`}
-              </div>
-            </div>
-          ` : `
-            <div class="space-y-6">
-              <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl"><h3 class="text-sm font-bold text-white mb-3"><i class="fa-solid fa-truck-pickup text-rose-400 mr-2"></i>Vehículo</h3>${v ? `<p class="text-white">${v.plate} - ${v.model}</p>`:`<p class="text-xs text-slate-400">Sin vehículo.</p>`}</div>
-              <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl"><h3 class="text-sm font-bold text-white mb-3"><i class="fa-solid fa-toolbox text-amber-400 mr-2"></i>Herramientas</h3>${t.length>0 ? t.map(x=>`<div class="bg-slate-950 p-2 text-xs text-white border border-slate-800 mb-2">${x.code} - ${x.name}</div>`).join(''):`<p class="text-xs text-slate-400">Sin herramientas.</p>`}</div>
-            </div>
-          `}
-        </div>
-      `;
-    }
-
-    function setNavTab(tab) { currentNavTab = tab; render(); }
-    function setLogisticsSubtab(tab) { currentLogisticsSubtab = tab; render(); }
-
-    function renderAdminView() {
-      const availVeh = appData.vehicles.filter(v => v.status === 'Operativo' && !v.assignedTo).length;
-      const techSite = appData.projects.filter(p => p.tracking && p.tracking.checkIn && !p.tracking.checkOut && p.tracking.isVerifiedOnSite).length;
-      return `
-        <div class="space-y-6">
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-slate-400 uppercase">Proyectos</div><div class="text-2xl font-black text-white mt-1">${appData.projects.length}</div></div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-emerald-400 uppercase"><span class="w-2 h-2 rounded-full bg-emerald-400 live-pulse inline-block mr-1"></span>En Sitio</div><div class="text-2xl font-black text-emerald-400 mt-1">${techSite}</div></div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-slate-400 uppercase">Autos Libres</div><div class="text-2xl font-black text-blue-400 mt-1">${availVeh}</div></div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-slate-400 uppercase">Técnicos</div><div class="text-2xl font-black text-rose-400 mt-1">${appData.technicians.length}</div></div>
-          </div>
-          <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
-            <div class="flex gap-2">
-              <button onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab==='projects'?'bg-rose-700 text-white':'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-list-check mr-1.5"></i> Proyectos</button>
-              <button onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab==='logistics'?'bg-rose-700 text-white':'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-truck-ramp-box mr-1.5"></i> Logística</button>
-              <button onclick="setNavTab('kpis')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab==='kpis'?'bg-emerald-700 text-white':'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-chart-line mr-1.5"></i> Informes KPI</button>
-            </div>
-            <div class="flex gap-2">
-            ${currentNavTab === 'projects' ? `
-                <button onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> Importar PDF</button>
-                <button onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Exportar</button>
-            ` : currentNavTab === 'logistics' ? `
-                <button onclick="exportLogisticsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Excel</button>
-                <button onclick="exportLogisticsToPDF()" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> PDF</button>
-            ` : `
-                <button onclick="exportKPIToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Exportar KPI</button>
-                <button onclick="exportKPIReportToPDF()" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> Informe PDF</button>
-            `}
-            </div>
-          </div>
-          ${currentNavTab === 'projects' ? renderAdminProjects() : currentNavTab === 'logistics' ? renderAdminLogistics() : renderAdminKPIs()}
-        </div>
-      `;
-    }
-
-    function renderAdminProjects() {
-      const filtered = filterProjectsList(appData.projects);
-      return `
-        <div class="space-y-4">
-          <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap gap-3 shadow"><input type="text" value="${projectSearchQuery}" oninput="handleSearchInput(this.value)" placeholder="Buscar CX-..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"><select onchange="handleStatusFilter(this.value)" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"><option value="ALL">Todos</option><option value="Levantamiento">Levantamiento</option><option value="En Curso">En Curso</option><option value="Finalizado">Finalizado</option></select></div>
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-            <div class="overflow-x-auto">
-              <table class="w-full text-xs text-left">
-                <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase">
-                  <tr><th class="p-3">Código</th><th class="p-3">Cliente</th><th class="p-3">Técnico</th><th class="p-3">GPS</th><th class="p-3">Estatus</th><th class="p-3 text-right">Acción</th></tr>
-                </thead>
-                <tbody class="divide-y divide-slate-800">
-                  ${filtered.map(p => {
-                    const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
-                    const isVer = p.tracking && p.tracking.isVerifiedOnSite;
-                    return `
-                    <tr class="table-row-hover transition" onclick="openProjectDetailModal('${p.id}')">
-                      <td class="p-3 font-mono font-bold text-rose-400">${p.code}</td>
-                      <td class="p-3 font-bold text-white">${p.title}</td>
-                      <td class="p-3 text-slate-200">${p.techLeader}</td>
-                      <td class="p-3">${isInSite ? `<span class="px-2 py-0.5 rounded-full font-bold text-[10px] ${isVer?'bg-emerald-950 text-emerald-400':'bg-amber-950 text-amber-400'}">${isVer?'EN SITIO':'DISTANTE'}</span>` : ''}</td>
-                      <td class="p-3"><span class="px-2 py-0.5 rounded-full font-bold ${getStatusBadge(p.status)}">${p.status}</span></td>
-                      <td class="p-3 text-right"><button class="bg-slate-800 text-slate-200 px-3 py-1 rounded text-[10px]"><i class="fa-solid fa-eye"></i></button></td>
-                    </tr>
-                  `}).join('')}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderAdminLogistics() {
-      return `
-        <div class="space-y-4">
-          <div class="flex gap-2 border-b border-slate-800 pb-1">
-            <button onclick="setLogisticsSubtab('vehicles')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='vehicles'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Vehículos</button>
-            <button onclick="setLogisticsSubtab('fuel')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='fuel'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Combustible</button>
-            <button onclick="setLogisticsSubtab('staff')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='staff'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Técnicos</button>
-            <button onclick="setLogisticsSubtab('tools')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='tools'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Herramientas</button>
-          </div>
-          ${currentLogisticsSubtab === 'vehicles' ? renderVehiclesLogistics() : currentLogisticsSubtab === 'fuel' ? renderFuelLogistics() : currentLogisticsSubtab === 'staff' ? renderStaffLogistics() : renderToolsLogistics()}
-        </div>
-      `;
-    }
-
-    function renderVehiclesLogistics() {
-      return `
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-          <div class="p-3 border-b border-slate-800 text-right"><button onclick="openVehicleModal()" class="bg-rose-700 text-white px-3 py-1.5 rounded text-xs"><i class="fa-solid fa-plus"></i> Registrar Vehículo</button></div>
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Placa</th><th class="p-3">Modelo</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acción</th></tr></thead>
-          <tbody class="divide-y divide-slate-800">
-            ${appData.vehicles.map(v => `
-              <tr><td class="p-3 text-white font-mono">${v.plate}</td><td class="p-3 text-slate-300">${v.model}</td><td class="p-3 text-blue-400">${v.assignedTo || 'Ninguno'}</td>
-              <td class="p-3 text-right"><button onclick="openVehicleModal('${v.id}')" class="text-blue-400 mr-2"><i class="fa-solid fa-pen"></i></button><button onclick="deleteVehicle('${v.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>
-            `).join('')}
-          </tbody></table>
-        </div>
-      `;
-    }
-
-    function renderFuelLogistics() {
-      return `
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
-          <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <div><label class="text-[10px] text-slate-400">Placa</label><select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 text-white px-2 py-1 rounded text-xs">${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate}</option>`).join('')}</select></div>
-            <div><label class="text-[10px] text-slate-400">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 text-slate-400 px-2 py-1 rounded text-xs font-mono"></div>
-            <div><label class="text-[10px] text-slate-400">Km Actual</label><input type="number" id="fuelCurrentKm" required class="w-full bg-slate-800 text-white px-2 py-1 rounded text-xs font-mono"></div>
-            <div><label class="text-[10px] text-slate-400">Tickets (RD$ 500)</label><input type="number" min="1" id="fuelTicketsCount" value="6" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 text-white px-2 py-1 rounded text-xs"></div>
-            <div><label class="text-[10px] text-slate-400">Total (RD$)</label><input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 text-emerald-400 px-2 py-1 rounded text-xs font-bold"></div>
-            <div class="md:col-span-5 text-right"><button type="submit" class="bg-rose-700 text-white px-4 py-1.5 rounded text-xs font-bold">Guardar Combustible</button></div>
-          </form>
-          <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400"><tr><th class="p-2">Fecha</th><th class="p-2">Placa</th><th class="p-2">Dist</th><th class="p-2">Monto</th><th class="p-2">Desvío</th></tr></thead>
-          <tbody class="divide-y divide-slate-800">
-            ${appData.fuelLogs.map(l => `<tr><td class="p-2">${l.date}</td><td class="p-2">${l.plate}</td><td class="p-2 text-emerald-400">${l.dist} KM</td><td class="p-2">RD$ ${l.cost}</td><td class="p-2 font-bold ${parseFloat(l.dev)<15?'text-emerald-400':'text-rose-400'}">${l.dev}</td></tr>`).join('')}
-          </tbody></table></div>
-        </div>
-      `;
-    }
-    function updateFuelPlateHelper() {
-      const v = appData.vehicles.find(item => item.plate === document.getElementById('fuelPlateSelect').value);
-      if (v) document.getElementById('fuelPrevKm').value = v.lastFuelKm || v.odo;
-    }
-    function calculateFuelTotalMonto() { document.getElementById('fuelCost').value = (parseInt(document.getElementById('fuelTicketsCount').value)||0) * 500; }
-    function handleFuelSubmit(e) {
-      e.preventDefault();
-      const prev = parseInt(document.getElementById('fuelPrevKm').value)||0; const current = parseInt(document.getElementById('fuelCurrentKm').value)||0;
-      if(current <= prev) { alert('El KM actual debe ser mayor al anterior.'); return; }
-      const dist = current - prev;
-      const t = parseInt(document.getElementById('fuelTicketsCount').value)||1;
-      const v = appData.vehicles.find(item => item.plate === document.getElementById('fuelPlateSelect').value);
-      const est = Math.max(30, Math.round(dist * 0.90));
-      const dev = ((Math.abs(dist - est) / est) * 100).toFixed(1) + '%';
-      
-      appData.fuelLogs.unshift({ id: 'FL_'+Date.now(), date: new Date().toISOString().split('T')[0], plate: v.plate, driver: v.assignedTo||'Sin asignar', tickets500: t, cost: t*500, prevKm: prev, currentKm: current, dist, taskKmEst: est, dev });
-      v.odo = current; v.lastFuelKm = current; saveData();
-      alert(`Guardado: ${dist} KM recorridos. Desvío: ${dev}`);
-    }
-
-    function renderStaffLogistics() {
-      return `
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-          <div class="p-3 border-b border-slate-800 text-right"><button onclick="openTechModal()" class="bg-rose-700 text-white px-3 py-1.5 rounded text-xs"><i class="fa-solid fa-plus"></i> Nuevo Técnico</button></div>
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Nombre</th><th class="p-3">Rango</th><th class="p-3 text-right">Acción</th></tr></thead>
-          <tbody class="divide-y divide-slate-800">
-            ${appData.technicians.map(t => `
-              <tr><td class="p-3 text-white font-bold">${t.name}</td><td class="p-3 text-slate-300">${t.level}</td>
-              <td class="p-3 text-right"><button onclick="openTechModal('${t.id}')" class="text-blue-400 mr-2"><i class="fa-solid fa-pen"></i></button><button onclick="deleteTechnician('${t.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>
-            `).join('')}
-          </tbody></table>
-        </div>
-      `;
-    }
-
-    function renderToolsLogistics() {
-      return `
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-          <div class="p-3 border-b border-slate-800 text-right"><button onclick="openToolModal()" class="bg-rose-700 text-white px-3 py-1.5 rounded text-xs"><i class="fa-solid fa-plus"></i> Nueva Herramienta</button></div>
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Código</th><th class="p-3">Nombre</th><th class="p-3 text-right">Acción</th></tr></thead>
-          <tbody class="divide-y divide-slate-800">
-            ${appData.tools.map(t => `
-              <tr><td class="p-3 text-amber-400 font-mono">${t.code}</td><td class="p-3 text-white">${t.name}</td>
-              <td class="p-3 text-right"><button onclick="openToolModal('${t.id}')" class="text-blue-400 mr-2"><i class="fa-solid fa-pen"></i></button><button onclick="deleteTool('${t.id}')" class="text-rose-400"><i class="fa-solid fa-trash"></i></button></td></tr>
-            `).join('')}
-          </tbody></table>
-        </div>
-      `;
-    }
-
-    function renderAdminKPIs() {
-      const techStats = appData.technicians.map(t => {
-        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || p.techCrew.includes(t.name));
-        const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
-        const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
-        const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
-        const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
-        const fuelEntries = appData.fuelLogs.filter(f => f.driver === t.name || f.plate === t.vehiclePlate);
-        let avgDev = 0;
-        if (fuelEntries.length > 0) { const sumDev = fuelEntries.reduce((acc, f) => acc + parseFloat(f.dev || 0), 0); avgDev = (sumDev / fuelEntries.length).toFixed(1); }
-        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 40 : 25;
-        const gpsScore = (gpsRate / 100) * 40;
-        const fuelScore = Math.max(0, (1 - (avgDev / 50))) * 20;
-        const performanceScore = Math.min(100, Math.round(closeScore + gpsScore + fuelScore));
-
-        return { ...t, assignedCount: assignedProj.length, completedCount: completed, gpsRate, avgDev, performanceScore };
-      });
-
-      return `
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-          <div class="p-4 bg-slate-950/80 border-b border-slate-800"><h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking Técnico de Desempeño</h3></div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left"><thead class="bg-slate-950/60 text-slate-400 uppercase"><tr><th class="p-3">Técnico</th><th class="p-3 text-center">Efectividad</th><th class="p-3 text-center">GPS en Sitio</th><th class="p-3 text-center">Desvío Gas</th><th class="p-3">Score Eficiencia</th></tr></thead>
-            <tbody class="divide-y divide-slate-800">
-              ${techStats.sort((a,b) => b.performanceScore - a.performanceScore).map((t, idx) => `
-                <tr class="hover:bg-slate-800/40">
-                  <td class="p-3"><span class="w-4 h-4 inline-flex items-center justify-center rounded-full bg-slate-800 mr-2">${idx+1}</span><strong class="text-white">${t.name}</strong></td>
-                  <td class="p-3 text-center">${t.completedCount} / ${t.assignedCount}</td>
-                  <td class="p-3 text-center font-bold ${t.gpsRate>=80?'text-emerald-400':'text-amber-400'}">${t.gpsRate}%</td>
-                  <td class="p-3 text-center font-bold ${parseFloat(t.avgDev)<15?'text-emerald-400':'text-rose-400'}">${t.avgDev}%</td>
-                  <td class="p-3"><div class="flex items-center gap-2"><div class="w-20 bg-slate-800 h-2 rounded-full overflow-hidden"><div class="h-full ${t.performanceScore>=80?'bg-emerald-500':'bg-amber-500'}" style="width:${t.performanceScore}%"></div></div><span class="font-bold text-white">${t.performanceScore}</span></div></td>
-                </tr>
-              `).join('')}
-            </tbody></table>
-          </div>
-        </div>
-      `;
-    }
-
-    /* -----------------------------------------------------------------
-       MODAL DETALLE PROYECTO (ADMIN Y TÉCNICO)
-       ----------------------------------------------------------------- */
-    let currentDetailProjectId = null;
-    function openProjectDetailModal(id) {
-      currentDetailProjectId = id;
-      const p = appData.projects.find(x => x.id === id);
-      if(!p) return;
-      
       document.getElementById('detailProjectCode').innerText = p.code;
       document.getElementById('detailProjectTitle').innerText = p.title;
       document.getElementById('detailProjectClient').innerText = `${p.client} — ${p.serviceType}`;
-      document.getElementById('detailProjectStatusBadge').innerText = p.status;
-      document.getElementById('detailProjectStatusBadge').className = `text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(p.status)}`;
       
-      const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
-      const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
+      const statusBadge = document.getElementById('detailProjectStatusBadge');
+      statusBadge.innerText = p.status;
+      statusBadge.className = `text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(p.status)}`;
+
       const gpsBadge = document.getElementById('detailProjectGpsBadge');
       if (isInSite) {
         gpsBadge.classList.remove('hidden');
-        gpsBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${isVerified ? 'bg-emerald-400' : 'bg-amber-400'} mr-1 inline-block live-pulse"></span>${isVerified ? 'EN SITIO AHORA' : 'FUERA DE RANGO'}`;
+        gpsBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${isVerified ? 'bg-emerald-400' : 'bg-amber-400'} mr-1 inline-block live-pulse"></span>${isVerified ? 'EN SITIO' : 'FUERA DE RANGO'}`;
         gpsBadge.className = `text-xs font-bold px-2 py-0.5 rounded-full ${isVerified ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}`;
-      } else { gpsBadge.classList.add('hidden'); }
+      } else {
+        gpsBadge.classList.add('hidden');
+      }
 
       document.getElementById('detailProjectAddress').innerText = p.address;
-      document.getElementById('detailProjectContact').innerText = p.contact;
-      document.getElementById('detailProjectMapBtn').href = `https://www.google.com/maps/search/?api=1&query=${p.targetLat ? p.targetLat+','+p.targetLng : encodeURIComponent(p.address)}`;
-      document.getElementById('detailProjectLeader').innerText = p.techLeader;
-      document.getElementById('detailProjectCrew').innerText = p.techCrew.join(', ') || 'Sin cuadrilla';
+      document.getElementById('detailProjectContact').innerText = p.contact || 'Sin contacto directo';
       
+      const mapBtn = document.getElementById('detailProjectMapBtn');
+      if(mapBtn) mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${p.targetLat && p.targetLng ? `${p.targetLat},${p.targetLng}` : encodeURIComponent(p.address)}`;
+
+      document.getElementById('detailProjectLeader').innerText = p.techLeader;
+      document.getElementById('detailProjectCrew').innerText = p.techCrew.join(', ') || 'N/A';
+
       document.getElementById('detailProjectCheckIn').innerText = p.tracking && p.tracking.checkIn ? p.tracking.checkIn : 'No registrada';
       document.getElementById('detailProjectCheckOut').innerText = p.tracking && p.tracking.checkOut ? p.tracking.checkOut : (isInSite ? 'Trabajando...' : 'Pendiente');
-      document.getElementById('detailProjectDuration').innerText = p.tracking && p.tracking.hoursWorked ? `Tiempo: ${p.tracking.hoursWorked}` : '';
-      document.getElementById('detailProjectDistance').innerText = p.tracking && p.tracking.distanceFromTargetMeters !== null ? `Distancia medida: ${p.tracking.distanceFromTargetMeters}m` : '';
+      
+      const distEl = document.getElementById('detailProjectDistance');
+      if (p.tracking && p.tracking.distanceFromTargetMeters !== null) {
+        distEl.innerText = `GPS Marcado a: ${p.tracking.distanceFromTargetMeters} metros`;
+      } else { distEl.innerText = ''; }
 
       document.getElementById('detailProjectOrderFileName').innerText = p.serviceOrderFile ? p.serviceOrderFile.name : 'Orden_Servicio.pdf';
 
-      const sName = document.getElementById('detailProjectSurveyDocName'); const sAct = document.getElementById('detailProjectSurveyDocActions');
-      if (p.survey && p.survey.surveyDoc) { sName.innerText = p.survey.surveyDoc.name; sAct.classList.remove('hidden'); } else { sName.innerText = 'Sin documento'; sAct.classList.add('hidden'); }
-      
-      const plName = document.getElementById('detailProjectPlanDocName'); const plAct = document.getElementById('detailProjectPlanDocActions');
-      if (p.survey && p.survey.planDoc) { plName.innerText = p.survey.planDoc.name; plAct.classList.remove('hidden'); } else { plName.innerText = 'Sin plano técnico'; plAct.classList.add('hidden'); }
+      const surveyDocName = document.getElementById('detailProjectSurveyDocName');
+      const surveyDocActions = document.getElementById('detailProjectSurveyDocActions');
+      if (p.survey && p.survey.surveyDoc) {
+        surveyDocName.innerText = p.survey.surveyDoc.name;
+        surveyDocActions.classList.remove('hidden');
+      } else {
+        surveyDocName.innerText = 'Sin evidencia subida';
+        surveyDocActions.classList.add('hidden');
+      }
+
+      const planDocName = document.getElementById('detailProjectPlanDocName');
+      const planDocActions = document.getElementById('detailProjectPlanDocActions');
+      if (p.survey && p.survey.planDoc) {
+        planDocName.innerText = p.survey.planDoc.name;
+        planDocActions.classList.remove('hidden');
+      } else {
+        planDocName.innerText = 'Sin plano / croquis';
+        planDocActions.classList.add('hidden');
+      }
 
       const budgetCont = document.getElementById('detailProjectBudgetContainer');
       const totalServices = p.budget.services ? p.budget.services.reduce((a,c)=>a+c.subtotal,0) : 0;
       const totalMat = p.budget.materials ? p.budget.materials.reduce((a,c)=>a+c.subtotal,0) : 0;
-      budgetCont.innerHTML = `<div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs"><div class="font-bold text-emerald-400 mb-2 border-b border-slate-800 pb-2">Presupuesto Interno: RD$ ${(totalServices+totalMat).toLocaleString()}</div><div class="grid grid-cols-2 gap-4"><div><span class="text-slate-400">Servicios:</span> <span class="text-white">RD$ ${totalServices.toLocaleString()}</span></div><div><span class="text-slate-400">Materiales:</span> <span class="text-white">RD$ ${totalMat.toLocaleString()}</span></div></div></div>`;
+      budgetCont.innerHTML = `
+        <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs shadow-inner">
+          <div class="font-bold text-emerald-400 mb-2 border-b border-slate-800 pb-2">Presupuesto Interno Estimado: RD$ ${(totalServices+totalMat).toLocaleString()}</div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><span class="text-slate-400 font-bold">Servicios Técnicos:</span><br><span class="text-white">RD$ ${totalServices.toLocaleString()}</span></div>
+            <div><span class="text-slate-400 font-bold">Equipos/Materiales:</span><br><span class="text-white">RD$ ${totalMat.toLocaleString()}</span></div>
+          </div>
+        </div>
+      `;
 
-      const statusBtnContainer = document.getElementById('detailProjectStatusButtons');
-      statusBtnContainer.innerHTML = `
-        <button onclick="changeProjectStatusFromDetail('${p.id}', 'Levantamiento')" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded">Levantamiento</button>
-        <button onclick="changeProjectStatusFromDetail('${p.id}', 'En Presupuesto')" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded">Presupuesto</button>
-        <button onclick="changeProjectStatusFromDetail('${p.id}', 'Aprobado')" class="text-[10px] bg-emerald-950 text-emerald-300 px-2 py-1 rounded font-bold">Aprobar</button>
-        <button onclick="changeProjectStatusFromDetail('${p.id}', 'En Curso')" class="text-[10px] bg-blue-950 text-blue-300 px-2 py-1 rounded">En Curso</button>
-        <button onclick="changeProjectStatusFromDetail('${p.id}', 'Finalizado')" class="text-[10px] bg-purple-950 text-purple-300 px-2 py-1 rounded font-bold">Finalizar</button>
+      document.getElementById('detailProjectStatusButtons').innerHTML = `
+        <span class="text-xs text-slate-400 self-center mr-1">Cambiar Estado:</span>
+        <button onclick="changeProjectStatusFromDetail('${p.id}', 'Levantamiento')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">Levantamiento</button>
+        <button onclick="changeProjectStatusFromDetail('${p.id}', 'En Presupuesto')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">Presupuesto</button>
+        <button onclick="changeProjectStatusFromDetail('${p.id}', 'Aprobado')" class="text-[11px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-1 rounded-lg transition">Aprobar</button>
+        <button onclick="changeProjectStatusFromDetail('${p.id}', 'En Curso')" class="text-[11px] bg-blue-950 text-blue-400 border border-blue-800 px-2.5 py-1 rounded-lg transition">En Curso</button>
+        <button onclick="changeProjectStatusFromDetail('${p.id}', 'Finalizado')" class="text-[11px] bg-purple-950 text-purple-400 border border-purple-800 px-2.5 py-1 rounded-lg transition">Finalizado</button>
       `;
 
       const isTech = currentAuthUser && currentAuthUser.role === 'tech';
       document.getElementById('detailProjectEditBtn').style.display = isTech ? 'none' : 'inline-flex';
       document.getElementById('detailProjectQuoteBtn').style.display = isTech ? 'none' : 'inline-flex';
-      
-      // Acciones rápidas para el técnico en el detalle
-      const actionsDiv = document.getElementById('detailTechQuickActions');
-      if (actionsDiv) {
-        if (isTech) {
-          actionsDiv.innerHTML = `
-            <button onclick="registerTechArrivalWithGeofence('${p.id}')" class="bg-blue-800 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold"><i class="fa-solid fa-location-crosshairs mr-1"></i> Llegada</button>
-            <button onclick="registerTechDeparture('${p.id}')" class="bg-amber-800 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold"><i class="fa-solid fa-flag-checkered mr-1"></i> Salida</button>
-            <button onclick="openSurveyModal('${p.id}')" class="bg-rose-800 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold"><i class="fa-solid fa-file-pen mr-1"></i> Levantamiento</button>
-          `;
-          actionsDiv.classList.remove('hidden');
-        } else { actionsDiv.classList.add('hidden'); }
-      }
 
       openModal('projectDetailModal');
     }
 
+    function changeProjectStatusFromDetail(projId, newStatus) { changeProjectStatus(projId, newStatus); openProjectDetailModal(projId); }
+    
     function editCurrentDetailProject() { closeModal('projectDetailModal'); openEditProjectModal(currentDetailProjectId); }
     function quoteCurrentDetailProject() { closeModal('projectDetailModal'); openQuotationModal(currentDetailProjectId); }
     function printCurrentDetailProjectPDF() { printProjectPDF(currentDetailProjectId); }
     function downloadOrderServicePDF() { alert('Descargando copia oficial de la Orden de Servicio en PDF...'); }
 
-    function viewSurveyDocFromDetail() { const p = appData.projects.find(x => x.id === currentDetailProjectId); if (p && p.survey && p.survey.surveyDoc) showFileViewerModal(p.survey.surveyDoc, `${p.code} - Levantamiento`); }
-    function viewPlanDocFromDetail() { const p = appData.projects.find(x => x.id === currentDetailProjectId); if (p && p.survey && p.survey.planDoc) showFileViewerModal(p.survey.planDoc, `${p.code} - Plano`); }
-    function downloadSurveyDocFromDetail() { const p = appData.projects.find(x => x.id === currentDetailProjectId); if (p && p.survey && p.survey.surveyDoc) triggerFileDownload(p.survey.surveyDoc); }
-    function downloadPlanDocFromDetail() { const p = appData.projects.find(x => x.id === currentDetailProjectId); if (p && p.survey && p.survey.planDoc) triggerFileDownload(p.survey.planDoc); }
-    function changeProjectStatusFromDetail(projId, newStatus) { changeProjectStatus(projId, newStatus); openProjectDetailModal(projId); }
-
-    /* -----------------------------------------------------------------
-       MODAL LEVANTAMIENTO TÉCNICO (SEPARACIÓN DE ARCHIVOS CORRECTA)
-       ----------------------------------------------------------------- */
-    let currentSurveyProjectId = null;
-    let tempSurveyItemsEquip = [];
-    let tempSurveyItemsMat = [];
-    let tempSurveyDoc = null;
-    let tempPlanDoc = null;
-
-    function openSurveyModal(id) {
-      currentSurveyProjectId = id;
-      const p = appData.projects.find(item => item.id === id);
-      if (!p) return;
-      document.getElementById('surveyProjectId').value = id;
-      document.getElementById('surveyProjectTitle').innerText = `${p.code} - ${p.title}`;
-      document.getElementById('surveyMeters').value = p.survey ? (p.survey.meters || '') : '';
-      document.getElementById('surveyStructure').value = p.survey ? (p.survey.structure || 'Ductería EMT Existente') : 'Ductería EMT Existente';
-      document.getElementById('surveyPower').value = p.survey ? (p.survey.power || '110V Regulada con UPS') : '110V Regulada con UPS';
-      document.getElementById('surveyNotes').value = p.survey ? (p.survey.notes || '') : '';
-      document.getElementById('ocrStatusBadge').innerText = 'OCR Inteligente Activo';
-
-      tempSurveyItemsEquip = p.survey && p.survey.itemsEquip ? JSON.parse(JSON.stringify(p.survey.itemsEquip)) : [];
-      tempSurveyItemsMat = p.survey && p.survey.itemsMat ? JSON.parse(JSON.stringify(p.survey.itemsMat)) : [];
-      tempSurveyDoc = p.survey && p.survey.surveyDoc ? { ...p.survey.surveyDoc } : null;
-      tempPlanDoc = p.survey && p.survey.planDoc ? { ...p.survey.planDoc } : null;
-
-      updateSurveyModalFileCards(); renderSurveyItemLists(); searchOmegaCatalog(); openModal('surveyModal');
+    function viewSurveyDocFromDetail() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.survey && p.survey.surveyDoc) showFileViewerModal(p.survey.surveyDoc, `${p.code} - Evidencia de Levantamiento`);
     }
-
-    function handleSurveyDocUpload(e) {
-      const file = e.target.files[0]; if (!file) return;
-      const badge = document.getElementById('ocrStatusBadge'); const nameL = file.name.toLowerCase();
-      if (nameL.endsWith('.docx') || nameL.endsWith('.doc')) {
-        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Leyendo Word...';
-        const r = new FileReader();
-        r.onload = function(evt) {
-          mammoth.extractRawText({ arrayBuffer: evt.target.result }).then(res => {
-            processExtractedSurveyText(res.value); tempSurveyDoc = { name: file.name, type: 'word', data: evt.target.result, text: res.value };
-            updateSurveyModalFileCards(); badge.innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> Word Analizado</span>';
-          });
-        }; r.readAsArrayBuffer(file);
-      } else if (file.type && file.type.startsWith('image/')) {
-        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Leyendo foto (OCR)...';
-        const r = new FileReader();
-        r.onload = function(evt) {
-          tempSurveyDoc = { name: file.name, type: file.type, data: evt.target.result }; updateSurveyModalFileCards();
-          Tesseract.recognize(evt.target.result, 'spa').then(({ data: { text } }) => {
-            processExtractedSurveyText(text); badge.innerHTML = '<span class="text-emerald-400 font-bold"><i class="fa-solid fa-check"></i> OCR Completado</span>';
-          }).catch(() => { badge.innerText = 'Foto adjuntada (Sin texto detectado)'; });
-        }; r.readAsDataURL(file);
-      } else {
-        const r = new FileReader(); r.onload = function(evt) { tempSurveyDoc = { name: file.name, type: file.type, data: evt.target.result }; updateSurveyModalFileCards(); badge.innerText = 'Documento cargado'; }; r.readAsDataURL(file);
-      }
+    function viewPlanDocFromDetail() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.survey && p.survey.planDoc) showFileViewerModal(p.survey.planDoc, `${p.code} - Plano Técnico`);
     }
-
-    function handlePlanDocUpload(e) {
-      const file = e.target.files[0]; if (!file) return;
-      const r = new FileReader(); r.onload = function(evt) { tempPlanDoc = { name: file.name, type: file.type, data: evt.target.result }; updateSurveyModalFileCards(); }; r.readAsDataURL(file);
+    function downloadSurveyDocFromDetail() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.survey && p.survey.surveyDoc) triggerFileDownload(p.survey.surveyDoc);
     }
-
-    function updateSurveyModalFileCards() {
-      const docCard = document.getElementById('surveyDocCard');
-      if (tempSurveyDoc) { docCard.classList.remove('hidden'); document.getElementById('surveyDocName').innerText = tempSurveyDoc.name; } else { docCard.classList.add('hidden'); }
-      const planCard = document.getElementById('surveyPlanCard');
-      if (tempPlanDoc) { planCard.classList.remove('hidden'); document.getElementById('surveyPlanName').innerText = tempPlanDoc.name; } else { planCard.classList.add('hidden'); }
+    function downloadPlanDocFromDetail() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.survey && p.survey.planDoc) triggerFileDownload(p.survey.planDoc);
     }
-
-    function removeSurveyDoc() { if(confirm('¿Eliminar documento de levantamiento?')) { tempSurveyDoc = null; updateSurveyModalFileCards(); } }
-    function removePlanDoc() { if(confirm('¿Eliminar plano/croquis?')) { tempPlanDoc = null; updateSurveyModalFileCards(); } }
-    function previewSurveyDoc() { if(tempSurveyDoc) showFileViewerModal(tempSurveyDoc, 'Evidencia Levantamiento'); }
-    function previewPlanDoc() { if(tempPlanDoc) showFileViewerModal(tempPlanDoc, 'Plano / Croquis'); }
-
-    function processExtractedSurveyText(text) {
-      if (!text || !text.trim()) return;
-      const notesField = document.getElementById('surveyNotes');
-      notesField.value += (notesField.value ? '\n\n' : '') + '[Extraído]: ' + text.trim();
-      const m = text.match(/(\d{2,4})\s*(?:metros?|mts?|m\b)/i); if (m && !document.getElementById('surveyMeters').value) document.getElementById('surveyMeters').value = m[1];
-      const c = text.match(/(\d+)\s*(?:c[aá]maras?|cam)/i); if (c) { const qty = parseInt(c[1])||1; tempSurveyItemsEquip.push({ name: `Cámara IP Antivandálica 4MP (OCR)`, qty, sku: 'CAM-HIK-4MP', price: 5200 }); }
-      const l = text.match(/(\d+)\s*(?:rollos?|bobinas?|cajas?)\s*(?:de\s*)?(?:cable|utp)/i); if (l) { const qty = parseInt(l[1])||1; tempSurveyItemsMat.push({ name: `Bobina UTP Cat6 305m (OCR)`, qty, sku: 'CAB-UTP-CAT6', price: 7900 }); }
-      renderSurveyItemLists();
-    }
-
-    function handleSaveSurvey(e) {
-      e.preventDefault();
-      const p = appData.projects.find(item => item.id === currentSurveyProjectId);
-      if (!p) return;
-      p.survey = { meters: parseInt(document.getElementById('surveyMeters').value)||0, structure: document.getElementById('surveyStructure').value, power: document.getElementById('surveyPower').value, notes: document.getElementById('surveyNotes').value, itemsEquip: [...tempSurveyItemsEquip], itemsMat: [...tempSurveyItemsMat], surveyDoc: tempSurveyDoc, planDoc: tempPlanDoc };
-      if (p.budget) {
-        p.budget.materials = [];
-        tempSurveyItemsEquip.forEach(item => { p.budget.materials.push({ desc: item.name, qtyEst: item.qty, qtyReal: item.qty, unitCost: item.price||1500, subtotal: item.qty*(item.price||1500) }); });
-        tempSurveyItemsMat.forEach(item => { p.budget.materials.push({ desc: item.name, qtyEst: item.qty, qtyReal: item.qty, unitCost: item.price||500, subtotal: item.qty*(item.price||500) }); });
-      }
-      p.status = 'En Presupuesto';
-      closeModal('surveyModal');
-      
-      // Enviar Notificación Push al admin
-      if(currentAuthUser && currentAuthUser.role === 'tech') {
-        addNotification('admin', `✅ ${currentAuthUser.name} ha completado el levantamiento del proyecto: ${p.code}`);
-      }
-      saveData();
-      alert('¡Levantamiento guardado con éxito! Ítems y cantidades transferidos al presupuesto.');
-    }
-
-    /* -----------------------------------------------------------------
-       VISOR UNIVERSAL DE ARCHIVOS
-       ----------------------------------------------------------------- */
-    function showFileViewerModal(fileObj, subtitle) {
-      document.getElementById('viewerTitle').innerText = fileObj.name;
-      document.getElementById('viewerSubtitle').innerText = subtitle;
-      const downloadBtn = document.getElementById('viewerDownloadBtn');
-      downloadBtn.href = fileObj.data || '#'; downloadBtn.download = fileObj.name;
-      const body = document.getElementById('viewerBody');
-      body.innerHTML = '';
-      if (fileObj.type && fileObj.type.includes('image')) {
-        body.innerHTML = `<img src="${fileObj.data}" class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-md" />`;
-      } else if (fileObj.type === 'word' || (fileObj.type && fileObj.type.includes('word'))) {
-        body.innerHTML = `<div class="text-center p-8"><i class="fa-solid fa-file-word text-6xl text-blue-500 mb-3"></i><p>${fileObj.text ? `<div class="mt-4 p-3 bg-slate-900 border border-slate-800 rounded text-left whitespace-pre-wrap">${fileObj.text}</div>` : ''}</div>`;
-      } else if (fileObj.type && fileObj.type.includes('pdf')) {
-        body.innerHTML = fileObj.data ? `<iframe src="${fileObj.data}" class="w-full h-[70vh] rounded-lg bg-white"></iframe>` : `<p>PDF cargado listo para descarga</p>`;
-      } else {
-        body.innerHTML = `<div class="text-center p-8"><i class="fa-solid fa-file text-5xl text-emerald-500 mb-3"></i><p>${fileObj.name}</p></div>`;
-      }
-      openModal('fileViewerModal');
-    }
-    function triggerFileDownload(f) { if(f.data) { const a = document.createElement('a'); a.href = f.data; a.download = f.name; a.click(); } }
-
-    /* -----------------------------------------------------------------
-       CRUD TÉCNICOS & LOGÍSTICA
-       ----------------------------------------------------------------- */
-    function handleSaveTechnician(e) {
-      e.preventDefault();
-      const id = document.getElementById('techEditId').value;
-      const tData = { name: document.getElementById('techName').value.trim(), level: document.getElementById('techLevel').value, phone: document.getElementById('techPhone').value.trim(), address: document.getElementById('techAddress').value.trim(), vehiclePlate: document.getElementById('techVehiclePlate').value };
-      if (id) {
-        const t = appData.technicians.find(item => item.id === id);
-        if(t.name !== tData.name) { appData.projects.forEach(p => { if(p.techLeader === t.name) p.techLeader = tData.name; }); }
-        Object.assign(t, tData);
-      } else { appData.technicians.push({ id: 'T_' + Date.now(), pin: '1234', ...tData }); }
-      closeModal('techModal'); populateTechSelect(); saveData();
-    }
-    function openTechModal(id = null) {
-      document.getElementById('techVehiclePlate').innerHTML = '<option value="">-- Sin vehículo --</option>' + appData.vehicles.map(v => `<option value="${v.plate}">${v.plate}</option>`).join('');
-      if (id) {
-        const t = appData.technicians.find(item => item.id === id);
-        document.getElementById('techEditId').value = t.id; document.getElementById('techName').value = t.name; document.getElementById('techLevel').value = t.level; document.getElementById('techPhone').value = t.phone; document.getElementById('techAddress').value = t.address; document.getElementById('techVehiclePlate').value = t.vehiclePlate || ''; document.getElementById('techResetPinBtn').classList.remove('hidden');
-      } else {
-        document.getElementById('techEditId').value = ''; document.getElementById('techName').value = ''; document.getElementById('techPhone').value = ''; document.getElementById('techAddress').value = ''; document.getElementById('techVehiclePlate').value = ''; document.getElementById('techResetPinBtn').classList.add('hidden');
-      }
-      openModal('techModal');
-    }
-    function deleteTechnician(id) { if(confirm('¿Eliminar técnico?')) { appData.technicians = appData.technicians.filter(x => x.id !== id); populateTechSelect(); saveData(); } }
-
-    /* -----------------------------------------------------------------
-       EXPORTACIONES PDF Y EXCEL
-       ----------------------------------------------------------------- */
-    function exportLogisticsToExcel() { alert('Generando Excel con datos de flota, inventario y personal...'); }
-    function exportProjectsToExcel() { alert('Generando listado de proyectos en Excel...'); }
-    function exportKPIToExcel() { alert('Generando informe estadístico en Excel...'); }
-    function exportLogisticsToPDF() { window.print(); }
-    function exportKPIReportToPDF() { window.print(); }
-
-    /* -----------------------------------------------------------------
-       RESTO DE FUNCIONES (Canvas, Listas dinámicas, Cotización)
-       ----------------------------------------------------------------- */
-    function renderSurveyItemLists() {
-      const equipBox = document.getElementById('surveyEquipList'); const matBox = document.getElementById('surveyMaterialList');
-      equipBox.innerHTML = tempSurveyItemsEquip.length ? tempSurveyItemsEquip.map((item, idx) => `<div class="bg-slate-900 border border-slate-700/80 p-2 rounded-lg flex items-center justify-between gap-2 shadow-sm"><div class="flex-1 truncate"><span class="font-bold text-white">${item.name}</span><div class="text-[10px] text-slate-400 font-mono">RD$ ${(item.price||0).toLocaleString()} c/u</div></div><div class="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-700"><button type="button" onclick="changeSurveyItemQty('equip',${idx},-1)" class="text-slate-400 hover:text-white px-1">-</button><input type="number" value="${item.qty}" onchange="setSurveyItemQty('equip',${idx},this.value)" class="w-10 bg-transparent text-center font-bold text-white text-xs focus:outline-none"><button type="button" onclick="changeSurveyItemQty('equip',${idx},1)" class="text-slate-400 hover:text-white px-1">+</button></div><div class="flex items-center gap-1"><button type="button" onclick="editSurveyItemName('equip',${idx})" class="text-slate-400 p-1"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="removeSurveyItem('equip',${idx})" class="text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button></div></div>`).join('') : '<span class="text-slate-500 italic text-[11px]">No hay equipos cargados.</span>';
-      matBox.innerHTML = tempSurveyItemsMat.length ? tempSurveyItemsMat.map((item, idx) => `<div class="bg-slate-900 border border-slate-700/80 p-2 rounded-lg flex items-center justify-between gap-2 shadow-sm"><div class="flex-1 truncate"><span class="font-bold text-white">${item.name}</span><div class="text-[10px] text-slate-400 font-mono">RD$ ${(item.price||0).toLocaleString()} c/u</div></div><div class="flex items-center gap-1 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-700"><button type="button" onclick="changeSurveyItemQty('mat',${idx},-1)" class="text-slate-400 hover:text-white px-1">-</button><input type="number" value="${item.qty}" onchange="setSurveyItemQty('mat',${idx},this.value)" class="w-10 bg-transparent text-center font-bold text-white text-xs focus:outline-none"><button type="button" onclick="changeSurveyItemQty('mat',${idx},1)" class="text-slate-400 hover:text-white px-1">+</button></div><div class="flex items-center gap-1"><button type="button" onclick="editSurveyItemName('mat',${idx})" class="text-slate-400 p-1"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="removeSurveyItem('mat',${idx})" class="text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button></div></div>`).join('') : '<span class="text-slate-500 italic text-[11px]">No hay insumos cargados.</span>';
-    }
-    function changeSurveyItemQty(type, idx, delta) { const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat; if (arr[idx]) { arr[idx].qty = Math.max(1, (arr[idx].qty || 1) + delta); renderSurveyItemLists(); } }
-    function setSurveyItemQty(type, idx, val) { const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat; if (arr[idx]) { arr[idx].qty = Math.max(1, parseInt(val) || 1); renderSurveyItemLists(); } }
-    function editSurveyItemName(type, idx) { const arr = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat; if (!arr[idx]) return; const newName = prompt('Editar descripción:', arr[idx].name); if (newName && newName.trim()) { arr[idx].name = newName.trim(); renderSurveyItemLists(); } }
-    function removeSurveyItem(type, idx) { if (type === 'equip') tempSurveyItemsEquip.splice(idx, 1); else tempSurveyItemsMat.splice(idx, 1); renderSurveyItemLists(); }
-    function promptAddManualItem(type) { const name = prompt('Nombre del ítem:'); if (!name || !name.trim()) return; const qty = parseInt(prompt('Cantidad:', '1')) || 1; const target = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat; target.push({ name: name.trim(), qty, sku: 'MANUAL', price: 0 }); renderSurveyItemLists(); }
-    
-    // Canvas
-    let canvas, ctx, isDrawing = false, canvasTool = 'pen', startX = 0, startY = 0, canvasSnapshot = null;
-    function openPlanCanvasModal() { openModal('planCanvasModal'); setTimeout(initPlanCanvas, 50); }
-    function initPlanCanvas() { canvas = document.getElementById('planCanvas'); if (!canvas) return; ctx = canvas.getContext('2d'); if (!canvasSnapshot) clearPlanCanvas(); canvas.onmousedown = startCanvasDraw; canvas.onmousemove = drawCanvasMove; canvas.onmouseup = stopCanvasDraw; canvas.ontouchstart = (e) => { startCanvasDraw({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY }); }; canvas.ontouchmove = (e) => { drawCanvasMove({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY }); }; canvas.ontouchend = stopCanvasDraw; }
-    function clearPlanCanvas() { if (!ctx) return; ctx.fillStyle = '#0f172a'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1; for (let x = 0; x < canvas.width; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); } for (let y = 0; y < canvas.height; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); } }
-    function setCanvasTool(tool) { canvasTool = tool; ['pen', 'line', 'rect', 'camera', 'text', 'eraser'].forEach(t => { const btn = document.getElementById('toolBtn_' + t); if(btn) btn.className = (t === tool) ? 'bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold' : 'bg-slate-800 text-slate-300 px-2.5 py-1.5 rounded-lg hover:text-white'; }); }
-    function getCanvasCoords(e) { const r = canvas.getBoundingClientRect(); return { x: (e.clientX - r.left) * (canvas.width / r.width), y: (e.clientY - r.top) * (canvas.height / r.height) }; }
-    function startCanvasDraw(e) { isDrawing = true; const c = getCanvasCoords(e); startX = c.x; startY = c.y; canvasSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height); if(canvasTool === 'camera') { ctx.fillStyle = '#8b1524'; ctx.beginPath(); ctx.arc(startX, startY, 8, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#f8fafc'; ctx.font = '9px Arial'; ctx.fillText('CAM', startX-10, startY-12); isDrawing = false; } else if (canvasTool === 'text') { const txt = prompt('Texto:'); if(txt) { ctx.fillStyle = document.getElementById('canvasColor').value; ctx.font = 'bold 14px Arial'; ctx.fillText(txt, startX, startY); } isDrawing = false; } else { ctx.beginPath(); ctx.moveTo(startX, startY); } }
-    function drawCanvasMove(e) { if (!isDrawing) return; const c = getCanvasCoords(e); const color = document.getElementById('canvasColor').value; const w = parseInt(document.getElementById('canvasLineWidth').value) || 3; if(canvasTool === 'pen') { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineTo(c.x, c.y); ctx.stroke(); } else if(canvasTool === 'eraser') { ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 20; ctx.lineTo(c.x, c.y); ctx.stroke(); } else if(canvasTool === 'line') { ctx.putImageData(canvasSnapshot, 0, 0); ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.moveTo(startX, startY); ctx.lineTo(c.x, c.y); ctx.stroke(); } else if(canvasTool === 'rect') { ctx.putImageData(canvasSnapshot, 0, 0); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.strokeRect(startX, startY, c.x-startX, c.y-startY); } }
-    function stopCanvasDraw() { isDrawing = false; }
-    function savePlanDrawing() { tempPlanDoc = { name: 'Croquis_Dibujado.png', type: 'image/png', data: canvas.toDataURL('image/png') }; updateSurveyModalFileCards(); closeModal('planCanvasModal'); }
-
-    // On Load
-    window.addEventListener('DOMContentLoaded', () => { populateTechSelect(); openModal('loginModal'); render(); });
   </script>
 </body>
 </html>
