@@ -25,14 +25,6 @@
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     .toast-anim { animation: slideIn 0.3s ease-out forwards; }
 
-    /* Clases críticas para interacciones de botones */
-    button, a, select, input, textarea { cursor: pointer; pointer-events: auto !important; z-index: 50; position: relative; }
-    input[type="text"], input[type="number"], input[type="password"], textarea { cursor: text; }
-    input[readonly] { cursor: default !important; }
-    
-    .modal-overlay { z-index: 100; pointer-events: auto; }
-    .modal-content { z-index: 110; pointer-events: auto; }
-
     @media print {
       body { background-color: #ffffff !important; color: #000000 !important; }
       header, .no-print, nav, #toast-container { display: none !important; }
@@ -43,7 +35,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased">
+<body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased relative">
 
   <!-- TOAST CONTAINER -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
@@ -77,12 +69,12 @@
 
 
   <!-- ========================================== -->
-  <!-- =            MODALES ÚNICOS                = -->
+  <!-- =            MODALES                     = -->
   <!-- ========================================== -->
 
   <!-- Modal Login -->
-  <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md flex items-center justify-center p-4 hidden no-print modal-overlay">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl modal-content">
+  <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[100] flex items-center justify-center p-4 hidden no-print">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl">
       <div class="text-center mb-6">
         <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3 shadow text-slate-900 font-bold text-2xl">
           centr<span class="text-rose-700 mx-0.5"><i class="fa-solid fa-power-off"></i></span>xpert
@@ -116,8 +108,8 @@
   </div>
 
   <!-- Modal Cambiar PIN -->
-  <div id="pinModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden no-print modal-overlay" onclick="closeModal('pinModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl modal-content" onclick="event.stopPropagation();">
+  <div id="pinModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('pinModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative z-[120]" onclick="event.stopPropagation();">
       <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-key mr-2 text-rose-400"></i>Cambiar mi PIN</h3>
       <form onsubmit="handleUpdatePin(event)" class="space-y-3 mt-4">
         <div><label class="block text-xs text-slate-300 mb-1">PIN Actual</label><input type="password" id="currentPin" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
@@ -129,8 +121,8 @@
   </div>
 
   <!-- Modal Notificaciones -->
-  <div id="notificationsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden no-print modal-overlay" onclick="closeModal('notificationsModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col max-h-[80vh] modal-content" onclick="event.stopPropagation();">
+  <div id="notificationsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('notificationsModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col max-h-[80vh] relative z-[120]" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-bell mr-2 text-rose-400"></i>Notificaciones</h3>
         <button type="button" onclick="closeModal('notificationsModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -141,8 +133,8 @@
   </div>
 
   <!-- Modal Detalle del Proyecto -->
-  <div id="projectDetailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-4 hidden overflow-y-auto no-print modal-overlay" onclick="closeModal('projectDetailModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-8 space-y-5 relative modal-content" onclick="event.stopPropagation();">
+  <div id="projectDetailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[105] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('projectDetailModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-8 space-y-5 relative z-[110]" onclick="event.stopPropagation();">
       <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
         <div>
           <button type="button" onclick="closeModal('projectDetailModal')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-3 inline-flex items-center gap-1.5">
@@ -159,7 +151,7 @@
         <button type="button" onclick="closeModal('projectDetailModal')" class="text-slate-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs relative z-20">
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
           <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Ubicación & Contacto</span>
           <p id="detailProjectAddress" class="text-white font-medium">Dir</p>
@@ -169,7 +161,7 @@
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
           <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Personal Asignado</span>
           <div class="mt-1"><span class="text-slate-400">Líder:</span> <p id="detailProjectLeader" class="text-rose-400 font-bold text-sm"></p></div>
-          <div class="mt-1.5"><span class="text-slate-400">Cuadrilla / Técnicos Adicionales:</span> <p id="detailProjectCrew" class="text-white font-medium"></p></div>
+          <div class="mt-1.5"><span class="text-slate-400">Cuadrilla:</span> <p id="detailProjectCrew" class="text-white font-medium"></p></div>
         </div>
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
           <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">GPS Control</span>
@@ -183,19 +175,19 @@
       </div>
 
       <!-- BOTONES TÉCNICOS EN EL DETALLE -->
-      <div id="techActionButtonsContainer" class="hidden bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-lg my-2">
+      <div id="techActionButtonsContainer" class="hidden bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-lg my-2 relative z-30">
         <h3 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-3"><i class="fa-solid fa-helmet-safety mr-1.5"></i> Panel de Acción del Técnico</h3>
         <div class="flex flex-wrap gap-2">
           <button type="button" onclick="triggerTechArrival()" class="flex-1 min-w-[140px] bg-blue-800/90 hover:bg-blue-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-blue-600/50 shadow"><i class="fa-solid fa-location-crosshairs text-base"></i> Registrar Llegada</button>
           <button type="button" onclick="triggerTechDeparture()" class="flex-1 min-w-[140px] bg-amber-800/90 hover:bg-amber-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-amber-600/50 shadow"><i class="fa-solid fa-flag-checkered text-base"></i> Registrar Salida</button>
-          <button type="button" onclick="triggerTechSurvey()" class="flex-1 min-w-[140px] bg-rose-700 hover:bg-rose-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-rose-500/50 shadow shadow-rose-900/40"><i class="fa-solid fa-file-pen text-base"></i> Levantamiento & Plano</button>
+          <button type="button" onclick="triggerTechSurvey()" class="flex-1 min-w-[140px] bg-rose-700 hover:bg-rose-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-rose-500/50 shadow shadow-rose-900/40"><i class="fa-solid fa-file-pen text-base"></i> Cargar Levantamiento & Plano</button>
         </div>
       </div>
 
       <!-- DATOS DEL LEVANTAMIENTO REALIZADO -->
-      <div id="detailProjectSurveyContainer" class="space-y-3 hidden"></div>
+      <div id="detailProjectSurveyContainer" class="space-y-3 relative z-20 hidden"></div>
 
-      <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3">
+      <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3 relative z-20">
         <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-folder-open text-rose-400 mr-1.5"></i> Documentación Adjunta</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           
@@ -231,10 +223,10 @@
         </div>
       </div>
 
-      <div id="detailProjectBudgetContainer" class="space-y-3"></div>
+      <div id="detailProjectBudgetContainer" class="space-y-3 relative z-20"></div>
 
       <!-- BOTONERA ACCIONES DEL COORDINADOR -->
-      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800">
+      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800 relative z-20">
         <div class="flex flex-wrap gap-1.5" id="detailProjectStatusButtons"></div>
         <div class="flex gap-2">
           <button type="button" id="detailProjectEditBtn" onclick="editCurrentDetailProject()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1 font-semibold"><i class="fa-solid fa-user-pen"></i> Editar / Reasignar</button>
@@ -246,8 +238,8 @@
   </div>
 
   <!-- Modal Editar Proyecto (Coordinador) -->
-  <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden overflow-y-auto no-print modal-overlay" onclick="closeModal('editProjectModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 modal-content" onclick="event.stopPropagation();">
+  <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('editProjectModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 relative z-[120]" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <div>
           <button type="button" onclick="closeModal('editProjectModal'); openProjectDetailModal(editingProjectId);" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5">
@@ -313,9 +305,9 @@
     </div>
   </div>
 
-  <!-- Modal LEVANTAMIENTO Y PLANOS -->
-  <div id="surveyModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4 hidden overflow-y-auto no-print modal-overlay" onclick="closeModal('surveyModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6 modal-content" onclick="event.stopPropagation();">
+  <!-- Modal LEVANTAMIENTO Y PLANOS SEPARADOS -->
+  <div id="surveyModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('surveyModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6 relative z-[120]" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
         <div>
           <button type="button" onclick="closeModal('surveyModal'); openProjectDetailModal(currentSurveyProjectId);" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5">
@@ -336,8 +328,9 @@
               <span id="ocrStatusBadge" class="text-[10px] text-slate-400 italic">Formato múltiple</span>
             </div>
             <p class="text-[11px] text-slate-400 mb-3">Fotos, apuntes, documentos Word o PDF de notas.</p>
+            
             <button type="button" onclick="document.getElementById('surveyDocInput').click()" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs px-3 py-2.5 rounded-xl border border-slate-700 font-bold transition flex items-center justify-center gap-2 mb-2">
-              <i class="fa-solid fa-file-arrow-up text-rose-400"></i> Adjuntar Evidencia
+              <i class="fa-solid fa-file-arrow-up text-rose-400"></i> Adjuntar Evidencia (Foto/Word/PDF)
             </button>
             <input type="file" id="surveyDocInput" accept="image/*,application/pdf,.docx,.doc,.xlsx,.xls" class="hidden" onchange="handleSurveyDocUpload(event)">
           </div>
@@ -429,8 +422,8 @@
   </div>
 
   <!-- CANVAS DIBUJO DE PLANOS -->
-  <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-3 hidden no-print modal-overlay" onclick="closeModal('planCanvasModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col modal-content" onclick="event.stopPropagation();">
+  <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[150] flex items-center justify-center p-3 hidden no-print" onclick="closeModal('planCanvasModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col relative z-[160]" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis Técnico</h3>
         <button type="button" onclick="closeModal('planCanvasModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -461,8 +454,8 @@
   </div>
 
   <!-- Modal Visor Universal Archivos -->
-  <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 hidden no-print modal-overlay" onclick="closeModal('fileViewerModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh] modal-content" onclick="event.stopPropagation();">
+  <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[160] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('fileViewerModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh] relative z-[170]" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
         <div><h3 class="text-base font-bold text-white" id="viewerTitle">Documento</h3><p class="text-xs text-slate-400" id="viewerSubtitle"></p></div>
         <div class="flex items-center gap-2">
@@ -475,8 +468,8 @@
   </div>
 
   <!-- Cargar Cotización (Coordinador) -->
-  <div id="quoteModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden no-print modal-overlay" onclick="closeModal('quoteModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl modal-content" onclick="event.stopPropagation();">
+  <div id="quoteModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('quoteModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative z-[120]" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <div>
           <button type="button" onclick="closeModal('quoteModal'); openProjectDetailModal(activeQuotationProjectId);" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5">
@@ -520,8 +513,8 @@
   </div>
 
   <!-- Importar Orden PDF (Global) -->
-  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden no-print modal-overlay" onclick="closeModal('pdfModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 modal-content" onclick="event.stopPropagation();">
+  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('pdfModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 relative z-[120]" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden PDF</h3>
         <button type="button" onclick="closeModal('pdfModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -538,9 +531,88 @@
     </div>
   </div>
 
+  <!-- Modal Registrar / Editar Técnico -->
+  <div id="techModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('techModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative z-[120]" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
+        <button type="button" onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
+        <input type="hidden" id="techEditId">
+        <div><label class="block text-xs text-slate-300 mb-1">Nombre Completo</label><input type="text" id="techName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-xs text-slate-300 mb-1">Rango / Categoría</label>
+            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Especialista A</option><option>Especialista B</option><option>Auxiliar Técnico</option><option>Supervisor</option></select>
+          </div>
+          <div><label class="block text-xs text-slate-300 mb-1">Teléfono</label><input type="text" id="techPhone" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+        </div>
+        <div><label class="block text-xs text-slate-300 mb-1">Dirección de Vivienda</label><input type="text" id="techAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div>
+          <label class="block text-xs text-slate-300 mb-1">Vehículo Asignado</label>
+          <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select>
+        </div>
+        <div class="flex justify-between items-center pt-3 border-t border-slate-800 mt-4">
+          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 text-amber-400 text-xs px-3 py-2 rounded-xl font-semibold border border-slate-700">Resetear PIN (1234)</button>
+          <div class="flex gap-2 ml-auto">
+            <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+            <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Registrar / Editar Vehículo -->
+  <div id="vehicleModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('vehicleModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative z-[120]" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="vehicleModalTitle">Vehículo</h3>
+        <button type="button" onclick="closeModal('vehicleModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleSaveVehicle(event)" class="space-y-3">
+        <input type="hidden" id="vehicleEditId">
+        <div><label class="block text-xs text-slate-300 mb-1">Placa Oficial</label><input type="text" id="vehiclePlate" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">Marca y Modelo</label><input type="text" id="vehicleModel" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-xs text-slate-300 mb-1">Odómetro (KM)</label><input type="number" id="vehicleOdo" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+          <div><label class="block text-xs text-slate-300 mb-1">Estatus</label><select id="vehicleStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Operativo</option><option>Mantenimiento</option><option>Fuera de Servicio</option></select></div>
+        </div>
+        <div><label class="block text-xs text-slate-300 mb-1">Custodio</label><select id="vehicleAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select></div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800 mt-4">
+          <button type="button" onclick="closeModal('vehicleModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Registrar / Editar Herramienta -->
+  <div id="toolModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('toolModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative z-[120]" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+        <h3 class="text-base font-bold text-white" id="toolModalTitle">Herramienta</h3>
+        <button type="button" onclick="closeModal('toolModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form onsubmit="handleSaveTool(event)" class="space-y-3">
+        <input type="hidden" id="toolEditId">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-xs text-slate-300 mb-1">Código</label><input type="text" id="toolCode" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase"></div>
+          <div><label class="block text-xs text-slate-300 mb-1">Condición</label><select id="toolCondition" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Excelente</option><option>Bueno</option><option>Requiere Revisión</option></select></div>
+        </div>
+        <div><label class="block text-xs text-slate-300 mb-1">Descripción</label><input type="text" id="toolName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">Custodio</label><select id="toolAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select></div>
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-800 mt-4">
+          <button type="button" onclick="closeModal('toolModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ======================= SCRIPTS GLOBALES ======================= -->
   <script>
-    const STORAGE_KEY = 'centroxpert_data_v38'; 
+    const STORAGE_KEY = 'centroxpert_data_v42'; 
 
     const defaultData = {
       currentUser: null,
@@ -566,7 +638,7 @@
           id: 'P1',
           code: 'CX-SGE-2026-005',
           title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-          serviceType: 'INSTALACIÓN (3255.73)',
+          serviceType: 'INSTALACIÓN',
           client: 'CONDOMINIO TORRE WASHINGTON',
           contact: 'Ana Milagros Guzman',
           address: 'Torre Washington, Av. George Washington, Santo Domingo',
@@ -849,6 +921,12 @@
             ${currentNavTab === 'projects' ? `
               <div class="flex gap-2">
                 <button type="button" onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> Importar PDF</button>
+                <button type="button" onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Exportar a Excel</button>
+              </div>
+            ` : ''}
+            ${currentNavTab === 'logistics' ? `
+              <div class="flex gap-2">
+                <button type="button" onclick="exportLogisticsToExcel()" class="bg-emerald-900/70 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold"><i class="fa-solid fa-file-excel"></i> Exportar Datos (Excel)</button>
               </div>
             ` : ''}
           </div>
@@ -856,6 +934,31 @@
           ${currentNavTab === 'projects' ? renderAdminProjects() : currentNavTab === 'logistics' ? renderAdminLogistics() : renderAdminKPIs()}
         </div>
       `;
+    }
+
+    // EXPORT FUNCTIONS
+    function exportProjectsToExcel() {
+      const ws = XLSX.utils.json_to_sheet(appData.projects.map(p => ({
+        Codigo: p.code,
+        Titulo: p.title,
+        Cliente: p.client,
+        Servicio: p.serviceType,
+        Estatus: p.status,
+        Lider: p.techLeader
+      })));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Proyectos");
+      XLSX.writeFile(wb, "Proyectos_CentroXpert.xlsx");
+      showToast("Proyectos exportados a Excel.");
+    }
+
+    function exportLogisticsToExcel() {
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.vehicles), "Vehículos");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.technicians), "Técnicos");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.tools), "Herramientas");
+      XLSX.writeFile(wb, "Logistica_CentroXpert.xlsx");
+      showToast("Logística exportada a Excel.");
     }
 
     function renderAdminProjects() {
@@ -933,12 +1036,12 @@
         <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
           <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Llenado Semanal & Desvío</h3>
           <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <div><label class="block text-[10px] text-slate-400">Placa</label><select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 text-white px-2 py-1.5 rounded text-xs">${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate}</option>`).join('')}</select></div>
-            <div><label class="block text-[10px] text-slate-400">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 text-slate-400 px-2 py-1.5 rounded text-xs"></div>
-            <div><label class="block text-[10px] text-slate-400">Km Actual</label><input type="number" id="fuelCurrentKm" required class="w-full bg-slate-800 text-white px-2 py-1.5 rounded text-xs"></div>
-            <div><label class="block text-[10px] text-slate-400">Tickets (RD$ 500)</label><input type="number" id="fuelTicketsCount" value="6" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 text-white px-2 py-1.5 rounded text-xs"></div>
-            <div><label class="block text-[10px] text-slate-400">Total (RD$)</label><input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 text-emerald-400 px-2 py-1.5 rounded text-xs font-bold"></div>
-            <div class="md:col-span-5 text-right"><button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">Guardar Combustible</button></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Placa</label><select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs">${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate}</option>`).join('')}</select></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-700 text-slate-400 px-2 py-1.5 rounded text-xs"></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Km Actual</label><input type="number" id="fuelCurrentKm" required class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs"></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Tickets (RD$ 500)</label><input type="number" id="fuelTicketsCount" value="6" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs"></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Total (RD$)</label><input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 border border-slate-700 text-emerald-400 px-2 py-1.5 rounded text-xs font-bold"></div>
+            <div class="md:col-span-5 text-right mt-2"><button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">Guardar Combustible</button></div>
           </form>
           <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400"><tr><th class="p-2">Fecha</th><th class="p-2">Placa</th><th class="p-2">Dist</th><th class="p-2">Monto</th><th class="p-2">Desvío</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
@@ -949,6 +1052,32 @@
     }
 
     function calculateFuelTotalMonto() { document.getElementById('fuelCost').value = (parseInt(document.getElementById('fuelTicketsCount').value)||0) * 500; }
+    
+    function updateFuelPlateHelper() {
+      const plate = document.getElementById('fuelPlateSelect').value;
+      const v = appData.vehicles.find(x => x.plate === plate);
+      document.getElementById('fuelPrevKm').value = v ? v.lastFuelKm : 0;
+    }
+
+    function handleFuelSubmit(e) {
+      e.preventDefault();
+      const plate = document.getElementById('fuelPlateSelect').value;
+      const currentKm = parseInt(document.getElementById('fuelCurrentKm').value);
+      const prevKm = parseInt(document.getElementById('fuelPrevKm').value) || 0;
+      const cost = parseInt(document.getElementById('fuelCost').value);
+      const dist = currentKm - prevKm;
+      
+      const expectedDist = (cost / 500) * 30; // Formula dummy
+      const dev = Math.abs(dist - expectedDist) > 10 ? '15.5%' : '5.2%';
+      
+      appData.fuelLogs.unshift({ id: Date.now(), date: new Date().toLocaleDateString('es-DO'), plate: plate, dist: dist, cost: cost, dev: dev });
+      
+      const v = appData.vehicles.find(x => x.plate === plate);
+      if(v) v.lastFuelKm = currentKm;
+      
+      saveData();
+      alert('Registro de combustible guardado correctamente.');
+    }
 
     function renderStaffLogistics() {
       return `
@@ -987,6 +1116,117 @@
         </div>
       `;
     }
+
+    // Funciones CRUD Logistica
+    function openVehicleModal(id = null) {
+      document.getElementById('vehicleAssignedTo').innerHTML = '<option value="">-- Sin asignar --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      if (id) {
+        const v = appData.vehicles.find(item => item.id === id);
+        document.getElementById('vehicleModalTitle').innerText = 'Editar Vehículo ' + v.plate;
+        document.getElementById('vehicleEditId').value = v.id;
+        document.getElementById('vehiclePlate').value = v.plate;
+        document.getElementById('vehicleModel').value = v.model;
+        document.getElementById('vehicleOdo').value = v.odo;
+        document.getElementById('vehicleStatus').value = v.status;
+        document.getElementById('vehicleAssignedTo').value = v.assignedTo || '';
+      } else {
+        document.getElementById('vehicleModalTitle').innerText = 'Registrar Vehículo';
+        document.getElementById('vehicleEditId').value = '';
+        document.getElementById('vehiclePlate').value = ''; document.getElementById('vehicleModel').value = ''; document.getElementById('vehicleOdo').value = 0; document.getElementById('vehicleStatus').value = 'Operativo'; document.getElementById('vehicleAssignedTo').value = '';
+      }
+      openModal('vehicleModal');
+    }
+
+    function handleSaveVehicle(e) {
+      e.preventDefault();
+      const id = document.getElementById('vehicleEditId').value;
+      const vData = {
+        plate: document.getElementById('vehiclePlate').value.trim().toUpperCase(),
+        model: document.getElementById('vehicleModel').value.trim(),
+        odo: parseInt(document.getElementById('vehicleOdo').value) || 0,
+        status: document.getElementById('vehicleStatus').value,
+        assignedTo: document.getElementById('vehicleAssignedTo').value
+      };
+      if (id) { Object.assign(appData.vehicles.find(item => item.id === id), vData); } 
+      else { appData.vehicles.push({ id: 'V_' + Date.now(), lastFuelKm: vData.odo, ...vData }); }
+      closeModal('vehicleModal'); saveData();
+    }
+    
+    function deleteVehicle(id) { if(confirm('¿Eliminar vehículo?')) { appData.vehicles = appData.vehicles.filter(x => x.id !== id); saveData(); } }
+
+    function openTechModal(id = null) {
+      document.getElementById('techVehiclePlate').innerHTML = '<option value="">-- Sin vehículo --</option>' + appData.vehicles.map(v => `<option value="${v.plate}">${v.plate}</option>`).join('');
+      if (id) {
+        const t = appData.technicians.find(item => item.id === id);
+        document.getElementById('techModalTitle').innerText = 'Editar Técnico';
+        document.getElementById('techEditId').value = t.id; document.getElementById('techName').value = t.name; document.getElementById('techLevel').value = t.level;
+        document.getElementById('techPhone').value = t.phone; document.getElementById('techAddress').value = t.address; document.getElementById('techVehiclePlate').value = t.vehiclePlate || '';
+        document.getElementById('techResetPinBtn').classList.remove('hidden');
+      } else {
+        document.getElementById('techModalTitle').innerText = 'Registrar Técnico';
+        document.getElementById('techEditId').value = ''; document.getElementById('techName').value = ''; document.getElementById('techPhone').value = '';
+        document.getElementById('techAddress').value = ''; document.getElementById('techVehiclePlate').value = '';
+        document.getElementById('techResetPinBtn').classList.add('hidden');
+      }
+      openModal('techModal');
+    }
+
+    function resetTechPinDirectly() {
+      const t = appData.technicians.find(item => item.id === document.getElementById('techEditId').value);
+      if(t && confirm(`¿Restablecer PIN de ${t.name} a 1234?`)) { t.pin = '1234'; saveData(); alert('PIN restablecido a 1234.'); }
+    }
+
+    function handleSaveTechnician(e) {
+      e.preventDefault();
+      const id = document.getElementById('techEditId').value;
+      const tData = {
+        name: document.getElementById('techName').value.trim(),
+        level: document.getElementById('techLevel').value,
+        phone: document.getElementById('techPhone').value.trim(),
+        address: document.getElementById('techAddress').value.trim(),
+        vehiclePlate: document.getElementById('techVehiclePlate').value
+      };
+      if (id) {
+        const t = appData.technicians.find(item => item.id === id);
+        if(t.name !== tData.name) { appData.projects.forEach(p => { if(p.techLeader === t.name) p.techLeader = tData.name; }); }
+        Object.assign(t, tData);
+      } else { appData.technicians.push({ id: 'T_' + Date.now(), pin: '1234', ...tData }); }
+      closeModal('techModal'); populateTechSelect(); saveData();
+    }
+
+    function deleteTechnician(id) { if(confirm('¿Eliminar técnico?')) { appData.technicians = appData.technicians.filter(x => x.id !== id); populateTechSelect(); saveData(); } }
+
+    function openToolModal(id = null) {
+      document.getElementById('toolAssignedTo').innerHTML = '<option value="">-- Almacén --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      if (id) {
+        const t = appData.tools.find(item => item.id === id);
+        document.getElementById('toolModalTitle').innerText = 'Editar Herramienta';
+        document.getElementById('toolEditId').value = t.id; document.getElementById('toolCode').value = t.code;
+        document.getElementById('toolName').value = t.name; document.getElementById('toolCondition').value = t.condition; document.getElementById('toolAssignedTo').value = t.assignedTo || '';
+      } else {
+        document.getElementById('toolModalTitle').innerText = 'Registrar Herramienta';
+        document.getElementById('toolEditId').value = ''; document.getElementById('toolCode').value = 'TL-' + Date.now().toString().slice(-3);
+        document.getElementById('toolName').value = ''; document.getElementById('toolAssignedTo').value = '';
+      }
+      openModal('toolModal');
+    }
+
+    function handleSaveTool(e) {
+      e.preventDefault();
+      const id = document.getElementById('toolEditId').value;
+      const tData = {
+        code: document.getElementById('toolCode').value.trim().toUpperCase(),
+        name: document.getElementById('toolName').value.trim(),
+        condition: document.getElementById('toolCondition').value,
+        assignedTo: document.getElementById('toolAssignedTo').value
+      };
+      if (id) { Object.assign(appData.tools.find(item => item.id === id), tData); }
+      else { appData.tools.push({ id: 'H_' + Date.now(), date: new Date().toISOString().split('T')[0], ...tData }); }
+      closeModal('toolModal'); saveData();
+    }
+
+    function deleteTool(id) { if(confirm('¿Eliminar herramienta?')) { appData.tools = appData.tools.filter(x => x.id !== id); saveData(); } }
+
 
     function renderAdminKPIs() {
       const techStats = appData.technicians.map(t => {
@@ -1203,7 +1443,7 @@
       window.print();
     }
     
-    function downloadOrderServicePDF() { alert('Descargando copia de Orden Oficial de Ingeniería...'); }
+    function downloadOrderServicePDF() { alert('Descargando copia oficial de la Orden de Servicio en PDF...'); }
     
     function viewSurveyDocFromDetail() {
       const p = appData.projects.find(x => x.id === currentDetailProjectId);
@@ -1384,6 +1624,46 @@
       renderSurveyItemLists();
     }
 
+    function searchOmegaCatalog() {
+      const q = document.getElementById('omegaSearchInput').value.toLowerCase();
+      const resBox = document.getElementById('omegaResults');
+      if(!q) { resBox.innerHTML = ''; return; }
+      
+      const omegaProducts = [
+        { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200 },
+        { sku: 'CAM-HIK-BUL', name: 'Cámara IP Bullet 4MP Hikvision ColorVu Exterior', category: 'Equipos', priceRD: 5650 },
+        { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', category: 'Equipos', priceRD: 18500 },
+        { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', category: 'Materiales', priceRD: 7900 },
+        { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', category: 'Materiales', priceRD: 850 }
+      ];
+
+      const matched = omegaProducts.filter(p => p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
+      if(matched.length === 0) { resBox.innerHTML = '<div class="col-span-2 text-[10px] text-slate-500">No hay resultados.</div>'; return; }
+      
+      resBox.innerHTML = matched.map(p => `
+        <div class="bg-slate-900 p-2 rounded border border-slate-700 flex justify-between items-center text-[10px]">
+          <div class="truncate mr-2"><div class="font-bold text-white truncate">${p.name}</div><div class="text-slate-400 font-mono">${p.sku} - RD$ ${p.priceRD}</div></div>
+          <button type="button" onclick="addFromCatalog('${p.sku}')" class="bg-blue-800 hover:bg-blue-700 text-white px-2 py-1 rounded">Agregar</button>
+        </div>
+      `).join('');
+    }
+
+    function addFromCatalog(sku) {
+      const omegaProducts = [
+        { sku: 'CAM-HIK-4MP', name: 'Cámara IP Domo 4MP Hikvision Antivandálica IR30m', category: 'Equipos', priceRD: 5200 },
+        { sku: 'CAM-HIK-BUL', name: 'Cámara IP Bullet 4MP Hikvision ColorVu Exterior', category: 'Equipos', priceRD: 5650 },
+        { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision AcuSense', category: 'Equipos', priceRD: 18500 },
+        { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m 100% Cobre Exterior Negra', category: 'Materiales', priceRD: 7900 },
+        { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Blindados Paquete 50 Unidades', category: 'Materiales', priceRD: 850 }
+      ];
+      const p = omegaProducts.find(x => x.sku === sku);
+      if(!p) return;
+      if(p.category === 'Equipos') tempSurveyItemsEquip.push({ name: p.name, qty: 1, sku: p.sku, price: p.priceRD });
+      else tempSurveyItemsMat.push({ name: p.name, qty: 1, sku: p.sku, price: p.priceRD });
+      renderSurveyItemLists();
+      alert(p.name + ' agregado.');
+    }
+
     function promptAddManualItem(type) {
       const name = prompt(type === 'equip' ? 'Nombre del Equipo:' : 'Nombre del Material:');
       if (!name || !name.trim()) return;
@@ -1520,12 +1800,6 @@
       closeModal('planCanvasModal');
     }
 
-    // Init
-    window.addEventListener('DOMContentLoaded', () => {
-      populateTechSelect();
-      openModal('loginModal');
-      render();
-    });
   </script>
 </body>
 </html>
