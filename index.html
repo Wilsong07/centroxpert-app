@@ -593,9 +593,8 @@
 </div>
 </div>
 
-  <!-- ======================= SCRIPTS GLOBALES ======================= -->
   <script>
-    const STORAGE_KEY = 'centroxpert_data_v48'; 
+    const STORAGE_KEY = 'centroxpert_data_v51'; 
 
     const defaultData = {
       currentUser: null,
@@ -679,6 +678,8 @@
     function goHome() { render(); }
     
     function openModal(id) { 
+      const modals = document.querySelectorAll('#modals-container > div');
+      modals.forEach(m => m.classList.add('hidden'));
       const el = document.getElementById(id);
       if (el) el.classList.remove('hidden'); 
     }
@@ -1266,7 +1267,7 @@
       const totalMat = p.budget.materials ? p.budget.materials.reduce((a,c)=>a+c.subtotal,0) : 0;
       budgetCont.innerHTML = `
         <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs shadow-inner">
-          <div class="font-bold text-emerald-400 mb-2 border-b border-slate-800 pb-2">Presupuesto Interno (Costos Estimados): RD$ ${(totalServices+totalMat).toLocaleString()}</div>
+          <div class="font-bold text-emerald-400 mb-2 border-b border-slate-800 pb-2">Presupuesto Interno Estimado: RD$ ${(totalServices+totalMat).toLocaleString()}</div>
           <div class="grid grid-cols-2 gap-4">
             <div><span class="text-slate-400 font-bold">Servicios Técnicos:</span><br><span class="text-white">RD$ ${totalServices.toLocaleString()}</span></div>
             <div><span class="text-slate-400 font-bold">Equipos/Materiales:</span><br><span class="text-white">RD$ ${totalMat.toLocaleString()}</span></div>
@@ -1290,9 +1291,9 @@
       const editBtn = document.getElementById('detailProjectEditBtn');
       const quoteBtn = document.getElementById('detailProjectQuoteBtn');
       const techActions = document.getElementById('techActionButtonsContainer');
+      const adminBtns = document.getElementById('adminButtonsSection');
       
-      if (editBtn) editBtn.style.display = isTech ? 'none' : 'inline-flex';
-      if (quoteBtn) quoteBtn.style.display = isTech ? 'none' : 'inline-flex';
+      if (adminBtns) adminBtns.style.display = isTech ? 'none' : 'flex';
       
       if (techActions) {
         if (isTech) {
@@ -1308,8 +1309,8 @@
     function changeProjectStatusFromDetail(projId, newStatus) { changeProjectStatus(projId, newStatus); openProjectDetailModal(projId); }
     function changeProjectStatus(id, newStatus) { const p = appData.projects.find(x => x.id === id); if(p){ p.status = newStatus; saveData(); } }
 
-    function editCurrentDetailProject() { closeModal('projectDetailModal'); openEditProjectModal(currentDetailProjectId); }
-    function quoteCurrentDetailProject() { closeModal('projectDetailModal'); openQuotationModal(currentDetailProjectId); }
+    function editCurrentDetailProject() { closeModal('projectDetailModal'); editingProjectId = currentDetailProjectId; openEditProjectModal(currentDetailProjectId); }
+    function quoteCurrentDetailProject() { closeModal('projectDetailModal'); activeQuotationProjectId = currentDetailProjectId; openQuotationModal(currentDetailProjectId); }
     
     function printCurrentDetailProjectPDF() {
       if(!currentDetailProjectId) return;
@@ -1336,7 +1337,7 @@
       window.print();
     }
     
-    function downloadOrderServicePDF() { alert('Descargando copia de Orden Oficial de Ingeniería...'); }
+    function downloadOrderServicePDF() { alert('Descargando copia oficial de la Orden de Servicio en PDF...'); }
     
     function viewSurveyDocFromDetail() {
       const p = appData.projects.find(x => x.id === currentDetailProjectId);
@@ -1360,12 +1361,100 @@
        ----------------------------------------------------------------- */
     function triggerTechArrival() {
       if(!currentDetailProjectId) return;
-      registerTechArrivalWithGeofence(currentDetailProjectId);
+      
+      const p = appData.projects.find(item => item.id === currentDetailProjectId);
+      if (!p) return;
+      
+      let forceFallback = false;
+      const fallBackTimer = setTimeout(() => {
+          forceFallback = true;
+          const now = new Date();
+          const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          p.tracking.checkIn = `${timeStr} (Sin GPS)`; 
+          p.tracking.checkInRaw = Date.now(); 
+          p.tracking.isVerifiedOnSite = false;
+          p.status = 'En Curso'; 
+          saveData(); 
+          alert(`Llegada registrada a las ${timeStr} en Modo Manual (No se pudo capturar ubicación GPS a tiempo).`);
+          openProjectDetailModal(p.id);
+      }, 5000);
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            if(forceFallback) return;
+            clearTimeout(fallBackTimer);
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const userLat = pos.coords.latitude; const userLng = pos.coords.longitude;
+            p.tracking.checkInCoords = { lat: userLat, lng: userLng };
+            p.tracking.checkInRaw = Date.now();
+            let distanceMeters = null;
+            let isVerified = false;
+
+            if (p.targetLat && p.targetLng) {
+              distanceMeters = calculateHaversineDistance(userLat, userLng, p.targetLat, p.targetLng);
+              isVerified = distanceMeters <= (p.geofenceRadiusMeters || 300);
+            } else {
+              p.targetLat = userLat; p.targetLng = userLng;
+              distanceMeters = 0; isVerified = true;
+            }
+
+            p.tracking.distanceFromTargetMeters = distanceMeters;
+            p.tracking.isVerifiedOnSite = isVerified;
+            p.tracking.checkIn = `${timeStr}`;
+            p.status = 'En Curso';
+            saveData();
+            
+            if(currentAuthUser && currentAuthUser.role === 'tech') {
+              addNotification('admin', `📍 ${currentAuthUser.name} marcó llegada. Distancia a obra: ${distanceMeters} m.`);
+            }
+
+            if(isVerified) alert(`🟢 ¡LLEGADA CONFIRMADA EN SITIO!\\nDistancia a la obra: ${distanceMeters} m.`);
+            else alert(`⚠️ LLEGADA FUERA DE RANGO:\\nEl GPS indica que estás a ${(distanceMeters/1000).toFixed(2)} KM de la obra.`);
+            
+            openProjectDetailModal(p.id); 
+          },
+          err => {
+            if(forceFallback) return;
+            clearTimeout(fallBackTimer);
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            p.tracking.checkIn = `${timeStr} (GPS manual)`; p.tracking.checkInRaw = Date.now(); p.tracking.isVerifiedOnSite = false;
+            p.status = 'En Curso'; saveData(); 
+            alert(`Llegada registrada a las ${timeStr}. (Permiso de GPS denegado o no disponible).`);
+            openProjectDetailModal(p.id); 
+          },
+          { enableHighAccuracy: true, timeout: 4500, maximumAge: 0 }
+        );
+      } else {
+        clearTimeout(fallBackTimer);
+        alert("El navegador no soporta geolocalización.");
+      }
+    }
+
+    function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const p1 = lat1 * Math.PI/180; const p2 = lat2 * Math.PI/180;
+      const dp = (lat2-lat1) * Math.PI/180; const dl = (lon2-lon1) * Math.PI/180;
+      const a = Math.sin(dp/2) * Math.sin(dp/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl/2) * Math.sin(dl/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return Math.round(R * c);
     }
 
     function triggerTechDeparture() {
       if(!currentDetailProjectId) return;
-      registerTechDeparture(currentDetailProjectId);
+      const p = appData.projects.find(item => item.id === currentDetailProjectId);
+      if (!p) return;
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      p.tracking.checkOut = `${timeStr}`;
+      if (p.tracking.checkInRaw) {
+        const ms = Date.now() - p.tracking.checkInRaw;
+        p.tracking.hoursWorked = `${Math.floor(ms/3600000)}h ${Math.floor((ms%3600000)/60000)}m en obra`;
+      }
+      saveData();
+      alert(`Salida registrada a las ${timeStr}. Jornada finalizada.`);
+      openProjectDetailModal(p.id); 
     }
 
     function triggerTechSurvey() {
@@ -1377,12 +1466,6 @@
     /* -----------------------------------------------------------------
        MODAL DE LEVANTAMIENTO PARA EL TÉCNICO
        ----------------------------------------------------------------- */
-    let currentSurveyProjectId = null;
-    let tempSurveyItemsEquip = [];
-    let tempSurveyItemsMat = [];
-    let tempSurveyDoc = null;
-    let tempPlanDoc = null;
-
     function openSurveyModal(id) {
       currentSurveyProjectId = id;
       const p = appData.projects.find(item => item.id === id);
@@ -1506,16 +1589,21 @@
     function processExtractedSurveyText(text) {
       if (!text || !text.trim()) return;
       const nf = document.getElementById('surveyNotes');
-      nf.value += (nf.value ? '
-' : '') + '[OCR]: ' + text.trim();
+      nf.value += (nf.value ? '\\n' : '') + '[OCR]: ' + text.trim();
 
-      const mMatch = text.match(/(\d{2,4})\s*(?:metros?|mts?|m)/i);
+      const mMatch = text.match(/(\d{2,4})\s*(?:metros?|mts?|m\b)/i);
       if (mMatch && !document.getElementById('surveyMeters').value) document.getElementById('surveyMeters').value = mMatch[1];
       const cMatch = text.match(/(\d+)\s*(?:c[aá]maras?|cam)/i);
       if (cMatch) tempSurveyItemsEquip.push({ name: `Cámara IP Detectada (OCR)`, qty: parseInt(cMatch[1])||1, sku: 'CAM-HIK-4MP', price: 5200 });
       const rMatch = text.match(/(\d+)\s*(?:rollos?|bobinas?)\s*(?:de\s*)?(?:cable|utp)/i);
       if (rMatch) tempSurveyItemsMat.push({ name: `Bobina UTP Cat6 (OCR)`, qty: parseInt(rMatch[1])||1, sku: 'CAB-UTP-CAT6', price: 7900 });
       renderSurveyItemLists();
+    }
+    
+    function processManualOCRFake() {
+        const dummyText = "Requerimos 120 metros de cableado y 4 cámaras.";
+        processExtractedSurveyText(dummyText);
+        alert("Simulación de lectura de notas activada exitosamente.");
     }
 
     function searchOmegaCatalog() {
@@ -1692,6 +1780,197 @@
       tempPlanDoc = { name: 'Croquis_Dibujado.png', type: 'image/png', data: dataUrl };
       updateSurveyModalFileCards();
       closeModal('planCanvasModal');
+    }
+
+    // Funciones CRUD Logistica
+    function openVehicleModal(id = null) {
+      document.getElementById('vehicleAssignedTo').innerHTML = '<option value="">-- Sin asignar --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      if (id) {
+        const v = appData.vehicles.find(item => item.id === id);
+        document.getElementById('vehicleModalTitle').innerText = 'Editar Vehículo ' + v.plate;
+        document.getElementById('vehicleEditId').value = v.id;
+        document.getElementById('vehiclePlate').value = v.plate;
+        document.getElementById('vehicleModel').value = v.model;
+        document.getElementById('vehicleOdo').value = v.odo;
+        document.getElementById('vehicleStatus').value = v.status;
+        document.getElementById('vehicleAssignedTo').value = v.assignedTo || '';
+      } else {
+        document.getElementById('vehicleModalTitle').innerText = 'Registrar Vehículo';
+        document.getElementById('vehicleEditId').value = '';
+        document.getElementById('vehiclePlate').value = ''; document.getElementById('vehicleModel').value = ''; document.getElementById('vehicleOdo').value = 0; document.getElementById('vehicleStatus').value = 'Operativo'; document.getElementById('vehicleAssignedTo').value = '';
+      }
+      openModal('vehicleModal');
+    }
+
+    function handleSaveVehicle(e) {
+      e.preventDefault();
+      const id = document.getElementById('vehicleEditId').value;
+      const vData = {
+        plate: document.getElementById('vehiclePlate').value.trim().toUpperCase(),
+        model: document.getElementById('vehicleModel').value.trim(),
+        odo: parseInt(document.getElementById('vehicleOdo').value) || 0,
+        status: document.getElementById('vehicleStatus').value,
+        assignedTo: document.getElementById('vehicleAssignedTo').value
+      };
+      if (id) { Object.assign(appData.vehicles.find(item => item.id === id), vData); } 
+      else { appData.vehicles.push({ id: 'V_' + Date.now(), lastFuelKm: vData.odo, ...vData }); }
+      closeModal('vehicleModal'); saveData();
+    }
+    
+    function deleteVehicle(id) { if(confirm('¿Eliminar vehículo?')) { appData.vehicles = appData.vehicles.filter(x => x.id !== id); saveData(); } }
+
+    function openTechModal(id = null) {
+      document.getElementById('techVehiclePlate').innerHTML = '<option value="">-- Sin vehículo --</option>' + appData.vehicles.map(v => `<option value="${v.plate}">${v.plate}</option>`).join('');
+      if (id) {
+        const t = appData.technicians.find(item => item.id === id);
+        document.getElementById('techModalTitle').innerText = 'Editar Técnico';
+        document.getElementById('techEditId').value = t.id; document.getElementById('techName').value = t.name; document.getElementById('techLevel').value = t.level;
+        document.getElementById('techPhone').value = t.phone; document.getElementById('techAddress').value = t.address; document.getElementById('techVehiclePlate').value = t.vehiclePlate || '';
+        document.getElementById('techResetPinBtn').classList.remove('hidden');
+      } else {
+        document.getElementById('techModalTitle').innerText = 'Registrar Técnico';
+        document.getElementById('techEditId').value = ''; document.getElementById('techName').value = ''; document.getElementById('techPhone').value = '';
+        document.getElementById('techAddress').value = ''; document.getElementById('techVehiclePlate').value = '';
+        document.getElementById('techResetPinBtn').classList.add('hidden');
+      }
+      openModal('techModal');
+    }
+
+    function resetTechPinDirectly() {
+      const t = appData.technicians.find(item => item.id === document.getElementById('techEditId').value);
+      if(t && confirm(`¿Restablecer PIN de ${t.name} a 1234?`)) { t.pin = '1234'; saveData(); alert('PIN restablecido a 1234.'); }
+    }
+
+    function handleSaveTechnician(e) {
+      e.preventDefault();
+      const id = document.getElementById('techEditId').value;
+      const tData = {
+        name: document.getElementById('techName').value.trim(),
+        level: document.getElementById('techLevel').value,
+        phone: document.getElementById('techPhone').value.trim(),
+        address: document.getElementById('techAddress').value.trim(),
+        vehiclePlate: document.getElementById('techVehiclePlate').value
+      };
+      if (id) {
+        const t = appData.technicians.find(item => item.id === id);
+        if(t.name !== tData.name) { appData.projects.forEach(p => { if(p.techLeader === t.name) p.techLeader = tData.name; }); }
+        Object.assign(t, tData);
+      } else { appData.technicians.push({ id: 'T_' + Date.now(), pin: '1234', ...tData }); }
+      closeModal('techModal'); populateTechSelect(); saveData();
+    }
+
+    function deleteTechnician(id) { if(confirm('¿Eliminar técnico?')) { appData.technicians = appData.technicians.filter(x => x.id !== id); populateTechSelect(); saveData(); } }
+
+    function openToolModal(id = null) {
+      document.getElementById('toolAssignedTo').innerHTML = '<option value="">-- Almacén --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      if (id) {
+        const t = appData.tools.find(item => item.id === id);
+        document.getElementById('toolModalTitle').innerText = 'Editar Herramienta';
+        document.getElementById('toolEditId').value = t.id; document.getElementById('toolCode').value = t.code;
+        document.getElementById('toolName').value = t.name; document.getElementById('toolCondition').value = t.condition; document.getElementById('toolAssignedTo').value = t.assignedTo || '';
+      } else {
+        document.getElementById('toolModalTitle').innerText = 'Registrar Herramienta';
+        document.getElementById('toolEditId').value = ''; document.getElementById('toolCode').value = 'TL-' + Date.now().toString().slice(-3);
+        document.getElementById('toolName').value = ''; document.getElementById('toolAssignedTo').value = '';
+      }
+      openModal('toolModal');
+    }
+
+    function handleSaveTool(e) {
+      e.preventDefault();
+      const id = document.getElementById('toolEditId').value;
+      const tData = {
+        code: document.getElementById('toolCode').value.trim().toUpperCase(),
+        name: document.getElementById('toolName').value.trim(),
+        condition: document.getElementById('toolCondition').value,
+        assignedTo: document.getElementById('toolAssignedTo').value
+      };
+      if (id) { Object.assign(appData.tools.find(item => item.id === id), tData); }
+      else { appData.tools.push({ id: 'H_' + Date.now(), date: new Date().toISOString().split('T')[0], ...tData }); }
+      closeModal('toolModal'); saveData();
+    }
+
+    function deleteTool(id) { if(confirm('¿Eliminar herramienta?')) { appData.tools = appData.tools.filter(x => x.id !== id); saveData(); } }
+
+    // Función de apertura de modales específica con edición limpia para editar proyecto
+    function openEditProjectModal(projId) {
+      const p = appData.projects.find(item => item.id === projId);
+      if (!p) return;
+      document.getElementById('editProjectId').value = p.id;
+      document.getElementById('editProjectCode').value = p.code;
+      document.getElementById('editProjectTitle').value = p.title;
+      document.getElementById('editProjectClient').value = p.client;
+      document.getElementById('editProjectServiceType').value = p.serviceType;
+      document.getElementById('editProjectContact').value = p.contact;
+      document.getElementById('editProjectPlannedDate').value = p.plannedDate;
+      document.getElementById('editProjectAddress').value = p.address;
+      document.getElementById('editProjectStatus').value = p.status;
+      document.getElementById('editProjectLat').value = p.targetLat || '';
+      document.getElementById('editProjectLng').value = p.targetLng || '';
+
+      const techSelect = document.getElementById('editProjectTechLeader');
+      const crewSelect = document.getElementById('editProjectTechCrew');
+      
+      let opts = '<option value="">Sin Asignar</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      techSelect.innerHTML = opts; crewSelect.innerHTML = opts;
+      
+      techSelect.value = p.techLeader;
+      crewSelect.value = p.techCrew.length > 0 ? p.techCrew[0] : '';
+      
+      openModal('editProjectModal');
+    }
+
+    function openQuotationModal(projId) {
+      const p = appData.projects.find(item => item.id === projId);
+      if (!p) return;
+
+      document.getElementById('quoteProjectId').value = projId;
+      
+      if (p.quotation) {
+        document.getElementById('quoteNumber').value = p.quotation.number || '';
+        document.getElementById('quoteAmount').value = p.quotation.amount || '';
+        document.getElementById('quoteDate').value = p.quotation.date || '';
+        document.getElementById('quoteNotes').value = p.quotation.notes || '';
+        document.getElementById('quoteFileLabel').innerText = p.quotation.fileName || 'Archivo actual subido';
+      } else {
+        document.getElementById('quoteNumber').value = 'COT-' + new Date().getFullYear() + '-' + Math.floor(100 + Math.random() * 900);
+        document.getElementById('quoteAmount').value = '';
+        document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('quoteNotes').value = '50% anticipo, 50% contra entrega.';
+        document.getElementById('quoteFileLabel').innerText = 'Haz clic para seleccionar documento PDF';
+      }
+      openModal('quoteModal');
+    }
+
+    function handleEditPDFUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            page.getTextContent().then(textContent => {
+              const fullText = textContent.items.map(item => item.str).join(' ');
+              
+              const codeMatch = fullText.match(/Código\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
+              const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+Código\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
+              const addrMatch = fullText.match(/Dirección\s+del\s+Servicio[\s\S]*?(?:Persona\s+Contacto)?:?\s*([^]+?)\s+Fecha\s+Planificada/i);
+              const obsMatch = fullText.match(/Observaciones:\s*([^]+?)(?:Cliente:|Técnicos)/i);
+
+              if(codeMatch) document.getElementById('editProjectCode').value = codeMatch[1].trim() || codeMatch[0].trim();
+              if(clientMatch) document.getElementById('editProjectClient').value = clientMatch[1].trim();
+              if(addrMatch) document.getElementById('editProjectAddress').value = addrMatch[1].trim().substring(0,60);
+              
+              if(obsMatch) document.getElementById('editProjectTitle').value = "SERVICIO: " + obsMatch[1].trim().substring(0,30);
+              
+              alert('Datos extraídos del PDF (beta). Por favor revisa los campos completados.');
+            });
+          });
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
     }
 
   </script>
