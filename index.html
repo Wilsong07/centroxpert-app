@@ -25,7 +25,6 @@
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     .toast-anim { animation: slideIn 0.3s ease-out forwards; }
 
-    /* Fix para eventos y modales */
     button, a { cursor: pointer; pointer-events: auto; }
     input, textarea, select { pointer-events: auto; }
     
@@ -41,7 +40,6 @@
 </head>
 <body class="min-h-screen bg-slate-950 text-slate-100 flex flex-col antialiased">
 
-  <!-- TOAST CONTAINER -->
   <div id="toast-container" class="fixed bottom-5 right-5 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
 
   <!-- HEADER -->
@@ -68,13 +66,7 @@
   <!-- MAIN CONTAINER -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 no-print" id="mainContainer"></main>
 
-  <!-- CONTENEDOR DE IMPRESIÓN -->
   <div id="printContainer" class="hidden print-area"></div>
-
-
-  <!-- ========================================== -->
-  <!-- =            MODALES ÚNICOS                = -->
-  <!-- ========================================== -->
 
   <!-- Modal Login -->
   <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden no-print">
@@ -136,7 +128,7 @@
     </div>
   </div>
 
-  <!-- Modal Detalle del Proyecto -->
+  <!-- Modal Detalle del Proyecto (Visor Ejecutivo / Técnico / Resultados Levantamiento) -->
   <div id="projectDetailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('projectDetailModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-8 space-y-5 relative" onclick="event.stopPropagation();">
       <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
@@ -178,18 +170,21 @@
         </div>
       </div>
 
+      <!-- DATOS DEL LEVANTAMIENTO REALIZADO -->
+      <div id="detailProjectSurveyContainer" class="space-y-3 relative z-20 hidden"></div>
+
       <!-- BOTONES TÉCNICOS EN EL DETALLE -->
       <div id="techActionButtonsContainer" class="hidden bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-lg my-2">
         <h3 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-3"><i class="fa-solid fa-helmet-safety mr-1.5"></i> Panel de Acción del Técnico</h3>
         <div class="flex flex-wrap gap-2">
           <button type="button" onclick="triggerTechArrival()" class="flex-1 min-w-[140px] bg-blue-800/90 hover:bg-blue-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-blue-600/50 shadow"><i class="fa-solid fa-location-crosshairs text-base"></i> Registrar Llegada</button>
           <button type="button" onclick="triggerTechDeparture()" class="flex-1 min-w-[140px] bg-amber-800/90 hover:bg-amber-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-amber-600/50 shadow"><i class="fa-solid fa-flag-checkered text-base"></i> Registrar Salida</button>
-          <button type="button" onclick="triggerTechSurvey()" class="flex-1 min-w-[140px] bg-rose-700 hover:bg-rose-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-rose-500/50 shadow shadow-rose-900/40"><i class="fa-solid fa-file-pen text-base"></i> Levantamiento & Plano</button>
+          <button type="button" onclick="triggerTechSurvey()" class="flex-1 min-w-[140px] bg-rose-700 hover:bg-rose-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-rose-500/50 shadow shadow-rose-900/40"><i class="fa-solid fa-file-pen text-base"></i> Cargar Levantamiento & Plano</button>
         </div>
       </div>
 
       <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-folder-open text-rose-400 mr-1.5"></i> Documentación Adjunta</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-folder-open text-rose-400 mr-1.5"></i> Documentos Adjuntos Disponibles</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           
           <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
@@ -239,7 +234,7 @@
   </div>
 
   <!-- Modal Editar Proyecto (Coordinador) -->
-  <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('editProjectModal')">
+  <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('editProjectModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 relative" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <div>
@@ -250,6 +245,15 @@
         </div>
         <button type="button" onclick="closeModal('editProjectModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
+
+      <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-3 mb-4 text-center">
+        <p class="text-xs text-slate-400 mb-2">¿Tienes la orden oficial en PDF? Autocompleta los campos:</p>
+        <button type="button" onclick="document.getElementById('editPdfInput').click()" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-1.5 rounded-xl border border-rose-700 inline-flex items-center gap-1.5">
+          <i class="fa-solid fa-file-pdf"></i> Extraer datos del PDF
+        </button>
+        <input type="file" id="editPdfInput" accept="application/pdf" class="hidden" onchange="handleEditPDFUpload(event)">
+      </div>
+
       <form onsubmit="handleSaveEditedProject(event)" class="space-y-4">
         <input type="hidden" id="editProjectId">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -260,7 +264,7 @@
             </select>
           </div>
         </div>
-        <div><label class="block text-xs text-slate-300 mb-1">Título</label><input type="text" id="editProjectTitle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">Título / Descripción</label><input type="text" id="editProjectTitle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div><label class="block text-xs text-slate-300 mb-1">Cliente</label><input type="text" id="editProjectClient" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
           <div><label class="block text-xs text-slate-300 mb-1">Servicio</label><input type="text" id="editProjectServiceType" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
@@ -297,8 +301,8 @@
     </div>
   </div>
 
-  <!-- Modal LEVANTAMIENTO Y PLANOS -->
-  <div id="surveyModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('surveyModal')">
+  <!-- Modal LEVANTAMIENTO Y PLANOS SEPARADOS -->
+  <div id="surveyModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('surveyModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6 relative" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
         <div>
@@ -320,7 +324,6 @@
               <span id="ocrStatusBadge" class="text-[10px] text-slate-400 italic">Formato múltiple</span>
             </div>
             <p class="text-[11px] text-slate-400 mb-3">Fotos, apuntes, documentos Word o PDF de notas.</p>
-            
             <button type="button" onclick="document.getElementById('surveyDocInput').click()" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs px-3 py-2.5 rounded-xl border border-slate-700 font-bold transition flex items-center justify-center gap-2 mb-2">
               <i class="fa-solid fa-file-arrow-up text-rose-400"></i> Adjuntar Evidencia (Foto/Word/PDF)
             </button>
@@ -342,7 +345,7 @@
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-blue-400"><i class="fa-solid fa-map-location-dot mr-1.5"></i> 2. Plano / Croquis</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-400"><i class="fa-solid fa-map-location-dot mr-1.5"></i> 2. Plano Técnico</span>
               <span class="text-[10px] text-slate-400 italic">IMG, PDF, DWG</span>
             </div>
             <p class="text-[11px] text-slate-400 mb-3">Sube el plano arquitectónico o dibuja un croquis digital.</p>
@@ -381,14 +384,9 @@
           </div>
         </div>
 
-        <!-- SECCIÓN DIGITALIZAR OCR EDITABLE -->
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1 flex justify-between">
-            <span>Observaciones en Sitio / Texto Extraído de OCR</span>
-            <button type="button" onclick="processManualOCRFake()" class="text-[10px] bg-blue-900 hover:bg-blue-800 text-blue-200 px-2 rounded-lg border border-blue-700 transition">Forzar lectura OCR de Foto</button>
-          </label>
-          <textarea id="surveyNotes" rows="3" placeholder="Detalles de instalación, cruces, etc..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
-          <p class="text-[10px] text-slate-500 mt-1">El texto extraído de la foto aparecerá aquí arriba para que lo puedas corregir o completar.</p>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Observaciones en Sitio / OCR</label>
+          <textarea id="surveyNotes" rows="3" placeholder="Detalles u OCR..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></textarea>
         </div>
 
         <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
@@ -416,8 +414,8 @@
   </div>
 
   <!-- CANVAS DIBUJO DE PLANOS -->
-  <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[150] flex items-center justify-center p-3 hidden no-print" onclick="closeModal('planCanvasModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col relative" onclick="event.stopPropagation();">
+  <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden no-print" onclick="closeModal('planCanvasModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
         <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis Técnico</h3>
         <button type="button" onclick="closeModal('planCanvasModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -506,7 +504,8 @@
     </div>
   </div>
 
-  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('pdfModal')">
+  <!-- Importar Orden PDF (Global) -->
+  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print" onclick="closeModal('pdfModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 relative" onclick="event.stopPropagation();">
       <h3 class="text-lg font-bold text-white mb-4"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden CentroXpert PDF</h3>
       <div class="border-2 border-dashed border-slate-700 hover:border-rose-500 bg-slate-950/50 rounded-2xl p-6 text-center cursor-pointer mb-4" onclick="document.getElementById('pdfInput').click()">
@@ -523,7 +522,7 @@
 
   <!-- ======================= SCRIPTS GLOBALES ======================= -->
   <script>
-    const STORAGE_KEY = 'centroxpert_data_v17'; 
+    const STORAGE_KEY = 'centroxpert_data_v20'; 
 
     const defaultData = {
       currentUser: null,
@@ -551,7 +550,7 @@
           serviceType: 'INSTALACIÓN (3255.73)',
           client: 'CONDOMINIO TORRE WASHINGTON',
           contact: 'Ana Milagros Guzman',
-          address: 'Torre Washington, Av. George Washington',
+          address: 'Torre Washington, Av. George Washington, Santo Domingo',
           targetLat: 18.463200,
           targetLng: -69.905600,
           geofenceRadiusMeters: 300,
@@ -825,12 +824,6 @@
             ${currentNavTab === 'projects' ? `
               <div class="flex gap-2">
                 <button type="button" onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> Importar PDF</button>
-                <button type="button" onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Exportar</button>
-              </div>
-            ` : ''}
-            ${currentNavTab === 'logistics' ? `
-              <div class="flex gap-2">
-                <button type="button" onclick="exportLogisticsToExcel()" class="bg-emerald-900/70 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold"><i class="fa-solid fa-file-excel"></i> Exportar</button>
               </div>
             ` : ''}
           </div>
@@ -916,7 +909,7 @@
           <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Llenado Semanal & Desvío</h3>
           <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div><label class="text-[10px] text-slate-400">Placa</label><select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 text-white px-2 py-1.5 rounded text-xs">${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate}</option>`).join('')}</select></div>
-            <div><label class="text-[10px] text-slate-400">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 text-slate-400 px-2 py-1.5 rounded text-xs cursor-not-allowed"></div>
+            <div><label class="text-[10px] text-slate-400">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 text-slate-400 px-2 py-1.5 rounded text-xs"></div>
             <div><label class="text-[10px] text-slate-400">Km Actual</label><input type="number" id="fuelCurrentKm" required class="w-full bg-slate-800 text-white px-2 py-1.5 rounded text-xs"></div>
             <div><label class="text-[10px] text-slate-400">Tickets (RD$ 500)</label><input type="number" id="fuelTicketsCount" value="6" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 text-white px-2 py-1.5 rounded text-xs"></div>
             <div><label class="text-[10px] text-slate-400">Total (RD$)</label><input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 text-emerald-400 px-2 py-1.5 rounded text-xs font-bold"></div>
@@ -994,8 +987,8 @@
 
       return `
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-          <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between"><h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking Técnico</h3>
-          <div><button type="button" onclick="exportLogisticsToExcel()" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded text-[11px] mr-1">Exportar Excel</button></div>
+          <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between">
+            <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking Técnico</h3>
           </div>
           <div class="overflow-x-auto">
           <table class="w-full text-xs text-left"><thead class="bg-slate-950/60 text-slate-400 uppercase"><tr><th class="p-3">Técnico</th><th class="p-3">Tareas Cierre</th><th class="p-3 text-center">Cumplimiento GPS</th><th class="p-3 text-center">Desvío</th><th class="p-3">Score Eficiencia</th></tr></thead>
@@ -1084,12 +1077,38 @@
         planDocActions.classList.add('hidden');
       }
 
+      // Render Resultados del Levantamiento
+      const surveyContainer = document.getElementById('detailProjectSurveyContainer');
+      if (p.survey && (p.survey.meters > 0 || p.survey.notes || p.survey.itemsEquip.length > 0)) {
+        let equipHtml = p.survey.itemsEquip.map(i => `<li>${i.qty}x ${i.name}</li>`).join('');
+        let matHtml = p.survey.itemsMat.map(i => `<li>${i.qty}x ${i.name}</li>`).join('');
+        surveyContainer.innerHTML = `
+          <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs shadow-inner">
+            <div class="font-bold text-amber-400 mb-2 border-b border-slate-800 pb-2"><i class="fa-solid fa-clipboard-check mr-1.5"></i> Resultados del Levantamiento</div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+              <div><span class="text-slate-500">Metros:</span> <span class="text-white">${p.survey.meters}m</span></div>
+              <div><span class="text-slate-500">Estructura:</span> <span class="text-white">${p.survey.structure}</span></div>
+              <div><span class="text-slate-500">Respaldo:</span> <span class="text-white">${p.survey.power}</span></div>
+            </div>
+            <div class="mb-3"><span class="text-slate-500">Observaciones / OCR:</span> <p class="text-white mt-1 p-2 bg-slate-900 rounded">${p.survey.notes || 'Ninguna'}</p></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><span class="text-slate-500 font-bold">Equipos Requeridos:</span><ul class="text-white list-disc pl-4 mt-1">${equipHtml || '<li>Ninguno</li>'}</ul></div>
+              <div><span class="text-slate-500 font-bold">Materiales Requeridos:</span><ul class="text-white list-disc pl-4 mt-1">${matHtml || '<li>Ninguno</li>'}</ul></div>
+            </div>
+          </div>
+        `;
+        surveyContainer.classList.remove('hidden');
+      } else {
+        surveyContainer.innerHTML = '';
+        surveyContainer.classList.add('hidden');
+      }
+
       const budgetCont = document.getElementById('detailProjectBudgetContainer');
       const totalServices = p.budget.services ? p.budget.services.reduce((a,c)=>a+c.subtotal,0) : 0;
       const totalMat = p.budget.materials ? p.budget.materials.reduce((a,c)=>a+c.subtotal,0) : 0;
       budgetCont.innerHTML = `
         <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs shadow-inner">
-          <div class="font-bold text-emerald-400 mb-2 border-b border-slate-800 pb-2">Presupuesto Interno Estimado: RD$ ${(totalServices+totalMat).toLocaleString()}</div>
+          <div class="font-bold text-emerald-400 mb-2 border-b border-slate-800 pb-2">Presupuesto Interno (Costos Estimados): RD$ ${(totalServices+totalMat).toLocaleString()}</div>
           <div class="grid grid-cols-2 gap-4">
             <div><span class="text-slate-400 font-bold">Servicios Técnicos:</span><br><span class="text-white">RD$ ${totalServices.toLocaleString()}</span></div>
             <div><span class="text-slate-400 font-bold">Equipos/Materiales:</span><br><span class="text-white">RD$ ${totalMat.toLocaleString()}</span></div>
@@ -1153,7 +1172,7 @@
           </table>
           <p><strong>Ubicación:</strong> ${p.address}</p>
           <hr style="border:1px solid #ccc; margin: 15px 0;">
-          ${p.quotation ? `<div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd;"><h4>Cotización: ${p.quotation.number}</h4><p>Monto RD$: ${p.quotation.amount}</p><p>Condiciones: ${p.quotation.notes}</p></div>` : '<p>Sin cotización formalizada.</p>'}
+          ${p.quotation ? `<div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd;"><h4>Cotización Oficial: ${p.quotation.number}</h4><p>Monto RD$: ${p.quotation.amount}</p><p>Condiciones: ${p.quotation.notes}</p></div>` : '<p>Sin cotización formalizada.</p>'}
         </div>
       `;
       window.print();
@@ -1178,11 +1197,28 @@
       if (p && p.survey && p.survey.planDoc) triggerFileDownload(p.survey.planDoc);
     }
 
-    function triggerTechArrival() { if(!currentDetailProjectId) return; registerTechArrivalWithGeofence(currentDetailProjectId); }
-    function triggerTechDeparture() { if(!currentDetailProjectId) return; registerTechDeparture(currentDetailProjectId); }
-    function triggerTechSurvey() { if(!currentDetailProjectId) return; closeModal('projectDetailModal'); openSurveyModal(currentDetailProjectId); }
+    /* -----------------------------------------------------------------
+       ACCIONES RÁPIDAS DEL TÉCNICO EN EL DETALLE
+       ----------------------------------------------------------------- */
+    function triggerTechArrival() {
+      if(!currentDetailProjectId) return;
+      registerTechArrivalWithGeofence(currentDetailProjectId);
+    }
 
-    /* Modal de Levantamiento (OCR editable, etc) */
+    function triggerTechDeparture() {
+      if(!currentDetailProjectId) return;
+      registerTechDeparture(currentDetailProjectId);
+    }
+
+    function triggerTechSurvey() {
+      if(!currentDetailProjectId) return;
+      closeModal('projectDetailModal');
+      openSurveyModal(currentDetailProjectId);
+    }
+
+    /* -----------------------------------------------------------------
+       MODAL DE LEVANTAMIENTO PARA EL TÉCNICO
+       ----------------------------------------------------------------- */
     let currentSurveyProjectId = null;
     let tempSurveyItemsEquip = [];
     let tempSurveyItemsMat = [];
@@ -1250,12 +1286,6 @@
         };
         r.readAsDataURL(file);
       }
-    }
-
-    function processManualOCRFake() {
-      // Simula el OCR si el usuario lo pide manual
-      const text = "Levantamiento de campo:\nRequiere 45 metros de Tubería EMT\nSe instalarán 3 cámaras IP ColorVu\n2 Bobinas UTP Cat6";
-      processExtractedSurveyText(text);
     }
 
     function handlePlanDocUpload(e) {
@@ -1361,93 +1391,16 @@
         tempSurveyItemsMat.forEach(item => p.budget.materials.push({ desc: item.name, qtyEst: item.qty, qtyReal: item.qty, unitCost: item.price || 500, subtotal: item.qty * (item.price || 500) }));
       }
 
-      p.status = 'En Presupuesto'; // Cambio automático
+      p.status = 'En Presupuesto';
       closeModal('surveyModal');
       
       if(currentAuthUser && currentAuthUser.role === 'tech') {
-        addNotification('admin', `✅ ${currentAuthUser.name} ha completado y enviado el levantamiento para el proyecto ${p.code}. Pasa a Presupuesto.`);
+        addNotification('admin', `✅ ${currentAuthUser.name} ha completado el levantamiento para el proyecto ${p.code}. Pasa a Presupuesto.`);
       }
 
       saveData();
-      alert('¡Levantamiento guardado! Documentos y planos subidos. El proyecto ha pasado a estatus de Presupuesto.');
-      openProjectDetailModal(p.id); // Reabrimos para que vea el nuevo estatus
-    }
-
-    /* -----------------------------------------------------------------
-       EDICIÓN Y REASIGNACIÓN DE PROYECTOS (MODAL)
-       ----------------------------------------------------------------- */
-    let editingProjectId = null;
-    function openEditProjectModal(id) {
-      editingProjectId = id;
-      const p = appData.projects.find(item => item.id === id);
-      if (!p) return;
-      document.getElementById('editProjectId').value = p.id;
-      document.getElementById('editProjectCode').value = p.code;
-      document.getElementById('editProjectTitle').value = p.title;
-      document.getElementById('editProjectClient').value = p.client;
-      document.getElementById('editProjectServiceType').value = p.serviceType || 'INSTALACIÓN';
-      document.getElementById('editProjectContact').value = p.contact || '';
-      document.getElementById('editProjectPlannedDate').value = p.plannedDate || '';
-      document.getElementById('editProjectAddress').value = p.address;
-      document.getElementById('editProjectStatus').value = p.status;
-      document.getElementById('editProjectLat').value = p.targetLat || '';
-      document.getElementById('editProjectLng').value = p.targetLng || '';
-
-      const leaderSelect = document.getElementById('editProjectTechLeader');
-      leaderSelect.innerHTML = appData.technicians.map(t => `<option value="${t.name}" ${t.name === p.techLeader ? 'selected' : ''}>${t.name} (${t.level})</option>`).join('');
-
-      const crewSelect = document.getElementById('editProjectTechCrew');
-      crewSelect.innerHTML = '<option value="">-- Sin acompañante --</option>' + appData.technicians.map(t => `<option value="${t.name}" ${(p.techCrew && p.techCrew.includes(t.name)) ? 'selected' : ''}>${t.name} (${t.level})</option>`).join('');
-
-      openModal('editProjectModal');
-    }
-
-    function captureProjectGPSCurrentLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-          document.getElementById('editProjectLat').value = pos.coords.latitude.toFixed(6);
-          document.getElementById('editProjectLng').value = pos.coords.longitude.toFixed(6);
-          alert(`Ubicación capturada.\nLat: ${pos.coords.latitude}\nLng: ${pos.coords.longitude}`);
-        });
-      }
-    }
-
-    function handleSaveEditedProject(e) {
-      e.preventDefault();
-      const p = appData.projects.find(item => item.id === document.getElementById('editProjectId').value);
-      if (!p) return;
-      
-      const oldLeader = p.techLeader;
-      const newLeader = document.getElementById('editProjectTechLeader').value;
-      
-      p.code = document.getElementById('editProjectCode').value.trim();
-      p.title = document.getElementById('editProjectTitle').value.trim();
-      p.client = document.getElementById('editProjectClient').value.trim();
-      p.serviceType = document.getElementById('editProjectServiceType').value.trim();
-      p.contact = document.getElementById('editProjectContact').value.trim();
-      p.plannedDate = document.getElementById('editProjectPlannedDate').value.trim();
-      p.address = document.getElementById('editProjectAddress').value.trim();
-      p.status = document.getElementById('editProjectStatus').value;
-      p.targetLat = parseFloat(document.getElementById('editProjectLat').value) || null;
-      p.targetLng = parseFloat(document.getElementById('editProjectLng').value) || null;
-      p.techLeader = newLeader;
-      p.techCrew = document.getElementById('editProjectTechCrew').value ? [document.getElementById('editProjectTechCrew').value] : [];
-
-      closeModal('editProjectModal');
-      if (oldLeader !== newLeader) addNotification(newLeader, `📋 Tienes una nueva tarea asignada: ${p.code} - ${p.title}.`);
-      else addNotification(oldLeader, `🔄 Tu proyecto ha sido actualizado por coordinación: ${p.code}.`);
-      
-      saveData();
-      alert('¡Proyecto guardado!');
-      openProjectDetailModal(p.id); // Reabrimos para que vea los cambios
-    }
-
-    function deleteProjectPrompt() {
-      const id = document.getElementById('editProjectId').value;
-      if (confirm(`¿Eliminar definitivamente este proyecto?`)) {
-        appData.projects = appData.projects.filter(x => x.id !== id);
-        closeModal('editProjectModal'); saveData();
-      }
+      alert('¡Levantamiento guardado! El proyecto ha pasado a estatus de Presupuesto.');
+      openProjectDetailModal(p.id); 
     }
 
     /* -----------------------------------------------------------------
@@ -1536,6 +1489,241 @@
     }
 
     /* -----------------------------------------------------------------
+       GEO-ASISTENCIA GPS (LLEGADA Y SALIDA TÉCNICOS)
+       ----------------------------------------------------------------- */
+    function registerTechArrivalWithGeofence(projectId) {
+      const p = appData.projects.find(item => item.id === projectId);
+      if (!p) return;
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const userLat = pos.coords.latitude; const userLng = pos.coords.longitude;
+            p.tracking.checkInCoords = { lat: userLat, lng: userLng };
+            p.tracking.checkInRaw = Date.now();
+            let distanceMeters = null;
+            let isVerified = false;
+
+            if (p.targetLat && p.targetLng) {
+              distanceMeters = calculateHaversineDistance(userLat, userLng, p.targetLat, p.targetLng);
+              isVerified = distanceMeters <= (p.geofenceRadiusMeters || 300);
+            } else {
+              p.targetLat = userLat; p.targetLng = userLng;
+              distanceMeters = 0; isVerified = true;
+            }
+
+            p.tracking.distanceFromTargetMeters = distanceMeters;
+            p.tracking.isVerifiedOnSite = isVerified;
+            p.tracking.checkIn = `${timeStr}`;
+            p.status = 'En Curso';
+            saveData();
+            
+            if(currentAuthUser && currentAuthUser.role === 'tech') {
+              addNotification('admin', `📍 ${currentAuthUser.name} marcó llegada. Distancia a obra: ${distanceMeters} m.`);
+            }
+
+            if(isVerified) alert(`🟢 ¡LLEGADA CONFIRMADA EN SITIO!\nDistancia a la obra: ${distanceMeters} m.`);
+            else alert(`⚠️ LLEGADA FUERA DE RANGO:\nEl GPS indica que estás a ${(distanceMeters/1000).toFixed(2)} KM de la obra.`);
+            
+            openProjectDetailModal(projectId); // Actualiza modal
+          },
+          err => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            p.tracking.checkIn = `${timeStr} (GPS manual)`; p.tracking.checkInRaw = Date.now(); p.tracking.isVerifiedOnSite = false;
+            p.status = 'En Curso'; saveData(); 
+            alert(`Llegada registrada a las ${timeStr}. (No se pudo capturar ubicación GPS).`);
+            openProjectDetailModal(projectId); // Actualiza modal
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      } else {
+        alert("El navegador no soporta geolocalización.");
+      }
+    }
+
+    function registerTechDeparture(projectId) {
+      const p = appData.projects.find(item => item.id === projectId);
+      if (!p) return;
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      p.tracking.checkOut = `${timeStr}`;
+      if (p.tracking.checkInRaw) {
+        const ms = Date.now() - p.tracking.checkInRaw;
+        p.tracking.hoursWorked = `${Math.floor(ms/3600000)}h ${Math.floor((ms%3600000)/60000)}m en obra`;
+      }
+      saveData();
+      alert(`Salida registrada a las ${timeStr}. Jornada finalizada.`);
+      openProjectDetailModal(projectId); // Actualiza modal
+    }
+
+    function setProjectCoordsFromPhone(projId) {
+      const p = appData.projects.find(x => x.id === projId);
+      if(confirm('¿Fijar tu ubicación actual como la coordenada exacta de esta obra?')) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          p.targetLat = pos.coords.latitude; p.targetLng = pos.coords.longitude;
+          saveData(); alert(`¡Coordenadas actualizadas!\n[${p.targetLat.toFixed(5)}, ${p.targetLng.toFixed(5)}]`);
+        });
+      }
+    }
+    
+    /* -----------------------------------------------------------------
+       CRUD Y EDICIÓN DE PROYECTOS (COORDINADOR)
+       ----------------------------------------------------------------- */
+    function handleSaveEditedProject(e) {
+      e.preventDefault();
+      const p = appData.projects.find(item => item.id === document.getElementById('editProjectId').value);
+      if (!p) return;
+      
+      const oldLeader = p.techLeader;
+      const newLeader = document.getElementById('editProjectTechLeader').value;
+      
+      p.code = document.getElementById('editProjectCode').value.trim();
+      p.title = document.getElementById('editProjectTitle').value.trim();
+      p.client = document.getElementById('editProjectClient').value.trim();
+      p.serviceType = document.getElementById('editProjectServiceType').value.trim();
+      p.contact = document.getElementById('editProjectContact').value.trim();
+      p.plannedDate = document.getElementById('editProjectPlannedDate').value.trim();
+      p.address = document.getElementById('editProjectAddress').value.trim();
+      p.status = document.getElementById('editProjectStatus').value;
+      p.targetLat = parseFloat(document.getElementById('editProjectLat').value) || null;
+      p.targetLng = parseFloat(document.getElementById('editProjectLng').value) || null;
+      p.techLeader = newLeader;
+      p.techCrew = document.getElementById('editProjectTechCrew').value ? [document.getElementById('editProjectTechCrew').value] : [];
+
+      closeModal('editProjectModal');
+      
+      if (oldLeader !== newLeader) {
+        addNotification(newLeader, `📋 Tienes una nueva tarea asignada: ${p.code} - ${p.title}.`);
+      } else {
+        addNotification(oldLeader, `🔄 Tu proyecto ha sido actualizado por coordinación: ${p.code}.`);
+      }
+      
+      saveData();
+      alert('¡Proyecto actualizado correctamente!');
+      openProjectDetailModal(p.id);
+    }
+
+    function deleteProjectPrompt() {
+      const id = document.getElementById('editProjectId').value;
+      if (confirm(`¿Eliminar definitivamente este proyecto?`)) {
+        appData.projects = appData.projects.filter(x => x.id !== id);
+        closeModal('editProjectModal'); saveData();
+      }
+    }
+
+    // EXTRAER DATOS DEL PDF EN LA EDICIÓN DE PROYECTO
+    function handleEditPDFUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            page.getTextContent().then(textContent => {
+              const fullText = textContent.items.map(item => item.str).join(' ');
+              
+              // Regex Avanzados para capturar campos estándar (o usar genericos si falla)
+              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i);
+              const clientMatch = fullText.match(/(?:Cliente|Empresa|Para|Nombre):\s*([^|]+)/i);
+              const addrMatch = fullText.match(/(?:Direcci[óo]n|Ubicaci[óo]n):\s*([^|]+)/i);
+              const contactMatch = fullText.match(/(?:Contacto|Tel[ée]fono):\s*([^|]+)/i);
+              const obsMatch = fullText.match(/(?:Observaciones|Notas):\s*([^|]+)/i);
+
+              if(codeMatch) document.getElementById('editProjectCode').value = codeMatch[0].trim();
+              if(clientMatch) document.getElementById('editProjectClient').value = clientMatch[1].trim();
+              if(addrMatch) document.getElementById('editProjectAddress').value = addrMatch[1].trim();
+              if(contactMatch) document.getElementById('editProjectContact').value = contactMatch[1].trim();
+              if(obsMatch) document.getElementById('editProjectTitle').value += " - " + obsMatch[1].trim();
+              
+              alert('Datos extraídos del PDF. Por favor revisa los campos completados.');
+            });
+          });
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    // EXTRAER DATOS DEL PDF (CREAR PROYECTO NUEVO EN GENERAL)
+    function handlePDFUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            page.getTextContent().then(textContent => {
+              const fullText = textContent.items.map(item => item.str).join(' ');
+              
+              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || ['CX-SGE-' + Date.now().toString().slice(-4)];
+              const clientMatch = fullText.match(/(?:Cliente|Empresa|Para|Nombre):\s*([^|]+)/i) || [null, 'CLIENTE CORPORATIVO'];
+              const addrMatch = fullText.match(/(?:Direcci[óo]n|Ubicaci[óo]n):\s*([^|]+)/i) || [null, 'Santo Domingo'];
+              const contactMatch = fullText.match(/(?:Contacto|Tel[ée]fono):\s*([^|]+)/i) || [null, 'No especificado'];
+
+              const newProj = {
+                id: 'P_' + Date.now(),
+                code: codeMatch[0],
+                title: 'SERVICIO TÉCNICO ' + codeMatch[0],
+                serviceType: 'INSTALACIÓN',
+                client: clientMatch[1].trim(),
+                contact: contactMatch[1].trim(),
+                address: addrMatch[1].trim(),
+                targetLat: 18.463200, targetLng: -69.905600, geofenceRadiusMeters: 300,
+                plannedDate: new Date().toLocaleDateString('es-DO'),
+                techLeader: 'Enmanuel Matos', techCrew: [],
+                status: 'Levantamiento',
+                observations: 'Importado desde PDF CentroXpert.',
+                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+                serviceOrderFile: { name: file.name, type: 'application/pdf' },
+                quotation: null,
+                budget: { approved: false, services: [], materials: [] },
+                tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+              };
+
+              appData.projects.unshift(newProj);
+              closeModal('pdfModal');
+              saveData();
+              alert(`¡Orden ${newProj.code} importada con éxito desde el PDF!`);
+              openProjectDetailModal(newProj.id);
+            });
+          });
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    function loadSampleTorreWashington() {
+      const newProj = {
+        id: 'P_' + Date.now(),
+        code: 'CX-SGE-2026-005',
+        title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
+        serviceType: 'INSTALACIÓN (3255.73)',
+        client: 'CONDOMINIO TORRE WASHINGTON',
+        contact: 'Ana Milagros Guzman (829) 762-8952',
+        address: 'Torre Washington, Av. George Washington, Santo Domingo',
+        targetLat: 18.463200, targetLng: -69.905600, geofenceRadiusMeters: 300,
+        plannedDate: '26/10/2026',
+        techLeader: 'Enmanuel Matos', techCrew: ['WESLY ALEJANDRO MOJICA'],
+        status: 'Levantamiento',
+        observations: 'INSTALACION DE CAMARAS',
+        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+        serviceOrderFile: { name: 'TORRE WASHINGTON.pdf', type: 'application/pdf' },
+        quotation: null,
+        budget: { approved: false, services: [], materials: [] },
+        tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+      };
+      appData.projects.unshift(newProj);
+      closeModal('pdfModal');
+      saveData();
+      alert('¡Muestra importada con éxito!');
+    }
+
+    /* -----------------------------------------------------------------
        COTIZACIÓN
        ----------------------------------------------------------------- */
     let activeQuotationProjectId = null;
@@ -1593,12 +1781,6 @@
       openProjectDetailModal(p.id); // Reabrir para ver cambio
     }
 
-    // Init
-    window.addEventListener('DOMContentLoaded', () => {
-      populateTechSelect();
-      openModal('loginModal');
-      render();
-    });
   </script>
 </body>
 </html>
