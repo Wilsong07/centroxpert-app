@@ -424,6 +424,52 @@
     </div>
   </div>
 
+  <!-- CANVAS DIBUJO DE PLANOS -->
+  <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[150] flex items-center justify-center p-3 hidden no-print" onclick="closeModal('planCanvasModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col relative z-[160]" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+        <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis Técnico</h3>
+        <button type="button" onclick="closeModal('planCanvasModal')" class="interactive-layer text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 mb-3 text-xs interactive-layer">
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="setCanvasTool('pen')" id="toolBtn_pen" class="bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-pencil"></i> Lápiz</button>
+          <button type="button" onclick="setCanvasTool('line')" id="toolBtn_line" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-slash"></i> Línea</button>
+          <button type="button" onclick="setCanvasTool('rect')" id="toolBtn_rect" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-regular fa-square"></i> Cuadro</button>
+          <button type="button" onclick="setCanvasTool('camera')" id="toolBtn_camera" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-video text-rose-400"></i> Cámara</button>
+          <button type="button" onclick="setCanvasTool('text')" id="toolBtn_text" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-font"></i> Texto</button>
+          <button type="button" onclick="setCanvasTool('eraser')" id="toolBtn_eraser" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-eraser"></i> Borrador</button>
+        </div>
+        <div class="flex items-center gap-3">
+          <input type="color" id="canvasColor" value="#8b1524" class="w-7 h-7 rounded border border-slate-700 bg-transparent">
+          <select id="canvasLineWidth" class="bg-slate-800 text-white rounded px-2 py-1 text-xs border border-slate-700"><option value="2">Fino</option><option value="4" selected>Medio</option><option value="8">Grueso</option></select>
+          <button type="button" onclick="clearPlanCanvas()" class="bg-slate-800 hover:bg-red-950 text-red-300 px-2.5 py-1.5 rounded-lg border border-slate-700">Limpiar</button>
+        </div>
+      </div>
+      <div class="relative w-full bg-slate-950 rounded-xl border border-slate-800 overflow-hidden flex justify-center cursor-crosshair">
+        <canvas id="planCanvas" width="850" height="480" class="bg-slate-950 touch-none max-w-full h-auto"></canvas>
+      </div>
+      <div class="flex justify-end gap-2 mt-3 pt-3 border-t border-slate-800">
+        <button type="button" onclick="closeModal('planCanvasModal')" class="interactive-layer bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cerrar</button>
+        <button type="button" onclick="savePlanDrawing()" class="interactive-layer bg-rose-700 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-rose-900/30">Guardar Plano</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Visor Universal Archivos -->
+  <div id="fileViewerModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[160] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('fileViewerModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl flex flex-col max-h-[90vh] relative z-[170]" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+        <div><h3 class="text-base font-bold text-white" id="viewerTitle">Documento</h3><p class="text-xs text-slate-400" id="viewerSubtitle"></p></div>
+        <div class="flex items-center gap-2">
+          <a id="viewerDownloadBtn" href="#" download class="bg-emerald-700 hover:bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-download"></i> Descargar</a>
+          <button type="button" onclick="closeModal('fileViewerModal')" class="text-slate-400 hover:text-white p-1 text-xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      <div id="viewerBody" class="flex-1 overflow-auto bg-slate-950 rounded-xl p-3 flex items-center justify-center text-slate-300 text-xs"></div>
+    </div>
+  </div>
+
   <!-- Cargar Cotización (Coordinador) -->
   <div id="quoteModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('quoteModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative z-[120]" onclick="event.stopPropagation();">
@@ -488,9 +534,8 @@
     </div>
   </div>
 
-  <!-- ======================= SCRIPTS GLOBALES ======================= -->
   <script>
-    const STORAGE_KEY = 'centroxpert_data_v45'; 
+    const STORAGE_KEY = 'centroxpert_data_v51'; 
 
     const defaultData = {
       currentUser: null,
@@ -516,7 +561,7 @@
           id: 'P1',
           code: 'CX-SGE-2026-005',
           title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-          serviceType: 'INSTALACIÓN',
+          serviceType: 'INSTALACIÓN (3255.73)',
           client: 'CONDOMINIO TORRE WASHINGTON',
           contact: 'Ana Milagros Guzman',
           address: 'Torre Washington, Av. George Washington, Santo Domingo',
@@ -581,7 +626,7 @@
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       toast.className = 'bg-slate-800 border border-slate-700 p-4 rounded-xl shadow-2xl flex items-start gap-3 toast-anim text-xs w-72 pointer-events-auto';
-      toast.innerHTML = `<div class="bg-rose-950 text-rose-400 p-2 rounded-lg mt-0.5"><i class="fa-solid fa-bell"></i></div><div class="flex-1 text-slate-200 font-medium pt-1">${msg}</div><button type="button" onclick="this.parentElement.remove()" class="interactive-layer text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>`;
+      toast.innerHTML = `<div class="bg-rose-950 text-rose-400 p-2 rounded-lg mt-0.5"><i class="fa-solid fa-bell"></i></div><div class="flex-1 text-slate-200 font-medium pt-1">${msg}</div><button type="button" onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>`;
       container.appendChild(toast);
       setTimeout(() => { if (toast.parentElement) toast.remove(); }, 6000);
     }
@@ -799,12 +844,6 @@
             ${currentNavTab === 'projects' ? `
               <div class="flex gap-2">
                 <button type="button" onclick="openModal('pdfModal')" class="interactive-layer bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> Importar PDF</button>
-                <button type="button" onclick="exportProjectsToExcel()" class="interactive-layer bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Exportar a Excel</button>
-              </div>
-            ` : ''}
-            ${currentNavTab === 'logistics' ? `
-              <div class="flex gap-2">
-                <button type="button" onclick="exportLogisticsToExcel()" class="interactive-layer bg-emerald-900/70 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold"><i class="fa-solid fa-file-excel"></i> Exportar Datos (Excel)</button>
               </div>
             ` : ''}
           </div>
@@ -812,35 +851,6 @@
           ${currentNavTab === 'projects' ? renderAdminProjects() : currentNavTab === 'logistics' ? renderAdminLogistics() : renderAdminKPIs()}
         </div>
       `;
-    }
-
-    // EXPORT FUNCTIONS
-    function exportProjectsToExcel() {
-      const ws = XLSX.utils.json_to_sheet(appData.projects.map(p => ({
-        Codigo: p.code,
-        Titulo: p.title,
-        Cliente: p.client,
-        Servicio: p.serviceType,
-        Estatus: p.status,
-        Lider: p.techLeader
-      })));
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "Proyectos");
-      XLSX.writeFile(wb, "Proyectos_CentroXpert.xlsx");
-      showToast("Proyectos exportados a Excel.");
-    }
-
-    function exportLogisticsToExcel() {
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.vehicles), "Vehículos");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.technicians), "Técnicos");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.tools), "Herramientas");
-      XLSX.writeFile(wb, "Logistica_CentroXpert.xlsx");
-      showToast("Logística exportada a Excel.");
-    }
-    
-    function exportKPIReportToPDF() {
-        window.print();
     }
 
     function renderAdminProjects() {
@@ -1026,7 +1036,6 @@
           <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between">
             <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking Técnico</h3>
             <div>
-              <button type="button" onclick="exportLogisticsToExcel()" class="interactive-layer bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded text-[11px] mr-1 transition"><i class="fa-solid fa-file-excel mr-1"></i> Excel</button>
               <button type="button" onclick="exportKPIReportToPDF()" class="interactive-layer bg-rose-900 hover:bg-rose-800 text-rose-200 px-3 py-1.5 rounded text-[11px] transition"><i class="fa-solid fa-file-pdf mr-1"></i> Exportar PDF</button>
             </div>
           </div>
@@ -1046,6 +1055,10 @@
           </div>
         </div>
       `;
+    }
+
+    function exportKPIReportToPDF() {
+      window.print();
     }
 
     // ===================================================================
@@ -1192,31 +1205,6 @@
 
     function editCurrentDetailProject() { closeModal('projectDetailModal'); openEditProjectModal(currentDetailProjectId); }
     function quoteCurrentDetailProject() { closeModal('projectDetailModal'); openQuotationModal(currentDetailProjectId); }
-    
-    function printCurrentDetailProjectPDF() {
-      if(!currentDetailProjectId) return;
-      const p = appData.projects.find(x => x.id === currentDetailProjectId);
-      if(!p) return;
-      
-      const printContainer = document.getElementById('printContainer');
-      printContainer.innerHTML = `
-        <div style="font-family: Arial, sans-serif; color: #000;">
-          <h1 style="color: #8b1524; font-size: 24px; margin-bottom: 0;">CentroXpert - Ingeniería</h1>
-          <h3 style="margin-top: 5px; color: #333;">Ficha de Proyecto: ${p.code}</h3>
-          <hr style="border:1px solid #ccc; margin: 15px 0;">
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-            <tr><td style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Proyecto:</strong> ${p.title}</td><td style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Estatus:</strong> ${p.status}</td></tr>
-            <tr><td style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Cliente:</strong> ${p.client}</td><td style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Fecha:</strong> ${p.plannedDate}</td></tr>
-            <tr><td style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Líder:</strong> ${p.techLeader}</td><td style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Cuadrilla:</strong> ${p.techCrew.join(', ')}</td></tr>
-            <tr><td style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Llegada GPS:</strong> ${p.tracking.checkIn || 'N/A'}</td><td style="padding: 5px; border-bottom: 1px solid #eee;"><strong>Salida:</strong> ${p.tracking.checkOut || 'N/A'}</td></tr>
-          </table>
-          <p><strong>Ubicación:</strong> ${p.address}</p>
-          <hr style="border:1px solid #ccc; margin: 15px 0;">
-          ${p.quotation ? `<div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd;"><h4>Cotización Oficial: ${p.quotation.number}</h4><p>Monto RD$: ${p.quotation.amount}</p><p>Condiciones: ${p.quotation.notes}</p></div>` : '<p>Sin cotización formalizada.</p>'}
-        </div>
-      `;
-      window.print();
-    }
     
     function downloadOrderServicePDF() { alert('Descargando copia oficial de la Orden de Servicio en PDF...'); }
     
@@ -1388,9 +1376,10 @@
     function processExtractedSurveyText(text) {
       if (!text || !text.trim()) return;
       const nf = document.getElementById('surveyNotes');
-      nf.value += (nf.value ? '\n' : '') + '[OCR]: ' + text.trim();
+      nf.value += (nf.value ? '
+' : '') + '[OCR]: ' + text.trim();
 
-      const mMatch = text.match(/(\d{2,4})\s*(?:metros?|mts?|m\b)/i);
+      const mMatch = text.match(/(\d{2,4})\s*(?:metros?|mts?|m)/i);
       if (mMatch && !document.getElementById('surveyMeters').value) document.getElementById('surveyMeters').value = mMatch[1];
       const cMatch = text.match(/(\d+)\s*(?:c[aá]maras?|cam)/i);
       if (cMatch) tempSurveyItemsEquip.push({ name: `Cámara IP Detectada (OCR)`, qty: parseInt(cMatch[1])||1, sku: 'CAM-HIK-4MP', price: 5200 });
@@ -1535,6 +1524,319 @@
       closeModal('planCanvasModal');
     }
 
+    /* -----------------------------------------------------------------
+       GEO-ASISTENCIA GPS (LLEGADA Y SALIDA TÉCNICOS)
+       ----------------------------------------------------------------- */
+    function registerTechArrivalWithGeofence(projectId) {
+      const p = appData.projects.find(item => item.id === projectId);
+      if (!p) return;
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const userLat = pos.coords.latitude; const userLng = pos.coords.longitude;
+            p.tracking.checkInCoords = { lat: userLat, lng: userLng };
+            p.tracking.checkInRaw = Date.now();
+            let distanceMeters = null;
+            let isVerified = false;
+
+            if (p.targetLat && p.targetLng) {
+              distanceMeters = calculateHaversineDistance(userLat, userLng, p.targetLat, p.targetLng);
+              isVerified = distanceMeters <= (p.geofenceRadiusMeters || 300);
+            } else {
+              p.targetLat = userLat; p.targetLng = userLng;
+              distanceMeters = 0; isVerified = true;
+            }
+
+            p.tracking.distanceFromTargetMeters = distanceMeters;
+            p.tracking.isVerifiedOnSite = isVerified;
+            p.tracking.checkIn = `${timeStr}`;
+            p.status = 'En Curso';
+            saveData();
+            
+            if(currentAuthUser && currentAuthUser.role === 'tech') {
+              addNotification('admin', `📍 ${currentAuthUser.name} marcó llegada. Distancia a obra: ${distanceMeters} m.`);
+            }
+
+            if(isVerified) alert(`🟢 ¡LLEGADA CONFIRMADA EN SITIO!
+Distancia a la obra: ${distanceMeters} m.`);
+            else alert(`⚠️ LLEGADA FUERA DE RANGO:
+El GPS indica que estás a ${(distanceMeters/1000).toFixed(2)} KM de la obra.`);
+            
+            openProjectDetailModal(projectId); // Actualiza modal
+          },
+          err => {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            p.tracking.checkIn = `${timeStr} (GPS manual)`; p.tracking.checkInRaw = Date.now(); p.tracking.isVerifiedOnSite = false;
+            p.status = 'En Curso'; saveData(); 
+            alert(`Llegada registrada a las ${timeStr}. (No se pudo capturar ubicación GPS).`);
+            openProjectDetailModal(projectId); // Actualiza modal
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      } else {
+        alert("El navegador no soporta geolocalización.");
+      }
+    }
+
+    function registerTechDeparture(projectId) {
+      const p = appData.projects.find(item => item.id === projectId);
+      if (!p) return;
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      p.tracking.checkOut = `${timeStr}`;
+      if (p.tracking.checkInRaw) {
+        const ms = Date.now() - p.tracking.checkInRaw;
+        p.tracking.hoursWorked = `${Math.floor(ms/3600000)}h ${Math.floor((ms%3600000)/60000)}m en obra`;
+      }
+      saveData();
+      alert(`Salida registrada a las ${timeStr}. Jornada finalizada.`);
+      openProjectDetailModal(projectId); // Actualiza modal
+    }
+
+    function setProjectCoordsFromPhone(projId) {
+      const p = appData.projects.find(x => x.id === projId);
+      if(confirm('¿Fijar tu ubicación actual como la coordenada exacta de esta obra?')) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          p.targetLat = pos.coords.latitude; p.targetLng = pos.coords.longitude;
+          saveData(); alert(`¡Coordenadas actualizadas!
+[${p.targetLat.toFixed(5)}, ${p.targetLng.toFixed(5)}]`);
+        });
+      }
+    }
+    
+    /* -----------------------------------------------------------------
+       CRUD Y EDICIÓN DE PROYECTOS (COORDINADOR)
+       ----------------------------------------------------------------- */
+    function handleSaveEditedProject(e) {
+      e.preventDefault();
+      const p = appData.projects.find(item => item.id === document.getElementById('editProjectId').value);
+      if (!p) return;
+      
+      const oldLeader = p.techLeader;
+      const newLeader = document.getElementById('editProjectTechLeader').value;
+      
+      p.code = document.getElementById('editProjectCode').value.trim();
+      p.title = document.getElementById('editProjectTitle').value.trim();
+      p.client = document.getElementById('editProjectClient').value.trim();
+      p.serviceType = document.getElementById('editProjectServiceType').value.trim();
+      p.contact = document.getElementById('editProjectContact').value.trim();
+      p.plannedDate = document.getElementById('editProjectPlannedDate').value.trim();
+      p.address = document.getElementById('editProjectAddress').value.trim();
+      p.status = document.getElementById('editProjectStatus').value;
+      p.targetLat = parseFloat(document.getElementById('editProjectLat').value) || null;
+      p.targetLng = parseFloat(document.getElementById('editProjectLng').value) || null;
+      p.techLeader = newLeader;
+      p.techCrew = document.getElementById('editProjectTechCrew').value ? [document.getElementById('editProjectTechCrew').value] : [];
+
+      closeModal('editProjectModal');
+      
+      if (oldLeader !== newLeader) {
+        addNotification(newLeader, `📋 Tienes una nueva tarea asignada: ${p.code} - ${p.title}.`);
+      } else {
+        addNotification(oldLeader, `🔄 Tu proyecto ha sido actualizado por coordinación: ${p.code}.`);
+      }
+      
+      saveData();
+      alert('¡Proyecto actualizado correctamente!');
+      openProjectDetailModal(p.id);
+    }
+
+    function deleteProjectPrompt() {
+      const id = document.getElementById('editProjectId').value;
+      if (confirm(`¿Eliminar definitivamente este proyecto?`)) {
+        appData.projects = appData.projects.filter(x => x.id !== id);
+        closeModal('editProjectModal'); saveData();
+      }
+    }
+
+    // EXTRAER DATOS DEL PDF EN LA EDICIÓN DE PROYECTO
+    function handleEditPDFUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            page.getTextContent().then(textContent => {
+              const fullText = textContent.items.map(item => item.str).join(' ');
+              
+              // Regex Avanzados para capturar campos estándar
+              const codeMatch = fullText.match(/Código\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
+              const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+Código\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
+              const addrMatch = fullText.match(/Dirección\s+del\s+Servicio[\s\S]*?(?:Persona\s+Contacto)?:?\s*([^]+?)\s+Fecha\s+Planificada/i);
+              const contactMatch = fullText.match(/(?:Persona\s+Contacto)?:?\s*([A-Za-z\s]+?)\s*\+?1?\s*\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/i);
+              const obsMatch = fullText.match(/Observaciones:\s*([^]+?)(?:Cliente:|Técnicos)/i);
+
+              if(codeMatch) document.getElementById('editProjectCode').value = codeMatch[1].trim() || codeMatch[0].trim();
+              if(clientMatch) document.getElementById('editProjectClient').value = clientMatch[1].trim();
+              if(addrMatch) document.getElementById('editProjectAddress').value = addrMatch[1].trim().substring(0,60); // Clean up address
+              
+              if(obsMatch) document.getElementById('editProjectTitle').value += " - " + obsMatch[1].trim();
+              
+              alert('Datos extraídos del PDF. Por favor revisa los campos completados.');
+            });
+          });
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    // EXTRAER DATOS DEL PDF (CREAR PROYECTO NUEVO EN GENERAL)
+    function handlePDFUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            page.getTextContent().then(textContent => {
+              const fullText = textContent.items.map(item => item.str).join(' ');
+              
+              const codeMatch = fullText.match(/Código\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i) || [null, 'CX-SGE-' + Date.now().toString().slice(-4)];
+              const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+Código\s+interno/i) || [null, 'CLIENTE CORPORATIVO'];
+              const addrMatch = fullText.match(/Dirección\s+del\s+Servicio[\s\S]*?(?:Persona\s+Contacto)?:?\s*([^]+?)\s+Fecha\s+Planificada/i) || [null, 'República Dominicana'];
+              const dateMatch = fullText.match(/Fecha\s+Planificada:\s*(\d{1,2}\/\d{1,2}\/\d{4})/i) || [null, new Date().toLocaleDateString('es-DO')];
+              
+              const leaderMatch = fullText.match(/Técnicos\s+Responsables:\s*([a-zA-Z\s]+?)\s*Técnicos\s+Adicionales/i) || [null, 'Enmanuel Matos'];
+              const crewMatch = fullText.match(/Técnicos\s+Adicionales:\s*([^]+?)\s*Cantidad/i);
+
+              const leaderStr = (leaderMatch[1] && leaderMatch[1].trim().length > 3) ? leaderMatch[1].trim() : 'Enmanuel Matos';
+              
+              let crewArr = [];
+              if (crewMatch && crewMatch[1]) {
+                 crewArr = crewMatch[1].split(',').map(c => c.trim()).filter(c => c.length > 2);
+              }
+
+              const theCode = codeMatch[1] || codeMatch[0];
+
+              const newProj = {
+                id: 'P_' + Date.now(),
+                code: theCode,
+                title: 'PROYECTO: ' + (clientMatch[1] ? clientMatch[1].trim().substring(0,15) : theCode),
+                serviceType: 'INSTALACIÓN',
+                client: clientMatch[1] ? clientMatch[1].trim() : 'NO IDENTIFICADO',
+                contact: 'Extraído de PDF',
+                address: addrMatch[1] ? addrMatch[1].trim().substring(0, 100) : 'SD',
+                targetLat: 18.463200, targetLng: -69.905600, geofenceRadiusMeters: 300,
+                plannedDate: dateMatch[1],
+                techLeader: leaderStr,
+                techCrew: crewArr,
+                status: 'Levantamiento',
+                observations: 'Importado automáticamente desde documento PDF.',
+                survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+                serviceOrderFile: { name: file.name, type: 'application/pdf' },
+                quotation: null,
+                budget: { approved: false, services: [], materials: [] },
+                tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+              };
+
+              appData.projects.unshift(newProj);
+              closeModal('pdfModal');
+              saveData();
+              alert(`¡Orden ${newProj.code} importada con éxito desde el PDF!
+Líder asignado: ${newProj.techLeader}`);
+              openProjectDetailModal(newProj.id);
+            });
+          });
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    function loadSampleTorreWashington() {
+      const newProj = {
+        id: 'P_' + Date.now(),
+        code: 'CX-SGE-2026-005',
+        title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
+        serviceType: 'INSTALACIÓN (3255.73)',
+        client: 'CONDOMINIO TORRE WASHINGTON',
+        contact: 'Ana Milagros Guzman',
+        address: 'Torre Washington, Av. George Washington, Santo Domingo',
+        targetLat: 18.463200, targetLng: -69.905600, geofenceRadiusMeters: 300,
+        plannedDate: '26/10/2026',
+        techLeader: 'Enmanuel Matos', techCrew: ['WESLY ALEJANDRO MOJICA'],
+        status: 'Levantamiento',
+        observations: 'INSTALACION DE CAMARAS',
+        survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+        serviceOrderFile: { name: 'TORRE WASHINGTON.pdf', type: 'application/pdf' },
+        quotation: null,
+        budget: { approved: false, services: [], materials: [] },
+        tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+      };
+      appData.projects.unshift(newProj);
+      closeModal('pdfModal');
+      saveData();
+      alert('¡Muestra importada con éxito!');
+    }
+
+    /* -----------------------------------------------------------------
+       COTIZACIÓN
+       ----------------------------------------------------------------- */
+    let activeQuotationProjectId = null;
+    let tempQuoteFileData = null;
+    let tempQuoteFileName = null;
+
+    function openQuotationModal(projId) {
+      activeQuotationProjectId = projId;
+      const p = appData.projects.find(item => item.id === projId);
+      if (!p) return;
+
+      document.getElementById('quoteProjectId').value = projId;
+      
+      if (p.quotation) {
+        document.getElementById('quoteNumber').value = p.quotation.number || '';
+        document.getElementById('quoteAmount').value = p.quotation.amount || '';
+        document.getElementById('quoteDate').value = p.quotation.date || '';
+        document.getElementById('quoteNotes').value = p.quotation.notes || '';
+        document.getElementById('quoteFileLabel').innerText = p.quotation.fileName || 'Archivo actual subido';
+      } else {
+        document.getElementById('quoteNumber').value = 'COT-' + new Date().getFullYear() + '-' + Math.floor(100 + Math.random() * 900);
+        document.getElementById('quoteAmount').value = '';
+        document.getElementById('quoteDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('quoteNotes').value = '50% anticipo, 50% contra entrega.';
+        document.getElementById('quoteFileLabel').innerText = 'Haz clic para seleccionar documento PDF';
+      }
+      openModal('quoteModal');
+    }
+
+    function handleQuoteFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      tempQuoteFileName = file.name;
+      document.getElementById('quoteFileLabel').innerText = file.name;
+      const reader = new FileReader();
+      reader.onload = function(evt) { tempQuoteFileData = evt.target.result; };
+      reader.readAsDataURL(file);
+    }
+
+    function handleSaveQuotation(e) {
+      e.preventDefault();
+      const p = appData.projects.find(item => item.id === activeQuotationProjectId);
+      if (!p) return;
+      p.quotation = {
+        number: document.getElementById('quoteNumber').value.trim(),
+        amount: parseFloat(document.getElementById('quoteAmount').value) || 0,
+        date: document.getElementById('quoteDate').value,
+        notes: document.getElementById('quoteNotes').value.trim(),
+        fileName: tempQuoteFileName || 'Cotizacion.pdf',
+        fileData: tempQuoteFileData
+      };
+      p.status = 'Cotizado Pendiente de Aprobacion'; // Avance de flujo
+      closeModal('quoteModal'); saveData(); 
+      alert('Cotización guardada exitosamente. El estatus pasó a "Cotizado".');
+      openProjectDetailModal(p.id); // Reabrir para ver cambio
+    }
+
   </script>
+</body>
+</html>
+</script>
 </body>
 </html>
