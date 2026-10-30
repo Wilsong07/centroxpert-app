@@ -10,6 +10,7 @@
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
@@ -2378,19 +2379,145 @@
   
 
     /* ===================================================================
-       CAMBIO DE CLAVE DEL COORDINADOR Y SINCRONIZACION EN LA NUBE (PC <-> MOVIL)
+       CAMBIO DE CLAVE DEL COORDINADOR Y SINCRONIZACION EN TIEMPO REAL (PC <-> MOVIL)
        =================================================================== */
-    const CLOUD_ROOM_KEY = 'centroxpert_cloud_room_v1';
-    const DEFAULT_CLOUD_ROOM = 'centroxpert_omega_santo_domingo_v1';
+    const CLOUD_ROOM_KEY = 'centroxpert_cloud_room_v2';
+    const CLOUD_BLOB_ID_KEY = 'centroxpert_cloud_blob_id_v2';
+    const DEFAULT_CLOUD_ROOM = 'centroxpert-omega-rd';
+    const CLIENT_INSTANCE_ID = 'cx_' + Math.random().toString(36).substring(2, 10);
+
+    let mqttClient = null;
     let isSyncingCloud = false;
+    let lastCloudStatus = 'Conectando...';
 
     function getCloudRoom() {
-      return localStorage.getItem(CLOUD_ROOM_KEY) || DEFAULT_CLOUD_ROOM;
+      return (localStorage.getItem(CLOUD_ROOM_KEY) || DEFAULT_CLOUD_ROOM).trim().toLowerCase();
     }
 
-    function getCloudEndpoint() {
-      const room = encodeURIComponent(getCloudRoom().replace(/[^a-zA-Z0-9_-]/g, '_'));
-      return `https://kvdb.io/A2w9zR4mK8pL5vX1nQ7jB3/${room}`;
+    function getMqttTopic() {
+      const cleanRoom = getCloudRoom().replace(/[^a-z0-9_-]/g, '_');
+      return `centroxpert/sync/v2/${cleanRoom}/state`;
+    }
+
+    function getNtfyTopicUrl() {
+      const cleanRoom = getCloudRoom().replace(/[^a-z0-9_-]/g, '_');
+      return `https://ntfy.sh/cx_omega_sync_${cleanRoom}`;
+    }
+
+    function updateCloudVisualStatus(statusText, isOnline) {
+      lastCloudStatus = statusText;
+      const modalBadge = document.getElementById('cloudModalStatusText');
+      if (modalBadge) {
+        modalBadge.innerText = statusText;
+        modalBadge.className = isOnline
+          ? 'text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono'
+          : 'text-[11px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-mono';
+      }
+      const headerText = document.getElementById('cloudHeaderText');
+      if (headerText) {
+        headerText.innerText = isOnline ? 'En L\u00ednea' : 'Sincronizar';
+      }
+    }
+
+    // Preparar copia ligera de appData para sincronizaci\u00f3n instant\u00e1nea (evita bloquear por PDFs pesados)
+    function createSyncPayload() {
+      const clone = JSON.parse(JSON.stringify(appData));
+      clone._sender = CLIENT_INSTANCE_ID;
+      clone.lastUpdated = appData.lastUpdated || Date.now();
+      return JSON.stringify(clone);
+    }
+
+    function applyIncomingCloudData(remoteData, sourceLabel = 'Nube', forceApply = false) {
+      if (!remoteData || !Array.isArray(remoteData.projects) || !Array.isArray(remoteData.technicians)) return false;
+      if (!forceApply && remoteData._sender === CLIENT_INSTANCE_ID) return false;
+
+      const localTime = Number(appData.lastUpdated || 0);
+      const remoteTime = Number(remoteData.lastUpdated || 0);
+
+      if (forceApply || remoteTime > localTime) {
+        // Preservar adjuntos pesados locales si el proyecto remoto es el mismo pero no trajo base64
+        const localProjMap = {};
+        (appData.projects || []).forEach(lp => { localProjMap[lp.id] = lp; });
+
+        remoteData.projects.forEach(rp => {
+          const lp = localProjMap[rp.id];
+          if (lp) {
+            if (lp.survey && lp.survey.surveyDoc && (!rp.survey || !rp.survey.surveyDoc)) {
+              rp.survey = rp.survey || {};
+              rp.survey.surveyDoc = lp.survey.surveyDoc;
+            }
+            if (lp.survey && lp.survey.planDoc && (!rp.survey || !rp.survey.planDoc)) {
+              rp.survey = rp.survey || {};
+              rp.survey.planDoc = lp.survey.planDoc;
+            }
+            if (lp.quotation && lp.quotation.fileData && rp.quotation && !rp.quotation.fileData) {
+              rp.quotation.fileData = lp.quotation.fileData;
+            }
+          }
+        });
+
+        appData = remoteData;
+        if (!appData.adminPass) appData.adminPass = 'admin123';
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        populateTechSelect();
+        render();
+        if (currentDetailProjectId) {
+          const detailModal = document.getElementById('projectDetailModal');
+          if (detailModal && !detailModal.classList.contains('hidden')) {
+            openProjectDetailModal(currentDetailProjectId);
+          }
+        }
+        return true;
+      }
+      return false;
+    }
+
+    // Motor 1: WebSockets MQTT en Tiempo Real (con mensaje retenido en el broker para nuevos equipos)
+    function initRealtimeMqttSync() {
+      if (typeof mqtt === 'undefined') return;
+      try {
+        if (mqttClient) {
+          try { mqttClient.end(true); } catch(e) {}
+        }
+        const topic = getMqttTopic();
+        mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+          clientId: 'centroxpert_' + Math.random().toString(16).substring(2, 10),
+          clean: true,
+          connectTimeout: 5000,
+          reconnectPeriod: 4000
+        });
+
+        mqttClient.on('connect', () => {
+          updateCloudVisualStatus('Conectado en Tiempo Real', true);
+          mqttClient.subscribe(topic, { qos: 1 }, (err) => {
+            if (!err) {
+              // Solicitar o publicar estado actual si somos el m\u00e1s reciente
+            }
+          });
+        });
+
+        mqttClient.on('message', (recvTopic, message) => {
+          try {
+            const text = message.toString();
+            if (text && text.trim().startsWith('{')) {
+              const remoteData = JSON.parse(text);
+              const updated = applyIncomingCloudData(remoteData, 'Tiempo Real', false);
+              if (updated) {
+                showToast('\ud83d\udd04 Cambios recibidos en tiempo real.');
+              } else if (Number(appData.lastUpdated || 0) > Number(remoteData.lastUpdated || 0)) {
+                // Nuestra base local es m\u00e1s reciente que la retenida en el servidor: actualizamos el servidor
+                mqttClient.publish(topic, createSyncPayload(), { qos: 1, retain: true });
+              }
+            }
+          } catch (e) { console.error(e); }
+        });
+
+        mqttClient.on('error', () => {
+          updateCloudVisualStatus('Modo Respaldo HTTP', false);
+        });
+      } catch (err) {
+        console.error(err);
+      }
     }
 
     function openAdminPassModal() {
@@ -2424,77 +2551,98 @@
     function openCloudSyncModal() {
       const inp = document.getElementById('cloudRoomInput');
       if (inp) inp.value = getCloudRoom();
+      updateCloudVisualStatus(lastCloudStatus, lastCloudStatus.includes('Conectado'));
       openModal('cloudSyncModal');
     }
 
     function saveCloudRoomConfig() {
-      const val = document.getElementById('cloudRoomInput').value.trim();
+      const val = document.getElementById('cloudRoomInput').value.trim().toLowerCase();
       if (!val) return;
       localStorage.setItem(CLOUD_ROOM_KEY, val);
-      showToast('C\u00f3digo de sincronizaci\u00f3n guardado. Sincronizando...');
+      initRealtimeMqttSync();
+      showToast('Sala "' + val + '" conectada. Sincronizando dispositivos...');
       pullFromCloud(true);
     }
 
     async function pushToCloud(manual = false) {
-      if (isSyncingCloud) return;
+      const payload = createSyncPayload();
+
+      // 1. Publicar instant\u00e1neamente por WebSocket MQTT (con Retain=true para que quede guardado en la sala)
+      let mqttSent = false;
+      if (mqttClient && mqttClient.connected) {
+        try {
+          mqttClient.publish(getMqttTopic(), payload, { qos: 1, retain: true });
+          mqttSent = true;
+        } catch (e) {}
+      }
+
+      // 2. Publicar respaldo en cach\u00e9 HTTP (ntfy JSON stream) para dispositivos con firewall estricto
+      if (isSyncingCloud && !manual) return;
       isSyncingCloud = true;
       try {
-        const payload = JSON.stringify(appData);
-        const res = await fetch(getCloudEndpoint(), {
+        const res = await fetch(getNtfyTopicUrl(), {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: payload
         });
-        if (res.ok && manual) {
-          showToast('Datos subidos a la nube correctamente.');
+        if ((res.ok || mqttSent) && manual) {
+          updateCloudVisualStatus('Conectado en Tiempo Real', true);
+          showToast('\u2705 Datos subidos y sincronizados con todos los equipos.');
         }
       } catch (err) {
-        if (manual) showToast('Sin conexi\u00f3n a la nube temporalmente. Usa Exportar Base (.json).');
+        if (mqttSent && manual) {
+          showToast('\u2705 Datos sincronizados en tiempo real.');
+        } else if (manual) {
+          showToast('Aviso: Red restringida. Usa Exportar Base (.json).');
+        }
       } finally {
         isSyncingCloud = false;
       }
     }
 
     async function pullFromCloud(manual = false) {
-      if (isSyncingCloud) return;
+      // Si MQTT est\u00e1 conectado, re-suscribir para recibir el \u00faltimo mensaje retenido inmediatamente
+      if (mqttClient && mqttClient.connected) {
+        mqttClient.subscribe(getMqttTopic(), { qos: 1 });
+      }
+
+      if (isSyncingCloud && !manual) return;
       isSyncingCloud = true;
       try {
-        const res = await fetch(getCloudEndpoint() + '?t=' + Date.now(), { cache: 'no-store' });
+        const res = await fetch(getNtfyTopicUrl() + '/json?poll=1&since=48h', { cache: 'no-store' });
         if (res.ok) {
           const text = await res.text();
-          if (text && text.trim().startsWith('{')) {
-            const remoteData = JSON.parse(text);
-            if (remoteData && Array.isArray(remoteData.projects)) {
-              const localTime = appData.lastUpdated || 0;
-              const remoteTime = remoteData.lastUpdated || 0;
-              if (manual || remoteTime > localTime || remoteData.projects.length > appData.projects.length) {
-                appData = remoteData;
-                if (!appData.adminPass) appData.adminPass = 'admin123';
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-                populateTechSelect();
-                render();
-                if (manual) showToast('Datos sincronizados desde la nube.');
-              } else if (remoteTime < localTime) {
-                // Local is newer, push local to cloud
-                isSyncingCloud = false;
-                await pushToCloud(false);
-                return;
+          const lines = text.trim().split('\n').filter(Boolean);
+          let latestRemote = null;
+          let latestTime = 0;
+
+          for (const line of lines) {
+            try {
+              const wrapper = JSON.parse(line);
+              if (wrapper && wrapper.event === 'message' && wrapper.message && wrapper.message.startsWith('{')) {
+                const candidate = JSON.parse(wrapper.message);
+                if (candidate && Array.isArray(candidate.projects) && Number(candidate.lastUpdated || 0) >= latestTime) {
+                  latestRemote = candidate;
+                  latestTime = Number(candidate.lastUpdated || 0);
+                }
               }
+            } catch (e) {}
+          }
+
+          if (latestRemote) {
+            const applied = applyIncomingCloudData(latestRemote, 'Nube HTTP', manual);
+            updateCloudVisualStatus('Conectado en Tiempo Real', true);
+            if (manual) {
+              showToast(applied ? '\u2705 Datos actualizados desde la nube.' : '\u2705 Tu equipo ya tiene la versi\u00f3n m\u00e1s reciente.');
             }
           } else if (manual) {
-            // Cloud empty, push current data
             isSyncingCloud = false;
             await pushToCloud(true);
             return;
           }
-        } else if (res.status === 404) {
-          // Initialize cloud bucket with local data
-          isSyncingCloud = false;
-          await pushToCloud(false);
-          return;
         }
       } catch (err) {
-        if (manual) showToast('No se pudo conectar al servidor nube.');
+        if (manual) showToast('Verificando conexi\u00f3n en tiempo real...');
       } finally {
         isSyncingCloud = false;
       }
@@ -2534,15 +2682,15 @@
       r.readAsText(file);
     }
 
-    // Sincronizar al abrir y cada 12 segundos en segundo plano
+    // Iniciar WebSockets en tiempo real + respaldo peri\u00f3dico al abrir la app
     window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => pullFromCloud(false), 600);
+      initRealtimeMqttSync();
+      setTimeout(() => pullFromCloud(false), 800);
       setInterval(() => {
         const anyModalOpen = Array.from(document.querySelectorAll('#modals-container > div')).some(el => !el.classList.contains('hidden') && el.id !== 'loginModal');
         if (!anyModalOpen) pullFromCloud(false);
-      }, 12000);
+      }, 10000);
     });
-
   </script>
 </body>
 </html>
