@@ -590,19 +590,82 @@
       </form>
     </div>
   </div>
+
+  <!-- Modal Cambiar Clave Coordinador -->
+  <div id="adminPassModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('adminPassModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-sm w-full p-6 shadow-2xl relative" onclick="event.stopPropagation();">
+      <h3 class="text-lg font-bold text-white mb-1"><i class="fa-solid fa-user-shield mr-2 text-blue-400"></i>Clave de Coordinador</h3>
+      <p class="text-xs text-slate-400 mb-3">Actualiza la contrase&#241;a de acceso administrativo.</p>
+      <form onsubmit="handleUpdateAdminPass(event)" class="space-y-3 mt-2">
+        <div><label class="block text-xs text-slate-300 mb-1">Clave Actual</label><input type="password" id="currentAdminPass" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">Nueva Clave</label><input type="password" id="newAdminPass" required minlength="4" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">Confirmar Nueva Clave</label><input type="password" id="confirmAdminPass" required minlength="4" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeModal('adminPassModal')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs font-semibold">Cancelar</button>
+          <button type="submit" class="flex-1 bg-blue-700 hover:bg-blue-600 text-white py-2 rounded-xl text-xs font-bold">Actualizar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Sincronizacion en la Nube (Multi-Dispositivo) -->
+  <div id="cloudSyncModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('cloudSyncModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative space-y-4" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-cloud-arrow-up mr-2 text-emerald-400"></i>Sincronizaci&#243;n Multi-Dispositivo (PC &amp; M&#243;vil)</h3>
+          <p class="text-[11px] text-slate-400">Conecta tu PC y tel&#233;fonos para compartir proyectos en tiempo real</p>
+        </div>
+        <button type="button" onclick="closeModal('cloudSyncModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-3 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-emerald-400 uppercase"><i class="fa-solid fa-tower-broadcast mr-1"></i> 1. Nube en Tiempo Real (Autom&#225;tica)</span>
+          <span id="cloudModalStatusText" class="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">Activo</span>
+        </div>
+        <p class="text-slate-400 text-[11px] leading-relaxed">Todos los dispositivos que tengan el mismo <strong>C&#243;digo de Sala / Empresa</strong> comparten autom&#225;ticamente los proyectos, t&#233;cnicos y estados.</p>
+        <div>
+          <label class="block text-[11px] text-slate-300 mb-1">C&#243;digo de Sala de Sincronizaci&#243;n (Debe ser igual en PC y Tel&#233;fono):</label>
+          <div class="flex gap-2">
+            <input type="text" id="cloudRoomInput" placeholder="centroxpert-omega-rd" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+            <button type="button" onclick="saveCloudRoomConfig()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold">Conectar</button>
+          </div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="pushToCloud(true)" class="flex-1 bg-blue-900/80 hover:bg-blue-800 text-blue-200 py-2 px-3 rounded-xl font-bold border border-blue-700/60 flex items-center justify-center gap-1.5"><i class="fa-solid fa-cloud-arrow-up"></i> Subir mis datos a la Nube</button>
+          <button type="button" onclick="pullFromCloud(true)" class="flex-1 bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 py-2 px-3 rounded-xl font-bold border border-emerald-700/60 flex items-center justify-center gap-1.5"><i class="fa-solid fa-cloud-arrow-down"></i> Descargar de la Nube ahora</button>
+        </div>
+      </div>
+
+      <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2 text-xs">
+        <div class="font-bold text-amber-400 uppercase"><i class="fa-solid fa-database mr-1"></i> 2. Respaldo Directo por Archivo (.JSON)</div>
+        <p class="text-slate-400 text-[11px]">Tambi&#233;n puedes exportar toda la base de datos a un archivo y abrirlo en otro equipo:</p>
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="exportFullDatabaseJSON()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 px-3 rounded-xl font-semibold border border-slate-700"><i class="fa-solid fa-download mr-1 text-amber-400"></i> Exportar Base (.json)</button>
+          <button type="button" onclick="document.getElementById('importDbJsonInput').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 px-3 rounded-xl font-semibold border border-slate-700"><i class="fa-solid fa-upload mr-1 text-blue-400"></i> Importar Base (.json)</button>
+          <input type="file" id="importDbJsonInput" accept=".json" class="hidden" onchange="importFullDatabaseJSON(event)">
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
   <script>
-    const STORAGE_KEY = 'centroxpert_data_v80'; 
+    const STORAGE_KEY = 'centroxpert_data_v85'; 
 
     const defaultData = {
       currentUser: null,
       notifications: [], 
+      adminPass: 'admin123',
+      lastUpdated: 1730320000000,
       technicians: [
         { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Herrera', vehiclePlate: 'L428901', pin: '1234' },
         { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'Los Alcarrizos', vehiclePlate: 'L389104', pin: '1234' },
         { id: 'T3', name: 'Carlos Morales', level: 'Especialista A', phone: '849-555-0188', address: 'Villa Mella', vehiclePlate: 'L451299', pin: '1234' },
-        { id: 'T4', name: 'Julio Barranco', level: 'Supervisor', phone: '809-555-0100', address: 'DN', vehiclePlate: '', pin: '1234' }
+        { id: 'T4', name: 'Julio Barranco', level: 'Supervisor', phone: '809-555-0100', address: 'DN', vehiclePlate: '', pin: '1234' },
+        { id: 'T5', name: 'JUAN PACHECO', level: 'Especialista A', phone: '809-555-0199', address: 'Santo Domingo', vehiclePlate: '', pin: '1234' }
       ],
       vehicles: [
         { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520, lastFuelKm: 48120 },
@@ -615,6 +678,28 @@
       ],
       fuelLogs: [],
       projects: [
+        {
+          id: 'P2',
+          code: 'CX-SGE-2026-033',
+          title: 'BELLA CASA INTERNACIONAL S A',
+          serviceType: 'INSTALACI\u00d3N',
+          client: 'BELLA CASA INTERNACIONAL S A',
+          contact: 'Administraci\u00f3n Bella Casa',
+          address: 'Bella Casa Internacional, Santo Domingo',
+          targetLat: 18.472000,
+          targetLng: -69.939000,
+          geofenceRadiusMeters: 300,
+          plannedDate: '30/10/2026',
+          techLeader: 'JUAN PACHECO',
+          techCrew: [],
+          status: 'Levantamiento',
+          observations: 'LEVANTAMIENTO E INSTALACION',
+          survey: { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+          serviceOrderFile: { name: 'Orden_BELLA_CASA_CX-SGE-2026-033.pdf', type: 'application/pdf' },
+          quotation: null,
+          budget: { approved: false, services: [], materials: [] },
+          tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+        },
         {
           id: 'P1',
           code: 'CX-SGE-2026-005',
@@ -673,7 +758,14 @@
       return JSON.parse(JSON.stringify(defaultData));
     }
 
-    function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appData)); render(); }
+    function saveData(skipCloudPush = false) {
+      appData.lastUpdated = Date.now();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      render();
+      if (!skipCloudPush) {
+        pushToCloud(false);
+      }
+    }
     function goHome() { render(); }
     
     function openModal(id) { 
@@ -748,7 +840,8 @@
     function handleAdminLogin(e) {
       e.preventDefault();
       const pass = document.getElementById('loginAdminPass').value;
-      if (pass === 'admin123') { currentAuthUser = { role: 'admin', name: 'Coordinador General' }; closeModal('loginModal'); render(); }
+      const validPass = appData.adminPass || 'admin123';
+      if (pass === validPass) { currentAuthUser = { role: 'admin', name: 'Coordinador General' }; closeModal('loginModal'); render(); }
       else { alert('Clave de Coordinaci\u00f3n incorrecta'); }
     }
 
@@ -789,7 +882,10 @@
       const unreadCount = appData.notifications.filter(n => ((isTech && n.to === currentAuthUser.name) || (!isTech && n.to === 'admin')) && !n.read).length;
 
       actions.innerHTML = `
-        <div class="relative cursor-pointer mr-2" onclick="openNotifModal()">
+        <button type="button" onclick="openCloudSyncModal()" title="Sincronizar PC y M\u00f3vil en la Nube" class="bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 px-2.5 py-1.5 rounded-xl border border-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-cloud-arrow-up" id="cloudHeaderIcon"></i> <span class="hidden md:inline" id="cloudHeaderText">Sincronizar</span>
+        </button>
+        <div class="relative cursor-pointer mx-1" onclick="openNotifModal()">
           <i class="fa-solid fa-bell text-slate-300 hover:text-white text-lg transition"></i>
           ${unreadCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-rose-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">${unreadCount}</span>` : ''}
         </div>
@@ -800,8 +896,8 @@
             <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'T\u00e9cnico' : 'Coordinador'}</div>
           </div>
         </div>
-        ${isTech ? `<button type="button" onclick="openPinModal()" class="bg-slate-800 text-rose-400 p-2 rounded-xl border border-slate-700"><i class="fa-solid fa-key"></i></button>` : ''}
-        <button type="button" onclick="logout()" class="bg-slate-800 text-slate-300 p-2 rounded-xl border border-slate-700"><i class="fa-solid fa-right-from-bracket"></i></button>
+        ${isTech ? `<button type="button" onclick="openPinModal()" title="Cambiar mi PIN" class="bg-slate-800 hover:bg-slate-700 text-rose-400 px-2.5 py-2 rounded-xl border border-slate-700 text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-key"></i> <span class="hidden sm:inline">PIN</span></button>` : `<button type="button" onclick="openAdminPassModal()" title="Cambiar Clave de Coordinador" class="bg-slate-800 hover:bg-slate-700 text-blue-400 px-2.5 py-2 rounded-xl border border-slate-700 text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-key"></i> <span class="hidden sm:inline">Clave</span></button>`}
+        <button type="button" onclick="logout()" title="Cerrar Sesi\u00f3n" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-xl border border-slate-700"><i class="fa-solid fa-right-from-bracket"></i></button>
       `;
     }
 
@@ -2278,6 +2374,174 @@
       showToast('Orden TORRE WASHINGTON cargada y asignada.');
       openProjectDetailModal(newProj.id);
     }
+
+  
+
+    /* ===================================================================
+       CAMBIO DE CLAVE DEL COORDINADOR Y SINCRONIZACION EN LA NUBE (PC <-> MOVIL)
+       =================================================================== */
+    const CLOUD_ROOM_KEY = 'centroxpert_cloud_room_v1';
+    const DEFAULT_CLOUD_ROOM = 'centroxpert_omega_santo_domingo_v1';
+    let isSyncingCloud = false;
+
+    function getCloudRoom() {
+      return localStorage.getItem(CLOUD_ROOM_KEY) || DEFAULT_CLOUD_ROOM;
+    }
+
+    function getCloudEndpoint() {
+      const room = encodeURIComponent(getCloudRoom().replace(/[^a-zA-Z0-9_-]/g, '_'));
+      return `https://kvdb.io/A2w9zR4mK8pL5vX1nQ7jB3/${room}`;
+    }
+
+    function openAdminPassModal() {
+      document.getElementById('currentAdminPass').value = '';
+      document.getElementById('newAdminPass').value = '';
+      document.getElementById('confirmAdminPass').value = '';
+      openModal('adminPassModal');
+    }
+
+    function handleUpdateAdminPass(e) {
+      e.preventDefault();
+      const current = document.getElementById('currentAdminPass').value;
+      const newP = document.getElementById('newAdminPass').value;
+      const confirmP = document.getElementById('confirmAdminPass').value;
+      const validPass = appData.adminPass || 'admin123';
+
+      if (current !== validPass) {
+        alert('La clave actual de Coordinador no es correcta.');
+        return;
+      }
+      if (newP !== confirmP) {
+        alert('La nueva clave y la confirmaci\u00f3n no coinciden.');
+        return;
+      }
+      appData.adminPass = newP;
+      closeModal('adminPassModal');
+      saveData();
+      showToast('Clave de Coordinador actualizada y sincronizada.');
+    }
+
+    function openCloudSyncModal() {
+      const inp = document.getElementById('cloudRoomInput');
+      if (inp) inp.value = getCloudRoom();
+      openModal('cloudSyncModal');
+    }
+
+    function saveCloudRoomConfig() {
+      const val = document.getElementById('cloudRoomInput').value.trim();
+      if (!val) return;
+      localStorage.setItem(CLOUD_ROOM_KEY, val);
+      showToast('C\u00f3digo de sincronizaci\u00f3n guardado. Sincronizando...');
+      pullFromCloud(true);
+    }
+
+    async function pushToCloud(manual = false) {
+      if (isSyncingCloud) return;
+      isSyncingCloud = true;
+      try {
+        const payload = JSON.stringify(appData);
+        const res = await fetch(getCloudEndpoint(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload
+        });
+        if (res.ok && manual) {
+          showToast('Datos subidos a la nube correctamente.');
+        }
+      } catch (err) {
+        if (manual) showToast('Sin conexi\u00f3n a la nube temporalmente. Usa Exportar Base (.json).');
+      } finally {
+        isSyncingCloud = false;
+      }
+    }
+
+    async function pullFromCloud(manual = false) {
+      if (isSyncingCloud) return;
+      isSyncingCloud = true;
+      try {
+        const res = await fetch(getCloudEndpoint() + '?t=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) {
+          const text = await res.text();
+          if (text && text.trim().startsWith('{')) {
+            const remoteData = JSON.parse(text);
+            if (remoteData && Array.isArray(remoteData.projects)) {
+              const localTime = appData.lastUpdated || 0;
+              const remoteTime = remoteData.lastUpdated || 0;
+              if (manual || remoteTime > localTime || remoteData.projects.length > appData.projects.length) {
+                appData = remoteData;
+                if (!appData.adminPass) appData.adminPass = 'admin123';
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+                populateTechSelect();
+                render();
+                if (manual) showToast('Datos sincronizados desde la nube.');
+              } else if (remoteTime < localTime) {
+                // Local is newer, push local to cloud
+                isSyncingCloud = false;
+                await pushToCloud(false);
+                return;
+              }
+            }
+          } else if (manual) {
+            // Cloud empty, push current data
+            isSyncingCloud = false;
+            await pushToCloud(true);
+            return;
+          }
+        } else if (res.status === 404) {
+          // Initialize cloud bucket with local data
+          isSyncingCloud = false;
+          await pushToCloud(false);
+          return;
+        }
+      } catch (err) {
+        if (manual) showToast('No se pudo conectar al servidor nube.');
+      } finally {
+        isSyncingCloud = false;
+      }
+    }
+
+    function exportFullDatabaseJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+      const a = document.createElement('a');
+      a.href = dataStr;
+      a.download = `CentroXpert_BaseDatos_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('Base de datos exportada.');
+    }
+
+    function importFullDatabaseJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const r = new FileReader();
+      r.onload = function(evt) {
+        try {
+          const imported = JSON.parse(evt.target.result);
+          if (imported && Array.isArray(imported.projects) && Array.isArray(imported.technicians)) {
+            appData = imported;
+            saveData();
+            populateTechSelect();
+            closeModal('cloudSyncModal');
+            showToast('Base de datos importada y sincronizada en la nube.');
+          } else {
+            alert('El archivo no tiene el formato de CentroXpert.');
+          }
+        } catch (err) {
+          alert('Error al leer el archivo JSON.');
+        }
+      };
+      r.readAsText(file);
+    }
+
+    // Sincronizar al abrir y cada 12 segundos en segundo plano
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => pullFromCloud(false), 600);
+      setInterval(() => {
+        const anyModalOpen = Array.from(document.querySelectorAll('#modals-container > div')).some(el => !el.classList.contains('hidden') && el.id !== 'loginModal');
+        if (!anyModalOpen) pullFromCloud(false);
+      }, 12000);
+    });
 
   </script>
 </body>
