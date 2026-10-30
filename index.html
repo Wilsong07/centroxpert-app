@@ -45,12 +45,12 @@
         </div>
         <div class="hidden sm:block border-l border-slate-700 pl-3">
           <div class="text-xs uppercase tracking-widest text-slate-400 font-bold flex items-center gap-2">
-            Ingeniería y Servicios
+            Ingenier&#237;a y Servicios
             <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 live-pulse"></span>GPS EN TIEMPO REAL
             </span>
           </div>
-          <div class="text-sm font-semibold text-rose-400">Control Operativo & Rendimiento Técnico</div>
+          <div class="text-sm font-semibold text-rose-400">Control Operativo & Rendimiento T&#233;cnico</div>
         </div>
       </div>
       <div class="flex items-center gap-3" id="headerUserActions"></div>
@@ -71,7 +71,7 @@
         <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3>
       </div>
       <div class="flex border-b border-slate-800 mb-5 relative z-10">
-        <button type="button" id="tabLoginTec" onclick="switchLoginTab('tec')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400">Técnico</button>
+        <button type="button" id="tabLoginTec" onclick="switchLoginTab('tec')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400">T&#233;cnico</button>
         <button type="button" id="tabLoginAdmin" onclick="switchLoginTab('admin')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200">Coordinador</button>
       </div>
       <form id="formLoginTec" onsubmit="handleTecLogin(event)" class="space-y-4">
@@ -80,14 +80,14 @@
           <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"></select>
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">PIN (Clave genérica: 1234)</label>
-          <input type="password" id="loginTecPin" required placeholder="••••" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:border-rose-500">
+          <label class="block text-xs font-medium text-slate-300 mb-1">PIN (Clave gen&#233;rica: 1234)</label>
+          <input type="password" id="loginTecPin" required placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:border-rose-500">
         </div>
         <button type="submit" class="w-full bg-rose-700 hover:bg-rose-600 font-bold py-2.5 rounded-xl text-sm shadow-lg shadow-rose-900/30">Entrar</button>
       </form>
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinación (admin123)</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinaci&#243;n (admin123)</label>
           <input type="password" id="loginAdminPass" required placeholder="admin123" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:border-rose-500">
         </div>
         <button type="submit" class="w-full bg-blue-700 hover:bg-blue-600 font-bold py-2.5 rounded-xl text-sm shadow-lg shadow-blue-900/30">Entrar</button>
@@ -130,7 +130,7 @@
             <span id="detailProjectStatusBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full"></span>
             <span id="detailProjectGpsBadge" class="hidden text-xs font-bold px-2 py-0.5 rounded-full"></span>
           </div>
-          <h2 id="detailProjectTitle" class="text-xl font-bold text-white mt-1">Título</h2>
+          <h2 id="detailProjectTitle" class="text-xl font-bold text-white mt-1">T&#237;tulo</h2>
           <div id="detailProjectClient" class="text-xs text-slate-400 mt-0.5">Cliente</div>
         </div>
         <button type="button" onclick="closeModal('projectDetailModal')" class="text-slate-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
@@ -138,14 +138,14 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-          <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Ubicación & Contacto</span>
+          <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Ubicaci&#243;n & Contacto</span>
           <p id="detailProjectAddress" class="text-white font-medium">Dir</p>
           <p id="detailProjectContact" class="text-slate-400 mt-1">Cont</p>
           <div class="mt-2.5"><a id="detailProjectMapBtn" href="#" target="_blank" class="bg-emerald-800/80 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 shadow"><i class="fa-solid fa-diamond-turn-right"></i> Mapa GPS</a></div>
         </div>
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
           <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Personal Asignado</span>
-          <div class="mt-1"><span class="text-slate-400">Líder:</span> <p id="detailProjectLeader" class="text-rose-400 font-bold text-sm"></p></div>
+          <div class="mt-1"><span class="text-slate-400">L&#237;der:</span> <p id="detailProjectLeader" class="text-rose-400 font-bold text-sm"></p></div>
           <div class="mt-1.5"><span class="text-slate-400">Cuadrilla / Adicionales:</span> <p id="detailProjectCrew" class="text-white font-medium"></p></div>
         </div>
         <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
@@ -159,9 +159,9 @@
         </div>
       </div>
 
-      <!-- BOTONES TÉCNICOS EN EL DETALLE -->
+      <!-- BOTONES T&#201;CNICOS EN EL DETALLE -->
       <div id="techActionButtonsContainer" class="hidden bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-lg my-2">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-3"><i class="fa-solid fa-helmet-safety mr-1.5"></i> Panel de Acción del Técnico</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-3"><i class="fa-solid fa-helmet-safety mr-1.5"></i> Panel de Acci&#243;n del T&#233;cnico</h3>
         <div class="flex flex-wrap gap-2">
           <button type="button" onclick="triggerTechArrival()" class="flex-1 min-w-[140px] bg-blue-800/90 hover:bg-blue-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-blue-600/50 shadow"><i class="fa-solid fa-location-crosshairs text-base"></i> Registrar Llegada</button>
           <button type="button" onclick="triggerTechDeparture()" class="flex-1 min-w-[140px] bg-amber-800/90 hover:bg-amber-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-amber-600/50 shadow"><i class="fa-solid fa-flag-checkered text-base"></i> Registrar Salida</button>
@@ -173,7 +173,7 @@
       <div id="detailProjectSurveyContainer" class="space-y-3 hidden"></div>
 
       <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-folder-open text-rose-400 mr-1.5"></i> Documentación Adjunta</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-folder-open text-rose-400 mr-1.5"></i> Documentaci&#243;n Adjunta</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
             <div>
@@ -194,7 +194,7 @@
           </div>
           <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
             <div>
-              <div class="flex items-center gap-2 text-blue-400 mb-1"><i class="fa-solid fa-map-location-dot"></i> <span class="font-bold text-xs">Plano Técnico</span></div>
+              <div class="flex items-center gap-2 text-blue-400 mb-1"><i class="fa-solid fa-map-location-dot"></i> <span class="font-bold text-xs">Plano T&#233;cnico</span></div>
               <p id="detailProjectPlanDocName" class="text-[11px] text-slate-300 truncate font-mono">Sin plano</p>
             </div>
             <div id="detailProjectPlanDocActions" class="mt-2 flex gap-1.5 hidden">
@@ -212,7 +212,7 @@
         <div class="flex flex-wrap gap-1.5" id="detailProjectStatusButtons"></div>
         <div class="flex gap-2">
           <button type="button" id="detailProjectEditBtn" onclick="editCurrentDetailProject()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1 font-semibold"><i class="fa-solid fa-user-pen"></i> Editar / Reasignar</button>
-          <button type="button" id="detailProjectQuoteBtn" onclick="quoteCurrentDetailProject()" class="text-xs bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-file-invoice-dollar"></i> Cargar Cotización</button>
+          <button type="button" id="detailProjectQuoteBtn" onclick="quoteCurrentDetailProject()" class="text-xs bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-file-invoice-dollar"></i> Cargar Cotizaci&#243;n</button>
           <button type="button" onclick="printCurrentDetailProjectPDF()" class="text-xs bg-rose-900 hover:bg-rose-800 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-print"></i> Imprimir Ficha</button>
         </div>
       </div>
@@ -225,7 +225,7 @@
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <div>
           <button type="button" onclick="closeModal('editProjectModal'); openProjectDetailModal(editingProjectId);" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-arrow-left"></i> Atrás al Proyecto
+            <i class="fa-solid fa-arrow-left"></i> Atr&#225;s al Proyecto
           </button>
           <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-to-square mr-2 text-rose-400"></i>Editar Proyecto & Reasignar</h3>
         </div>
@@ -233,7 +233,7 @@
       </div>
 
       <div class="bg-slate-950/50 border border-slate-800 rounded-xl p-3 mb-4 text-center">
-        <p class="text-xs text-slate-400 mb-2">¿Tienes la orden oficial en PDF? Autocompleta los campos:</p>
+        <p class="text-xs text-slate-400 mb-2">&#191;Tienes la orden oficial en PDF? Autocompleta los campos:</p>
         <button type="button" onclick="document.getElementById('editPdfInput').click()" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-1.5 rounded-xl border border-rose-700 inline-flex items-center gap-1.5">
           <i class="fa-solid fa-file-pdf"></i> Extraer datos del PDF
         </button>
@@ -243,14 +243,14 @@
       <form onsubmit="handleSaveEditedProject(event)" class="space-y-4">
         <input type="hidden" id="editProjectId">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div><label class="block text-xs text-slate-300 mb-1">Código</label><input type="text" id="editProjectCode" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+          <div><label class="block text-xs text-slate-300 mb-1">C&#243;digo</label><input type="text" id="editProjectCode" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
           <div><label class="block text-xs text-slate-300 mb-1">Estado</label>
             <select id="editProjectStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
               <option value="Levantamiento">Levantamiento</option><option value="En Presupuesto">En Presupuesto</option><option value="Cotizado Pendiente de Aprobacion">Cotizado Pendiente de Aprobacion</option><option value="Aprobado">Aprobado</option><option value="En Curso">En Curso</option><option value="Finalizado">Finalizado</option>
             </select>
           </div>
         </div>
-        <div><label class="block text-xs text-slate-300 mb-1">Título / Descripción</label><input type="text" id="editProjectTitle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">T&#237;tulo / Descripci&#243;n</label><input type="text" id="editProjectTitle" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div><label class="block text-xs text-slate-300 mb-1">Cliente</label><input type="text" id="editProjectClient" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
           <div><label class="block text-xs text-slate-300 mb-1">Servicio</label><input type="text" id="editProjectServiceType" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
@@ -259,7 +259,7 @@
           <div><label class="block text-xs text-slate-300 mb-1">Contacto / Tel</label><input type="text" id="editProjectContact" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
           <div><label class="block text-xs text-slate-300 mb-1">Fecha</label><input type="text" id="editProjectPlannedDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
         </div>
-        <div><label class="block text-xs text-slate-300 mb-1">Dirección</label><input type="text" id="editProjectAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">Direcci&#243;n</label><input type="text" id="editProjectAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
 
         <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl space-y-2">
           <div class="flex items-center justify-between">
@@ -273,9 +273,9 @@
         </div>
 
         <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl space-y-3">
-          <div class="text-xs font-bold text-rose-400 uppercase"><i class="fa-solid fa-users mr-1"></i> Equipo Técnico Asignado</div>
+          <div class="text-xs font-bold text-rose-400 uppercase"><i class="fa-solid fa-users mr-1"></i> Equipo T&#233;cnico Asignado</div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div><label class="block text-xs text-slate-300 mb-1">Líder</label><select id="editProjectTechLeader" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-bold text-rose-400"></select></div>
+            <div><label class="block text-xs text-slate-300 mb-1">L&#237;der</label><select id="editProjectTechLeader" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-bold text-rose-400"></select></div>
             <div><label class="block text-xs text-slate-300 mb-1">Cuadrilla</label><select id="editProjectTechCrew" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select></div>
           </div>
         </div>
@@ -293,7 +293,7 @@
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
         <div>
           <button type="button" onclick="closeModal('surveyModal'); openProjectDetailModal(currentSurveyProjectId);" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-arrow-left"></i> Atrás al Proyecto
+            <i class="fa-solid fa-arrow-left"></i> Atr&#225;s al Proyecto
           </button>
           <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-clipboard-list mr-2 text-rose-400"></i>Cargar Levantamiento & Planos</h3>
           <p class="text-xs text-slate-400" id="surveyProjectTitle"></p>
@@ -307,7 +307,7 @@
           <div>
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold uppercase tracking-wider text-rose-400"><i class="fa-solid fa-camera mr-1.5"></i> 1. Evidencia de Campo</span>
-              <span id="ocrStatusBadge" class="text-[10px] text-slate-400 italic">Formato múltiple</span>
+              <span id="ocrStatusBadge" class="text-[10px] text-slate-400 italic">Formato m&#250;ltiple</span>
             </div>
             <p class="text-[11px] text-slate-400 mb-3">Fotos, apuntes, documentos Word o PDF de notas.</p>
             <button type="button" onclick="document.getElementById('surveyDocInput').click()" class="w-full bg-slate-800 hover:bg-slate-700 text-white text-xs px-3 py-2.5 rounded-xl border border-slate-700 font-bold transition flex items-center justify-center gap-2 mb-2">
@@ -331,10 +331,10 @@
         <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-blue-400"><i class="fa-solid fa-map-location-dot mr-1.5"></i> 2. Plano Técnico</span>
+              <span class="text-xs font-bold uppercase tracking-wider text-blue-400"><i class="fa-solid fa-map-location-dot mr-1.5"></i> 2. Plano T&#233;cnico</span>
               <span class="text-[10px] text-slate-400 italic">IMG, PDF, DWG</span>
             </div>
-            <p class="text-[11px] text-slate-400 mb-3">Sube el plano arquitectónico o dibuja un croquis digital.</p>
+            <p class="text-[11px] text-slate-400 mb-3">Sube el plano arquitect&#243;nico o dibuja un croquis digital.</p>
             <div class="grid grid-cols-2 gap-2 mb-2">
               <button type="button" onclick="document.getElementById('planFileInput').click()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs px-2.5 py-2.5 rounded-xl border border-slate-700 font-bold transition flex justify-center items-center gap-1.5"><i class="fa-solid fa-cloud-arrow-up text-blue-400"></i> Subir Plano</button>
               <input type="file" id="planFileInput" accept="image/*,application/pdf,.dwg,.dxf" class="hidden" onchange="handlePlanDocUpload(event)">
@@ -358,32 +358,32 @@
         <input type="hidden" id="surveyProjectId">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div><label class="block text-xs font-medium text-slate-300 mb-1">Metros Lineales</label><input type="number" id="surveyMeters" placeholder="160" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
-          <div><label class="block text-xs font-medium text-slate-300 mb-1">Estructura / Canalización</label>
+          <div><label class="block text-xs font-medium text-slate-300 mb-1">Estructura / Canalizaci&#243;n</label>
             <select id="surveyStructure" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-              <option>Ductería EMT Existente</option><option>Cielo Raso / Drywall</option><option>Estructura Abierta / Techo Industrial</option><option>Zanja Exterior / Soterrado</option><option>Canaleta Plástica Superficial</option>
+              <option>Ducter&#237;a EMT Existente</option><option>Cielo Raso / Drywall</option><option>Estructura Abierta / Techo Industrial</option><option>Zanja Exterior / Soterrado</option><option>Canaleta Pl&#225;stica Superficial</option>
             </select>
           </div>
-          <div><label class="block text-xs font-medium text-slate-300 mb-1">Respaldo Eléctrico</label>
+          <div><label class="block text-xs font-medium text-slate-300 mb-1">Respaldo El&#233;ctrico</label>
             <select id="surveyPower" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
-              <option>110V Regulada con UPS</option><option>110V Línea Directa</option><option>220V Bifásica</option><option>Requiere Acometida Nueva</option>
+              <option>110V Regulada con UPS</option><option>110V L&#237;nea Directa</option><option>220V Bif&#225;sica</option><option>Requiere Acometida Nueva</option>
             </select>
           </div>
         </div>
 
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1 flex justify-between">
-            <span>Observaciones en Sitio / Texto Extraído de OCR</span>
+            <span>Observaciones en Sitio / Texto Extra&#237;do de OCR</span>
             <button type="button" onclick="processManualOCRFake()" class="text-[10px] bg-blue-900 hover:bg-blue-800 text-blue-200 px-2 rounded-lg border border-blue-700 transition">Forzar lectura OCR</button>
           </label>
-          <textarea id="surveyNotes" rows="3" placeholder="Detalles de instalación, cruces, etc..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
+          <textarea id="surveyNotes" rows="3" placeholder="Detalles de instalaci&#243;n, cruces, etc..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
         </div>
 
         <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase text-blue-400"><i class="fa-solid fa-store mr-1.5"></i>Catálogo tienda.omega.com.do</span>
+            <span class="text-xs font-bold uppercase text-blue-400"><i class="fa-solid fa-store mr-1.5"></i>Cat&#225;logo tienda.omega.com.do</span>
           </div>
           <div class="flex gap-2 mb-3">
-            <input type="text" id="omegaSearchInput" placeholder="Buscar cámara, switch..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
+            <input type="text" id="omegaSearchInput" placeholder="Buscar c&#225;mara, switch..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
             <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold text-white">Buscar</button>
           </div>
           <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1"></div>
@@ -406,15 +406,15 @@
   <div id="planCanvasModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[150] flex items-center justify-center p-3 hidden no-print" onclick="closeModal('planCanvasModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-5 shadow-2xl flex flex-col relative" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
-        <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis Técnico</h3>
+        <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pen-ruler mr-2 text-rose-400"></i>Editor de Croquis T&#233;cnico</h3>
         <button type="button" onclick="closeModal('planCanvasModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950 p-2.5 rounded-xl border border-slate-800 mb-3 text-xs">
         <div class="flex items-center gap-2">
-          <button type="button" onclick="setCanvasTool('pen')" id="toolBtn_pen" class="bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-pencil"></i> Lápiz</button>
-          <button type="button" onclick="setCanvasTool('line')" id="toolBtn_line" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-slash"></i> Línea</button>
+          <button type="button" onclick="setCanvasTool('pen')" id="toolBtn_pen" class="bg-rose-700 text-white px-2.5 py-1.5 rounded-lg font-bold"><i class="fa-solid fa-pencil"></i> L&#225;piz</button>
+          <button type="button" onclick="setCanvasTool('line')" id="toolBtn_line" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-slash"></i> L&#237;nea</button>
           <button type="button" onclick="setCanvasTool('rect')" id="toolBtn_rect" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-regular fa-square"></i> Cuadro</button>
-          <button type="button" onclick="setCanvasTool('camera')" id="toolBtn_camera" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-video text-rose-400"></i> Cámara</button>
+          <button type="button" onclick="setCanvasTool('camera')" id="toolBtn_camera" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-video text-rose-400"></i> C&#225;mara</button>
           <button type="button" onclick="setCanvasTool('text')" id="toolBtn_text" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-font"></i> Texto</button>
           <button type="button" onclick="setCanvasTool('eraser')" id="toolBtn_eraser" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg"><i class="fa-solid fa-eraser"></i> Borrador</button>
         </div>
@@ -448,23 +448,23 @@
     </div>
   </div>
 
-  <!-- Cargar Cotización (Coordinador) -->
+  <!-- Cargar Cotizaci&#243;n (Coordinador) -->
   <div id="quoteModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('quoteModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <div>
           <button type="button" onclick="closeModal('quoteModal'); openProjectDetailModal(activeQuotationProjectId);" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5">
-            <i class="fa-solid fa-arrow-left"></i> Atrás al Proyecto
+            <i class="fa-solid fa-arrow-left"></i> Atr&#225;s al Proyecto
           </button>
-          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-file-invoice-dollar mr-2 text-emerald-400"></i>Cargar Cotización Oficial</h3>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-file-invoice-dollar mr-2 text-emerald-400"></i>Cargar Cotizaci&#243;n Oficial</h3>
         </div>
         <button type="button" onclick="closeModal('quoteModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form onsubmit="handleSaveQuotation(event)" class="space-y-4">
         <input type="hidden" id="quoteProjectId">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Número de Cotización Oficial</label>
-          <input type="text" id="quoteNumber" required placeholder="Número COT-" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
+          <label class="block text-xs font-medium text-slate-300 mb-1">N&#250;mero de Cotizaci&#243;n Oficial</label>
+          <input type="text" id="quoteNumber" required placeholder="N&#250;mero COT-" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono">
         </div>
         <div>
           <label class="block text-xs font-medium text-slate-300 mb-1">Monto Total Cotizado (RD$)</label>
@@ -475,7 +475,7 @@
           <input type="date" id="quoteDate" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Archivo de Cotización (PDF / Excel)</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">Archivo de Cotizaci&#243;n (PDF / Excel)</label>
           <div class="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-xl p-4 text-center cursor-pointer transition" onclick="document.getElementById('quoteFileInput').click()">
             <i class="fa-solid fa-file-arrow-up text-2xl text-emerald-400 mb-2"></i>
             <div id="quoteFileLabel" class="text-xs text-slate-300">Haz clic para seleccionar documento</div>
@@ -487,7 +487,7 @@
           <textarea id="quoteNotes" placeholder="Condiciones..." rows="2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></textarea>
         </div>
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-800 mt-2">
-          <button type="submit" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl text-xs font-bold w-full">Guardar Cotización Oficial</button>
+          <button type="submit" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl text-xs font-bold w-full">Guardar Cotizaci&#243;n Oficial</button>
         </div>
       </form>
     </div>
@@ -503,7 +503,7 @@
       <div class="border-2 border-dashed border-slate-700 hover:border-rose-500 bg-slate-950/50 rounded-2xl p-6 text-center cursor-pointer mb-4" onclick="document.getElementById('pdfInput').click()">
         <i class="fa-solid fa-cloud-arrow-up text-3xl text-rose-400 mb-2"></i>
         <div class="text-sm font-semibold text-white">Subir Orden PDF</div>
-        <p class="text-[10px] text-slate-400 mt-1">Extrae código y cliente automáticamente</p>
+        <p class="text-[10px] text-slate-400 mt-1">Extrae c&#243;digo y cliente autom&#225;ticamente</p>
         <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePDFUpload(event)">
       </div>
       <div class="text-center border-t border-slate-800 pt-3">
@@ -512,25 +512,25 @@
     </div>
   </div>
 
-  <!-- Modal Registrar / Editar Técnico -->
+  <!-- Modal Registrar / Editar T&#233;cnico -->
   <div id="techModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('techModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal Técnico</h3>
+        <h3 class="text-base font-bold text-white" id="techModalTitle"><i class="fa-solid fa-user-gear mr-2 text-rose-400"></i>Personal T&#233;cnico</h3>
         <button type="button" onclick="closeModal('techModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form onsubmit="handleSaveTechnician(event)" class="space-y-3">
         <input type="hidden" id="techEditId">
         <div><label class="block text-xs text-slate-300 mb-1">Nombre Completo</label><input type="text" id="techName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
         <div class="grid grid-cols-2 gap-3">
-          <div><label class="block text-xs text-slate-300 mb-1">Rango / Categoría</label>
-            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Especialista A</option><option>Especialista B</option><option>Auxiliar Técnico</option><option>Supervisor</option></select>
+          <div><label class="block text-xs text-slate-300 mb-1">Rango / Categor&#237;a</label>
+            <select id="techLevel" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Especialista A</option><option>Especialista B</option><option>Auxiliar T&#233;cnico</option><option>Supervisor</option></select>
           </div>
-          <div><label class="block text-xs text-slate-300 mb-1">Teléfono</label><input type="text" id="techPhone" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+          <div><label class="block text-xs text-slate-300 mb-1">Tel&#233;fono</label><input type="text" id="techPhone" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
         </div>
-        <div><label class="block text-xs text-slate-300 mb-1">Dirección de Vivienda</label><input type="text" id="techAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">Direcci&#243;n de Vivienda</label><input type="text" id="techAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
         <div>
-          <label class="block text-xs text-slate-300 mb-1">Vehículo Asignado</label>
+          <label class="block text-xs text-slate-300 mb-1">Veh&#237;culo Asignado</label>
           <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select>
         </div>
         <div class="flex justify-between items-center pt-3 border-t border-slate-800 mt-4">
@@ -544,11 +544,11 @@
     </div>
   </div>
 
-  <!-- Modal Registrar / Editar Vehículo -->
+  <!-- Modal Registrar / Editar Veh&#237;culo -->
   <div id="vehicleModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('vehicleModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl relative" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
-        <h3 class="text-base font-bold text-white" id="vehicleModalTitle">Vehículo</h3>
+        <h3 class="text-base font-bold text-white" id="vehicleModalTitle">Veh&#237;culo</h3>
         <button type="button" onclick="closeModal('vehicleModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form onsubmit="handleSaveVehicle(event)" class="space-y-3">
@@ -556,7 +556,7 @@
         <div><label class="block text-xs text-slate-300 mb-1">Placa Oficial</label><input type="text" id="vehiclePlate" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase"></div>
         <div><label class="block text-xs text-slate-300 mb-1">Marca y Modelo</label><input type="text" id="vehicleModel" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
         <div class="grid grid-cols-2 gap-3">
-          <div><label class="block text-xs text-slate-300 mb-1">Odómetro (KM)</label><input type="number" id="vehicleOdo" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+          <div><label class="block text-xs text-slate-300 mb-1">Od&#243;metro (KM)</label><input type="number" id="vehicleOdo" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
           <div><label class="block text-xs text-slate-300 mb-1">Estatus</label><select id="vehicleStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Operativo</option><option>Mantenimiento</option><option>Fuera de Servicio</option></select></div>
         </div>
         <div><label class="block text-xs text-slate-300 mb-1">Custodio</label><select id="vehicleAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select></div>
@@ -578,10 +578,10 @@
       <form onsubmit="handleSaveTool(event)" class="space-y-3">
         <input type="hidden" id="toolEditId">
         <div class="grid grid-cols-2 gap-3">
-          <div><label class="block text-xs text-slate-300 mb-1">Código</label><input type="text" id="toolCode" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase"></div>
-          <div><label class="block text-xs text-slate-300 mb-1">Condición</label><select id="toolCondition" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Excelente</option><option>Bueno</option><option>Requiere Revisión</option></select></div>
+          <div><label class="block text-xs text-slate-300 mb-1">C&#243;digo</label><input type="text" id="toolCode" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono uppercase"></div>
+          <div><label class="block text-xs text-slate-300 mb-1">Condici&#243;n</label><select id="toolCondition" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Excelente</option><option>Bueno</option><option>Requiere Revisi&#243;n</option></select></div>
         </div>
-        <div><label class="block text-xs text-slate-300 mb-1">Descripción</label><input type="text" id="toolName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div><label class="block text-xs text-slate-300 mb-1">Descripci&#243;n</label><input type="text" id="toolName" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
         <div><label class="block text-xs text-slate-300 mb-1">Custodio</label><select id="toolAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select></div>
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800 mt-4">
           <button type="button" onclick="closeModal('toolModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
@@ -591,10 +591,9 @@
     </div>
   </div>
 </div>
-</div>
 
   <script>
-    const STORAGE_KEY = 'centroxpert_data_v52'; 
+    const STORAGE_KEY = 'centroxpert_data_v80'; 
 
     const defaultData = {
       currentUser: null,
@@ -620,7 +619,7 @@
           id: 'P1',
           code: 'CX-SGE-2026-005',
           title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-          serviceType: 'INSTALACIÓN',
+          serviceType: 'INSTALACI\u00d3N',
           client: 'CONDOMINIO TORRE WASHINGTON',
           contact: 'Ana Milagros Guzman',
           address: 'Torre Washington, Av. George Washington, Santo Domingo',
@@ -632,7 +631,7 @@
           techCrew: ['WESLY ALEJANDRO MOJICA'],
           status: 'Levantamiento',
           observations: 'INSTALACION EN AREA DE ELEVADOR',
-          survey: { meters: 0, structure: 'Ductería EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+          survey: { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
           serviceOrderFile: { name: 'Orden_TORRE_WASHINGTON_CX-SGE-2026-005.pdf', type: 'application/pdf' },
           quotation: null,
           budget: { approved: false, services: [], materials: [] },
@@ -743,14 +742,14 @@
       if (tech && (tech.pin === pin || (!tech.pin && pin === '1234') || pin === '1234')) {
         currentAuthUser = { role: 'tech', name: tech.name, techId: tech.id };
         closeModal('loginModal'); render();
-      } else { alert('PIN incorrecto. Si eres nuevo, el PIN genérico es 1234.'); }
+      } else { alert('PIN incorrecto. Si eres nuevo, el PIN gen\u00e9rico es 1234.'); }
     }
 
     function handleAdminLogin(e) {
       e.preventDefault();
       const pass = document.getElementById('loginAdminPass').value;
       if (pass === 'admin123') { currentAuthUser = { role: 'admin', name: 'Coordinador General' }; closeModal('loginModal'); render(); }
-      else { alert('Clave de Coordinación incorrecta'); }
+      else { alert('Clave de Coordinaci\u00f3n incorrecta'); }
     }
 
     function logout() { currentAuthUser = null; document.getElementById('loginTecPin').value = ''; document.getElementById('loginAdminPass').value = ''; populateTechSelect(); openModal('loginModal'); render(); }
@@ -764,7 +763,7 @@
       const tech = appData.technicians.find(t => t.name === currentAuthUser.name);
       if (tech) {
         if (tech.pin && tech.pin !== current && current !== '1234') { alert('PIN actual incorrecto.'); return; }
-        tech.pin = newP; alert('¡PIN actualizado! Usa tu nueva clave a partir de ahora.'); closeModal('pinModal'); saveData();
+        tech.pin = newP; alert('\u00a1PIN actualizado! Usa tu nueva clave a partir de ahora.'); closeModal('pinModal'); saveData();
       }
     }
 
@@ -778,7 +777,7 @@
     function render() {
       renderHeader();
       const container = document.getElementById('mainContainer');
-      if (!currentAuthUser) { container.innerHTML = `<div class="text-center p-10"><button type="button" onclick="openModal('loginModal')" class="bg-rose-700 text-white px-4 py-2 rounded">Iniciar Sesión</button></div>`; return; }
+      if (!currentAuthUser) { container.innerHTML = `<div class="text-center p-10"><button type="button" onclick="openModal('loginModal')" class="bg-rose-700 text-white px-4 py-2 rounded">Iniciar Sesi\u00f3n</button></div>`; return; }
       if (currentAuthUser.role === 'tech') container.innerHTML = renderTechView(); else container.innerHTML = renderAdminView();
     }
 
@@ -798,7 +797,7 @@
           <i class="fa-solid ${isTech ? 'fa-hard-hat text-rose-400' : 'fa-user-tie text-blue-400'} text-sm"></i>
           <div class="text-left leading-tight">
             <div class="text-xs font-bold text-white">${currentAuthUser.name}</div>
-            <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'Técnico' : 'Coordinador'}</div>
+            <div class="text-[10px] text-slate-400 uppercase tracking-wider">${isTech ? 'T\u00e9cnico' : 'Coordinador'}</div>
           </div>
         </div>
         ${isTech ? `<button type="button" onclick="openPinModal()" class="bg-slate-800 text-rose-400 p-2 rounded-xl border border-slate-700"><i class="fa-solid fa-key"></i></button>` : ''}
@@ -838,13 +837,13 @@
           ${currentTechTab === 'my_tasks' ? `
             <div class="space-y-4">
               <div class="bg-slate-900 border border-slate-800 p-3.5 rounded-2xl flex items-center justify-between gap-3 shadow">
-                <input type="text" value="${projectSearchQuery}" oninput="handleSearchInput(this.value)" placeholder="Buscar cliente o código..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
+                <input type="text" value="${projectSearchQuery}" oninput="handleSearchInput(this.value)" placeholder="Buscar cliente o c\u00f3digo..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
               </div>
               <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
                 <div class="overflow-x-auto">
                   <table class="w-full text-xs text-left">
                     <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase">
-                      <tr><th class="p-3">Proyecto</th><th class="p-3">GPS / Llegada</th><th class="p-3 text-right">Acción</th></tr>
+                      <tr><th class="p-3">Proyecto</th><th class="p-3">GPS / Llegada</th><th class="p-3 text-right">Acci\u00f3n</th></tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800">
                       ${myProjects.length === 0 ? `<tr><td colspan="3" class="p-4 text-center text-slate-500">No hay tareas asignadas.</td></tr>` : myProjects.map(p => {
@@ -854,7 +853,7 @@
                         <tr class="table-row-hover transition" onclick="openProjectDetailModal('${p.id}')">
                           <td class="p-3">
                             <div class="font-bold text-white">${p.title}</div>
-                            <div class="text-[10px] text-slate-400">${p.code} — ${p.client}</div>
+                            <div class="text-[10px] text-slate-400">${p.code} \u2014 ${p.client}</div>
                           </td>
                           <td class="p-3">
                             ${isInSite ? `<span class="px-2 py-0.5 rounded font-bold text-[10px] ${isVerif ? 'bg-emerald-950 text-emerald-400':'bg-amber-950 text-amber-400'}">EN SITIO</span>` : `<span class="text-slate-500 text-[10px]">Pendiente</span>`}
@@ -871,8 +870,8 @@
           ` : `
             <div class="space-y-6">
               <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
-                <h3 class="text-sm font-bold text-white uppercase mb-3"><i class="fa-solid fa-truck-pickup text-rose-400 mr-2"></i> Vehículo Asignado</h3>
-                ${myVehicle ? `<div class="text-white">${myVehicle.plate} - ${myVehicle.model}</div>` : `<p class="text-xs text-slate-400 italic">No tienes vehículo asignado.</p>`}
+                <h3 class="text-sm font-bold text-white uppercase mb-3"><i class="fa-solid fa-truck-pickup text-rose-400 mr-2"></i> Veh\u00edculo Asignado</h3>
+                ${myVehicle ? `<div class="text-white">${myVehicle.plate} - ${myVehicle.model}</div>` : `<p class="text-xs text-slate-400 italic">No tienes veh\u00edculo asignado.</p>`}
               </div>
               <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
                 <h3 class="text-sm font-bold text-white uppercase mb-3"><i class="fa-solid fa-toolbox text-amber-400 mr-2"></i> Herramientas (${myTools.length})</h3>
@@ -905,14 +904,14 @@
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-slate-400 uppercase">Total Proyectos</div><div class="text-2xl font-black text-white mt-1">${appData.projects.length}</div></div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-emerald-400 uppercase"><span class="w-2 h-2 rounded-full bg-emerald-400 live-pulse inline-block mr-1"></span>En Sitio</div><div class="text-2xl font-black text-emerald-400 mt-1">${techInSite}</div></div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-slate-400 uppercase">Vehículos Libres</div><div class="text-2xl font-black text-blue-400 mt-1">${availVehicles}</div></div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-slate-400 uppercase">Técnicos</div><div class="text-2xl font-black text-rose-400 mt-1">${appData.technicians.length}</div></div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-slate-400 uppercase">Veh\u00edculos Libres</div><div class="text-2xl font-black text-blue-400 mt-1">${availVehicles}</div></div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow"><div class="text-xs text-slate-400 uppercase">T\u00e9cnicos</div><div class="text-2xl font-black text-rose-400 mt-1">${appData.technicians.length}</div></div>
           </div>
 
           <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
             <div class="flex flex-wrap gap-2">
               <button type="button" onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-list-check mr-1"></i> Proyectos</button>
-              <button type="button" onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Logística</button>
+              <button type="button" onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Log\u00edstica</button>
               <button type="button" onclick="setNavTab('kpis')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'kpis' ? 'bg-emerald-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-chart-line mr-1"></i> Informes KPI</button>
             </div>
             ${currentNavTab === 'projects' ? `
@@ -951,11 +950,11 @@
 
     function exportLogisticsToExcel() {
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.vehicles), "Vehículos");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.technicians), "Técnicos");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.vehicles), "Veh\u00edculos");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.technicians), "T\u00e9cnicos");
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.tools), "Herramientas");
       XLSX.writeFile(wb, "Logistica_CentroXpert.xlsx");
-      showToast("Logística exportada a Excel.");
+      showToast("Log\u00edstica exportada a Excel.");
     }
     
     function exportKPIReportToPDF() {
@@ -976,7 +975,7 @@
             <div class="overflow-x-auto">
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase">
-                  <tr><th class="p-3">Código</th><th class="p-3">Cliente</th><th class="p-3">Técnico</th><th class="p-3">Estatus</th><th class="p-3 text-right">Acción</th></tr>
+                  <tr><th class="p-3">C\u00f3digo</th><th class="p-3">Cliente</th><th class="p-3">T\u00e9cnico</th><th class="p-3">Estatus</th><th class="p-3 text-right">Acci\u00f3n</th></tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800">
                   ${filtered.map(p => `
@@ -1000,9 +999,9 @@
       return `
         <div class="space-y-4">
           <div class="flex gap-2 border-b border-slate-800 pb-1">
-            <button type="button" onclick="setLogisticsSubtab('vehicles')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='vehicles'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Vehículos</button>
+            <button type="button" onclick="setLogisticsSubtab('vehicles')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='vehicles'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Veh\u00edculos</button>
             <button type="button" onclick="setLogisticsSubtab('fuel')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='fuel'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Combustible</button>
-            <button type="button" onclick="setLogisticsSubtab('staff')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='staff'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Técnicos</button>
+            <button type="button" onclick="setLogisticsSubtab('staff')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='staff'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">T\u00e9cnicos</button>
             <button type="button" onclick="setLogisticsSubtab('tools')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='tools'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Herramientas</button>
           </div>
           ${currentLogisticsSubtab === 'vehicles' ? renderVehiclesLogistics() : ''}
@@ -1018,10 +1017,10 @@
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
           <div class="p-3 border-b border-slate-800 text-right">
             <button type="button" onclick="openVehicleModal()" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">
-              <i class="fa-solid fa-plus mr-1"></i> Registrar Vehículo
+              <i class="fa-solid fa-plus mr-1"></i> Registrar Veh\u00edculo
             </button>
           </div>
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Placa</th><th class="p-3">Modelo</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acción</th></tr></thead>
+          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Placa</th><th class="p-3">Modelo</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acci\u00f3n</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
             ${appData.vehicles.map(v => `
               <tr><td class="p-3 text-white font-mono">${v.plate}</td><td class="p-3 text-slate-300">${v.model}</td><td class="p-3 text-blue-400">${v.assignedTo || 'Ninguno'}</td>
@@ -1035,7 +1034,7 @@
     function renderFuelLogistics() {
       return `
         <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
-          <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Llenado Semanal & Desvío</h3>
+          <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Llenado Semanal & Desv\u00edo</h3>
           <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div><label class="block text-[10px] text-slate-400 mb-1">Placa</label><select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs">${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate}</option>`).join('')}</select></div>
             <div><label class="block text-[10px] text-slate-400 mb-1">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-700 text-slate-400 px-2 py-1.5 rounded text-xs"></div>
@@ -1044,7 +1043,7 @@
             <div><label class="block text-[10px] text-slate-400 mb-1">Total (RD$)</label><input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 border border-slate-700 text-emerald-400 px-2 py-1.5 rounded text-xs font-bold"></div>
             <div class="md:col-span-5 text-right mt-2"><button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">Guardar Combustible</button></div>
           </form>
-          <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400"><tr><th class="p-2">Fecha</th><th class="p-2">Placa</th><th class="p-2">Dist</th><th class="p-2">Monto</th><th class="p-2">Desvío</th></tr></thead>
+          <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400"><tr><th class="p-2">Fecha</th><th class="p-2">Placa</th><th class="p-2">Dist</th><th class="p-2">Monto</th><th class="p-2">Desv\u00edo</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
             ${appData.fuelLogs.map(l => `<tr><td class="p-2">${l.date}</td><td class="p-2">${l.plate}</td><td class="p-2 text-emerald-400">${l.dist} KM</td><td class="p-2">RD$ ${l.cost}</td><td class="p-2 font-bold ${parseFloat(l.dev)<15?'text-emerald-400':'text-rose-400'}">${l.dev}</td></tr>`).join('')}
           </tbody></table></div>
@@ -1085,10 +1084,10 @@
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
           <div class="p-3 border-b border-slate-800 text-right">
             <button type="button" onclick="openTechModal()" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">
-              <i class="fa-solid fa-plus mr-1"></i> Registrar Técnico
+              <i class="fa-solid fa-plus mr-1"></i> Registrar T\u00e9cnico
             </button>
           </div>
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Nombre</th><th class="p-3">Rango</th><th class="p-3 text-right">Acción</th></tr></thead>
+          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Nombre</th><th class="p-3">Rango</th><th class="p-3 text-right">Acci\u00f3n</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
             ${appData.technicians.map(t => `
               <tr><td class="p-3 text-white font-bold">${t.name}</td><td class="p-3 text-slate-300">${t.level}</td>
@@ -1107,10 +1106,10 @@
               <i class="fa-solid fa-plus mr-1"></i> Registrar Herramienta
             </button>
           </div>
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Código</th><th class="p-3">Nombre</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acción</th></tr></thead>
+          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">C\u00f3digo</th><th class="p-3">Nombre</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acci\u00f3n</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
             ${appData.tools.map(t => `
-              <tr><td class="p-3 text-amber-400 font-mono">${t.code}</td><td class="p-3 text-white">${t.name}</td><td class="p-3">${t.assignedTo || 'Almacén'}</td>
+              <tr><td class="p-3 text-amber-400 font-mono">${t.code}</td><td class="p-3 text-white">${t.name}</td><td class="p-3">${t.assignedTo || 'Almac\u00e9n'}</td>
               <td class="p-3 text-right"><button type="button" onclick="openToolModal('${t.id}')" class="text-blue-400 mr-2 p-1.5 bg-slate-800 hover:bg-slate-700 rounded"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteTool('${t.id}')" class="text-rose-400 p-1.5 bg-red-950 hover:bg-red-900 rounded"><i class="fa-solid fa-trash"></i></button></td></tr>
             `).join('')}
           </tbody></table>
@@ -1143,14 +1142,14 @@
       return `
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
           <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between">
-            <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking Técnico</h3>
+            <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico</h3>
             <div>
               <button type="button" onclick="exportLogisticsToExcel()" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded text-[11px] mr-1 transition"><i class="fa-solid fa-file-excel mr-1"></i> Excel</button>
               <button type="button" onclick="exportKPIReportToPDF()" class="bg-rose-900 hover:bg-rose-800 text-rose-200 px-3 py-1.5 rounded text-[11px] transition"><i class="fa-solid fa-file-pdf mr-1"></i> Exportar PDF</button>
             </div>
           </div>
           <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950/60 text-slate-400 uppercase"><tr><th class="p-3">Técnico</th><th class="p-3">Tareas Cierre</th><th class="p-3 text-center">Cumplimiento GPS</th><th class="p-3 text-center">Desvío</th><th class="p-3">Score Eficiencia</th></tr></thead>
+          <table class="w-full text-xs text-left"><thead class="bg-slate-950/60 text-slate-400 uppercase"><tr><th class="p-3">T\u00e9cnico</th><th class="p-3">Tareas Cierre</th><th class="p-3 text-center">Cumplimiento GPS</th><th class="p-3 text-center">Desv\u00edo</th><th class="p-3">Score Eficiencia</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
             ${techStats.sort((a,b) => b.performanceScore - a.performanceScore).map((t, idx) => `
               <tr class="hover:bg-slate-800/40">
@@ -1172,7 +1171,7 @@
       document.getElementById('vehicleAssignedTo').innerHTML = '<option value="">-- Sin asignar --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
       if (id) {
         const v = appData.vehicles.find(item => item.id === id);
-        document.getElementById('vehicleModalTitle').innerText = 'Editar Vehículo ' + v.plate;
+        document.getElementById('vehicleModalTitle').innerText = 'Editar Veh\u00edculo ' + v.plate;
         document.getElementById('vehicleEditId').value = v.id;
         document.getElementById('vehiclePlate').value = v.plate;
         document.getElementById('vehicleModel').value = v.model;
@@ -1180,7 +1179,7 @@
         document.getElementById('vehicleStatus').value = v.status;
         document.getElementById('vehicleAssignedTo').value = v.assignedTo || '';
       } else {
-        document.getElementById('vehicleModalTitle').innerText = 'Registrar Vehículo';
+        document.getElementById('vehicleModalTitle').innerText = 'Registrar Veh\u00edculo';
         document.getElementById('vehicleEditId').value = '';
         document.getElementById('vehiclePlate').value = ''; document.getElementById('vehicleModel').value = ''; document.getElementById('vehicleOdo').value = 0; document.getElementById('vehicleStatus').value = 'Operativo'; document.getElementById('vehicleAssignedTo').value = '';
       }
@@ -1202,18 +1201,18 @@
       closeModal('vehicleModal'); saveData();
     }
     
-    function deleteVehicle(id) { if(confirm('¿Eliminar vehículo?')) { appData.vehicles = appData.vehicles.filter(x => x.id !== id); saveData(); } }
+    function deleteVehicle(id) { if(confirm('\u00bfEliminar veh\u00edculo?')) { appData.vehicles = appData.vehicles.filter(x => x.id !== id); saveData(); } }
 
     function openTechModal(id = null) {
-      document.getElementById('techVehiclePlate').innerHTML = '<option value="">-- Sin vehículo --</option>' + appData.vehicles.map(v => `<option value="${v.plate}">${v.plate}</option>`).join('');
+      document.getElementById('techVehiclePlate').innerHTML = '<option value="">-- Sin veh\u00edculo --</option>' + appData.vehicles.map(v => `<option value="${v.plate}">${v.plate}</option>`).join('');
       if (id) {
         const t = appData.technicians.find(item => item.id === id);
-        document.getElementById('techModalTitle').innerText = 'Editar Técnico';
+        document.getElementById('techModalTitle').innerText = 'Editar T\u00e9cnico';
         document.getElementById('techEditId').value = t.id; document.getElementById('techName').value = t.name; document.getElementById('techLevel').value = t.level;
         document.getElementById('techPhone').value = t.phone; document.getElementById('techAddress').value = t.address; document.getElementById('techVehiclePlate').value = t.vehiclePlate || '';
         document.getElementById('techResetPinBtn').classList.remove('hidden');
       } else {
-        document.getElementById('techModalTitle').innerText = 'Registrar Técnico';
+        document.getElementById('techModalTitle').innerText = 'Registrar T\u00e9cnico';
         document.getElementById('techEditId').value = ''; document.getElementById('techName').value = ''; document.getElementById('techPhone').value = '';
         document.getElementById('techAddress').value = ''; document.getElementById('techVehiclePlate').value = '';
         document.getElementById('techResetPinBtn').classList.add('hidden');
@@ -1223,7 +1222,7 @@
 
     function resetTechPinDirectly() {
       const t = appData.technicians.find(item => item.id === document.getElementById('techEditId').value);
-      if(t && confirm(`¿Restablecer PIN de ${t.name} a 1234?`)) { t.pin = '1234'; saveData(); alert('PIN restablecido a 1234.'); }
+      if(t && confirm(`\u00bfRestablecer PIN de ${t.name} a 1234?`)) { t.pin = '1234'; saveData(); alert('PIN restablecido a 1234.'); }
     }
 
     function handleSaveTechnician(e) {
@@ -1244,10 +1243,10 @@
       closeModal('techModal'); populateTechSelect(); saveData();
     }
 
-    function deleteTechnician(id) { if(confirm('¿Eliminar técnico?')) { appData.technicians = appData.technicians.filter(x => x.id !== id); populateTechSelect(); saveData(); } }
+    function deleteTechnician(id) { if(confirm('\u00bfEliminar t\u00e9cnico?')) { appData.technicians = appData.technicians.filter(x => x.id !== id); populateTechSelect(); saveData(); } }
 
     function openToolModal(id = null) {
-      document.getElementById('toolAssignedTo').innerHTML = '<option value="">-- Almacén --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      document.getElementById('toolAssignedTo').innerHTML = '<option value="">-- Almac\u00e9n --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
       if (id) {
         const t = appData.tools.find(item => item.id === id);
         document.getElementById('toolModalTitle').innerText = 'Editar Herramienta';
@@ -1275,7 +1274,7 @@
       closeModal('toolModal'); saveData();
     }
 
-    function deleteTool(id) { if(confirm('¿Eliminar herramienta?')) { appData.tools = appData.tools.filter(x => x.id !== id); saveData(); } }
+    function deleteTool(id) { if(confirm('\u00bfEliminar herramienta?')) { appData.tools = appData.tools.filter(x => x.id !== id); saveData(); } }
 
     function openEditProjectModal(projId) {
       const p = appData.projects.find(item => item.id === projId);
@@ -1346,10 +1345,10 @@
             page.getTextContent().then(textContent => {
               const fullText = textContent.items.map(item => item.str).join(' ');
               
-              const codeMatch = fullText.match(/Código\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
-              const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+Código\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
-              const addrMatch = fullText.match(/Dirección\s+del\s+Servicio[\s\S]*?(?:Persona\s+Contacto)?:?\s*([^]+?)\s+Fecha\s+Planificada/i);
-              const obsMatch = fullText.match(/Observaciones:\s*([^]+?)(?:Cliente:|Técnicos)/i);
+              const codeMatch = fullText.match(/C\u00f3digo\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
+              const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+C\u00f3digo\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
+              const addrMatch = fullText.match(/Direcci\u00f3n\s+del\s+Servicio[\s\S]*?(?:Persona\s+Contacto)?:?\s*([^]+?)\s+Fecha\s+Planificada/i);
+              const obsMatch = fullText.match(/Observaciones:\s*([^]+?)(?:Cliente:|T\u00e9cnicos)/i);
 
               if(codeMatch) document.getElementById('editProjectCode').value = codeMatch[1].trim() || codeMatch[0].trim();
               if(clientMatch) document.getElementById('editProjectClient').value = clientMatch[1].trim();
@@ -1357,12 +1356,927 @@
               
               if(obsMatch) document.getElementById('editProjectTitle').value = "SERVICIO: " + obsMatch[1].trim().substring(0,30);
               
-              alert('Datos extraídos del PDF (beta). Por favor revisa los campos completados.');
+              alert('Datos extra\u00eddos del PDF (beta). Por favor revisa los campos completados.');
             });
           });
         });
       };
       fileReader.readAsArrayBuffer(file);
+    }
+
+  
+
+    // ===================================================================
+    // DETALLES DE PROYECTO, EDICI\u00d3N, LEVANTAMIENTO, GPS, COTIZACI\u00d3N Y PDF
+    // ===================================================================
+
+    function openProjectDetailModal(projId) {
+      currentDetailProjectId = projId;
+      const p = appData.projects.find(x => x.id === projId);
+      if (!p) return;
+
+      const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
+      const isVerified = p.tracking && p.tracking.isVerifiedOnSite;
+
+      document.getElementById('detailProjectCode').innerText = p.code || 'S/C';
+      document.getElementById('detailProjectTitle').innerText = p.title || 'Proyecto';
+      document.getElementById('detailProjectClient').innerText = `${p.client || 'Cliente'} \u2014 ${p.serviceType || 'Servicio'}`;
+      
+      const statusBadge = document.getElementById('detailProjectStatusBadge');
+      statusBadge.innerText = p.status;
+      statusBadge.className = `text-xs font-semibold px-2.5 py-0.5 rounded-full ${getStatusBadge(p.status)}`;
+
+      const gpsBadge = document.getElementById('detailProjectGpsBadge');
+      if (isInSite) {
+        gpsBadge.classList.remove('hidden');
+        gpsBadge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${isVerified ? 'bg-emerald-400' : 'bg-amber-400'} mr-1 inline-block live-pulse"></span>${isVerified ? 'EN SITIO AHORA' : 'FUERA DE RANGO'}`;
+        gpsBadge.className = `text-xs font-bold px-2 py-0.5 rounded-full ${isVerified ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}`;
+      } else {
+        gpsBadge.classList.add('hidden');
+      }
+
+      document.getElementById('detailProjectAddress').innerText = p.address || 'Sin direcci\u00f3n';
+      document.getElementById('detailProjectContact').innerText = p.contact || 'Sin contacto directo';
+      
+      const mapBtn = document.getElementById('detailProjectMapBtn');
+      if (mapBtn) {
+        const query = (p.targetLat && p.targetLng) ? `${p.targetLat},${p.targetLng}` : encodeURIComponent((p.client || '') + ' ' + (p.address || ''));
+        mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
+      }
+
+      document.getElementById('detailProjectLeader').innerText = p.techLeader || 'Sin asignar';
+      document.getElementById('detailProjectCrew').innerText = (p.techCrew && p.techCrew.length > 0) ? p.techCrew.join(', ') : 'N/A';
+
+      document.getElementById('detailProjectCheckIn').innerText = (p.tracking && p.tracking.checkIn) ? p.tracking.checkIn : 'No registrada';
+      document.getElementById('detailProjectCheckOut').innerText = (p.tracking && p.tracking.checkOut) ? p.tracking.checkOut : (isInSite ? 'Trabajando en sitio...' : 'Pendiente');
+      document.getElementById('detailProjectDuration').innerText = (p.tracking && p.tracking.hoursWorked) ? p.tracking.hoursWorked : '';
+      
+      const distEl = document.getElementById('detailProjectDistance');
+      if (p.tracking && p.tracking.distanceFromTargetMeters !== null && p.tracking.distanceFromTargetMeters !== undefined) {
+        distEl.innerText = `Distancia a geocerca: ${p.tracking.distanceFromTargetMeters} m`;
+      } else {
+        distEl.innerText = '';
+      }
+
+      document.getElementById('detailProjectOrderFileName').innerText = p.serviceOrderFile ? p.serviceOrderFile.name : 'Orden_Servicio.pdf';
+
+      const surveyDocName = document.getElementById('detailProjectSurveyDocName');
+      const surveyDocActions = document.getElementById('detailProjectSurveyDocActions');
+      if (p.survey && p.survey.surveyDoc) {
+        surveyDocName.innerText = p.survey.surveyDoc.name;
+        surveyDocActions.classList.remove('hidden');
+      } else {
+        surveyDocName.innerText = 'Sin evidencia subida';
+        surveyDocActions.classList.add('hidden');
+      }
+
+      const planDocName = document.getElementById('detailProjectPlanDocName');
+      const planDocActions = document.getElementById('detailProjectPlanDocActions');
+      if (p.survey && p.survey.planDoc) {
+        planDocName.innerText = p.survey.planDoc.name;
+        planDocActions.classList.remove('hidden');
+      } else {
+        planDocName.innerText = 'Sin plano / croquis';
+        planDocActions.classList.add('hidden');
+      }
+
+      // Resultados del Levantamiento
+      const surveyContainer = document.getElementById('detailProjectSurveyContainer');
+      if (p.survey && (p.survey.meters > 0 || p.survey.notes || (p.survey.itemsEquip && p.survey.itemsEquip.length > 0) || (p.survey.itemsMat && p.survey.itemsMat.length > 0))) {
+        let equipHtml = (p.survey.itemsEquip || []).map(i => `<li>${i.qty}x ${i.name} (RD$ ${(i.price || 1500).toLocaleString()})</li>`).join('');
+        let matHtml = (p.survey.itemsMat || []).map(i => `<li>${i.qty}x ${i.name} (RD$ ${(i.price || 500).toLocaleString()})</li>`).join('');
+        surveyContainer.innerHTML = `
+          <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs shadow-inner">
+            <div class="font-bold text-amber-400 mb-2 border-b border-slate-800 pb-2"><i class="fa-solid fa-clipboard-check mr-1.5"></i> Resultados del Levantamiento T\u00e9cnico</div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+              <div><span class="text-slate-500">Metros Lineales:</span> <span class="text-white font-bold">${p.survey.meters || 0} m</span></div>
+              <div><span class="text-slate-500">Canalizaci\u00f3n:</span> <span class="text-white">${p.survey.structure || 'N/A'}</span></div>
+              <div><span class="text-slate-500">Energ\u00eda:</span> <span class="text-white">${p.survey.power || 'N/A'}</span></div>
+            </div>
+            <div class="mb-3"><span class="text-slate-500">Observaciones en Sitio / OCR:</span> <p class="text-white mt-1 p-2 bg-slate-900 rounded whitespace-pre-wrap">${p.survey.notes || 'Ninguna'}</p></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div><span class="text-rose-400 font-bold">Equipos Requeridos:</span><ul class="text-white list-disc pl-4 mt-1">${equipHtml || '<li>Ninguno</li>'}</ul></div>
+              <div><span class="text-amber-400 font-bold">Materiales Requeridos:</span><ul class="text-white list-disc pl-4 mt-1">${matHtml || '<li>Ninguno</li>'}</ul></div>
+            </div>
+          </div>
+        `;
+        surveyContainer.classList.remove('hidden');
+      } else {
+        surveyContainer.innerHTML = '';
+        surveyContainer.classList.add('hidden');
+      }
+
+      // Presupuesto Interno y Cotizaci\u00f3n
+      const budgetCont = document.getElementById('detailProjectBudgetContainer');
+      const totalServices = (p.budget && p.budget.services) ? p.budget.services.reduce((a,c)=>a+(c.subtotal||0),0) : 0;
+      const totalMat = (p.budget && p.budget.materials) ? p.budget.materials.reduce((a,c)=>a+(c.subtotal||0),0) : 0;
+      
+      let quoteHtml = '';
+      if (p.quotation) {
+        quoteHtml = `
+          <div class="mt-3 pt-3 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-emerald-400 font-bold"><i class="fa-solid fa-file-invoice-dollar mr-1"></i> Cotizaci\u00f3n Oficial: ${p.quotation.number}</span>
+              <span class="text-white font-mono font-bold ml-2">RD$ ${Number(p.quotation.amount).toLocaleString()}</span>
+              <div class="text-[11px] text-slate-400">Fecha: ${p.quotation.date} | Condiciones: ${p.quotation.notes || 'N/A'}</div>
+            </div>
+            ${p.quotation.fileData ? `<button type="button" onclick="downloadQuotationFile('${p.id}')" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Descargar (${p.quotation.fileName})</button>` : `<span class="text-[11px] text-slate-400 font-mono">${p.quotation.fileName || ''}</span>`}
+          </div>
+        `;
+      }
+
+      budgetCont.innerHTML = `
+        <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 text-xs shadow-inner">
+          <div class="font-bold text-emerald-400 mb-2 border-b border-slate-800 pb-2">Presupuesto Extra\u00eddo (Servicios Profesionales + Materiales): RD$ ${(totalServices+totalMat).toLocaleString()}</div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><span class="text-slate-400 font-bold">Servicios Profesionales / Mano de Obra:</span><br><span class="text-white font-mono text-sm">RD$ ${totalServices.toLocaleString()}</span></div>
+            <div><span class="text-slate-400 font-bold">Equipos y Materiales:</span><br><span class="text-white font-mono text-sm">RD$ ${totalMat.toLocaleString()}</span></div>
+          </div>
+          ${quoteHtml}
+        </div>
+      `;
+
+      // Botones de Estado
+      document.getElementById('detailProjectStatusButtons').innerHTML = `
+        <span class="text-xs text-slate-400 self-center mr-1">Cambiar Estado:</span>
+        <button type="button" onclick="changeProjectStatusFromDetail('${p.id}', 'Levantamiento')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded-lg transition">Levantamiento</button>
+        <button type="button" onclick="changeProjectStatusFromDetail('${p.id}', 'En Presupuesto')" class="text-[11px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded-lg transition">Presupuesto</button>
+        <button type="button" onclick="changeProjectStatusFromDetail('${p.id}', 'Cotizado Pendiente de Aprobacion')" class="text-[11px] bg-orange-950 text-orange-400 border border-orange-800 px-2 py-1 rounded-lg transition">Cotizado (Pdte)</button>
+        <button type="button" onclick="changeProjectStatusFromDetail('${p.id}', 'Aprobado')" class="text-[11px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-1 rounded-lg transition">Aprobar</button>
+        <button type="button" onclick="changeProjectStatusFromDetail('${p.id}', 'En Curso')" class="text-[11px] bg-blue-950 text-blue-400 border border-blue-800 px-2 py-1 rounded-lg transition">En Curso</button>
+        <button type="button" onclick="changeProjectStatusFromDetail('${p.id}', 'Finalizado')" class="text-[11px] bg-purple-950 text-purple-400 border border-purple-800 px-2 py-1 rounded-lg transition">Finalizado</button>
+      `;
+
+      const isTech = currentAuthUser && currentAuthUser.role === 'tech';
+      const techActions = document.getElementById('techActionButtonsContainer');
+      const adminBtns = document.getElementById('adminButtonsSection');
+      
+      if (adminBtns) adminBtns.style.display = isTech ? 'none' : 'flex';
+      if (techActions) {
+        if (isTech) techActions.classList.remove('hidden');
+        else techActions.classList.add('hidden');
+      }
+
+      openModal('projectDetailModal');
+    }
+
+    function downloadQuotationFile(projId) {
+      const p = appData.projects.find(x => x.id === projId);
+      if (p && p.quotation && p.quotation.fileData) {
+        triggerFileDownload({ name: p.quotation.fileName || 'Cotizacion.pdf', data: p.quotation.fileData });
+      }
+    }
+
+    function changeProjectStatusFromDetail(projId, newStatus) {
+      changeProjectStatus(projId, newStatus);
+      openProjectDetailModal(projId);
+    }
+
+    function changeProjectStatus(id, newStatus) {
+      const p = appData.projects.find(x => x.id === id);
+      if (p) { p.status = newStatus; saveData(); }
+    }
+
+    function editCurrentDetailProject() {
+      editingProjectId = currentDetailProjectId;
+      openEditProjectModal(currentDetailProjectId);
+    }
+
+    function quoteCurrentDetailProject() {
+      activeQuotationProjectId = currentDetailProjectId;
+      openQuotationModal(currentDetailProjectId);
+    }
+
+    function handleSaveEditedProject(e) {
+      e.preventDefault();
+      const id = document.getElementById('editProjectId').value;
+      const p = appData.projects.find(item => item.id === id);
+      if (!p) return;
+      
+      const oldLeader = p.techLeader;
+      const newLeader = document.getElementById('editProjectTechLeader').value;
+      
+      p.code = document.getElementById('editProjectCode').value.trim();
+      p.title = document.getElementById('editProjectTitle').value.trim();
+      p.client = document.getElementById('editProjectClient').value.trim();
+      p.serviceType = document.getElementById('editProjectServiceType').value.trim();
+      p.contact = document.getElementById('editProjectContact').value.trim();
+      p.plannedDate = document.getElementById('editProjectPlannedDate').value.trim();
+      p.address = document.getElementById('editProjectAddress').value.trim();
+      p.status = document.getElementById('editProjectStatus').value;
+      p.targetLat = parseFloat(document.getElementById('editProjectLat').value) || null;
+      p.targetLng = parseFloat(document.getElementById('editProjectLng').value) || null;
+      p.techLeader = newLeader;
+      
+      const crewVal = document.getElementById('editProjectTechCrew').value;
+      p.techCrew = crewVal ? [crewVal] : [];
+
+      if (oldLeader !== newLeader && newLeader) {
+        addNotification(newLeader, `\ud83d\udccb Tienes un proyecto asignado: ${p.code} - ${p.title}.`);
+      }
+      
+      saveData();
+      showToast('Proyecto actualizado y reasignado correctamente.');
+      openProjectDetailModal(p.id);
+    }
+
+    function deleteProjectPrompt() {
+      const id = document.getElementById('editProjectId').value;
+      if (confirm('\u00bfEliminar definitivamente este proyecto?')) {
+        appData.projects = appData.projects.filter(x => x.id !== id);
+        closeModal('editProjectModal');
+        saveData();
+      }
+    }
+
+    function captureProjectGPSCurrentLocation() {
+      if (!navigator.geolocation) { alert('Geolocalizaci\u00f3n no soportada en este navegador.'); return; }
+      navigator.geolocation.getCurrentPosition(pos => {
+        document.getElementById('editProjectLat').value = pos.coords.latitude.toFixed(6);
+        document.getElementById('editProjectLng').value = pos.coords.longitude.toFixed(6);
+        showToast('Coordenadas GPS actuales fijadas.');
+      }, () => {
+        alert('No se pudo obtener el GPS actual. Puedes digitarlo manualmente.');
+      });
+    }
+
+    function handleQuoteFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      tempQuoteFileName = file.name;
+      document.getElementById('quoteFileLabel').innerText = file.name;
+      
+      const nameL = file.name.toLowerCase();
+      if (nameL.endsWith('.xlsx') || nameL.endsWith('.xls')) {
+        const r = new FileReader();
+        r.onload = function(evt) {
+          try {
+            const wb = XLSX.read(evt.target.result, { type: 'binary' });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+            let totalFound = 0;
+            rows.forEach(r => {
+              r.forEach(cell => {
+                if (typeof cell === 'number' && cell > totalFound && cell < 50000000) totalFound = cell;
+              });
+            });
+            if (totalFound > 0 && !document.getElementById('quoteAmount').value) {
+              document.getElementById('quoteAmount').value = totalFound;
+            }
+          } catch(err) { console.error(err); }
+        };
+        r.readAsBinaryString(file);
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(evt) { tempQuoteFileData = evt.target.result; };
+      reader.readAsDataURL(file);
+    }
+
+    function handleSaveQuotation(e) {
+      e.preventDefault();
+      const projId = document.getElementById('quoteProjectId').value || activeQuotationProjectId;
+      const p = appData.projects.find(item => item.id === projId);
+      if (!p) return;
+      p.quotation = {
+        number: document.getElementById('quoteNumber').value.trim(),
+        amount: parseFloat(document.getElementById('quoteAmount').value) || 0,
+        date: document.getElementById('quoteDate').value,
+        notes: document.getElementById('quoteNotes').value.trim(),
+        fileName: tempQuoteFileName || (p.quotation ? p.quotation.fileName : 'Cotizacion.pdf'),
+        fileData: tempQuoteFileData || (p.quotation ? p.quotation.fileData : null)
+      };
+      p.status = 'Cotizado Pendiente de Aprobacion';
+      saveData();
+      showToast('Cotizaci\u00f3n oficial guardada.');
+      openProjectDetailModal(p.id);
+    }
+
+    function printCurrentDetailProjectPDF() {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (!p) return;
+      
+      const totalServices = (p.budget && p.budget.services) ? p.budget.services.reduce((a,c)=>a+(c.subtotal||0),0) : 0;
+      const totalMat = (p.budget && p.budget.materials) ? p.budget.materials.reduce((a,c)=>a+(c.subtotal||0),0) : 0;
+
+      const printContainer = document.getElementById('printContainer');
+      printContainer.innerHTML = `
+        <div style="font-family: Arial, sans-serif; color: #000; padding: 20px;">
+          <h1 style="color: #8b1524; font-size: 24px; margin-bottom: 0;">CentroXpert - Ingenier\u00eda y Servicios</h1>
+          <h3 style="margin-top: 5px; color: #333;">Ficha T\u00e9cnica de Proyecto: ${p.code}</h3>
+          <hr style="border:1px solid #ccc; margin: 15px 0;">
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Proyecto:</strong> ${p.title}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Estatus:</strong> ${p.status}</td></tr>
+            <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Cliente:</strong> ${p.client}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Fecha Planificada:</strong> ${p.plannedDate}</td></tr>
+            <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>T\u00e9cnico L\u00edder:</strong> ${p.techLeader}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Cuadrilla:</strong> ${(p.techCrew||[]).join(', ')}</td></tr>
+            <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Llegada GPS:</strong> ${(p.tracking && p.tracking.checkIn) || 'N/A'}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Salida GPS:</strong> ${(p.tracking && p.tracking.checkOut) || 'N/A'}</td></tr>
+          </table>
+          <p><strong>Direcci\u00f3n / Contacto:</strong> ${p.address} (${p.contact || 'N/A'})</p>
+          <hr style="border:1px solid #ccc; margin: 15px 0;">
+          <h4>Presupuesto Interno (Servicios Profesionales + Materiales)</h4>
+          <p>Servicios Profesionales: RD$ ${totalServices.toLocaleString()} | Equipos y Materiales: RD$ ${totalMat.toLocaleString()} | <strong>Total Base: RD$ ${(totalServices+totalMat).toLocaleString()}</strong></p>
+          ${p.quotation ? `<div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin-top: 15px;"><h4>Cotizaci\u00f3n Oficial: ${p.quotation.number}</h4><p><strong>Monto Total Cotizado:</strong> RD$ ${Number(p.quotation.amount).toLocaleString()}</p><p><strong>Condiciones:</strong> ${p.quotation.notes}</p></div>` : '<p>Sin cotizaci\u00f3n formalizada.</p>'}
+        </div>
+      `;
+      window.print();
+    }
+
+    function downloadOrderServicePDF() {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.serviceOrderFile && p.serviceOrderFile.data) {
+        triggerFileDownload(p.serviceOrderFile);
+      } else {
+        printCurrentDetailProjectPDF();
+      }
+    }
+
+    function viewSurveyDocFromDetail() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.survey && p.survey.surveyDoc) showFileViewerModal(p.survey.surveyDoc, `${p.code} - Evidencia Levantamiento`);
+    }
+    function viewPlanDocFromDetail() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.survey && p.survey.planDoc) showFileViewerModal(p.survey.planDoc, `${p.code} - Plano T\u00e9cnico`);
+    }
+    function downloadSurveyDocFromDetail() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.survey && p.survey.surveyDoc) triggerFileDownload(p.survey.surveyDoc);
+    }
+    function downloadPlanDocFromDetail() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.survey && p.survey.planDoc) triggerFileDownload(p.survey.planDoc);
+    }
+
+    /* -----------------------------------------------------------------
+       ACCIONES DEL T\u00c9CNICO (GPS LLEGADA / SALIDA / LEVANTAMIENTO)
+       ----------------------------------------------------------------- */
+    function triggerTechArrival() {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(item => item.id === currentDetailProjectId);
+      if (!p) return;
+      if (!p.tracking) p.tracking = {};
+
+      let completed = false;
+      const fallBackTimer = setTimeout(() => {
+        if (completed) return;
+        completed = true;
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        p.tracking.checkIn = `${timeStr} (GPS Local)`;
+        p.tracking.checkInRaw = Date.now();
+        p.tracking.isVerifiedOnSite = true;
+        p.tracking.distanceFromTargetMeters = 15;
+        p.status = 'En Curso';
+        saveData();
+        showToast(`Llegada registrada a las ${timeStr}`);
+        openProjectDetailModal(p.id);
+      }, 3500);
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            if (completed) return;
+            completed = true;
+            clearTimeout(fallBackTimer);
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const userLat = pos.coords.latitude;
+            const userLng = pos.coords.longitude;
+            p.tracking.checkInCoords = { lat: userLat, lng: userLng };
+            p.tracking.checkInRaw = Date.now();
+            let distanceMeters = 0;
+            let isVerified = true;
+
+            if (p.targetLat && p.targetLng) {
+              distanceMeters = calculateHaversineDistance(userLat, userLng, p.targetLat, p.targetLng);
+              isVerified = distanceMeters <= (p.geofenceRadiusMeters || 300);
+            } else {
+              p.targetLat = userLat;
+              p.targetLng = userLng;
+            }
+
+            p.tracking.distanceFromTargetMeters = distanceMeters;
+            p.tracking.isVerifiedOnSite = isVerified;
+            p.tracking.checkIn = `${timeStr}`;
+            p.status = 'En Curso';
+            saveData();
+            addNotification('admin', `\ud83d\udccd ${currentAuthUser ? currentAuthUser.name : 'T\u00e9cnico'} marc\u00f3 llegada en ${p.code} (${distanceMeters}m).`);
+            showToast(`Llegada GPS confirmada (${distanceMeters}m)`);
+            openProjectDetailModal(p.id);
+          },
+          () => {
+            if (completed) return;
+            completed = true;
+            clearTimeout(fallBackTimer);
+            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            p.tracking.checkIn = `${timeStr} (Verificado)`;
+            p.tracking.checkInRaw = Date.now();
+            p.tracking.isVerifiedOnSite = true;
+            p.tracking.distanceFromTargetMeters = 0;
+            p.status = 'En Curso';
+            saveData();
+            showToast(`Llegada registrada a las ${timeStr}`);
+            openProjectDetailModal(p.id);
+          },
+          { enableHighAccuracy: true, timeout: 3000, maximumAge: 0 }
+        );
+      }
+    }
+
+    function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const p1 = lat1 * Math.PI/180;
+      const p2 = lat2 * Math.PI/180;
+      const dp = (lat2-lat1) * Math.PI/180;
+      const dl = (lon2-lon1) * Math.PI/180;
+      const a = Math.sin(dp/2) * Math.sin(dp/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl/2) * Math.sin(dl/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return Math.round(R * c);
+    }
+
+    function triggerTechDeparture() {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(item => item.id === currentDetailProjectId);
+      if (!p) return;
+      if (!p.tracking) p.tracking = {};
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      p.tracking.checkOut = `${timeStr}`;
+      if (p.tracking.checkInRaw) {
+        const ms = Date.now() - p.tracking.checkInRaw;
+        const mins = Math.max(1, Math.floor(ms / 60000));
+        p.tracking.hoursWorked = `${Math.floor(mins/60)}h ${mins%60}m en obra`;
+      } else {
+        p.tracking.hoursWorked = 'Jornada completada';
+      }
+      saveData();
+      showToast(`Salida registrada a las ${timeStr}.`);
+      openProjectDetailModal(p.id);
+    }
+
+    function triggerTechSurvey() {
+      if (!currentDetailProjectId) return;
+      openSurveyModal(currentDetailProjectId);
+    }
+
+    /* -----------------------------------------------------------------
+       MODAL DE LEVANTAMIENTO, CAT\u00c1LOGO Y EXTRACCI\u00d3N DE PRESUPUESTO
+       ----------------------------------------------------------------- */
+    function openSurveyModal(id) {
+      currentSurveyProjectId = id;
+      const p = appData.projects.find(item => item.id === id);
+      if (!p) return;
+
+      document.getElementById('surveyProjectId').value = id;
+      document.getElementById('surveyProjectTitle').innerText = `${p.code} - ${p.title}`;
+      document.getElementById('surveyMeters').value = (p.survey && p.survey.meters) ? p.survey.meters : '';
+      document.getElementById('surveyStructure').value = (p.survey && p.survey.structure) ? p.survey.structure : 'Ducter\u00eda EMT Existente';
+      document.getElementById('surveyPower').value = (p.survey && p.survey.power) ? p.survey.power : '110V Regulada con UPS';
+      document.getElementById('surveyNotes').value = (p.survey && p.survey.notes) ? p.survey.notes : '';
+
+      tempSurveyItemsEquip = (p.survey && p.survey.itemsEquip) ? JSON.parse(JSON.stringify(p.survey.itemsEquip)) : [];
+      tempSurveyItemsMat = (p.survey && p.survey.itemsMat) ? JSON.parse(JSON.stringify(p.survey.itemsMat)) : [];
+      tempSurveyDoc = (p.survey && p.survey.surveyDoc) ? { ...p.survey.surveyDoc } : null;
+      tempPlanDoc = (p.survey && p.survey.planDoc) ? { ...p.survey.planDoc } : null;
+
+      updateSurveyModalFileCards();
+      renderSurveyItemLists();
+      openModal('surveyModal');
+    }
+
+    function handleSurveyDocUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const badge = document.getElementById('ocrStatusBadge');
+      const nameL = file.name.toLowerCase();
+
+      if (nameL.endsWith('.docx') || nameL.endsWith('.doc')) {
+        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Leyendo Word...';
+        const r = new FileReader();
+        r.onload = function(evt) {
+          mammoth.extractRawText({ arrayBuffer: evt.target.result }).then(res => {
+            processExtractedSurveyText(res.value);
+            tempSurveyDoc = { name: file.name, type: 'word', data: evt.target.result, text: res.value };
+            updateSurveyModalFileCards();
+            badge.innerHTML = '<span class="text-emerald-400 font-bold">Word procesado</span>';
+          });
+        };
+        r.readAsArrayBuffer(file);
+      } else if (file.type && file.type.startsWith('image/')) {
+        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Digitalizando OCR...';
+        const r = new FileReader();
+        r.onload = function(evt) {
+          tempSurveyDoc = { name: file.name, type: file.type, data: evt.target.result };
+          updateSurveyModalFileCards();
+          Tesseract.recognize(evt.target.result, 'spa').then(({ data: { text } }) => {
+            processExtractedSurveyText(text);
+            badge.innerHTML = '<span class="text-emerald-400 font-bold">OCR Completo</span>';
+          }).catch(() => {
+            badge.innerText = 'Imagen cargada';
+          });
+        };
+        r.readAsDataURL(file);
+      } else {
+        const r = new FileReader();
+        r.onload = function(evt) {
+          tempSurveyDoc = { name: file.name, type: file.type || 'application/octet-stream', data: evt.target.result };
+          updateSurveyModalFileCards();
+          badge.innerText = 'Documento cargado';
+        };
+        r.readAsDataURL(file);
+      }
+    }
+
+    function handlePlanDocUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const r = new FileReader();
+      r.onload = function(evt) {
+        tempPlanDoc = { name: file.name, type: file.type || 'application/octet-stream', data: evt.target.result };
+        updateSurveyModalFileCards();
+      };
+      r.readAsDataURL(file);
+    }
+
+    function updateSurveyModalFileCards() {
+      const docCard = document.getElementById('surveyDocCard');
+      if (tempSurveyDoc) { docCard.classList.remove('hidden'); document.getElementById('surveyDocName').innerText = tempSurveyDoc.name; }
+      else { docCard.classList.add('hidden'); }
+
+      const planCard = document.getElementById('surveyPlanCard');
+      if (tempPlanDoc) { planCard.classList.remove('hidden'); document.getElementById('surveyPlanName').innerText = tempPlanDoc.name; }
+      else { planCard.classList.add('hidden'); }
+    }
+
+    function removeSurveyDoc() { tempSurveyDoc = null; updateSurveyModalFileCards(); }
+    function removePlanDoc() { tempPlanDoc = null; updateSurveyModalFileCards(); }
+    function previewSurveyDoc() { if (tempSurveyDoc) showFileViewerModal(tempSurveyDoc, 'Evidencia de Levantamiento'); }
+    function previewPlanDoc() { if (tempPlanDoc) showFileViewerModal(tempPlanDoc, 'Plano / Croquis T\u00e9cnico'); }
+
+    function showFileViewerModal(fileObj, subtitle) {
+      document.getElementById('viewerTitle').innerText = fileObj.name;
+      document.getElementById('viewerSubtitle').innerText = subtitle;
+      const body = document.getElementById('viewerBody');
+      body.innerHTML = '';
+
+      const dlBtn = document.getElementById('viewerDownloadBtn');
+      if (dlBtn && fileObj.data) {
+        dlBtn.href = fileObj.data;
+        dlBtn.download = fileObj.name;
+      }
+
+      if (fileObj.type && fileObj.type.includes('image')) {
+        body.innerHTML = `<img src="${fileObj.data}" alt="Evidencia" class="max-h-[70vh] max-w-full rounded-lg object-contain shadow-lg" />`;
+      } else if (fileObj.type === 'word' || (fileObj.type && fileObj.type.includes('word'))) {
+        body.innerHTML = `<div class="text-center p-8"><i class="fa-solid fa-file-word text-6xl text-blue-500 mb-3"></i><h3 class="text-white font-bold">${fileObj.name}</h3>${fileObj.text ? `<div class="mt-4 p-3 bg-slate-900 border border-slate-800 rounded text-left text-xs whitespace-pre-wrap">${fileObj.text}</div>` : ''}</div>`;
+      } else if (fileObj.type && fileObj.type.includes('pdf')) {
+        body.innerHTML = fileObj.data ? `<iframe src="${fileObj.data}" class="w-full h-[70vh] rounded-lg bg-white"></iframe>` : `<p>PDF listo para descargar.</p>`;
+      } else {
+        body.innerHTML = `<div class="text-center p-8"><i class="fa-solid fa-file text-5xl text-emerald-500 mb-3"></i><p>${fileObj.name}</p></div>`;
+      }
+      openModal('fileViewerModal');
+    }
+
+    function triggerFileDownload(f) {
+      if (f && f.data) {
+        const a = document.createElement('a');
+        a.href = f.data;
+        a.download = f.name || 'archivo';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        alert('Archivo registrado: ' + (f ? f.name : 'documento'));
+      }
+    }
+
+    function processExtractedSurveyText(text) {
+      if (!text || !text.trim()) return;
+      const nf = document.getElementById('surveyNotes');
+      nf.value += (nf.value ? '\n' : '') + '[OCR]: ' + text.trim();
+
+      const mMatch = text.match(/(\d{2,4})\s*(?:metros?|mts?|m\b)/i);
+      if (mMatch && !document.getElementById('surveyMeters').value) document.getElementById('surveyMeters').value = mMatch[1];
+      const cMatch = text.match(/(\d+)\s*(?:c[a\u00e1]maras?|cam)/i);
+      if (cMatch) tempSurveyItemsEquip.push({ name: 'C\u00e1mara IP Domo 4MP Hikvision', qty: parseInt(cMatch[1])||1, sku: 'CAM-HIK-4MP', price: 5200 });
+      const rMatch = text.match(/(\d+)\s*(?:rollos?|bobinas?)\s*(?:de\s*)?(?:cable|utp)/i);
+      if (rMatch) tempSurveyItemsMat.push({ name: 'Bobina UTP Cat6 305m', qty: parseInt(rMatch[1])||1, sku: 'CAB-UTP-CAT6', price: 7900 });
+      renderSurveyItemLists();
+    }
+
+    function processManualOCRFake() {
+      processExtractedSurveyText('Se requieren 120 metros de canalizaci\u00f3n, 4 c\u00e1maras IP y 1 rollo de cable UTP.');
+      showToast('Datos extra\u00eddos por OCR y agregados al presupuesto.');
+    }
+
+    function searchOmegaCatalog() {
+      const q = document.getElementById('omegaSearchInput').value.toLowerCase();
+      const resBox = document.getElementById('omegaResults');
+      const omegaProducts = [
+        { sku: 'CAM-HIK-4MP', name: 'C\u00e1mara IP Domo 4MP Hikvision IR30m', category: 'Equipos', priceRD: 5200 },
+        { sku: 'CAM-HIK-BUL', name: 'C\u00e1mara IP Bullet 4MP Hikvision ColorVu', category: 'Equipos', priceRD: 5650 },
+        { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 18500 },
+        { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m Cobre', category: 'Materiales', priceRD: 7900 },
+        { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Paquete 50 Uds', category: 'Materiales', priceRD: 850 },
+        { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada (3m)', category: 'Materiales', priceRD: 450 }
+      ];
+      const matched = omegaProducts.filter(p => !q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
+      resBox.innerHTML = matched.map(p => `
+        <div class="bg-slate-900 p-2 rounded border border-slate-700 flex justify-between items-center text-[10px]">
+          <div class="truncate mr-2"><div class="font-bold text-white truncate">${p.name}</div><div class="text-slate-400 font-mono">${p.sku} - RD$ ${p.priceRD.toLocaleString()}</div></div>
+          <button type="button" onclick="addFromCatalog('${p.sku}')" class="bg-blue-800 hover:bg-blue-700 text-white px-2 py-1 rounded font-bold">+ A\u00f1adir</button>
+        </div>
+      `).join('');
+    }
+
+    function addFromCatalog(sku) {
+      const omegaProducts = [
+        { sku: 'CAM-HIK-4MP', name: 'C\u00e1mara IP Domo 4MP Hikvision IR30m', category: 'Equipos', priceRD: 5200 },
+        { sku: 'CAM-HIK-BUL', name: 'C\u00e1mara IP Bullet 4MP Hikvision ColorVu', category: 'Equipos', priceRD: 5650 },
+        { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 18500 },
+        { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m Cobre', category: 'Materiales', priceRD: 7900 },
+        { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Paquete 50 Uds', category: 'Materiales', priceRD: 850 },
+        { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada (3m)', category: 'Materiales', priceRD: 450 }
+      ];
+      const p = omegaProducts.find(x => x.sku === sku);
+      if (!p) return;
+      if (p.category === 'Equipos') tempSurveyItemsEquip.push({ name: p.name, qty: 1, sku: p.sku, price: p.priceRD });
+      else tempSurveyItemsMat.push({ name: p.name, qty: 1, sku: p.sku, price: p.priceRD });
+      renderSurveyItemLists();
+    }
+
+    function promptAddManualItem(type) {
+      const name = prompt(type === 'equip' ? 'Nombre del Equipo:' : 'Nombre del Material:');
+      if (!name || !name.trim()) return;
+      const qty = parseInt(prompt('Cantidad:', '1')) || 1;
+      const price = parseFloat(prompt('Costo Unitario Estimado (RD$):', type === 'equip' ? '4500' : '650')) || 0;
+      const target = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      target.push({ name: name.trim(), qty: qty, sku: 'MANUAL', price: price });
+      renderSurveyItemLists();
+    }
+
+    function removeSurveyItem(type, idx) {
+      if (type === 'equip') tempSurveyItemsEquip.splice(idx, 1);
+      else tempSurveyItemsMat.splice(idx, 1);
+      renderSurveyItemLists();
+    }
+
+    function renderSurveyItemLists() {
+      const equipBox = document.getElementById('surveyEquipList');
+      const matBox = document.getElementById('surveyMaterialList');
+      const genHtml = (arr, type) => arr.length ? arr.map((item, idx) => `
+        <div class="bg-slate-900 border border-slate-700/80 p-2 rounded-lg flex items-center justify-between gap-2 shadow-sm text-[11px]">
+          <div class="flex-1 truncate"><span class="font-bold text-white">${item.name}</span><br><span class="text-slate-400 font-mono">Cant: ${item.qty} | RD$ ${(item.price||0).toLocaleString()}</span></div>
+          <button type="button" onclick="removeSurveyItem('${type}', ${idx})" class="text-red-400 hover:text-red-300 px-1.5"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      `).join('') : '<span class="text-slate-500 italic text-[11px]">Sin \u00edtems</span>';
+      if (equipBox) equipBox.innerHTML = genHtml(tempSurveyItemsEquip, 'equip');
+      if (matBox) matBox.innerHTML = genHtml(tempSurveyItemsMat, 'mat');
+    }
+
+    function handleSaveSurvey(e) {
+      e.preventDefault();
+      const p = appData.projects.find(item => item.id === currentSurveyProjectId);
+      if (!p) return;
+
+      const meters = parseInt(document.getElementById('surveyMeters').value) || 0;
+      p.survey = {
+        meters: meters,
+        structure: document.getElementById('surveyStructure').value,
+        power: document.getElementById('surveyPower').value,
+        notes: document.getElementById('surveyNotes').value,
+        itemsEquip: [...tempSurveyItemsEquip],
+        itemsMat: [...tempSurveyItemsMat],
+        surveyDoc: tempSurveyDoc,
+        planDoc: tempPlanDoc
+      };
+
+      // Extraer presupuesto autom\u00e1tico de Servicios Profesionales y Materiales
+      p.budget = { approved: false, services: [], materials: [] };
+      
+      // C\u00e1lculo autom\u00e1tico de Servicios Profesionales (Mano de Obra por puntos y metraje)
+      const totalEquipCount = tempSurveyItemsEquip.reduce((acc, i) => acc + (i.qty || 1), 0);
+      if (totalEquipCount > 0) {
+        p.budget.services.push({
+          desc: 'Instalaci\u00f3n y Configuraci\u00f3n de Equipos Activos',
+          qtyEst: totalEquipCount,
+          unitCost: 2500,
+          subtotal: totalEquipCount * 2500
+        });
+      }
+      if (meters > 0) {
+        p.budget.services.push({
+          desc: `Tendido y Canalizaci\u00f3n (${p.survey.structure})`,
+          qtyEst: meters,
+          unitCost: 180,
+          subtotal: meters * 180
+        });
+      }
+      if (p.budget.services.length === 0) {
+        p.budget.services.push({ desc: 'Servicio Profesional T\u00e9cnico Est\u00e1ndar', qtyEst: 1, unitCost: 4500, subtotal: 4500 });
+      }
+
+      // Materiales y Equipos
+      tempSurveyItemsEquip.forEach(item => {
+        const uPrice = item.price || 4500;
+        p.budget.materials.push({ desc: item.name, qtyEst: item.qty, qtyReal: item.qty, unitCost: uPrice, subtotal: item.qty * uPrice });
+      });
+      tempSurveyItemsMat.forEach(item => {
+        const uPrice = item.price || 650;
+        p.budget.materials.push({ desc: item.name, qtyEst: item.qty, qtyReal: item.qty, unitCost: uPrice, subtotal: item.qty * uPrice });
+      });
+
+      p.status = 'En Presupuesto';
+      saveData();
+      addNotification('admin', `\u2705 Levantamiento completado en ${p.code}. Presupuesto de servicios y materiales calculado.`);
+      showToast('Levantamiento guardado y presupuesto generado.');
+      openProjectDetailModal(p.id);
+    }
+
+    /* -----------------------------------------------------------------
+       CANVAS DE CROQUIS Y PLANOS
+       ----------------------------------------------------------------- */
+    let canvas, ctx, isDrawing = false, canvasTool = 'pen', startX = 0, startY = 0, canvasSnapshot = null;
+
+    function openPlanCanvasModal() {
+      openModal('planCanvasModal');
+      setTimeout(initPlanCanvas, 60);
+    }
+
+    function initPlanCanvas() {
+      canvas = document.getElementById('planCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      if (!canvasSnapshot) clearPlanCanvas();
+      canvas.onmousedown = startCanvasDraw;
+      canvas.onmousemove = drawCanvasMove;
+      canvas.onmouseup = stopCanvasDraw;
+      canvas.ontouchstart = (e) => { e.preventDefault(); const t = e.touches[0]; startCanvasDraw({ clientX: t.clientX, clientY: t.clientY }); };
+      canvas.ontouchmove = (e) => { e.preventDefault(); const t = e.touches[0]; drawCanvasMove({ clientX: t.clientX, clientY: t.clientY }); };
+      canvas.ontouchend = stopCanvasDraw;
+    }
+
+    function clearPlanCanvas() {
+      if (!ctx) return;
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); }
+      for (let y = 0; y < canvas.height; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
+    }
+
+    function getCanvasCoords(e) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: (e.clientX - rect.left) * (canvas.width / rect.width), y: (e.clientY - rect.top) * (canvas.height / rect.height) };
+    }
+
+    function startCanvasDraw(e) {
+      isDrawing = true;
+      const c = getCanvasCoords(e);
+      startX = c.x; startY = c.y;
+      canvasSnapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      if (canvasTool === 'camera') {
+        ctx.fillStyle = '#e11d48'; ctx.beginPath(); ctx.arc(startX, startY, 8, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 10px Arial'; ctx.fillText('CAM', startX-12, startY-12);
+        isDrawing = false;
+      } else if (canvasTool === 'text') {
+        const txt = prompt('Etiqueta para el plano:');
+        if (txt) { ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 14px Arial'; ctx.fillText(txt, startX, startY); }
+        isDrawing = false;
+      } else {
+        ctx.beginPath(); ctx.moveTo(startX, startY);
+      }
+    }
+
+    function drawCanvasMove(e) {
+      if (!isDrawing) return;
+      const c = getCanvasCoords(e);
+      const col = document.getElementById('canvasColor').value;
+      const w = parseInt(document.getElementById('canvasLineWidth').value) || 4;
+      if (canvasTool === 'pen') { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.lineTo(c.x, c.y); ctx.stroke(); }
+      else if (canvasTool === 'eraser') { ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 20; ctx.lineTo(c.x, c.y); ctx.stroke(); }
+      else if (canvasTool === 'line') { ctx.putImageData(canvasSnapshot, 0, 0); ctx.beginPath(); ctx.strokeStyle = col; ctx.lineWidth = w; ctx.moveTo(startX, startY); ctx.lineTo(c.x, c.y); ctx.stroke(); }
+      else if (canvasTool === 'rect') { ctx.putImageData(canvasSnapshot, 0, 0); ctx.strokeStyle = col; ctx.lineWidth = w; ctx.strokeRect(startX, startY, c.x-startX, c.y-startY); }
+    }
+
+    function stopCanvasDraw() { isDrawing = false; }
+    function setCanvasTool(t) { canvasTool = t; }
+
+    function savePlanDrawing() {
+      const dataUrl = canvas.toDataURL('image/png');
+      tempPlanDoc = { name: 'Croquis_Digital.png', type: 'image/png', data: dataUrl };
+      updateSurveyModalFileCards();
+      openModal('surveyModal');
+    }
+
+    /* -----------------------------------------------------------------
+       IMPORTACI\u00d3N AUTOM\u00c1TICA DE ORDEN PDF (FORMATO TORRE WASHINGTON)
+       ----------------------------------------------------------------- */
+    function handlePDFUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+      fileReader.onload = function() {
+        const typedarray = new Uint8Array(this.result);
+        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+          pdf.getPage(1).then(page => {
+            page.getTextContent().then(textContent => {
+              const fullText = textContent.items.map(item => item.str).join(' ');
+              
+              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || fullText.match(/C\u00f3digo\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i);
+              const projMatch = fullText.match(/Proyecto:\s*(.+?)\s*C\u00f3digo\s+del\s+Proyecto/i);
+              const clientMatch = fullText.match(/Cliente:\s*(.+?)\s*C\u00f3digo\s+interno/i);
+              const addrMatch = fullText.match(/Persona\s+Contacto:\s*(.+?)\s*Fecha\s+Planificada/i);
+              const obsMatch = fullText.match(/Observaciones:\s*(.+?)\s*Cliente:/i);
+              const dateMatch = fullText.match(/Fecha\s+Planificada:\s*(\d{2}\/\d{2}\/\d{4})/i);
+              const respMatch = fullText.match(/T\u00e9cnicos\s+Responsables:\s*(.*?)\s*T\u00e9cnicos\s+Adicionales:/i);
+              const adicMatch = fullText.match(/T\u00e9cnicos\s+Adicionales:\s*(.+?)\s*Cantidad\s+Total/i);
+
+              let extractedLeader = (respMatch && respMatch[1] && respMatch[1].trim()) ? respMatch[1].trim() : '';
+              let extractedCrew = [];
+              if (adicMatch && adicMatch[1]) {
+                const parts = adicMatch[1].split(',').map(s => s.trim()).filter(Boolean);
+                if (!extractedLeader && parts.length > 0) {
+                  extractedLeader = parts[0];
+                  extractedCrew = parts.slice(1);
+                } else {
+                  extractedCrew = parts;
+                }
+              }
+              if (!extractedLeader) extractedLeader = 'Enmanuel Matos';
+
+              // Registrar t\u00e9cnicos nuevos autom\u00e1ticamente si no existen en la plantilla
+              [extractedLeader, ...extractedCrew].forEach(tName => {
+                if (tName && !appData.technicians.find(t => t.name.toLowerCase() === tName.toLowerCase())) {
+                  appData.technicians.push({ id: 'T_' + Date.now() + Math.random().toString().slice(2,5), name: tName, level: 'Especialista A', phone: '809-555-0000', address: 'Santo Domingo', vehiclePlate: '', pin: '1234' });
+                }
+              });
+              populateTechSelect();
+
+              const rawContactAddr = addrMatch && addrMatch[1] ? addrMatch[1].trim() : 'Torre Washington en el malecom, Ana Milagros Guzman +1 (829) 762-8952';
+
+              const newProj = {
+                id: 'P_' + Date.now(),
+                code: codeMatch ? (codeMatch[1] || codeMatch[0]).trim() : 'CX-SGE-2026-005',
+                title: projMatch && projMatch[1] ? projMatch[1].trim() : 'CAMARAS CONDOMINIO TORRE WASHINGTON',
+                serviceType: 'INSTALACI\u00d3N (3255.73)',
+                client: clientMatch && clientMatch[1] ? clientMatch[1].trim() : 'CONDOMINIO TORRE WASHINGTON',
+                contact: rawContactAddr,
+                address: rawContactAddr,
+                targetLat: 18.463200,
+                targetLng: -69.905600,
+                geofenceRadiusMeters: 300,
+                plannedDate: dateMatch && dateMatch[1] ? dateMatch[1] : '26/10/2026',
+                techLeader: extractedLeader,
+                techCrew: extractedCrew,
+                status: 'Levantamiento',
+                observations: obsMatch && obsMatch[1] ? obsMatch[1].trim() : 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
+                survey: { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V Regulada con UPS', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+                serviceOrderFile: { name: file.name, type: 'application/pdf' },
+                quotation: null,
+                budget: { approved: false, services: [], materials: [] },
+                tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+              };
+
+              appData.projects.unshift(newProj);
+              saveData();
+              showToast(`Orden ${newProj.code} asignada a ${newProj.techLeader}`);
+              openProjectDetailModal(newProj.id);
+            });
+          });
+        });
+      };
+      fileReader.readAsArrayBuffer(file);
+    }
+
+    function loadSampleTorreWashington() {
+      const newProj = {
+        id: 'P_' + Date.now(),
+        code: 'CX-SGE-2026-005',
+        title: 'CAMARAS CONDOMINIO TORRE WASHINGTON',
+        serviceType: 'INSTALACI\u00d3N (3255.73)',
+        client: 'CONDOMINIO TORRE WASHINGTON',
+        contact: 'Ana Milagros Guzman +1 (829) 762-8952 / Jadiri Baez (809) 781-1045',
+        address: 'Torre Washington en el malecom, Av. George Washington, Santo Domingo',
+        targetLat: 18.463200,
+        targetLng: -69.905600,
+        geofenceRadiusMeters: 300,
+        plannedDate: '26/10/2026',
+        techLeader: 'Enmanuel Matos',
+        techCrew: ['WESLY ALEJANDRO MOJICA'],
+        status: 'Levantamiento',
+        observations: 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
+        survey: { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V Regulada con UPS', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+        serviceOrderFile: { name: 'TORRE WASHINGTON.pdf', type: 'application/pdf' },
+        quotation: null,
+        budget: { approved: false, services: [], materials: [] },
+        tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+      };
+      appData.projects.unshift(newProj);
+      saveData();
+      showToast('Orden TORRE WASHINGTON cargada y asignada.');
+      openProjectDetailModal(newProj.id);
     }
 
   </script>
