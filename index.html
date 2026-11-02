@@ -672,6 +672,105 @@
     </div>
   </div>
 
+
+  <!-- Modal Evaluacion Manual y Penalizaciones KPI del Tecnico -->
+  <div id="kpiEvalModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('kpiEvalModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 relative space-y-4" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-user-check mr-2 text-rose-400"></i>Evaluaci&#243;n Manual &amp; Penalizaciones de KPI</h3>
+          <p class="text-xs text-slate-400" id="kpiEvalTechSubtitle">Registrar incidencia o evaluaci&#243;n al t&#233;cnico</p>
+        </div>
+        <button type="button" onclick="closeModal('kpiEvalModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form onsubmit="handleSaveKpiEvaluation(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">T&#233;cnico Evaluado</label>
+            <select id="kpiEvalTechSelect" required onchange="renderTechEvalHistoryInModal(this.value)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold"></select>
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Proyecto Relacionado (Opcional)</label>
+            <select id="kpiEvalProjectSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono"></select>
+          </div>
+        </div>
+
+        <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-3">
+          <div class="font-bold text-rose-400 uppercase text-[11px]"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Motivos de Descuento de Puntos en el Ranking</div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <label class="flex items-start gap-2.5 bg-slate-900 p-2.5 rounded-lg border border-slate-800 cursor-pointer hover:border-rose-500/50">
+              <input type="checkbox" id="chkPenaltyConduct" onchange="recalcKpiPenaltyPreview()" class="mt-0.5 accent-rose-600">
+              <div class="flex-1">
+                <div class="font-bold text-white flex justify-between"><span>Conducta / Disciplina</span><span class="text-rose-400 font-mono">-10 pts</span></div>
+                <p class="text-[10px] text-slate-400">Incumplimiento de normas, trato al cliente o uniforme</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-2.5 bg-slate-900 p-2.5 rounded-lg border border-slate-800 cursor-pointer hover:border-rose-500/50">
+              <input type="checkbox" id="chkPenaltyOverBudget" onchange="recalcKpiPenaltyPreview()" class="mt-0.5 accent-rose-600">
+              <div class="flex-1">
+                <div class="font-bold text-white flex justify-between"><span>Exceso Materiales / Presupuesto</span><span class="text-rose-400 font-mono">-15 pts</span></div>
+                <p class="text-[10px] text-slate-400">Se excedi&#243; en materiales o presupuesto asignado</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-2.5 bg-slate-900 p-2.5 rounded-lg border border-slate-800 cursor-pointer hover:border-rose-500/50">
+              <input type="checkbox" id="chkPenaltyOmittedItem" onchange="recalcKpiPenaltyPreview()" class="mt-0.5 accent-rose-600">
+              <div class="flex-1">
+                <div class="font-bold text-white flex justify-between"><span>Omiti&#243; Equipo / Material</span><span class="text-rose-400 font-mono">-15 pts</span></div>
+                <p class="text-[10px] text-slate-400">No contempl&#243; alg&#250;n equipo o material en levantamiento</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-2.5 bg-slate-900 p-2.5 rounded-lg border border-slate-800 cursor-pointer hover:border-rose-500/50">
+              <input type="checkbox" id="chkPenaltyProjectError" onchange="recalcKpiPenaltyPreview()" class="mt-0.5 accent-rose-600">
+              <div class="flex-1">
+                <div class="font-bold text-white flex justify-between"><span>Error de Ejecuci&#243;n / Retrabajo</span><span class="text-rose-400 font-mono">-10 pts</span></div>
+                <p class="text-[10px] text-slate-400">Falla t&#233;cnica en instalaci&#243;n o mala conexi&#243;n</p>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-2.5 bg-slate-900 p-2.5 rounded-lg border border-slate-800 cursor-pointer hover:border-rose-500/50">
+              <input type="checkbox" id="chkPenaltySchedule" onchange="recalcKpiPenaltyPreview()" class="mt-0.5 accent-rose-600">
+              <div class="flex-1">
+                <div class="font-bold text-white flex justify-between"><span>Tardanza / Salida sin Cierre</span><span class="text-rose-400 font-mono">-5 pts</span></div>
+                <p class="text-[10px] text-slate-400">Incumplimiento en hora de llegada o salida en obra</p>
+              </div>
+            </label>
+
+            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 flex flex-col justify-between">
+              <label class="font-bold text-white flex justify-between"><span>Ajuste Manual Extra (Pts)</span><span class="text-amber-400 font-mono">+/-</span></label>
+              <input type="number" id="kpiEvalCustomPoints" value="0" min="-100" max="50" oninput="recalcKpiPenaltyPreview()" class="mt-1 w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-white font-mono text-xs" placeholder="Ej: -5 o +5">
+              <span class="text-[10px] text-slate-400">Negativo resta puntos, positivo bonifica</span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+            <span class="text-slate-300 font-semibold">Impacto Total de esta Evaluaci&#243;n en el Ranking:</span>
+            <span id="kpiPenaltyPreviewBadge" class="px-3 py-1 rounded-full font-mono font-bold text-xs bg-slate-800 text-slate-300">0 pts</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Detalle / Observaci&#243;n de la Incidencia o Evaluaci&#243;n</label>
+          <textarea id="kpiEvalNotes" rows="2" required placeholder="Ej: En el proyecto CX-SGE-2026-005 no contempl&#243; 2 bobinas de cable UTP Cat6 y excedi&#243; presupuesto de tuber&#237;a..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="closeModal('kpiEvalModal')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl font-semibold">Cancelar</button>
+          <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-5 py-2 rounded-xl font-bold shadow-lg shadow-rose-900/40"><i class="fa-solid fa-floppy-disk mr-1"></i> Aplicar al Ranking</button>
+        </div>
+      </form>
+
+      <div class="pt-3 border-t border-slate-800">
+        <h4 class="text-xs font-bold uppercase text-slate-400 mb-2"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Historial de Evaluaciones de este T&#233;cnico</h4>
+        <div id="kpiEvalModalHistoryList" class="space-y-2 max-h-40 overflow-y-auto pr-1 text-xs"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
   <script>
@@ -700,6 +799,7 @@
         { id: 'H2', code: 'TL-02', name: 'Certificador', assignedTo: 'Carlos Morales', condition: 'Bueno', date: '2026-02-10' }
       ],
       fuelLogs: [],
+      kpiEvaluations: [],
       projects: [
         {
           id: 'P2',
@@ -782,7 +882,7 @@
           if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed) || !Array.isArray(parsed.projects) || !Array.isArray(parsed.technicians)) continue;
           if (!parsed.projects.every(project => project && typeof project === 'object' && !Array.isArray(project)) || !parsed.technicians.every(tech => tech && typeof tech === 'object' && !Array.isArray(tech))) continue;
           const data = Object.assign({}, defaults, parsed);
-          for (const key of ['projects', 'technicians', 'vehicles', 'tools', 'fuelLogs', 'notifications']) {
+          for (const key of ['projects', 'technicians', 'vehicles', 'tools', 'fuelLogs', 'notifications', 'kpiEvaluations']) {
             if (!Array.isArray(data[key])) data[key] = Array.isArray(defaults[key]) ? defaults[key] : [];
           }
           const needsAuthAndGpsMigration = parsed._localAuthVersion !== 1;
@@ -1146,7 +1246,44 @@ function render() {
     }
     
     function exportKPIReportToPDF() {
-        window.print();
+      const stats = computeAllTechKPIStats().sort((a, b) => b.performanceScore - a.performanceScore);
+      const printContainer = document.getElementById('printContainer');
+      if (printContainer) {
+        const rowsHtml = stats.map((t, i) => `
+          <tr>
+            <td style="padding:6px; border:1px solid #ccc;">${i+1}</td>
+            <td style="padding:6px; border:1px solid #ccc;"><strong>${t.name}</strong><br><small>${t.level}</small></td>
+            <td style="padding:6px; border:1px solid #ccc; text-align:center;">${t.completedCount}/${t.assignedCount}</td>
+            <td style="padding:6px; border:1px solid #ccc;">Entrada: ${t.lastCheckIn}<br>Salida: ${t.lastCheckOut}<br><small>${t.lastProjCode} (${t.lastHours})</small></td>
+            <td style="padding:6px; border:1px solid #ccc; text-align:center;">${t.gpsRate}%</td>
+            <td style="padding:6px; border:1px solid #ccc;">Conducta: ${t.conductCount} | Exceso Presup.: ${t.overBudgetCount}<br>Omisi\u00f3n Eq/Mat: ${t.omittedItemCount} | Error Obra: ${t.projectErrorCount}</td>
+            <td style="padding:6px; border:1px solid #ccc; text-align:center; color:#b91c1c;"><strong>${t.penaltyPoints} pts</strong></td>
+            <td style="padding:6px; border:1px solid #ccc; text-align:center;"><strong>${t.performanceScore}/100</strong></td>
+          </tr>
+        `).join('');
+        printContainer.innerHTML = `
+          <div style="font-family: Arial, sans-serif; color:#000; padding:15px;">
+            <h2 style="color:#8b1524; margin:0;">CentroXpert - Informe KPI de Rendimiento T\u00e9cnico</h2>
+            <p style="font-size:12px; color:#444;">Fecha de emisi\u00f3n: ${new Date().toLocaleDateString('es-DO')} \u2014 Incluye control de llegada/salida y penalizaciones manuales</p>
+            <table style="width:100%; border-collapse:collapse; font-size:11px; margin-top:10px;">
+              <thead>
+                <tr style="background:#f1f5f9;">
+                  <th style="padding:6px; border:1px solid #ccc;">#</th>
+                  <th style="padding:6px; border:1px solid #ccc;">T\u00e9cnico</th>
+                  <th style="padding:6px; border:1px solid #ccc;">Cierres</th>
+                  <th style="padding:6px; border:1px solid #ccc;">Llegada / Salida</th>
+                  <th style="padding:6px; border:1px solid #ccc;">GPS</th>
+                  <th style="padding:6px; border:1px solid #ccc;">Incidencias Acumuladas</th>
+                  <th style="padding:6px; border:1px solid #ccc;">Descuento</th>
+                  <th style="padding:6px; border:1px solid #ccc;">Score Final</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          </div>
+        `;
+      }
+      window.print();
     }
 
     function renderAdminProjects() {
@@ -1312,47 +1449,422 @@ function renderStaffLogistics() {
       `;
     }
 
-    function renderAdminKPIs() {
-      const techStats = appData.technicians.map(t => {
-        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || p.techCrew.includes(t.name));
+    function computeAllTechKPIStats() {
+      if (!Array.isArray(appData.kpiEvaluations)) appData.kpiEvaluations = [];
+      return appData.technicians.map(t => {
+        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name)));
         const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
         const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
         const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
         const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
-        
-        const avgDev = 'N/D';
-        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 50 : 25;
-        const gpsScore = (gpsRate / 100) * 50;
-        const performanceScore = Math.min(100, Math.round(closeScore + gpsScore));
 
-        return { ...t, assignedCount: assignedProj.length, completedCount: completed, gpsRate, avgDev, performanceScore };
+        // \u00daltimo registro de hora de llegada y salida
+        const withTimes = assignedProj.filter(p => p.tracking && (p.tracking.checkIn || p.tracking.checkOut));
+        const lastProjWithTime = withTimes.length > 0 ? withTimes[0] : (assignedProj[0] || null);
+        const lastCheckIn = (lastProjWithTime && lastProjWithTime.tracking && lastProjWithTime.tracking.checkIn) ? lastProjWithTime.tracking.checkIn : 'Sin registro';
+        const lastCheckOut = (lastProjWithTime && lastProjWithTime.tracking && lastProjWithTime.tracking.checkOut) ? lastProjWithTime.tracking.checkOut : 'Pendiente';
+        const lastHours = (lastProjWithTime && lastProjWithTime.tracking && lastProjWithTime.tracking.hoursWorked) ? lastProjWithTime.tracking.hoursWorked : '\u2014';
+        const lastProjCode = lastProjWithTime ? lastProjWithTime.code : '\u2014';
+
+        // Evaluaciones manuales e incidencias de este t\u00e9cnico
+        const myEvals = appData.kpiEvaluations.filter(ev => ev.techName && ev.techName.toLowerCase() === t.name.toLowerCase());
+        const penaltyPoints = myEvals.reduce((acc, ev) => acc + (Number(ev.pointsDelta) || 0), 0); // usualmente negativo
+        const conductCount = myEvals.filter(ev => ev.conduct).length;
+        const overBudgetCount = myEvals.filter(ev => ev.overBudget).length;
+        const omittedItemCount = myEvals.filter(ev => ev.omittedItem).length;
+        const projectErrorCount = myEvals.filter(ev => ev.projectError).length;
+        const scheduleCount = myEvals.filter(ev => ev.scheduleIssue).length;
+
+        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 50 : 40;
+        const gpsScore = (gpsRate / 100) * 50;
+        const baseScore = Math.round(closeScore + gpsScore);
+        const performanceScore = Math.max(0, Math.min(100, Math.round(baseScore + penaltyPoints)));
+
+        return {
+          ...t,
+          assignedCount: assignedProj.length,
+          completedCount: completed,
+          gpsRate,
+          lastCheckIn,
+          lastCheckOut,
+          lastHours,
+          lastProjCode,
+          evalCount: myEvals.length,
+          penaltyPoints,
+          conductCount,
+          overBudgetCount,
+          omittedItemCount,
+          projectErrorCount,
+          scheduleCount,
+          baseScore,
+          performanceScore
+        };
       });
+    }
+
+    function renderAdminKPIs() {
+      const techStats = computeAllTechKPIStats().sort((a, b) => b.performanceScore - a.performanceScore);
+      const allAttendanceProjects = appData.projects.filter(p => p.tracking && (p.tracking.checkIn || p.tracking.checkOut));
+      const allEvals = Array.isArray(appData.kpiEvaluations) ? appData.kpiEvaluations : [];
 
       return `
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
-          <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex justify-between">
-            <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico</h3>
-            <div>
-              <button type="button" onclick="exportLogisticsToExcel()" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded text-[11px] mr-1 transition"><i class="fa-solid fa-file-excel mr-1"></i> Excel</button>
-              <button type="button" onclick="exportKPIReportToPDF()" class="bg-rose-900 hover:bg-rose-800 text-rose-200 px-3 py-1.5 rounded text-[11px] transition"><i class="fa-solid fa-file-pdf mr-1"></i> Exportar PDF</button>
+        <div class="space-y-6">
+          <!-- TABLA 1: RANKING TECNICO CON LLEGADA/SALIDA Y PENALIZACIONES -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico, Horarios &amp; Penalizaciones</h3>
+                <p class="text-[11px] text-slate-400">Mide cierres, GPS, hora de llegada/salida y resta puntos por conducta, excesos de material/presupuesto u omisi\u00f3n de equipos</p>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="openKpiEvalModal()" class="bg-rose-700 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-user-pen"></i> Evaluar / Penalizar T\u00e9cnico
+                </button>
+                <button type="button" onclick="exportKpiFullToExcel()" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                  <i class="fa-solid fa-file-excel mr-1"></i> Exportar KPI Excel
+                </button>
+                <button type="button" onclick="exportKPIReportToPDF()" class="bg-slate-800 hover:bg-slate-700 text-rose-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                  <i class="fa-solid fa-file-pdf mr-1"></i> Imprimir PDF
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
+                  <tr>
+                    <th class="p-3">Pos / T\u00e9cnico</th>
+                    <th class="p-3">Cierre Tareas</th>
+                    <th class="p-3">Hora Llegada / Salida (\u00dalt. Obra)</th>
+                    <th class="p-3 text-center">Cumpl. GPS</th>
+                    <th class="p-3">Incidencias (Conducta / Presupuesto / Omisi\u00f3n)</th>
+                    <th class="p-3 text-center">Pts Restados</th>
+                    <th class="p-3">Score Ranking</th>
+                    <th class="p-3 text-right">Acci\u00f3n</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  ${techStats.map((t, idx) => `
+                    <tr class="hover:bg-slate-800/40 transition">
+                      <td class="p-3">
+                        <div class="flex items-center gap-2">
+                          <span class="w-5 h-5 inline-flex items-center justify-center rounded-full font-bold text-[11px] ${idx===0?'bg-amber-500 text-slate-950':idx===1?'bg-slate-300 text-slate-950':idx===2?'bg-amber-700 text-white':'bg-slate-800 text-slate-300'}">${idx+1}</span>
+                          <div>
+                            <strong class="text-white block">${t.name}</strong>
+                            <span class="text-[10px] text-slate-400">${t.level}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="p-3 font-mono font-bold text-slate-200">${t.completedCount} / ${t.assignedCount}</td>
+                      <td class="p-3">
+                        <div class="text-[11px]">
+                          <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-right-to-bracket mr-1"></i>Entrada:</span> <span class="text-white font-mono">${t.lastCheckIn}</span>
+                        </div>
+                        <div class="text-[11px] mt-0.5">
+                          <span class="text-amber-400 font-semibold"><i class="fa-solid fa-right-from-bracket mr-1"></i>Salida:</span> <span class="text-white font-mono">${t.lastCheckOut}</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">${t.lastProjCode} (${t.lastHours})</div>
+                      </td>
+                      <td class="p-3 text-center font-bold ${t.gpsRate>=80?'text-emerald-400':'text-amber-400'}">${t.gpsRate}%</td>
+                      <td class="p-3">
+                        ${t.evalCount === 0 ? `<span class="text-[11px] text-emerald-400/80"><i class="fa-solid fa-circle-check mr-1"></i>Sin faltas registradas</span>` : `
+                          <div class="flex flex-wrap gap-1">
+                            ${t.conductCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 text-[10px] font-semibold">Conducta (${t.conductCount})</span>` : ''}
+                            ${t.overBudgetCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-orange-950 text-orange-300 border border-orange-800 text-[10px] font-semibold">Exceso Mat/Presup (${t.overBudgetCount})</span>` : ''}
+                            ${t.omittedItemCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-semibold">Omiti\u00f3 Equipo/Mat (${t.omittedItemCount})</span>` : ''}
+                            ${t.projectErrorCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-red-950 text-red-300 border border-red-800 text-[10px] font-semibold">Error Obra (${t.projectErrorCount})</span>` : ''}
+                            ${t.scheduleCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[10px] font-semibold">Horario (${t.scheduleCount})</span>` : ''}
+                          </div>
+                        `}
+                      </td>
+                      <td class="p-3 text-center font-mono font-bold ${t.penaltyPoints < 0 ? 'text-rose-400' : t.penaltyPoints > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                        ${t.penaltyPoints > 0 ? '+' + t.penaltyPoints : t.penaltyPoints} pts
+                      </td>
+                      <td class="p-3">
+                        <div class="flex items-center gap-2">
+                          <div class="w-20 bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                            <div class="h-full ${t.performanceScore>=80?'bg-emerald-500':t.performanceScore>=60?'bg-amber-500':'bg-rose-600'}" style="width:${t.performanceScore}%"></div>
+                          </div>
+                          <span class="font-bold text-white font-mono">${t.performanceScore}/100</span>
+                        </div>
+                        <div class="text-[10px] text-slate-500 font-mono">Base: ${t.baseScore} pts</div>
+                      </td>
+                      <td class="p-3 text-right">
+                        <button type="button" onclick="openKpiEvalModal('${t.name}')" class="bg-slate-800 hover:bg-rose-900/80 text-rose-300 border border-slate-700 px-2.5 py-1.5 rounded-lg text-[11px] font-bold transition">
+                          <i class="fa-solid fa-gavel mr-1"></i> Evaluar
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
             </div>
           </div>
-          <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950/60 text-slate-400 uppercase"><tr><th class="p-3">T\u00e9cnico</th><th class="p-3">Tareas Cierre</th><th class="p-3 text-center">Cumplimiento GPS</th><th class="p-3 text-center">Combustible</th><th class="p-3">Score Eficiencia</th></tr></thead>
-          <tbody class="divide-y divide-slate-800">
-            ${techStats.sort((a,b) => b.performanceScore - a.performanceScore).map((t, idx) => `
-              <tr class="hover:bg-slate-800/40">
-                <td class="p-3"><span class="w-4 h-4 inline-flex items-center justify-center rounded-full bg-slate-800 mr-2">${idx+1}</span><strong class="text-white">${t.name}</strong></td>
-                <td class="p-3">${t.completedCount} / ${t.assignedCount}</td>
-                <td class="p-3 text-center font-bold ${t.gpsRate>=80?'text-emerald-400':'text-amber-400'}">${t.gpsRate}%</td>
-                <td class="p-3 text-center font-bold ${parseFloat(t.avgDev)<15?'text-emerald-400':'text-rose-400'}">${t.avgDev === 'N/D' ? 'Sin datos' : t.avgDev}</td>
-                <td class="p-3"><div class="flex items-center gap-2"><div class="w-20 bg-slate-800 h-2 rounded-full overflow-hidden"><div class="h-full ${t.performanceScore>=80?'bg-emerald-500':'bg-amber-500'}" style="width:${t.performanceScore}%"></div></div><span class="font-bold text-white">${t.performanceScore}/100</span></div></td>
-              </tr>
-            `).join('')}
-          </tbody></table>
+
+          <!-- TABLA 2: CONTROL DETALLADO DE HORA DE LLEGADA Y SALIDA POR PROYECTO -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+              <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+                <h4 class="text-xs font-bold text-white uppercase"><i class="fa-solid fa-clock mr-1.5 text-blue-400"></i>Control de Hora de Llegada y Salida por Proyecto</h4>
+                <span class="text-[10px] text-slate-400 font-mono">${appData.projects.length} proyecto(s)</span>
+              </div>
+              <div class="overflow-x-auto max-h-80">
+                <table class="w-full text-xs text-left">
+                  <thead class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
+                    <tr>
+                      <th class="p-2.5">Proyecto / T\u00e9cnico</th>
+                      <th class="p-2.5">Hora Llegada</th>
+                      <th class="p-2.5">Hora Salida</th>
+                      <th class="p-2.5">Tiempo / GPS</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800">
+                    ${appData.projects.map(p => {
+                      const cIn = (p.tracking && p.tracking.checkIn) ? p.tracking.checkIn : 'Sin marcar';
+                      const cOut = (p.tracking && p.tracking.checkOut) ? p.tracking.checkOut : 'Pendiente';
+                      const hrs = (p.tracking && p.tracking.hoursWorked) ? p.tracking.hoursWorked : '\u2014';
+                      const verif = p.tracking && p.tracking.isVerifiedOnSite;
+                      return `
+                        <tr class="hover:bg-slate-800/40 cursor-pointer" onclick="openProjectDetailModal('${p.id}')">
+                          <td class="p-2.5">
+                            <div class="font-mono font-bold text-rose-400 text-[11px]">${p.code}</div>
+                            <div class="text-white font-semibold truncate max-w-[180px]">${p.techLeader || 'Sin asignar'}</div>
+                          </td>
+                          <td class="p-2.5 font-mono ${cIn !== 'Sin marcar' ? 'text-emerald-400 font-bold' : 'text-slate-500'}">${cIn}</td>
+                          <td class="p-2.5 font-mono ${cOut !== 'Pendiente' ? 'text-amber-300 font-bold' : 'text-slate-500'}">${cOut}</td>
+                          <td class="p-2.5">
+                            <div class="text-white font-mono text-[11px]">${hrs}</div>
+                            <span class="text-[10px] ${verif ? 'text-emerald-400' : 'text-slate-400'}">${verif ? 'GPS Verificado' : 'Sin geocerca/GPS'}</span>
+                          </td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TABLA 3: BITACORA DE EVALUACIONES MANUALES Y DESCUENTO DE PUNTOS -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+              <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+                <h4 class="text-xs font-bold text-white uppercase"><i class="fa-solid fa-clipboard-List mr-1.5 text-rose-400"></i>Historial de Evaluaciones Manuales &amp; Errores</h4>
+                <button type="button" onclick="openKpiEvalModal()" class="text-[11px] bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 px-2.5 py-1 rounded-lg font-bold">+ Nueva Evaluaci\u00f3n</button>
+              </div>
+              <div class="overflow-x-auto max-h-80">
+                <table class="w-full text-xs text-left">
+                  <thead class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
+                    <tr>
+                      <th class="p-2.5">Fecha / T\u00e9cnico</th>
+                      <th class="p-2.5">Motivos / Errores</th>
+                      <th class="p-2.5 text-center">Impacto</th>
+                      <th class="p-2.5 text-right">Borrar</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-800">
+                    ${allEvals.length === 0 ? `<tr><td colspan="4" class="p-6 text-center text-slate-500 italic">No se han registrado penalizaciones ni evaluaciones manuales a\u00fan.</td></tr>` : allEvals.map(ev => `
+                      <tr class="hover:bg-slate-800/40">
+                        <td class="p-2.5">
+                          <div class="font-bold text-white">${ev.techName}</div>
+                          <div class="text-[10px] text-slate-400 font-mono">${ev.date} ${ev.projectCode ? '\u00b7 ' + ev.projectCode : ''}</div>
+                        </td>
+                        <td class="p-2.5">
+                          <div class="text-[11px] text-rose-300 font-semibold">${(ev.reasons || []).join(', ') || 'Ajuste manual'}</div>
+                          <div class="text-[10px] text-slate-300 mt-0.5">${ev.notes || ''}</div>
+                        </td>
+                        <td class="p-2.5 text-center font-mono font-bold ${ev.pointsDelta < 0 ? 'text-rose-400' : 'text-emerald-400'}">
+                          ${ev.pointsDelta > 0 ? '+' + ev.pointsDelta : ev.pointsDelta} pts
+                        </td>
+                        <td class="p-2.5 text-right">
+                          <button type="button" onclick="deleteKpiEvaluation('${ev.id}')" class="text-slate-400 hover:text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       `;
+    }
+
+    function openKpiEvalModal(preselectedTechName = '') {
+      const techSel = document.getElementById('kpiEvalTechSelect');
+      const projSel = document.getElementById('kpiEvalProjectSelect');
+      if (!techSel || !projSel) return;
+
+      techSel.innerHTML = appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
+      if (preselectedTechName) techSel.value = preselectedTechName;
+
+      projSel.innerHTML = '<option value="">-- General / Sin proyecto espec\u00edfico --</option>' +
+        appData.projects.map(p => `<option value="${p.code}">${p.code} \u2014 ${p.title}</option>`).join('');
+
+      document.getElementById('chkPenaltyConduct').checked = false;
+      document.getElementById('chkPenaltyOverBudget').checked = false;
+      document.getElementById('chkPenaltyOmittedItem').checked = false;
+      document.getElementById('chkPenaltyProjectError').checked = false;
+      document.getElementById('chkPenaltySchedule').checked = false;
+      document.getElementById('kpiEvalCustomPoints').value = '0';
+      document.getElementById('kpiEvalNotes').value = '';
+
+      recalcKpiPenaltyPreview();
+      renderTechEvalHistoryInModal(techSel.value);
+      openModal('kpiEvalModal');
+    }
+
+    function recalcKpiPenaltyPreview() {
+      let delta = 0;
+      if (document.getElementById('chkPenaltyConduct')?.checked) delta -= 10;
+      if (document.getElementById('chkPenaltyOverBudget')?.checked) delta -= 15;
+      if (document.getElementById('chkPenaltyOmittedItem')?.checked) delta -= 15;
+      if (document.getElementById('chkPenaltyProjectError')?.checked) delta -= 10;
+      if (document.getElementById('chkPenaltySchedule')?.checked) delta -= 5;
+      const custom = parseInt(document.getElementById('kpiEvalCustomPoints')?.value) || 0;
+      delta += custom;
+
+      const badge = document.getElementById('kpiPenaltyPreviewBadge');
+      if (badge) {
+        badge.innerText = (delta > 0 ? '+' + delta : delta) + ' pts';
+        badge.className = delta < 0
+          ? 'px-3 py-1 rounded-full font-mono font-bold text-xs bg-rose-950 text-rose-300 border border-rose-800'
+          : delta > 0
+            ? 'px-3 py-1 rounded-full font-mono font-bold text-xs bg-emerald-950 text-emerald-300 border border-emerald-800'
+            : 'px-3 py-1 rounded-full font-mono font-bold text-xs bg-slate-800 text-slate-300';
+      }
+      return delta;
+    }
+
+    function renderTechEvalHistoryInModal(techName) {
+      const box = document.getElementById('kpiEvalModalHistoryList');
+      if (!box) return;
+      if (!Array.isArray(appData.kpiEvaluations)) appData.kpiEvaluations = [];
+      const list = appData.kpiEvaluations.filter(ev => ev.techName && ev.techName.toLowerCase() === String(techName || '').toLowerCase());
+      if (list.length === 0) {
+        box.innerHTML = '<div class="text-slate-500 italic py-2">Este t\u00e9cnico no tiene penalizaciones ni evaluaciones manuales registradas.</div>';
+        return;
+      }
+      box.innerHTML = list.map(ev => `
+        <div class="bg-slate-950 border border-slate-800 p-2.5 rounded-lg flex items-center justify-between gap-2">
+          <div>
+            <div class="font-bold text-rose-300">${(ev.reasons || []).join(' \u00b7 ') || 'Evaluaci\u00f3n manual'} <span class="text-slate-400 font-mono text-[10px]">(${ev.date}${ev.projectCode ? ' - ' + ev.projectCode : ''})</span></div>
+            <div class="text-slate-300 text-[11px]">${ev.notes || ''}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-mono font-bold ${ev.pointsDelta < 0 ? 'text-rose-400' : 'text-emerald-400'}">${ev.pointsDelta > 0 ? '+' + ev.pointsDelta : ev.pointsDelta} pts</span>
+            <button type="button" onclick="deleteKpiEvaluation('${ev.id}')" class="text-slate-500 hover:text-rose-400 p-1"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleSaveKpiEvaluation(e) {
+      e.preventDefault();
+      if (!Array.isArray(appData.kpiEvaluations)) appData.kpiEvaluations = [];
+      const techName = document.getElementById('kpiEvalTechSelect').value;
+      const projectCode = document.getElementById('kpiEvalProjectSelect').value;
+      const conduct = document.getElementById('chkPenaltyConduct').checked;
+      const overBudget = document.getElementById('chkPenaltyOverBudget').checked;
+      const omittedItem = document.getElementById('chkPenaltyOmittedItem').checked;
+      const projectError = document.getElementById('chkPenaltyProjectError').checked;
+      const scheduleIssue = document.getElementById('chkPenaltySchedule').checked;
+      const customPts = parseInt(document.getElementById('kpiEvalCustomPoints').value) || 0;
+      const notes = document.getElementById('kpiEvalNotes').value.trim();
+
+      const reasons = [];
+      if (conduct) reasons.push('Conducta (-10)');
+      if (overBudget) reasons.push('Exceso Material/Presupuesto (-15)');
+      if (omittedItem) reasons.push('Omiti\u00f3 Equipo/Material (-15)');
+      if (projectError) reasons.push('Error en Proyecto (-10)');
+      if (scheduleIssue) reasons.push('Incumplimiento Horario (-5)');
+      if (customPts !== 0) reasons.push(`Ajuste Manual (${customPts > 0 ? '+' + customPts : customPts})`);
+
+      const pointsDelta = recalcKpiPenaltyPreview();
+      if (reasons.length === 0 && pointsDelta === 0) {
+        alert('Selecciona al menos un motivo de evaluaci\u00f3n o ingresa un puntaje.');
+        return;
+      }
+
+      const newEval = {
+        id: 'EV_' + Date.now(),
+        date: new Date().toLocaleDateString('es-DO'),
+        techName,
+        projectCode,
+        conduct,
+        overBudget,
+        omittedItem,
+        projectError,
+        scheduleIssue,
+        customPts,
+        reasons,
+        pointsDelta,
+        notes
+      };
+
+      appData.kpiEvaluations.unshift(newEval);
+      saveData();
+      addNotification(techName, `\u26a0\ufe0f Evaluaci\u00f3n KPI registrada (${pointsDelta} pts): ${reasons.join(', ')}.`);
+      showToast(`Evaluaci\u00f3n aplicada a ${techName} (${pointsDelta} pts en el ranking).`);
+      closeModal('kpiEvalModal');
+    }
+
+    function deleteKpiEvaluation(evalId) {
+      if (!confirm('\u00bfEliminar esta evaluaci\u00f3n y restaurar los puntos al t\u00e9cnico?')) return;
+      appData.kpiEvaluations = (appData.kpiEvaluations || []).filter(ev => ev.id !== evalId);
+      saveData();
+      const modal = document.getElementById('kpiEvalModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        renderTechEvalHistoryInModal(document.getElementById('kpiEvalTechSelect').value);
+      }
+      showToast('Evaluaci\u00f3n eliminada y ranking recalculado.');
+    }
+
+    function exportKpiFullToExcel() {
+      const stats = computeAllTechKPIStats().sort((a, b) => b.performanceScore - a.performanceScore);
+      const wb = XLSX.utils.book_new();
+
+      const rankingSheet = stats.map((t, i) => ({
+        Posicion: i + 1,
+        Tecnico: t.name,
+        Rango: t.level,
+        Tareas_Cerradas: `${t.completedCount} / ${t.assignedCount}`,
+        Ultima_Obra: t.lastProjCode,
+        Hora_Llegada: t.lastCheckIn,
+        Hora_Salida: t.lastCheckOut,
+        Tiempo_Trabajado: t.lastHours,
+        Cumplimiento_GPS_Pct: t.gpsRate + '%',
+        Faltas_Conducta: t.conductCount,
+        Exceso_Material_Presupuesto: t.overBudgetCount,
+        Omitio_Equipo_Material: t.omittedItemCount,
+        Errores_Proyecto: t.projectErrorCount,
+        Puntos_Restados: t.penaltyPoints,
+        Score_Final_Ranking: t.performanceScore
+      }));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rankingSheet), "Ranking_KPI");
+
+      const horariosSheet = appData.projects.map(p => ({
+        Codigo_Proyecto: p.code,
+        Proyecto: p.title,
+        Cliente: p.client,
+        Tecnico_Lider: p.techLeader,
+        Cuadrilla: (p.techCrew || []).join(', '),
+        Hora_Llegada: (p.tracking && p.tracking.checkIn) || 'Sin registro',
+        Hora_Salida: (p.tracking && p.tracking.checkOut) || 'Pendiente',
+        Horas_En_Obra: (p.tracking && p.tracking.hoursWorked) || 'N/A',
+        GPS_Verificado: (p.tracking && p.tracking.isVerifiedOnSite) ? 'SI' : 'NO'
+      }));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(horariosSheet), "Llegadas_Y_Salidas");
+
+      const evalsSheet = (appData.kpiEvaluations || []).map(ev => ({
+        Fecha: ev.date,
+        Tecnico: ev.techName,
+        Proyecto: ev.projectCode || 'General',
+        Motivos: (ev.reasons || []).join(', '),
+        Puntos_Impacto: ev.pointsDelta,
+        Observaciones: ev.notes
+      }));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(evalsSheet), "Penalizaciones_Manuales");
+
+      XLSX.writeFile(wb, "Informes_KPI_CentroXpert.xlsx");
+      showToast("Informe KPI completo exportado a Excel.");
     }
 
     // Funciones CRUD Logistica
@@ -3060,7 +3572,7 @@ function validateDatabaseImport(data) {
       if (!Array.isArray(data.projects) || !Array.isArray(data.technicians)) return false;
       if (!data.projects.every(item => item && typeof item === 'object' && (typeof item.id === 'string' || typeof item.id === 'number') && typeof item.code === 'string')) return false;
       if (!data.technicians.every(item => item && typeof item === 'object' && (typeof item.id === 'string' || typeof item.id === 'number') && typeof item.name === 'string')) return false;
-      for (const key of ['vehicles', 'tools', 'fuelLogs', 'notifications']) {
+      for (const key of ['vehicles', 'tools', 'fuelLogs', 'notifications', 'kpiEvaluations']) {
         if (data[key] !== undefined && !Array.isArray(data[key])) return false;
       }
       return true;
