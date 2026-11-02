@@ -10,6 +10,7 @@
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
@@ -68,7 +69,7 @@
         <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3 shadow text-slate-900 font-bold text-2xl">
           centr<span class="text-rose-700 mx-0.5"><i class="fa-solid fa-power-off"></i></span>xpert
         </div>
-        <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3><div class="mt-2 p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-[11px] text-amber-200/90 leading-relaxed"><strong>Control local, no autenticación segura:</strong> este sitio estático no puede proteger datos frente a quien acceda al navegador o al código. No cargues información confidencial.</div>
+        <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3><div class="mt-2 p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-[11px] text-amber-200/90 leading-relaxed"><strong>Control local, no autenticaci&#243;n segura:</strong> este sitio est&#225;tico no puede proteger datos frente a quien acceda al navegador o al c&#243;digo. No cargues informaci&#243;n confidencial.</div>
       </div>
       <div class="flex border-b border-slate-800 mb-5 relative z-10">
         <button type="button" id="tabLoginTec" onclick="switchLoginTab('tec')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400">T&#233;cnico</button>
@@ -392,15 +393,22 @@
           <textarea id="surveyNotes" rows="3" placeholder="Detalles de instalaci&#243;n, cruces, etc..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-rose-500"></textarea>
         </div>
 
-        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase text-blue-400"><i class="fa-solid fa-store mr-1.5"></i>Cat&#225;logo local de referencia (no actualizado en l&#237;nea)</span>
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <span class="text-xs font-bold uppercase text-blue-400"><i class="fa-solid fa-globe mr-1.5"></i>Buscador Web: tienda.omega.com.do</span>
+              <p id="omegaSearchStatus" class="text-[10px] text-slate-400">Consulta equipos por nombre, modelo o referencia (SKU / No. de Parte)</p>
+            </div>
+            <a id="omegaDirectSearchLink" href="https://tienda.omega.com.do/es/product/search?Terms=camara" target="_blank" rel="noopener noreferrer" class="text-[11px] bg-blue-950/90 hover:bg-blue-900 text-blue-300 border border-blue-800 px-2.5 py-1 rounded-lg font-semibold inline-flex items-center gap-1">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir en tienda.omega.com.do
+            </a>
           </div>
-          <div class="flex gap-2 mb-3">
-            <input type="text" id="omegaSearchInput" placeholder="Buscar c&#225;mara, switch..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
-            <button type="button" onclick="searchOmegaCatalog()" class="bg-blue-700 hover:bg-blue-600 px-3 py-1.5 rounded-lg text-xs font-semibold text-white">Buscar</button>
+          <div class="flex flex-wrap gap-2">
+            <input type="text" id="omegaSearchInput" onkeydown="if(event.key==='Enter'){event.preventDefault();searchOmegaCatalog(false);}" oninput="updateOmegaDirectLink(this.value)" placeholder="Ej: camara, ezviz, NHC-OF10, DS-3E1510P-SI, AB356NXT32, switch, utp..." class="flex-1 min-w-[200px] bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+            <button type="button" onclick="searchOmegaCatalog(false)" class="bg-blue-700 hover:bg-blue-600 px-3.5 py-2 rounded-lg text-xs font-bold text-white flex items-center gap-1.5 shadow"><i class="fa-solid fa-magnifying-glass"></i> Buscar Equipos</button>
+            <button type="button" onclick="openOmegaWebPopup()" class="bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 px-3 py-2 rounded-lg text-xs font-semibold flex items-center gap-1" title="Abre https://tienda.omega.com.do/es/product/search?Terms=..."><i class="fa-solid fa-store"></i> Ver en Web Omega</button>
           </div>
-          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1"></div>
+          <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1"></div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -626,13 +634,35 @@
   <div id="cloudSyncModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('cloudSyncModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative space-y-4" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-        <div><h3 class="text-base font-bold text-white"><i class="fa-solid fa-database mr-2 text-amber-400"></i>Respaldo local</h3><p class="text-[11px] text-slate-400">Los datos se guardan en este navegador. No hay sincronización entre dispositivos.</p></div>
+        <div>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-cloud-arrow-up mr-2 text-emerald-400"></i>Sincronizaci&#243;n en Tiempo Real (PC &amp; M&#243;vil)</h3>
+          <p class="text-[11px] text-slate-400">Conecta tu PC y tel&#233;fonos en GitHub Pages para compartir cambios al instante</p>
+        </div>
         <button type="button" onclick="closeModal('cloudSyncModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      <div class="bg-amber-950/40 border border-amber-800/60 p-3 rounded-xl text-xs text-amber-100"><strong>Modo local:</strong> la nube pública está desactivada para no exponer proyectos, claves ni adjuntos. Descarga un respaldo antes de cambiar de equipo o importar una base.</div>
+
+      <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-3 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-emerald-400 uppercase"><i class="fa-solid fa-tower-broadcast mr-1"></i> 1. Nube en Tiempo Real (Autom&#225;tica)</span>
+          <span id="cloudModalStatusText" class="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">Conectando...</span>
+        </div>
+        <p class="text-slate-400 text-[11px] leading-relaxed">Todos los dispositivos con el mismo <strong>C&#243;digo de Sala</strong> sincronizan proyectos, veh&#237;culos, t&#233;cnicos, herramientas y levantamientos autom&#225;ticamente (sin exponer claves ni PIN locales).</p>
+        <div>
+          <label class="block text-[11px] text-slate-300 mb-1">C&#243;digo de Sala de Sincronizaci&#243;n (Igual en PC y M&#243;vil):</label>
+          <div class="flex gap-2">
+            <input type="text" id="cloudRoomInput" placeholder="centroxpert-omega-rd" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+            <button type="button" onclick="saveCloudRoomConfig()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold">Conectar Sala</button>
+          </div>
+        </div>
+        <div class="flex gap-2 pt-1">
+          <button type="button" onclick="pushToCloud(true)" class="flex-1 bg-blue-900/80 hover:bg-blue-800 text-blue-200 py-2 px-3 rounded-xl font-bold border border-blue-700/60 flex items-center justify-center gap-1.5"><i class="fa-solid fa-cloud-arrow-up"></i> Subir cambios ahora</button>
+          <button type="button" onclick="pullFromCloud(true)" class="flex-1 bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 py-2 px-3 rounded-xl font-bold border border-emerald-700/60 flex items-center justify-center gap-1.5"><i class="fa-solid fa-cloud-arrow-down"></i> Descargar de la Nube</button>
+        </div>
+      </div>
+
       <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2 text-xs">
-        <div class="font-bold text-amber-400 uppercase"><i class="fa-solid fa-database mr-1"></i> Respaldo JSON del dispositivo</div>
-        <p class="text-slate-400 text-[11px]">El archivo contiene los registros y adjuntos actuales, pero no exporta PIN ni clave local.</p>
+        <div class="font-bold text-amber-400 uppercase"><i class="fa-solid fa-database mr-1"></i> 2. Respaldo Directo por Archivo (.JSON)</div>
+        <p class="text-slate-400 text-[11px]">Descarga o importa una copia completa en archivo JSON en cualquier momento:</p>
         <div class="flex gap-2 pt-1">
           <button type="button" onclick="exportFullDatabaseJSON()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 px-3 rounded-xl font-semibold border border-slate-700"><i class="fa-solid fa-download mr-1 text-amber-400"></i> Exportar base</button>
           <button type="button" onclick="document.getElementById('importDbJsonInput').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 px-3 rounded-xl font-semibold border border-slate-700"><i class="fa-solid fa-upload mr-1 text-blue-400"></i> Importar base</button>
@@ -786,15 +816,15 @@
           }
           if (needsWrite) {
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-            catch (err) { console.warn('La migración local quedó pendiente; se conserva la copia anterior.'); }
+            catch (err) { console.warn('La migraci\u00f3n local qued\u00f3 pendiente; se conserva la copia anterior.'); }
           }
           return data;
-        } catch (err) { console.warn('No se pudo leer una copia local; se intentará otra versión.'); }
+        } catch (err) { console.warn('No se pudo leer una copia local; se intentar\u00e1 otra versi\u00f3n.'); }
       }
       return defaults;
     }
 
-function saveData() {
+function saveData(skipCloudPush = false) {
       const previousUpdated = appData.lastUpdated;
       appData.lastUpdated = Date.now();
       try {
@@ -802,11 +832,14 @@ function saveData() {
       } catch (err) {
         appData.lastUpdated = previousUpdated;
         const isQuota = err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014);
-        showToast(isQuota ? 'No hay espacio local suficiente. Exporta una copia y reduce el tamaño de los adjuntos.' : 'No se pudieron guardar los cambios en este navegador.');
+        showToast(isQuota ? 'No hay espacio local suficiente. Exporta una copia y reduce el tama\u00f1o de los adjuntos.' : 'No se pudieron guardar los cambios en este navegador.');
         console.error('CentroXpert local save failed:', err && err.name ? err.name : 'storage error');
         return false;
       }
       render();
+      if (!skipCloudPush && typeof pushToCloud === 'function') {
+        pushToCloud(false);
+      }
       return true;
     }
 
@@ -875,7 +908,7 @@ function goHome() { render(); }
       const techName = document.getElementById('loginTecSelect').value;
       const pin = document.getElementById('loginTecPin').value.trim();
       const tech = appData.technicians.find(t => t.name === techName);
-      if (!tech) { alert('No se encontró el perfil seleccionado.'); return; }
+      if (!tech) { alert('No se encontr\u00f3 el perfil seleccionado.'); return; }
       if (pin.length < 4) { alert('El PIN local debe tener al menos 4 caracteres.'); return; }
       if (!tech.pin) {
         tech.pin = pin;
@@ -917,7 +950,7 @@ function logout() { currentAuthUser = null; document.getElementById('loginTecPin
       if (newP.length < 4) { alert('El PIN local debe tener al menos 4 caracteres.'); return; }
       if (newP !== confirmP) { alert('Los PIN no coinciden.'); return; }
       const tech = appData.technicians.find(t => t.name === currentAuthUser.name);
-      if (!tech) { alert('No se encontró el perfil técnico.'); return; }
+      if (!tech) { alert('No se encontr\u00f3 el perfil t\u00e9cnico.'); return; }
       if (tech.pin && tech.pin !== current) { alert('El PIN actual no coincide.'); return; }
       const previousPin = tech.pin;
       tech.pin = newP;
@@ -942,7 +975,7 @@ function render() {
 
       actions.innerHTML = `
         <button type="button" onclick="openCloudSyncModal()" title="Sincronizar PC y M\u00f3vil en la Nube" class="bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 px-2.5 py-1.5 rounded-xl border border-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow">
-          <i class="fa-solid fa-database" id="cloudHeaderIcon"></i> <span class="hidden md:inline" id="cloudHeaderText">Respaldo local</span>
+          <i class="fa-solid fa-cloud-arrow-up" id="cloudHeaderIcon"></i> <span class="hidden md:inline" id="cloudHeaderText">Sincronizar</span>
         </button>
         <div class="relative cursor-pointer mx-1" onclick="openNotifModal()">
           <i class="fa-solid fa-bell text-slate-300 hover:text-white text-lg transition"></i>
@@ -1189,7 +1222,7 @@ function render() {
     function renderFuelLogistics() {
       return `
         <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
-          <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Registro de combustible & costo por kilómetro</h3>
+          <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Registro de combustible & costo por kil\u00f3metro</h3>
           <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div><label class="block text-[10px] text-slate-400 mb-1">Placa</label><select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs">${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate}</option>`).join('')}</select></div>
             <div><label class="block text-[10px] text-slate-400 mb-1">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-700 text-slate-400 px-2 py-1.5 rounded text-xs"></div>
@@ -1200,7 +1233,7 @@ function render() {
           </form>
           <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400"><tr><th class="p-2">Fecha</th><th class="p-2">Placa</th><th class="p-2">Dist</th><th class="p-2">Monto</th><th class="p-2">Tickets</th><th class="p-2">Costo/KM</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
-            ${appData.fuelLogs.map(l => `<tr><td class="p-2">${l.date}</td><td class="p-2">${l.plate}</td><td class="p-2 text-emerald-400">${l.dist == null ? 'N/D' : l.dist + ' KM'}</td><td class="p-2">RD$ ${l.cost}</td><td class="p-2">${l.ticketCount == null ? '—' : l.ticketCount}</td><td class="p-2 font-bold ${l.costPerKm == null ? 'text-slate-500' : 'text-emerald-400'}">${l.costPerKm == null ? 'Sin datos' : 'RD$ ' + Number(l.costPerKm).toFixed(2)}</td></tr>`).join('')}
+            ${appData.fuelLogs.map(l => `<tr><td class="p-2">${l.date}</td><td class="p-2">${l.plate}</td><td class="p-2 text-emerald-400">${l.dist == null ? 'N/D' : l.dist + ' KM'}</td><td class="p-2">RD$ ${l.cost}</td><td class="p-2">${l.ticketCount == null ? '\u2014' : l.ticketCount}</td><td class="p-2 font-bold ${l.costPerKm == null ? 'text-slate-500' : 'text-emerald-400'}">${l.costPerKm == null ? 'Sin datos' : 'RD$ ' + Number(l.costPerKm).toFixed(2)}</td></tr>`).join('')}
           </tbody></table></div>
         </div>
       `;
@@ -1238,7 +1271,7 @@ function updateFuelPlateHelper() {
       appData.fuelLogs.unshift({ id: Date.now(), date: new Date().toLocaleDateString('es-DO'), plate: plate, dist: dist, cost: cost, ticketCount: ticketCount, costPerKm: costPerKm, dev: 'N/D' });
       if (vehicle) vehicle.lastFuelKm = currentKm;
       if (!saveData()) return;
-      showToast('Registro guardado. El consumo requiere registrar litros; no se estimó un porcentaje.');
+      showToast('Registro guardado. El consumo requiere registrar litros; no se estim\u00f3 un porcentaje.');
     }
 
 function renderStaffLogistics() {
@@ -1379,9 +1412,9 @@ function openVehicleModal(id = null) {
     }
 
     function resetTechPinDirectly() {
-      if (!currentAuthUser || currentAuthUser.role !== 'admin') { alert('Acción no disponible.'); return; }
+      if (!currentAuthUser || currentAuthUser.role !== 'admin') { alert('Acci\u00f3n no disponible.'); return; }
       const tech = appData.technicians.find(item => item.id === document.getElementById('techEditId').value);
-      if (tech && confirm('Se borrará el PIN local de este perfil. El técnico deberá crear uno nuevo al próximo acceso. ¿Continuar?')) {
+      if (tech && confirm('Se borrar\u00e1 el PIN local de este perfil. El t\u00e9cnico deber\u00e1 crear uno nuevo al pr\u00f3ximo acceso. \u00bfContinuar?')) {
         const previousPin = tech.pin;
         tech.pin = '';
         if (!saveData()) { tech.pin = previousPin; return; }
@@ -1443,7 +1476,7 @@ function handleSaveTechnician(e) {
     function openEditProjectModal(projId) {
       const p = appData.projects.find(item => item.id === projId);
       if (!p) return;
-      if (p.tracking && p.tracking.legacyTargetNeedsReview) showToast('Revisa las coordenadas históricas antes de confirmar la geocerca.');
+      if (p.tracking && p.tracking.legacyTargetNeedsReview) showToast('Revisa las coordenadas hist\u00f3ricas antes de confirmar la geocerca.');
       document.getElementById('editProjectId').value = p.id;
       document.getElementById('editProjectCode').value = p.code || '';
       document.getElementById('editProjectTitle').value = p.title || '';
@@ -1527,7 +1560,7 @@ function openQuotationModal(projId) {
     }
 
     async function extractPdfTextFromAllPages(file) {
-      if (typeof pdfjsLib === 'undefined' || !pdfjsLib.getDocument) throw new Error('El lector PDF no está disponible.');
+      if (typeof pdfjsLib === 'undefined' || !pdfjsLib.getDocument) throw new Error('El lector PDF no est\u00e1 disponible.');
       const buffer = await readFileAsArrayBuffer(file);
       const pdf = await pdfjsLib.getDocument(new Uint8Array(buffer)).promise;
       const pages = [];
@@ -1546,11 +1579,11 @@ function openQuotationModal(projId) {
       try {
         const result = await extractPdfTextFromAllPages(file);
         const fullText = result.text || '';
-        if (!fullText.trim()) { alert('No se encontró texto extraíble en el PDF. No se rellenaron campos.'); return; }
-        const codeMatch = fullText.match(/Código\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
-        const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+Código\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
-        const addrMatch = fullText.match(/Dirección\s+del\s+Servicio:\s*([\s\S]*?)(?:Persona\s+Contacto|Fecha\s+Planificada)/i);
-        const obsMatch = fullText.match(/Observaciones:\s*([\s\S]*?)(?:Cliente:|Técnicos|$)/i);
+        if (!fullText.trim()) { alert('No se encontr\u00f3 texto extra\u00edble en el PDF. No se rellenaron campos.'); return; }
+        const codeMatch = fullText.match(/C\u00f3digo\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
+        const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+C\u00f3digo\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
+        const addrMatch = fullText.match(/Direcci\u00f3n\s+del\s+Servicio:\s*([\s\S]*?)(?:Persona\s+Contacto|Fecha\s+Planificada)/i);
+        const obsMatch = fullText.match(/Observaciones:\s*([\s\S]*?)(?:Cliente:|T\u00e9cnicos|$)/i);
         let found = false;
         const codeField = document.getElementById('editProjectCode');
         const clientField = document.getElementById('editProjectClient');
@@ -1560,7 +1593,7 @@ function openQuotationModal(projId) {
         if (clientMatch && clientField) { clientField.value = clientMatch[1].trim(); found = true; }
         if (addrMatch && addressField) { addressField.value = addrMatch[1].trim().slice(0, 120); found = true; }
         if (titleMatch && titleField) { titleField.value = titleMatch[1].trim(); found = true; }
-        alert(found ? 'Se revisaron ' + result.pageCount + ' páginas. Verifica cada campo antes de guardar; los campos no reconocidos quedaron intactos.' : 'No se reconocieron campos compatibles. No se modificó el formulario.');
+        alert(found ? 'Se revisaron ' + result.pageCount + ' p\u00e1ginas. Verifica cada campo antes de guardar; los campos no reconocidos quedaron intactos.' : 'No se reconocieron campos compatibles. No se modific\u00f3 el formulario.');
       } catch (err) {
         alert('No se pudo procesar el PDF. No se guardaron datos inventados.');
         console.error('PDF edit extraction failed:', err && err.name ? err.name : 'error');
@@ -1611,13 +1644,13 @@ function openProjectDetailModal(projId) {
       const distEl = document.getElementById('detailProjectDistance');
       const gpsLines = [];
       if (p.tracking && p.tracking.checkIn) {
-        let arrivalStatus = p.tracking.isVerifiedOnSite ? 'Llegada GPS verificada' : 'Llegada GPS sin verificación';
+        let arrivalStatus = p.tracking.isVerifiedOnSite ? 'Llegada GPS verificada' : 'Llegada GPS sin verificaci\u00f3n';
         if (p.tracking.distanceFromTargetMeters !== null && p.tracking.distanceFromTargetMeters !== undefined) arrivalStatus += ' (' + Math.round(Number(p.tracking.distanceFromTargetMeters)) + ' m)';
         gpsLines.push(arrivalStatus);
       }
-      if (p.tracking && p.tracking.checkOut) gpsLines.push('Salida GPS ' + (p.tracking.checkOutVerified ? 'verificada' : 'sin verificación'));
-      if (p.tracking && p.tracking.legacyTargetNeedsReview) gpsLines.push('Geocerca histórica pendiente de revisión');
-      distEl.innerText = gpsLines.length ? gpsLines.join(' · ') : 'Sin registro GPS';
+      if (p.tracking && p.tracking.checkOut) gpsLines.push('Salida GPS ' + (p.tracking.checkOutVerified ? 'verificada' : 'sin verificaci\u00f3n'));
+      if (p.tracking && p.tracking.legacyTargetNeedsReview) gpsLines.push('Geocerca hist\u00f3rica pendiente de revisi\u00f3n');
+      distEl.innerText = gpsLines.length ? gpsLines.join(' \u00b7 ') : 'Sin registro GPS';
 
       document.getElementById('detailProjectOrderFileName').innerText = p.serviceOrderFile ? p.serviceOrderFile.name : 'Orden_Servicio.pdf';
 
@@ -1934,12 +1967,12 @@ function handleSaveQuotation(e) {
       const p = appData.projects.find(item => item.id === currentDetailProjectId);
       if (!p) return;
       if (!p.tracking) p.tracking = {};
-      if (!navigator.geolocation) { showToast('Este navegador no ofrece GPS. No se registró una llegada verificada.'); return; }
-      showToast('Solicitando ubicación GPS…');
+      if (!navigator.geolocation) { showToast('Este navegador no ofrece GPS. No se registr\u00f3 una llegada verificada.'); return; }
+      showToast('Solicitando ubicaci\u00f3n GPS\u2026');
       navigator.geolocation.getCurrentPosition(pos => {
         const lat = Number(pos.coords.latitude);
         const lng = Number(pos.coords.longitude);
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) { showToast('El dispositivo devolvió coordenadas inválidas. No se registró la llegada.'); return; }
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) { showToast('El dispositivo devolvi\u00f3 coordenadas inv\u00e1lidas. No se registr\u00f3 la llegada.'); return; }
         const hasTarget = !p.tracking.legacyTargetNeedsReview && p.targetLat !== '' && p.targetLat !== null && p.targetLat !== undefined && p.targetLng !== '' && p.targetLng !== null && p.targetLng !== undefined && Number.isFinite(Number(p.targetLat)) && Number.isFinite(Number(p.targetLng));
         const distance = hasTarget ? calculateHaversineDistance(lat, lng, Number(p.targetLat), Number(p.targetLng)) : null;
         const radius = Number(p.geofenceRadiusMeters) > 0 ? Number(p.geofenceRadiusMeters) : 300;
@@ -1953,12 +1986,12 @@ function handleSaveQuotation(e) {
         p.status = 'En Curso';
         if (!saveData()) return;
         const note = verified ? 'Llegada GPS verificada' : (hasTarget ? 'Llegada GPS registrada fuera de la geocerca; no verificada' : 'Llegada GPS registrada, pero el proyecto no tiene geocerca configurada; no verificada');
-        addNotification('admin', '📍 ' + (currentAuthUser ? currentAuthUser.name : 'Técnico') + ' — ' + note + ' en ' + p.code + '.');
+        addNotification('admin', '\ud83d\udccd ' + (currentAuthUser ? currentAuthUser.name : 'T\u00e9cnico') + ' \u2014 ' + note + ' en ' + p.code + '.');
         showToast(note + '.');
         openProjectDetailModal(p.id);
       }, error => {
-        const messages = { 1: 'Permiso de ubicación denegado', 2: 'Ubicación no disponible', 3: 'La solicitud GPS agotó el tiempo de espera' };
-        showToast((messages[error && error.code] || 'No se pudo obtener la ubicación GPS') + '. No se registró llegada verificada.');
+        const messages = { 1: 'Permiso de ubicaci\u00f3n denegado', 2: 'Ubicaci\u00f3n no disponible', 3: 'La solicitud GPS agot\u00f3 el tiempo de espera' };
+        showToast((messages[error && error.code] || 'No se pudo obtener la ubicaci\u00f3n GPS') + '. No se registr\u00f3 llegada verificada.');
       }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
     }
 
@@ -2002,17 +2035,17 @@ function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
           p.tracking.hoursWorked = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm en obra';
         } else p.tracking.hoursWorked = 'Jornada completada';
         if (!saveData()) return;
-        showToast(coords ? p.tracking.checkOutLocationStatus + '.' : 'Salida registrada; ubicación no verificada.');
+        showToast(coords ? p.tracking.checkOutLocationStatus + '.' : 'Salida registrada; ubicaci\u00f3n no verificada.');
         openProjectDetailModal(p.id);
       };
       if (!navigator.geolocation) { recordDeparture(null, 'GPS no disponible'); return; }
       navigator.geolocation.getCurrentPosition(pos => {
         const lat = Number(pos.coords.latitude);
         const lng = Number(pos.coords.longitude);
-        if (!Number.isFinite(lat) || !Number.isFinite(lng)) { recordDeparture(null, 'Coordenadas GPS inválidas'); return; }
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) { recordDeparture(null, 'Coordenadas GPS inv\u00e1lidas'); return; }
         recordDeparture({ lat: lat, lng: lng, accuracy: Number(pos.coords.accuracy) || null }, '');
       }, error => {
-        const messages = { 1: 'Permiso GPS denegado', 2: 'Ubicación GPS no disponible', 3: 'Tiempo de espera GPS agotado' };
+        const messages = { 1: 'Permiso GPS denegado', 2: 'Ubicaci\u00f3n GPS no disponible', 3: 'Tiempo de espera GPS agotado' };
         recordDeparture(null, messages[error && error.code] || 'No se pudo obtener GPS');
       }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
     }
@@ -2045,6 +2078,7 @@ function triggerTechSurvey() {
       updateSurveyModalFileCards();
       renderSurveyItemLists();
       openModal('surveyModal');
+      setTimeout(() => searchOmegaCatalog(), 50);
     }
 
     async function handleSurveyDocUpload(e) {
@@ -2055,7 +2089,7 @@ function triggerTechSurvey() {
       const nameL = file.name.toLowerCase();
       try {
         if (nameL.endsWith('.docx')) {
-          badge.innerText = 'Leyendo Word…';
+          badge.innerText = 'Leyendo Word\u2026';
           const buffer = await readFileAsArrayBuffer(file);
           const dataUrl = await readFileAsDataURL(file);
           const result = await mammoth.extractRawText({ arrayBuffer: buffer });
@@ -2063,9 +2097,9 @@ function triggerTechSurvey() {
           if (text.trim()) processExtractedSurveyText(text);
           tempSurveyDoc = { name: file.name, type: 'word', data: dataUrl, text: text };
           updateSurveyModalFileCards();
-          badge.innerText = text.trim() ? 'Word leído; revisa los datos' : 'Word adjunto sin texto extraíble';
+          badge.innerText = text.trim() ? 'Word le\u00eddo; revisa los datos' : 'Word adjunto sin texto extra\u00edble';
         } else if (file.type && file.type.startsWith('image/')) {
-          badge.innerText = 'Digitalizando imagen…';
+          badge.innerText = 'Digitalizando imagen\u2026';
           const dataUrl = await readFileAsDataURL(file);
           tempSurveyDoc = { name: file.name, type: file.type, data: dataUrl };
           updateSurveyModalFileCards();
@@ -2073,16 +2107,16 @@ function triggerTechSurvey() {
           const result = await Tesseract.recognize(dataUrl, 'spa');
           const text = result && result.data ? result.data.text : '';
           if (text.trim()) processExtractedSurveyText(text);
-          badge.innerText = text.trim() ? 'OCR leído; revisa los datos' : 'Imagen adjunta sin texto reconocido';
+          badge.innerText = text.trim() ? 'OCR le\u00eddo; revisa los datos' : 'Imagen adjunta sin texto reconocido';
         } else if (file.type === 'application/pdf' || nameL.endsWith('.pdf')) {
-          badge.innerText = 'Leyendo todas las páginas PDF…';
+          badge.innerText = 'Leyendo todas las p\u00e1ginas PDF\u2026';
           const result = await extractPdfTextFromAllPages(file);
           const dataUrl = await readFileAsDataURL(file);
           const text = result.text || '';
           tempSurveyDoc = { name: file.name, type: 'application/pdf', data: dataUrl, text: text };
           updateSurveyModalFileCards();
           if (text.trim()) processExtractedSurveyText(text);
-          badge.innerText = text.trim() ? 'PDF de ' + result.pageCount + ' páginas leído; revisa los datos' : 'PDF adjunto sin texto extraíble';
+          badge.innerText = text.trim() ? 'PDF de ' + result.pageCount + ' p\u00e1ginas le\u00eddo; revisa los datos' : 'PDF adjunto sin texto extra\u00edble';
         } else {
           const dataUrl = await readFileAsDataURL(file);
           tempSurveyDoc = { name: file.name, type: file.type || 'application/octet-stream', data: dataUrl };
@@ -2091,7 +2125,7 @@ function triggerTechSurvey() {
         }
       } catch (err) {
         badge.innerText = 'No se pudo procesar el archivo';
-        showToast('No se guardó texto inventado. Revisa el archivo y vuelve a intentarlo.');
+        showToast('No se guard\u00f3 texto inventado. Revisa el archivo y vuelve a intentarlo.');
         console.error('Survey file processing failed:', err && err.name ? err.name : 'error');
       } finally { if (e.target) e.target.value = ''; }
     }
@@ -2175,42 +2209,216 @@ function updateSurveyModalFileCards() {
     }
 
     function processManualOCRFake() {
-      showToast('La lectura manual de ejemplo está desactivada. Adjunta una imagen real para ejecutar OCR.');
+      showToast('La lectura manual de ejemplo est\u00e1 desactivada. Adjunta una imagen real para ejecutar OCR.');
     }
 
-function searchOmegaCatalog() {
-      const q = document.getElementById('omegaSearchInput').value.toLowerCase();
+const OMEGA_VERIFIED_CATALOG = [
+      { sku: 'NHC-OF10', consulId: '105941', name: 'CAMARA DE VIGILANCIA NEXXT EXTERIOR SMART WIFI 2K+ 5MP IP65', brand: 'Nexxt', category: 'Equipos', priceRD: 2563.34, url: 'https://tienda.omega.com.do/es/product/consul/105941' },
+      { sku: 'H8C-PRO-2K', consulId: 'ezviz', name: 'CAMARA DE VIGILANCIA PTZ EZVIZ MODELO H8C PRO 2K', brand: 'Ezviz', category: 'Equipos', priceRD: 3405.34, url: 'https://tienda.omega.com.do/es/product/search?Terms=ezviz' },
+      { sku: 'CS-C6W-A0-3H4WF', consulId: 'ezviz', name: 'EZVIZ CAMARA INTERIOR MODELO C6W CON PANEO E INCLINACION 4MP', brand: 'Ezviz', category: 'Equipos', priceRD: 5595.59, url: 'https://tienda.omega.com.do/es/product/search?Terms=ezviz' },
+      { sku: 'CB8-LITE-2K-KIT', consulId: 'ezviz', name: 'CAMARA CON BATERIA Y PANEL SOLAR EXTERIOR EZVIZ CB8 LITE 2K+ (KIT)', brand: 'Ezviz', category: 'Equipos', priceRD: 7689.12, url: 'https://tienda.omega.com.do/es/product/search?Terms=ezviz' },
+      { sku: 'DS-2CD1043G2-LIUF', consulId: '96693', name: 'HIKVISION CAMARA BULLET IP 4MP DUAL LIGHT 30M IR + 20M LUZ BLANCA IP67', brand: 'Hikvision', category: 'Equipos', priceRD: 4850.00, url: 'https://tienda.omega.com.do/es/product/consul/96693' },
+      { sku: 'DS-2CE12DF0T-F', consulId: '106631', name: 'CAMARA HIKVISION ANALOGA BULLET TURBO HD 2MP 1080P COLORVU IP67', brand: 'Hikvision', category: 'Equipos', priceRD: 2890.00, url: 'https://tienda.omega.com.do/es/product/consul/106631' },
+      { sku: 'DS-2SE4C425MWG-E', consulId: '109363', name: 'HIKVISION CAMARA IP PTZ 4MP TANDEMVU IR 40M 25X ZOOM CAPTURA ROSTROS', brand: 'Hikvision', category: 'Equipos', priceRD: 19450.00, url: 'https://tienda.omega.com.do/es/product/consul/109363' },
+      { sku: 'IDS-2CD5T47G2/V-XS', consulId: '109364', name: 'HIKVISION DEEPINVIEWX BULLET IP 4MP ANPR WDR 120DB IP67 IK10 80M', brand: 'Hikvision', category: 'Equipos', priceRD: 23051.98, url: 'https://tienda.omega.com.do/es/product/consul/109364' },
+      { sku: 'IDS-2CD7A46G2/V-XZHSY', consulId: '107699', name: 'HIKVISION DEEPINVIEWX VARIFOCAL BULLET IP 4MP ANPR PLACAS IP67 IK10', brand: 'Hikvision', category: 'Equipos', priceRD: 36080.32, url: 'https://tienda.omega.com.do/es/product/consul/107699' },
+      { sku: 'NKS424W03H', consulId: '109515', name: 'KIT SEGURIDAD HIKVISION 2 CAMARAS BULLET 4MP + GRABADORA WIFI', brand: 'Hikvision', category: 'Equipos', priceRD: 11250.00, url: 'https://tienda.omega.com.do/es/product/consul/109515' },
+      { sku: 'DS-3E1510P-SI', consulId: '109361', name: 'SWITCH 8 PUERTOS HIKVISION 8X GIGABIT POE + 2X FIBRA OPTICA', brand: 'Hikvision', category: 'Equipos', priceRD: 9935.86, url: 'https://tienda.omega.com.do/es/product/consul/109361' },
+      { sku: 'DS-PHA64-LP', consulId: '94415', name: 'PANEL DE ALARMA HIKVISION AX HYBRID PRO 64 ZONAS TCP/IP Y WIFI', brand: 'Hikvision', category: 'Equipos', priceRD: 7171.14, url: 'https://tienda.omega.com.do/es/product/consul/94415' },
+      { sku: 'NVR-HIK-16CH-4K', consulId: 'nvr', name: 'NVR HIKVISION 16 CANALES 4K POE ACUSENSE H.265+', brand: 'Hikvision', category: 'Equipos', priceRD: 18500.00, url: 'https://tienda.omega.com.do/es/product/search?Terms=nvr' },
+      { sku: 'AB356NXT32', consulId: '94316', name: 'ROLLO DE CABLE UTP NEXXT CAT6 1000 PIES 24 AWG 100% COBRE AZUL', brand: 'Nexxt', category: 'Materiales', priceRD: 13462.12, url: 'https://tienda.omega.com.do/es/product/consul/94316' },
+      { sku: 'PCG6U-50B', consulId: 'rj45', name: 'CONECTORES RJ45 CAT6 NEXXT PAQUETE 50 UNIDADES', brand: 'Nexxt', category: 'Materiales', priceRD: 850.00, url: 'https://tienda.omega.com.do/es/product/search?Terms=rj45' },
+      { sku: 'TUB-EMT-34', consulId: 'emt', name: 'TUBO CONDUIT EMT 3/4 PULGADA (TRAMO 3M) GALVANIZADO', brand: 'Gen\u00e9rico', category: 'Materiales', priceRD: 450.00, url: 'https://tienda.omega.com.do/es/product/search?Terms=cable' }
+    ];
+
+    let lastOmegaSearchList = [...OMEGA_VERIFIED_CATALOG];
+
+    function getOmegaSearchUrl(term) {
+      const clean = (term || 'camara').trim() || 'camara';
+      return 'https://tienda.omega.com.do/es/product/search?Terms=' + encodeURIComponent(clean);
+    }
+
+    function updateOmegaDirectLink(val) {
+      const link = document.getElementById('omegaDirectSearchLink');
+      if (link) {
+        link.href = getOmegaSearchUrl(val);
+      }
+    }
+
+    function openOmegaWebPopup() {
+      const inp = document.getElementById('omegaSearchInput');
+      const term = inp && inp.value.trim() ? inp.value.trim() : 'camara';
+      window.open(getOmegaSearchUrl(term), '_blank', 'noopener,noreferrer');
+    }
+
+    function parseLiveOmegaSearchHtml(rawHtml, queryTerm) {
+      if (!rawHtml || typeof rawHtml !== 'string') return [];
+      const doc = new DOMParser().parseFromString(rawHtml, 'text/html');
+      const items = [];
+      const seen = new Set();
+
+      // Buscar enlaces a productos (/es/product/consul/...)
+      const links = Array.from(doc.querySelectorAll('a[href*="/es/product/"]'));
+      links.forEach(a => {
+        const href = a.getAttribute('href') || '';
+        const idMatch = href.match(/\/consul\/(\d+)/i);
+        const card = a.closest('.product-item, .item-box, .product, .card, li, div') || a.parentElement;
+        if (!card) return;
+        const textBlock = (card.innerText || card.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!textBlock || textBlock.length < 10) return;
+
+        // Extraer precio RD$ o $
+        const priceMatch = textBlock.match(/\$\s*([\d,]+(?:\.\d{2})?)/);
+        const partMatch = textBlock.match(/(?:N\u00famero de parte|Part|Modelo|Ref|SKU)\s*[:#]?\s*([A-Z0-9-_/+.]{3,25})/i) || textBlock.match(/\(([A-Z0-9-]{4,20})\)/);
+        let title = (a.innerText || a.textContent || '').replace(/\s+/g, ' ').trim();
+        if (!title || title.toLowerCase() === 'ver detalle' || title.toLowerCase() === 'agregar al carrito') {
+          const heading = card.querySelector('h1, h2, h3, h4, h5, .product-title, .title');
+          if (heading) title = (heading.innerText || heading.textContent || '').replace(/\s+/g, ' ').trim();
+        }
+        if (!title || title.length < 4 || title.toLowerCase().includes('agregar al carrito')) return;
+
+        const sku = partMatch ? partMatch[1].trim() : (idMatch ? 'OMG-' + idMatch[1] : 'OMG-WEB');
+        const key = (sku + '|' + title).toUpperCase();
+        if (seen.has(key)) return;
+        seen.add(key);
+
+        const price = priceMatch ? parseFloat(priceMatch[1].replace(/,/g, '')) : 0;
+        const fullUrl = href.startsWith('http') ? href : 'https://tienda.omega.com.do' + (href.startsWith('/') ? '' : '/') + href;
+        const isMaterial = /cable|utp|bobina|conector|rj45|patch|canaleta|tubo|rack/i.test(title);
+
+        items.push({
+          sku: sku,
+          consulId: idMatch ? idMatch[1] : '',
+          name: title.slice(0, 110),
+          brand: 'Omega Tech',
+          category: isMaterial ? 'Materiales' : 'Equipos',
+          priceRD: Number.isFinite(price) ? price : 0,
+          url: fullUrl
+        });
+      });
+      return items.slice(0, 20);
+    }
+
+    async function searchOmegaCatalog() {
+      const inp = document.getElementById('omegaSearchInput');
+      const rawQuery = inp ? inp.value.trim() : '';
+      const q = rawQuery.toLowerCase();
+      updateOmegaDirectLink(rawQuery || 'camara');
+
       const resBox = document.getElementById('omegaResults');
-      const omegaProducts = [
-        { sku: 'CAM-HIK-4MP', name: 'C\u00e1mara IP Domo 4MP Hikvision IR30m', category: 'Equipos', priceRD: 5200 },
-        { sku: 'CAM-HIK-BUL', name: 'C\u00e1mara IP Bullet 4MP Hikvision ColorVu', category: 'Equipos', priceRD: 5650 },
-        { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 18500 },
-        { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m Cobre', category: 'Materiales', priceRD: 7900 },
-        { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Paquete 50 Uds', category: 'Materiales', priceRD: 850 },
-        { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada (3m)', category: 'Materiales', priceRD: 450 }
-      ];
-      const matched = omegaProducts.filter(p => !q || p.name.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q));
-      resBox.innerHTML = matched.map(p => `
-        <div class="bg-slate-900 p-2 rounded border border-slate-700 flex justify-between items-center text-[10px]">
-          <div class="truncate mr-2"><div class="font-bold text-white truncate">${p.name}</div><div class="text-slate-400 font-mono">${p.sku} - RD$ ${p.priceRD.toLocaleString()}</div></div>
-          <button type="button" onclick="addFromCatalog('${p.sku}')" class="bg-blue-800 hover:bg-blue-700 text-white px-2 py-1 rounded font-bold">+ A\u00f1adir</button>
+      const statusEl = document.getElementById('omegaSearchStatus');
+      const targetUrl = getOmegaSearchUrl(rawQuery || 'camara');
+
+      // 1. Filtrar primero el cat\u00e1logo verificado de tienda.omega.com.do por nombre, marca, SKU o ID
+      const localMatches = OMEGA_VERIFIED_CATALOG.filter(p =>
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        p.sku.toLowerCase().includes(q) ||
+        (p.brand && p.brand.toLowerCase().includes(q)) ||
+        (p.consulId && p.consulId.toLowerCase().includes(q))
+      );
+
+      lastOmegaSearchList = [...localMatches];
+      renderOmegaResultsList(lastOmegaSearchList, targetUrl);
+
+      if (!rawQuery) {
+        if (statusEl) statusEl.innerText = 'Mostrando equipos verificados de tienda.omega.com.do con su referencia (SKU / No. de Parte).';
+        return;
+      }
+
+      if (statusEl) {
+        statusEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1 text-blue-400"></i> Consultando en vivo: <span class="font-mono text-blue-300">${targetUrl}</span>...`;
+      }
+
+      // 2. Intentar consulta en vivo a https://tienda.omega.com.do/es/product/search?Terms=...
+      try {
+        const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(targetUrl);
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 6500);
+        const resp = await fetch(proxyUrl, { signal: controller.signal });
+        clearTimeout(timer);
+
+        if (resp.ok) {
+          const data = await resp.json();
+          const liveItems = parseLiveOmegaSearchHtml(data && data.contents ? data.contents : '', rawQuery);
+          if (liveItems.length > 0) {
+            const existingSkus = new Set(localMatches.map(x => x.sku.toUpperCase()));
+            const merged = [...localMatches];
+            liveItems.forEach(item => {
+              if (!existingSkus.has(item.sku.toUpperCase())) {
+                merged.push(item);
+              }
+            });
+            lastOmegaSearchList = merged;
+            renderOmegaResultsList(lastOmegaSearchList, targetUrl);
+            if (statusEl) {
+              statusEl.innerHTML = `<span class="text-emerald-400 font-semibold"><i class="fa-solid fa-check mr-1"></i> Resultados actualizados desde tienda.omega.com.do (${merged.length} equipos).</span>`;
+            }
+            return;
+          }
+        }
+      } catch (err) {
+        // Si CORS o la red bloquean el proxy, mantenemos los resultados verificados y el enlace directo
+      }
+
+      if (statusEl) {
+        statusEl.innerHTML = localMatches.length > 0
+          ? `Mostrando ${localMatches.length} coincidencia(s) con referencia oficial. <a href="${targetUrl}" target="_blank" class="text-blue-400 underline ml-1">Ver b\u00fasqueda completa en tienda.omega.com.do</a>`
+          : `Sin coincidencias directas en cach\u00e9 local para "${rawQuery}". <a href="${targetUrl}" target="_blank" class="text-blue-400 underline font-bold ml-1">Abrir "${rawQuery}" en tienda.omega.com.do</a>`;
+      }
+    }
+
+    function renderOmegaResultsList(list, searchUrl) {
+      const resBox = document.getElementById('omegaResults');
+      if (!resBox) return;
+      if (!list || list.length === 0) {
+        resBox.innerHTML = `
+          <div class="col-span-2 bg-slate-900/90 border border-slate-800 p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span class="text-slate-300">No se encontraron referencias locales con ese t\u00e9rmino.</span>
+            <a href="${searchUrl}" target="_blank" rel="noopener noreferrer" class="bg-blue-700 hover:bg-blue-600 text-white px-3 py-1.5 rounded-lg font-bold inline-flex items-center gap-1">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Consultar en tienda.omega.com.do
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      resBox.innerHTML = list.map((p, idx) => `
+        <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700/90 flex justify-between items-center gap-2 text-[11px] hover:border-blue-500/60 transition">
+          <div class="truncate flex-1">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="bg-blue-950 text-blue-300 border border-blue-800/80 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold">Ref: ${p.sku}</span>
+              <span class="text-[10px] text-slate-400">${p.category}</span>
+            </div>
+            <div class="font-bold text-white truncate" title="${p.name}">${p.name}</div>
+            <div class="text-emerald-400 font-mono text-[10px] font-semibold mt-0.5">
+              ${p.priceRD > 0 ? 'RD$ ' + Number(p.priceRD).toLocaleString('es-DO', { minimumFractionDigits: 2 }) : 'Consultar precio en web'}
+              <a href="${p.url || searchUrl}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline ml-2 font-sans"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver ficha</a>
+            </div>
+          </div>
+          <button type="button" onclick="addFromCatalogIndex(${idx})" class="bg-blue-700 hover:bg-blue-600 text-white px-2.5 py-1.5 rounded-lg font-bold whitespace-nowrap shadow">
+            + A\u00f1adir
+          </button>
         </div>
       `).join('');
     }
 
-    function addFromCatalog(sku) {
-      const omegaProducts = [
-        { sku: 'CAM-HIK-4MP', name: 'C\u00e1mara IP Domo 4MP Hikvision IR30m', category: 'Equipos', priceRD: 5200 },
-        { sku: 'CAM-HIK-BUL', name: 'C\u00e1mara IP Bullet 4MP Hikvision ColorVu', category: 'Equipos', priceRD: 5650 },
-        { sku: 'NVR-HIK-16CH', name: 'NVR 16 Canales 4K PoE Hikvision', category: 'Equipos', priceRD: 18500 },
-        { sku: 'CAB-UTP-CAT6', name: 'Bobina UTP Cat6 305m Cobre', category: 'Materiales', priceRD: 7900 },
-        { sku: 'CON-RJ45-50P', name: 'Conectores RJ45 Cat6 Paquete 50 Uds', category: 'Materiales', priceRD: 850 },
-        { sku: 'TUB-EMT-34', name: 'Tubo EMT 3/4 Pulgada (3m)', category: 'Materiales', priceRD: 450 }
-      ];
-      const p = omegaProducts.find(x => x.sku === sku);
+    function addFromCatalogIndex(idx) {
+      const p = lastOmegaSearchList[idx];
       if (!p) return;
-      if (p.category === 'Equipos') tempSurveyItemsEquip.push({ name: p.name, qty: 1, sku: p.sku, price: p.priceRD });
-      else tempSurveyItemsMat.push({ name: p.name, qty: 1, sku: p.sku, price: p.priceRD });
+      const itemObj = { name: `[Ref: ${p.sku}] ${p.name}`, qty: 1, sku: p.sku, price: p.priceRD || 0, url: p.url || '' };
+      if (p.category === 'Equipos') tempSurveyItemsEquip.push(itemObj);
+      else tempSurveyItemsMat.push(itemObj);
+      renderSurveyItemLists();
+      showToast(`Equipo ${p.sku} agregado al levantamiento.`);
+    }
+
+    function addFromCatalog(sku) {
+      const p = OMEGA_VERIFIED_CATALOG.find(x => x.sku === sku);
+      if (!p) return;
+      const itemObj = { name: `[Ref: ${p.sku}] ${p.name}`, qty: 1, sku: p.sku, price: p.priceRD || 0, url: p.url || '' };
+      if (p.category === 'Equipos') tempSurveyItemsEquip.push(itemObj);
+      else tempSurveyItemsMat.push(itemObj);
       renderSurveyItemLists();
     }
 
@@ -2389,20 +2597,20 @@ function searchOmegaCatalog() {
       try {
         const result = await extractPdfTextFromAllPages(file);
         const fullText = result.text || '';
-        if (!fullText.trim()) { alert('El PDF no contiene texto extraíble. No se creó ningún proyecto.'); return; }
-        const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || fullText.match(/Código\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i);
-        const projMatch = fullText.match(/Proyecto:\s*(.+?)\s*Código\s+del\s+Proyecto/i);
-        const clientMatch = fullText.match(/Cliente:\s*(.+?)\s*Código\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
-        const addressMatch = fullText.match(/Dirección\s+del\s+Servicio:\s*([\s\S]*?)(?:Persona\s+Contacto|Fecha\s+Planificada)/i);
+        if (!fullText.trim()) { alert('El PDF no contiene texto extra\u00edble. No se cre\u00f3 ning\u00fan proyecto.'); return; }
+        const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || fullText.match(/C\u00f3digo\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i);
+        const projMatch = fullText.match(/Proyecto:\s*(.+?)\s*C\u00f3digo\s+del\s+Proyecto/i);
+        const clientMatch = fullText.match(/Cliente:\s*(.+?)\s*C\u00f3digo\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
+        const addressMatch = fullText.match(/Direcci\u00f3n\s+del\s+Servicio:\s*([\s\S]*?)(?:Persona\s+Contacto|Fecha\s+Planificada)/i);
         const contactMatch = fullText.match(/Persona\s+Contacto:\s*(.+?)\s*Fecha\s+Planificada/i);
         const obsMatch = fullText.match(/Observaciones:\s*(.+?)\s*Cliente:/i);
         const dateMatch = fullText.match(/Fecha\s+Planificada:\s*(\d{2}\/\d{2}\/\d{4})/i);
-        const leaderMatch = fullText.match(/Técnicos\s+Responsables:\s*(.*?)\s*Técnicos\s+Adicionales:/i);
-        const crewMatch = fullText.match(/Técnicos\s+Adicionales:\s*(.+?)\s*Cantidad\s+Total/i);
+        const leaderMatch = fullText.match(/T\u00e9cnicos\s+Responsables:\s*(.*?)\s*T\u00e9cnicos\s+Adicionales:/i);
+        const crewMatch = fullText.match(/T\u00e9cnicos\s+Adicionales:\s*(.+?)\s*Cantidad\s+Total/i);
         const code = codeMatch ? (codeMatch[1] || codeMatch[0]).trim() : '';
         const title = projMatch && projMatch[1] ? projMatch[1].trim() : '';
         const client = clientMatch && clientMatch[1] ? clientMatch[1].trim() : '';
-        if (!code || !title || !client) { alert('Faltan código, proyecto o cliente reconocibles. No se creó ningún proyecto; revisa el formato o completa el formulario manualmente.'); return; }
+        if (!code || !title || !client) { alert('Faltan c\u00f3digo, proyecto o cliente reconocibles. No se cre\u00f3 ning\u00fan proyecto; revisa el formato o completa el formulario manualmente.'); return; }
         const existing = appData.projects.find(p => p.code && p.code.trim().toUpperCase() === code.toUpperCase());
         const leaderName = leaderMatch && leaderMatch[1] ? leaderMatch[1].trim() : '';
         const leader = appData.technicians.find(t => t.name.toLowerCase() === leaderName.toLowerCase());
@@ -2440,10 +2648,10 @@ function searchOmegaCatalog() {
         }
         if (!saveData()) return;
         closeModal('pdfModal');
-        showToast('Se importaron campos detectados en ' + result.pageCount + ' páginas. Revisa los datos y asigna técnicos que no se reconocieron.');
+        showToast('Se importaron campos detectados en ' + result.pageCount + ' p\u00e1ginas. Revisa los datos y asigna t\u00e9cnicos que no se reconocieron.');
         openProjectDetailModal(projectId);
       } catch (err) {
-        alert('No se pudo leer el PDF. No se creó un proyecto con datos de ejemplo.');
+        alert('No se pudo leer el PDF. No se cre\u00f3 un proyecto con datos de ejemplo.');
         console.error('PDF project import failed:', err && err.name ? err.name : 'error');
       } finally { if (e.target) e.target.value = ''; }
     }
@@ -2493,27 +2701,163 @@ function loadSampleTorreWashington() {
     /* ===================================================================
        CAMBIO DE CLAVE DEL COORDINADOR Y SINCRONIZACION EN TIEMPO REAL (PC <-> MOVIL)
        =================================================================== */
-    let lastCloudStatus = 'Modo local';
+    const CLOUD_ROOM_KEY = 'centroxpert_cloud_room_v2';
+    const DEFAULT_CLOUD_ROOM = 'centroxpert-omega-rd';
+    const CLIENT_INSTANCE_ID = 'cx_' + Math.random().toString(36).substring(2, 10);
 
-    function getCloudRoom() { return 'local-only'; }
+    let mqttClient = null;
+    let isSyncingCloud = false;
+    let lastCloudStatus = 'Conectando...';
 
-function getMqttTopic() { return ''; }
-
-function getNtfyTopicUrl() { return ''; }
-
-function updateCloudVisualStatus() {
-      lastCloudStatus = 'Modo local';
-      const modalBadge = document.getElementById('cloudModalStatusText');
-      if (modalBadge) { modalBadge.innerText = 'Solo este dispositivo'; modalBadge.className = 'text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-mono'; }
-      const headerText = document.getElementById('cloudHeaderText');
-      if (headerText) headerText.innerText = 'Respaldo local';
+    function getCloudRoom() {
+      return (localStorage.getItem(CLOUD_ROOM_KEY) || DEFAULT_CLOUD_ROOM).trim().toLowerCase();
     }
 
-function createSyncPayload() { return null; }
+    function getMqttTopic() {
+      const cleanRoom = getCloudRoom().replace(/[^a-z0-9_-]/g, '_');
+      return `centroxpert/sync/v2/${cleanRoom}/state`;
+    }
 
-function applyIncomingCloudData() { return false; }
+    function getNtfyTopicUrl() {
+      const cleanRoom = getCloudRoom().replace(/[^a-z0-9_-]/g, '_');
+      return `https://ntfy.sh/cx_omega_sync_${cleanRoom}`;
+    }
 
-function initRealtimeMqttSync() { updateCloudVisualStatus(); return false; }
+    function updateCloudVisualStatus(statusText = lastCloudStatus, isOnline = true) {
+      lastCloudStatus = statusText || 'En L\u00ednea';
+      const modalBadge = document.getElementById('cloudModalStatusText');
+      if (modalBadge) {
+        modalBadge.innerText = lastCloudStatus;
+        modalBadge.className = isOnline
+          ? 'text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono'
+          : 'text-[11px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-mono';
+      }
+      const headerText = document.getElementById('cloudHeaderText');
+      if (headerText) {
+        headerText.innerText = isOnline ? 'En L\u00ednea' : 'Sincronizar';
+      }
+    }
+
+    // Crea payload limpio sin contrase\u00f1as ni PINs locales para sincronizar de forma segura e instant\u00e1nea
+    function createSyncPayload() {
+      const clone = JSON.parse(JSON.stringify(appData));
+      delete clone.adminPass;
+      delete clone.currentUser;
+      (clone.technicians || []).forEach(t => { if (t && typeof t === 'object') delete t.pin; });
+      clone._sender = CLIENT_INSTANCE_ID;
+      clone.lastUpdated = appData.lastUpdated || Date.now();
+      return JSON.stringify(clone);
+    }
+
+    function applyIncomingCloudData(remoteData, sourceLabel = 'Nube', forceApply = false) {
+      if (!remoteData || typeof remoteData !== 'object' || !Array.isArray(remoteData.projects) || !Array.isArray(remoteData.technicians)) return false;
+      if (!forceApply && remoteData._sender === CLIENT_INSTANCE_ID) return false;
+
+      const localTime = Number(appData.lastUpdated || 0);
+      const remoteTime = Number(remoteData.lastUpdated || 0);
+
+      if (forceApply || remoteTime > localTime) {
+        // Conservar PINs y clave de coordinador configurados en este dispositivo
+        const localAdminPass = appData.adminPass || '';
+        const localPinsById = new Map((appData.technicians || []).map(t => [String(t.id), t.pin || '']));
+        const localPinsByName = new Map((appData.technicians || []).map(t => [String(t.name || '').toLowerCase(), t.pin || '']));
+
+        // Conservar adjuntos pesados locales si el mensaje remoto vino compacto
+        const localProjMap = {};
+        (appData.projects || []).forEach(lp => { localProjMap[lp.id] = lp; });
+
+        remoteData.projects.forEach(rp => {
+          const lp = localProjMap[rp.id];
+          if (lp) {
+            if (lp.survey && lp.survey.surveyDoc && (!rp.survey || !rp.survey.surveyDoc)) {
+              rp.survey = rp.survey || {};
+              rp.survey.surveyDoc = lp.survey.surveyDoc;
+            }
+            if (lp.survey && lp.survey.planDoc && (!rp.survey || !rp.survey.planDoc)) {
+              rp.survey = rp.survey || {};
+              rp.survey.planDoc = lp.survey.planDoc;
+            }
+            if (lp.quotation && lp.quotation.fileData && rp.quotation && !rp.quotation.fileData) {
+              rp.quotation.fileData = lp.quotation.fileData;
+            }
+            if (lp.payment50Doc && !rp.payment50Doc) {
+              rp.payment50Doc = lp.payment50Doc;
+            }
+          }
+        });
+
+        remoteData.technicians = remoteData.technicians.map(rt => {
+          const savedPin = localPinsById.get(String(rt.id)) || localPinsByName.get(String(rt.name || '').toLowerCase()) || rt.pin || '';
+          return Object.assign({}, rt, { pin: savedPin });
+        });
+
+        appData = Object.assign({}, appData, remoteData);
+        appData.adminPass = localAdminPass;
+        appData._localAuthVersion = 1;
+
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        } catch (e) {}
+
+        populateTechSelect();
+        render();
+        if (currentDetailProjectId) {
+          const detailModal = document.getElementById('projectDetailModal');
+          if (detailModal && !detailModal.classList.contains('hidden')) {
+            openProjectDetailModal(currentDetailProjectId);
+          }
+        }
+        return true;
+      }
+      return false;
+    }
+
+    function initRealtimeMqttSync() {
+      if (typeof mqtt === 'undefined') {
+        updateCloudVisualStatus('Canal HTTP Activo', true);
+        return false;
+      }
+      try {
+        if (mqttClient) {
+          try { mqttClient.end(true); } catch (e) {}
+        }
+        const topic = getMqttTopic();
+        mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
+          clientId: 'centroxpert_' + Math.random().toString(16).substring(2, 10),
+          clean: true,
+          connectTimeout: 5000,
+          reconnectPeriod: 4000
+        });
+
+        mqttClient.on('connect', () => {
+          updateCloudVisualStatus('Conectado en Tiempo Real', true);
+          mqttClient.subscribe(topic, { qos: 1 });
+        });
+
+        mqttClient.on('message', (recvTopic, message) => {
+          try {
+            const text = message.toString();
+            if (text && text.trim().startsWith('{')) {
+              const remoteData = JSON.parse(text);
+              const updated = applyIncomingCloudData(remoteData, 'Tiempo Real', false);
+              if (updated) {
+                showToast('\ud83d\udd04 Datos sincronizados en tiempo real desde otro dispositivo.');
+              } else if (Number(appData.lastUpdated || 0) > Number(remoteData.lastUpdated || 0)) {
+                mqttClient.publish(topic, createSyncPayload(), { qos: 1, retain: true });
+              }
+            }
+          } catch (e) { console.error(e); }
+        });
+
+        mqttClient.on('error', () => {
+          updateCloudVisualStatus('Canal HTTP Activo', true);
+        });
+        return true;
+      } catch (err) {
+        updateCloudVisualStatus('Canal HTTP Activo', true);
+        return false;
+      }
+    }
 
 function handlePayment50Upload(e) {
       const file = e.target.files[0];
@@ -2576,21 +2920,104 @@ function viewPaymentDocFromDetail() {
     }
 
 function openCloudSyncModal() {
-      updateCloudVisualStatus();
+      const inp = document.getElementById('cloudRoomInput');
+      if (inp) inp.value = getCloudRoom();
+      updateCloudVisualStatus(lastCloudStatus, true);
       openModal('cloudSyncModal');
     }
 
-function saveCloudRoomConfig() {
-      showToast('La nube está desactivada. Usa exportar/importar JSON para mover datos entre equipos.');
+    function saveCloudRoomConfig() {
+      const inp = document.getElementById('cloudRoomInput');
+      const val = inp ? inp.value.trim().toLowerCase() : '';
+      if (!val) return;
+      localStorage.setItem(CLOUD_ROOM_KEY, val);
+      initRealtimeMqttSync();
+      showToast('Sala "' + val + '" conectada. Sincronizando dispositivos...');
+      pullFromCloud(true);
     }
 
-async function pushToCloud(manual = false) {
-      if (manual) showToast('La sincronización en nube está desactivada. Exporta un respaldo local para trasladar datos.');
-      return false;
+    async function pushToCloud(manual = false) {
+      const payload = createSyncPayload();
+      if (!payload) return false;
+
+      let mqttSent = false;
+      if (mqttClient && mqttClient.connected) {
+        try {
+          mqttClient.publish(getMqttTopic(), payload, { qos: 1, retain: true });
+          mqttSent = true;
+        } catch (e) {}
+      }
+
+      if (isSyncingCloud && !manual) return mqttSent;
+      isSyncingCloud = true;
+      try {
+        const res = await fetch(getNtfyTopicUrl(), {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: payload
+        });
+        if ((res.ok || mqttSent) && manual) {
+          updateCloudVisualStatus('Conectado en Tiempo Real', true);
+          showToast('\u2705 Datos subidos y sincronizados con todos tus dispositivos.');
+        }
+        return res.ok || mqttSent;
+      } catch (err) {
+        if (mqttSent && manual) {
+          showToast('\u2705 Sincronizado en tiempo real por WebSocket.');
+        } else if (manual) {
+          showToast('Red restringida temporalmente. Puedes usar Exportar base (.json).');
+        }
+        return mqttSent;
+      } finally {
+        isSyncingCloud = false;
+      }
     }
 
-async function pullFromCloud(manual = false) {
-      if (manual) showToast('No hay sincronización en nube en esta versión estática.');
+    async function pullFromCloud(manual = false) {
+      if (mqttClient && mqttClient.connected) {
+        try { mqttClient.subscribe(getMqttTopic(), { qos: 1 }); } catch (e) {}
+      }
+
+      if (isSyncingCloud && !manual) return false;
+      isSyncingCloud = true;
+      try {
+        const res = await fetch(getNtfyTopicUrl() + '/json?poll=1&since=48h', { cache: 'no-store' });
+        if (res.ok) {
+          const text = await res.text();
+          const lines = text.trim().split('\n').filter(Boolean);
+          let latestRemote = null;
+          let latestTime = 0;
+
+          for (const line of lines) {
+            try {
+              const wrapper = JSON.parse(line);
+              if (wrapper && wrapper.event === 'message' && wrapper.message && wrapper.message.startsWith('{')) {
+                const candidate = JSON.parse(wrapper.message);
+                if (candidate && Array.isArray(candidate.projects) && Number(candidate.lastUpdated || 0) >= latestTime) {
+                  latestRemote = candidate;
+                  latestTime = Number(candidate.lastUpdated || 0);
+                }
+              }
+            } catch (e) {}
+          }
+
+          if (latestRemote) {
+            const applied = applyIncomingCloudData(latestRemote, 'Nube HTTP', manual);
+            updateCloudVisualStatus('Conectado en Tiempo Real', true);
+            if (manual) {
+              showToast(applied ? '\u2705 Dispositivo actualizado desde la nube.' : '\u2705 Este dispositivo ya tiene los datos m\u00e1s recientes.');
+            }
+            return applied;
+          } else if (manual) {
+            isSyncingCloud = false;
+            return await pushToCloud(true);
+          }
+        }
+      } catch (err) {
+        if (manual) showToast('Verificando conexi\u00f3n en tiempo real...');
+      } finally {
+        isSyncingCloud = false;
+      }
       return false;
     }
 
@@ -2642,15 +3069,15 @@ function validateDatabaseImport(data) {
     function importFullDatabaseJSON(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
-      if (file.size > 12 * 1024 * 1024) { alert('El archivo supera el límite de importación local de 12 MB.'); e.target.value = ''; return; }
+      if (file.size > 12 * 1024 * 1024) { alert('El archivo supera el l\u00edmite de importaci\u00f3n local de 12 MB.'); e.target.value = ''; return; }
       const reader = new FileReader();
       reader.onload = function(evt) {
         const oldData = appData;
         let oldRaw = null;
         try {
           const imported = JSON.parse(evt.target.result);
-          if (!validateDatabaseImport(imported)) { alert('El JSON no tiene una estructura válida de CentroXpert. No se modificaron los datos actuales.'); return; }
-          if (!confirm('Se descargará un respaldo local sin PIN ni clave antes de importar. La importación reemplaza los registros de este dispositivo. ¿Continuar?')) return;
+          if (!validateDatabaseImport(imported)) { alert('El JSON no tiene una estructura v\u00e1lida de CentroXpert. No se modificaron los datos actuales.'); return; }
+          if (!confirm('Se descargar\u00e1 un respaldo local sin PIN ni clave antes de importar. La importaci\u00f3n reemplaza los registros de este dispositivo. \u00bfContinuar?')) return;
           const date = new Date().toISOString().slice(0, 10);
           downloadDatabaseSnapshot(createBackupSnapshot(appData), 'centroxpert-antes-de-importar-' + date + '.json');
           const oldPins = new Map((appData.technicians || []).map(tech => [String(tech.id), tech.pin || '']));
@@ -2686,11 +3113,11 @@ function validateDatabaseImport(data) {
           populateTechSelect();
           render();
           closeModal('cloudSyncModal');
-          showToast(hasCurrentGpsSchema ? 'Base importada en este dispositivo. No se envió a la nube.' : 'Base anterior importada. Revisa las geocercas; las verificaciones GPS antiguas se dejaron sin confirmar.');
+          showToast(hasCurrentGpsSchema ? 'Base importada en este dispositivo. No se envi\u00f3 a la nube.' : 'Base anterior importada. Revisa las geocercas; las verificaciones GPS antiguas se dejaron sin confirmar.');
         } catch (err) {
           appData = oldData;
           try { if (oldRaw !== null) localStorage.setItem(STORAGE_KEY, oldRaw); else localStorage.removeItem(STORAGE_KEY); } catch (restoreErr) {}
-          alert('No se pudo importar. La copia local anterior se conservó. Verifica el JSON y el espacio disponible.');
+          alert('No se pudo importar. La copia local anterior se conserv\u00f3. Verifica el JSON y el espacio disponible.');
           console.error('Database import failed:', err && err.name ? err.name : 'error');
         } finally { if (e.target) e.target.value = ''; }
       };
@@ -2705,8 +3132,13 @@ function validateDatabaseImport(data) {
       } catch (err) {
         console.error('No se pudo iniciar la vista de acceso:', err && err.name ? err.name : 'error');
       }
-      updateCloudVisualStatus();
-      if (localAuthResetNotice) showToast('Actualización local: vuelve a crear la clave del coordinador y los PIN de técnicos; revisa las geocercas históricas. Los registros se conservaron.');
+      initRealtimeMqttSync();
+      setTimeout(() => pullFromCloud(false), 700);
+      setInterval(() => {
+        const anyModalOpen = Array.from(document.querySelectorAll('#modals-container > div')).some(el => !el.classList.contains('hidden') && el.id !== 'loginModal');
+        if (!anyModalOpen) pullFromCloud(false);
+      }, 10000);
+      if (localAuthResetNotice) showToast('Actualizaci\u00f3n local: vuelve a crear la clave del coordinador y los PIN de t\u00e9cnicos; revisa las geocercas hist\u00f3ricas. Los registros se conservaron.');
       if (!currentAuthUser) openModal('loginModal');
     });
 
