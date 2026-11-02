@@ -10,7 +10,6 @@
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-  <script src="https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <style>
@@ -69,7 +68,7 @@
         <div class="inline-block bg-white px-4 py-2 rounded-xl mb-3 shadow text-slate-900 font-bold text-2xl">
           centr<span class="text-rose-700 mx-0.5"><i class="fa-solid fa-power-off"></i></span>xpert
         </div>
-        <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3>
+        <h3 class="text-xl font-bold text-white">Ingreso al Sistema</h3><div class="mt-2 p-2.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-[11px] text-amber-200/90 leading-relaxed"><strong>Control local, no autenticación segura:</strong> este sitio estático no puede proteger datos frente a quien acceda al navegador o al código. No cargues información confidencial.</div>
       </div>
       <div class="flex border-b border-slate-800 mb-5 relative z-10">
         <button type="button" id="tabLoginTec" onclick="switchLoginTab('tec')" class="flex-1 py-2 font-semibold text-sm border-b-2 border-rose-600 text-rose-400">T&#233;cnico</button>
@@ -81,15 +80,15 @@
           <select id="loginTecSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-rose-500"></select>
         </div>
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">PIN (Clave gen&#233;rica: 1234)</label>
+          <label class="block text-xs font-medium text-slate-300 mb-1">PIN local (se configura al primer acceso)</label>
           <input type="password" id="loginTecPin" required placeholder="&#8226;&#8226;&#8226;&#8226;" maxlength="10" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:border-rose-500">
         </div>
         <button type="submit" class="w-full bg-rose-700 hover:bg-rose-600 font-bold py-2.5 rounded-xl text-sm shadow-lg shadow-rose-900/30">Entrar</button>
       </form>
       <form id="formLoginAdmin" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
         <div>
-          <label class="block text-xs font-medium text-slate-300 mb-1">Clave de Coordinaci&#243;n (admin123)</label>
-          <input type="password" id="loginAdminPass" required placeholder="admin123" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:border-rose-500">
+          <label class="block text-xs font-medium text-slate-300 mb-1">Clave local del coordinador (se configura al primer acceso)</label>
+          <input type="password" id="loginAdminPass" required placeholder="Clave local del coordinador (se configura al primer acceso)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono focus:border-rose-500">
         </div>
         <button type="submit" class="w-full bg-blue-700 hover:bg-blue-600 font-bold py-2.5 rounded-xl text-sm shadow-lg shadow-blue-900/30">Entrar</button>
       </form>
@@ -368,6 +367,7 @@
         </div>
       </div>
 
+      <div class="mb-3 p-2.5 rounded-lg bg-amber-950/40 border border-amber-800/60 text-[11px] text-amber-200">El presupuesto autom&#225;tico usa tarifas de referencia locales. Verifica y ajusta los importes antes de cotizar.</div>
       <form onsubmit="handleSaveSurvey(event)" class="space-y-4">
         <input type="hidden" id="surveyProjectId">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -394,7 +394,7 @@
 
         <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-bold uppercase text-blue-400"><i class="fa-solid fa-store mr-1.5"></i>Cat&#225;logo tienda.omega.com.do</span>
+            <span class="text-xs font-bold uppercase text-blue-400"><i class="fa-solid fa-store mr-1.5"></i>Cat&#225;logo local de referencia (no actualizado en l&#237;nea)</span>
           </div>
           <div class="flex gap-2 mb-3">
             <input type="text" id="omegaSearchInput" placeholder="Buscar c&#225;mara, switch..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white">
@@ -548,7 +548,7 @@
           <select id="techVehiclePlate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select>
         </div>
         <div class="flex justify-between items-center pt-3 border-t border-slate-800 mt-4">
-          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 text-amber-400 text-xs px-3 py-2 rounded-xl font-semibold border border-slate-700">Resetear PIN (1234)</button>
+          <button type="button" id="techResetPinBtn" onclick="resetTechPinDirectly()" class="hidden bg-slate-800 text-amber-400 text-xs px-3 py-2 rounded-xl font-semibold border border-slate-700">Restablecer PIN local</button>
           <div class="flex gap-2 ml-auto">
             <button type="button" onclick="closeModal('techModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
             <button type="submit" class="bg-rose-700 hover:bg-rose-600 px-5 py-2 rounded-xl text-xs font-bold text-white">Guardar</button>
@@ -626,39 +626,17 @@
   <div id="cloudSyncModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('cloudSyncModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative space-y-4" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-        <div>
-          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-cloud-arrow-up mr-2 text-emerald-400"></i>Sincronizaci&#243;n Multi-Dispositivo (PC &amp; M&#243;vil)</h3>
-          <p class="text-[11px] text-slate-400">Conecta tu PC y tel&#233;fonos para compartir proyectos en tiempo real</p>
-        </div>
+        <div><h3 class="text-base font-bold text-white"><i class="fa-solid fa-database mr-2 text-amber-400"></i>Respaldo local</h3><p class="text-[11px] text-slate-400">Los datos se guardan en este navegador. No hay sincronización entre dispositivos.</p></div>
         <button type="button" onclick="closeModal('cloudSyncModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
       </div>
-
-      <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-3 text-xs">
-        <div class="flex items-center justify-between">
-          <span class="font-bold text-emerald-400 uppercase"><i class="fa-solid fa-tower-broadcast mr-1"></i> 1. Nube en Tiempo Real (Autom&#225;tica)</span>
-          <span id="cloudModalStatusText" class="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">Activo</span>
-        </div>
-        <p class="text-slate-400 text-[11px] leading-relaxed">Todos los dispositivos que tengan el mismo <strong>C&#243;digo de Sala / Empresa</strong> comparten autom&#225;ticamente los proyectos, t&#233;cnicos y estados.</p>
-        <div>
-          <label class="block text-[11px] text-slate-300 mb-1">C&#243;digo de Sala de Sincronizaci&#243;n (Debe ser igual en PC y Tel&#233;fono):</label>
-          <div class="flex gap-2">
-            <input type="text" id="cloudRoomInput" placeholder="centroxpert-omega-rd" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
-            <button type="button" onclick="saveCloudRoomConfig()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold">Conectar</button>
-          </div>
-        </div>
-        <div class="flex gap-2 pt-1">
-          <button type="button" onclick="pushToCloud(true)" class="flex-1 bg-blue-900/80 hover:bg-blue-800 text-blue-200 py-2 px-3 rounded-xl font-bold border border-blue-700/60 flex items-center justify-center gap-1.5"><i class="fa-solid fa-cloud-arrow-up"></i> Subir mis datos a la Nube</button>
-          <button type="button" onclick="pullFromCloud(true)" class="flex-1 bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 py-2 px-3 rounded-xl font-bold border border-emerald-700/60 flex items-center justify-center gap-1.5"><i class="fa-solid fa-cloud-arrow-down"></i> Descargar de la Nube ahora</button>
-        </div>
-      </div>
-
+      <div class="bg-amber-950/40 border border-amber-800/60 p-3 rounded-xl text-xs text-amber-100"><strong>Modo local:</strong> la nube pública está desactivada para no exponer proyectos, claves ni adjuntos. Descarga un respaldo antes de cambiar de equipo o importar una base.</div>
       <div class="bg-slate-950/80 border border-slate-800 p-4 rounded-xl space-y-2 text-xs">
-        <div class="font-bold text-amber-400 uppercase"><i class="fa-solid fa-database mr-1"></i> 2. Respaldo Directo por Archivo (.JSON)</div>
-        <p class="text-slate-400 text-[11px]">Tambi&#233;n puedes exportar toda la base de datos a un archivo y abrirlo en otro equipo:</p>
+        <div class="font-bold text-amber-400 uppercase"><i class="fa-solid fa-database mr-1"></i> Respaldo JSON del dispositivo</div>
+        <p class="text-slate-400 text-[11px]">El archivo contiene los registros y adjuntos actuales, pero no exporta PIN ni clave local.</p>
         <div class="flex gap-2 pt-1">
-          <button type="button" onclick="exportFullDatabaseJSON()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 px-3 rounded-xl font-semibold border border-slate-700"><i class="fa-solid fa-download mr-1 text-amber-400"></i> Exportar Base (.json)</button>
-          <button type="button" onclick="document.getElementById('importDbJsonInput').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 px-3 rounded-xl font-semibold border border-slate-700"><i class="fa-solid fa-upload mr-1 text-blue-400"></i> Importar Base (.json)</button>
-          <input type="file" id="importDbJsonInput" accept=".json" class="hidden" onchange="importFullDatabaseJSON(event)">
+          <button type="button" onclick="exportFullDatabaseJSON()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 px-3 rounded-xl font-semibold border border-slate-700"><i class="fa-solid fa-download mr-1 text-amber-400"></i> Exportar base</button>
+          <button type="button" onclick="document.getElementById('importDbJsonInput').click()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-2 px-3 rounded-xl font-semibold border border-slate-700"><i class="fa-solid fa-upload mr-1 text-blue-400"></i> Importar base</button>
+          <input type="file" id="importDbJsonInput" accept=".json,application/json" class="hidden" onchange="importFullDatabaseJSON(event)">
         </div>
       </div>
     </div>
@@ -667,19 +645,20 @@
 </div>
 
   <script>
-    const STORAGE_KEY = 'centroxpert_data_v85'; 
+    const STORAGE_KEY = 'centroxpert_data_v86'; 
 
     const defaultData = {
       currentUser: null,
       notifications: [], 
-      adminPass: 'admin123',
+      adminPass: '',
+      _localAuthVersion: 1,
       lastUpdated: 1730320000000,
       technicians: [
-        { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Herrera', vehiclePlate: 'L428901', pin: '1234' },
-        { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'Los Alcarrizos', vehiclePlate: 'L389104', pin: '1234' },
-        { id: 'T3', name: 'Carlos Morales', level: 'Especialista A', phone: '849-555-0188', address: 'Villa Mella', vehiclePlate: 'L451299', pin: '1234' },
-        { id: 'T4', name: 'Julio Barranco', level: 'Supervisor', phone: '809-555-0100', address: 'DN', vehiclePlate: '', pin: '1234' },
-        { id: 'T5', name: 'JUAN PACHECO', level: 'Especialista A', phone: '809-555-0199', address: 'Santo Domingo', vehiclePlate: '', pin: '1234' }
+        { id: 'T1', name: 'Enmanuel Matos', level: 'Especialista A', phone: '829-555-0192', address: 'Herrera', vehiclePlate: 'L428901', pin: '' },
+        { id: 'T2', name: 'WESLY ALEJANDRO MOJICA', level: 'Especialista B', phone: '809-555-0144', address: 'Los Alcarrizos', vehiclePlate: 'L389104', pin: '' },
+        { id: 'T3', name: 'Carlos Morales', level: 'Especialista A', phone: '849-555-0188', address: 'Villa Mella', vehiclePlate: 'L451299', pin: '' },
+        { id: 'T4', name: 'Julio Barranco', level: 'Supervisor', phone: '809-555-0100', address: 'DN', vehiclePlate: '', pin: '' },
+        { id: 'T5', name: 'JUAN PACHECO', level: 'Especialista A', phone: '809-555-0199', address: 'Santo Domingo', vehiclePlate: '', pin: '' }
       ],
       vehicles: [
         { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520, lastFuelKm: 48120 },
@@ -739,6 +718,7 @@
       ]
     };
 
+    let localAuthResetNotice = false;
     let appData = loadData();
     let currentAuthUser = null; 
     let projectSearchQuery = '';
@@ -761,26 +741,76 @@
     let tempQuoteFileName = null;
 
     function loadData() {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try { 
-          const parsed = JSON.parse(saved);
-          if (!parsed.notifications) parsed.notifications = [];
-          return parsed;
-        } catch(e) { console.error(e); }
+      const defaults = JSON.parse(JSON.stringify(defaultData));
+      const legacyKeys = [STORAGE_KEY, 'centroxpert_data_v85', 'centroxpert_data_v80'];
+      for (const storageKey of legacyKeys) {
+        let raw = null;
+        try { raw = localStorage.getItem(storageKey); } catch (err) { break; }
+        if (!raw) continue;
+        try {
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed) || !Array.isArray(parsed.projects) || !Array.isArray(parsed.technicians)) continue;
+          if (!parsed.projects.every(project => project && typeof project === 'object' && !Array.isArray(project)) || !parsed.technicians.every(tech => tech && typeof tech === 'object' && !Array.isArray(tech))) continue;
+          const data = Object.assign({}, defaults, parsed);
+          for (const key of ['projects', 'technicians', 'vehicles', 'tools', 'fuelLogs', 'notifications']) {
+            if (!Array.isArray(data[key])) data[key] = Array.isArray(defaults[key]) ? defaults[key] : [];
+          }
+          const needsAuthAndGpsMigration = parsed._localAuthVersion !== 1;
+          let needsWrite = storageKey !== STORAGE_KEY || needsAuthAndGpsMigration;
+          data.projects.forEach(project => {
+            if (!Array.isArray(project.techCrew)) project.techCrew = [];
+            if (!project.tracking || typeof project.tracking !== 'object' || Array.isArray(project.tracking)) project.tracking = {};
+            if (!project.survey || typeof project.survey !== 'object' || Array.isArray(project.survey)) project.survey = {};
+            if (!Array.isArray(project.survey.itemsEquip)) project.survey.itemsEquip = [];
+            if (!Array.isArray(project.survey.itemsMat)) project.survey.itemsMat = [];
+            if (needsAuthAndGpsMigration) {
+              project.tracking.isVerifiedOnSite = false;
+              project.tracking.distanceFromTargetMeters = null;
+              project.tracking.checkOutVerified = false;
+              project.tracking.checkOutDistanceMeters = null;
+              const hasOldTarget = project.targetLat !== '' && project.targetLat !== null && project.targetLat !== undefined && project.targetLng !== '' && project.targetLng !== null && project.targetLng !== undefined;
+              if (hasOldTarget) project.tracking.legacyTargetNeedsReview = true;
+            }
+          });
+          data.technicians.forEach(tech => { if (typeof tech.pin !== 'string') tech.pin = ''; });
+          data.fuelLogs = data.fuelLogs.filter(log => log && typeof log === 'object' && !Array.isArray(log));
+          data.fuelLogs.forEach(log => {
+            if (!Number.isFinite(Number(log.costPerKm))) { log.costPerKm = null; log.dev = 'N/D'; }
+          });
+          if (needsAuthAndGpsMigration) {
+            data.adminPass = '';
+            data.technicians.forEach(tech => { tech.pin = ''; });
+            data._localAuthVersion = 1;
+            localAuthResetNotice = true;
+            needsWrite = true;
+          }
+          if (needsWrite) {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+            catch (err) { console.warn('La migración local quedó pendiente; se conserva la copia anterior.'); }
+          }
+          return data;
+        } catch (err) { console.warn('No se pudo leer una copia local; se intentará otra versión.'); }
       }
-      return JSON.parse(JSON.stringify(defaultData));
+      return defaults;
     }
 
-    function saveData(skipCloudPush = false) {
+function saveData() {
+      const previousUpdated = appData.lastUpdated;
       appData.lastUpdated = Date.now();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-      render();
-      if (!skipCloudPush) {
-        pushToCloud(false);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (err) {
+        appData.lastUpdated = previousUpdated;
+        const isQuota = err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014);
+        showToast(isQuota ? 'No hay espacio local suficiente. Exporta una copia y reduce el tamaño de los adjuntos.' : 'No se pudieron guardar los cambios en este navegador.');
+        console.error('CentroXpert local save failed:', err && err.name ? err.name : 'storage error');
+        return false;
       }
+      render();
+      return true;
     }
-    function goHome() { render(); }
+
+function goHome() { render(); }
     
     function openModal(id) { 
       const modals = document.querySelectorAll('#modals-container > div');
@@ -843,45 +873,60 @@
     function handleTecLogin(e) {
       e.preventDefault();
       const techName = document.getElementById('loginTecSelect').value;
-      const pin = document.getElementById('loginTecPin').value;
+      const pin = document.getElementById('loginTecPin').value.trim();
       const tech = appData.technicians.find(t => t.name === techName);
-      if (tech && (tech.pin === pin || (!tech.pin && pin === '1234') || pin === '1234')) {
-        currentAuthUser = { role: 'tech', name: tech.name, techId: tech.id };
-        closeModal('loginModal'); render();
-      } else { alert('PIN incorrecto. Si eres nuevo, el PIN gen\u00e9rico es 1234.'); }
+      if (!tech) { alert('No se encontró el perfil seleccionado.'); return; }
+      if (pin.length < 4) { alert('El PIN local debe tener al menos 4 caracteres.'); return; }
+      if (!tech.pin) {
+        tech.pin = pin;
+        if (!saveData()) { tech.pin = ''; return; }
+      } else if (tech.pin !== pin) {
+        alert('PIN incorrecto.');
+        return;
+      }
+      currentAuthUser = { role: 'tech', name: tech.name, techId: tech.id };
+      closeModal('loginModal');
+      render();
     }
 
-    function handleAdminLogin(e) {
+function handleAdminLogin(e) {
       e.preventDefault();
       const pass = document.getElementById('loginAdminPass').value;
-      const validPass = appData.adminPass || 'admin123';
-      if (pass === validPass) { currentAuthUser = { role: 'admin', name: 'Coordinador General' }; closeModal('loginModal'); render(); }
-      else { alert('Clave de Coordinaci\u00f3n incorrecta'); }
+      if (pass.length < 8) { alert('La clave local debe tener al menos 8 caracteres.'); return; }
+      if (!appData.adminPass) {
+        appData.adminPass = pass;
+        if (!saveData()) { appData.adminPass = ''; return; }
+      } else if (pass !== appData.adminPass) {
+        alert('Clave local incorrecta.');
+        return;
+      }
+      currentAuthUser = { role: 'admin', name: 'Coordinador General' };
+      closeModal('loginModal');
+      render();
     }
 
-    function logout() { currentAuthUser = null; document.getElementById('loginTecPin').value = ''; document.getElementById('loginAdminPass').value = ''; populateTechSelect(); openModal('loginModal'); render(); }
+function logout() { currentAuthUser = null; document.getElementById('loginTecPin').value = ''; document.getElementById('loginAdminPass').value = ''; populateTechSelect(); openModal('loginModal'); render(); }
     function populateTechSelect() { const select = document.getElementById('loginTecSelect'); if (select) select.innerHTML = appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join(''); }
 
     function openPinModal() { document.getElementById('currentPin').value = ''; document.getElementById('newPin').value = ''; document.getElementById('confirmPin').value = ''; openModal('pinModal'); }
     function handleUpdatePin(e) {
       e.preventDefault();
-      const current = document.getElementById('currentPin').value; const newP = document.getElementById('newPin').value; const confirmP = document.getElementById('confirmPin').value;
-      if (newP !== confirmP) { alert('El nuevo PIN no coincide.'); return; }
+      const current = document.getElementById('currentPin').value.trim();
+      const newP = document.getElementById('newPin').value.trim();
+      const confirmP = document.getElementById('confirmPin').value.trim();
+      if (newP.length < 4) { alert('El PIN local debe tener al menos 4 caracteres.'); return; }
+      if (newP !== confirmP) { alert('Los PIN no coinciden.'); return; }
       const tech = appData.technicians.find(t => t.name === currentAuthUser.name);
-      if (tech) {
-        if (tech.pin && tech.pin !== current && current !== '1234') { alert('PIN actual incorrecto.'); return; }
-        tech.pin = newP; alert('\u00a1PIN actualizado! Usa tu nueva clave a partir de ahora.'); closeModal('pinModal'); saveData();
-      }
+      if (!tech) { alert('No se encontró el perfil técnico.'); return; }
+      if (tech.pin && tech.pin !== current) { alert('El PIN actual no coincide.'); return; }
+      const previousPin = tech.pin;
+      tech.pin = newP;
+      if (!saveData()) { tech.pin = previousPin; return; }
+      showToast('PIN local actualizado.');
+      closeModal('pinModal');
     }
 
-    /* Render Main */
-    window.addEventListener('DOMContentLoaded', () => {
-      populateTechSelect();
-      openModal('loginModal');
-      render();
-    });
-
-    function render() {
+function render() {
       renderHeader();
       const container = document.getElementById('mainContainer');
       if (!currentAuthUser) { container.innerHTML = `<div class="text-center p-10"><button type="button" onclick="openModal('loginModal')" class="bg-rose-700 text-white px-4 py-2 rounded">Iniciar Sesi\u00f3n</button></div>`; return; }
@@ -897,7 +942,7 @@
 
       actions.innerHTML = `
         <button type="button" onclick="openCloudSyncModal()" title="Sincronizar PC y M\u00f3vil en la Nube" class="bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 px-2.5 py-1.5 rounded-xl border border-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow">
-          <i class="fa-solid fa-cloud-arrow-up" id="cloudHeaderIcon"></i> <span class="hidden md:inline" id="cloudHeaderText">Sincronizar</span>
+          <i class="fa-solid fa-database" id="cloudHeaderIcon"></i> <span class="hidden md:inline" id="cloudHeaderText">Respaldo local</span>
         </button>
         <div class="relative cursor-pointer mx-1" onclick="openNotifModal()">
           <i class="fa-solid fa-bell text-slate-300 hover:text-white text-lg transition"></i>
@@ -1144,26 +1189,26 @@
     function renderFuelLogistics() {
       return `
         <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
-          <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Llenado Semanal & Desv\u00edo</h3>
+          <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Registro de combustible & costo por kilómetro</h3>
           <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div><label class="block text-[10px] text-slate-400 mb-1">Placa</label><select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs">${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate}</option>`).join('')}</select></div>
             <div><label class="block text-[10px] text-slate-400 mb-1">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-700 text-slate-400 px-2 py-1.5 rounded text-xs"></div>
             <div><label class="block text-[10px] text-slate-400 mb-1">Km Actual</label><input type="number" id="fuelCurrentKm" required class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs"></div>
-            <div><label class="block text-[10px] text-slate-400 mb-1">Tickets (RD$ 500)</label><input type="number" id="fuelTicketsCount" value="6" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs"></div>
-            <div><label class="block text-[10px] text-slate-400 mb-1">Total (RD$)</label><input type="number" id="fuelCost" readonly value="3000" class="w-full bg-slate-950 border border-slate-700 text-emerald-400 px-2 py-1.5 rounded text-xs font-bold"></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Cantidad de tickets</label><input type="number" id="fuelTicketsCount" min="0" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs"></div>
+            <div><label class="block text-[10px] text-slate-400 mb-1">Total (RD$)</label><input type="number" id="fuelCost" min="0" step="0.01" required class="w-full bg-slate-950 border border-slate-700 text-emerald-400 px-2 py-1.5 rounded text-xs font-bold"></div>
             <div class="md:col-span-5 text-right mt-2"><button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">Guardar Combustible</button></div>
           </form>
-          <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400"><tr><th class="p-2">Fecha</th><th class="p-2">Placa</th><th class="p-2">Dist</th><th class="p-2">Monto</th><th class="p-2">Desv\u00edo</th></tr></thead>
+          <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400"><tr><th class="p-2">Fecha</th><th class="p-2">Placa</th><th class="p-2">Dist</th><th class="p-2">Monto</th><th class="p-2">Tickets</th><th class="p-2">Costo/KM</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
-            ${appData.fuelLogs.map(l => `<tr><td class="p-2">${l.date}</td><td class="p-2">${l.plate}</td><td class="p-2 text-emerald-400">${l.dist} KM</td><td class="p-2">RD$ ${l.cost}</td><td class="p-2 font-bold ${parseFloat(l.dev)<15?'text-emerald-400':'text-rose-400'}">${l.dev}</td></tr>`).join('')}
+            ${appData.fuelLogs.map(l => `<tr><td class="p-2">${l.date}</td><td class="p-2">${l.plate}</td><td class="p-2 text-emerald-400">${l.dist == null ? 'N/D' : l.dist + ' KM'}</td><td class="p-2">RD$ ${l.cost}</td><td class="p-2">${l.ticketCount == null ? '—' : l.ticketCount}</td><td class="p-2 font-bold ${l.costPerKm == null ? 'text-slate-500' : 'text-emerald-400'}">${l.costPerKm == null ? 'Sin datos' : 'RD$ ' + Number(l.costPerKm).toFixed(2)}</td></tr>`).join('')}
           </tbody></table></div>
         </div>
       `;
     }
 
-    function calculateFuelTotalMonto() { document.getElementById('fuelCost').value = (parseInt(document.getElementById('fuelTicketsCount').value)||0) * 500; }
-    
-    function updateFuelPlateHelper() {
+function calculateFuelTotalMonto() { return false; }
+
+function updateFuelPlateHelper() {
       const plate = document.getElementById('fuelPlateSelect').value;
       const v = appData.vehicles.find(x => x.plate === plate);
       document.getElementById('fuelPrevKm').value = v ? v.lastFuelKm : 0;
@@ -1172,24 +1217,31 @@
     function handleFuelSubmit(e) {
       e.preventDefault();
       const plate = document.getElementById('fuelPlateSelect').value;
-      const currentKm = parseInt(document.getElementById('fuelCurrentKm').value);
-      const prevKm = parseInt(document.getElementById('fuelPrevKm').value) || 0;
-      const cost = parseInt(document.getElementById('fuelCost').value);
-      const dist = currentKm - prevKm;
-      
-      const expectedDist = (cost / 500) * 30; // Formula dummy
-      const dev = Math.abs(dist - expectedDist) > 10 ? '15.5%' : '5.2%';
-      
-      appData.fuelLogs.unshift({ id: Date.now(), date: new Date().toLocaleDateString('es-DO'), plate: plate, dist: dist, cost: cost, dev: dev });
-      
-      const v = appData.vehicles.find(x => x.plate === plate);
-      if(v) v.lastFuelKm = currentKm;
-      
-      saveData();
-      alert('Registro de combustible guardado correctamente.');
+      const currentKm = Number(document.getElementById('fuelCurrentKm').value);
+      const cost = Number(document.getElementById('fuelCost').value);
+      const ticketField = document.getElementById('fuelTicketsCount');
+      const ticketRaw = ticketField ? String(ticketField.value || '').trim() : '';
+      const ticketCount = ticketRaw === '' ? null : Number(ticketRaw);
+      const vehicle = appData.vehicles.find(item => item.plate === plate);
+      const typedPrevious = Number(document.getElementById('fuelPrevKm').value);
+      const prevKm = typedPrevious > 0 ? typedPrevious : Number(vehicle && vehicle.lastFuelKm ? vehicle.lastFuelKm : 0);
+      if (!plate || !Number.isFinite(currentKm) || currentKm <= 0 || !Number.isFinite(cost) || cost < 0 || (ticketCount !== null && (!Number.isInteger(ticketCount) || ticketCount < 0))) {
+        alert('Verifica la placa, el kilometraje y el monto del combustible.');
+        return;
+      }
+      if (prevKm > 0 && currentKm <= prevKm) {
+        alert('El kilometraje actual debe ser mayor que el anterior.');
+        return;
+      }
+      const dist = prevKm > 0 ? currentKm - prevKm : null;
+      const costPerKm = dist > 0 ? Number((cost / dist).toFixed(2)) : null;
+      appData.fuelLogs.unshift({ id: Date.now(), date: new Date().toLocaleDateString('es-DO'), plate: plate, dist: dist, cost: cost, ticketCount: ticketCount, costPerKm: costPerKm, dev: 'N/D' });
+      if (vehicle) vehicle.lastFuelKm = currentKm;
+      if (!saveData()) return;
+      showToast('Registro guardado. El consumo requiere registrar litros; no se estimó un porcentaje.');
     }
 
-    function renderStaffLogistics() {
+function renderStaffLogistics() {
       return `
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
           <div class="p-3 border-b border-slate-800 text-right">
@@ -1235,16 +1287,10 @@
         const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
         const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
         
-        const fuelEntries = appData.fuelLogs.filter(f => f.driver === t.name || f.plate === t.vehiclePlate);
-        let avgDev = 0;
-        if (fuelEntries.length > 0) {
-          const sumDev = fuelEntries.reduce((acc, f) => acc + parseFloat(f.dev || 0), 0);
-          avgDev = (sumDev / fuelEntries.length).toFixed(1);
-        }
-        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 40 : 25;
-        const gpsScore = (gpsRate / 100) * 40;
-        const fuelScore = Math.max(0, (1 - (avgDev / 50))) * 20;
-        const performanceScore = Math.min(100, Math.round(closeScore + gpsScore + fuelScore));
+        const avgDev = 'N/D';
+        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 50 : 25;
+        const gpsScore = (gpsRate / 100) * 50;
+        const performanceScore = Math.min(100, Math.round(closeScore + gpsScore));
 
         return { ...t, assignedCount: assignedProj.length, completedCount: completed, gpsRate, avgDev, performanceScore };
       });
@@ -1259,14 +1305,14 @@
             </div>
           </div>
           <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950/60 text-slate-400 uppercase"><tr><th class="p-3">T\u00e9cnico</th><th class="p-3">Tareas Cierre</th><th class="p-3 text-center">Cumplimiento GPS</th><th class="p-3 text-center">Desv\u00edo</th><th class="p-3">Score Eficiencia</th></tr></thead>
+          <table class="w-full text-xs text-left"><thead class="bg-slate-950/60 text-slate-400 uppercase"><tr><th class="p-3">T\u00e9cnico</th><th class="p-3">Tareas Cierre</th><th class="p-3 text-center">Cumplimiento GPS</th><th class="p-3 text-center">Combustible</th><th class="p-3">Score Eficiencia</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
             ${techStats.sort((a,b) => b.performanceScore - a.performanceScore).map((t, idx) => `
               <tr class="hover:bg-slate-800/40">
                 <td class="p-3"><span class="w-4 h-4 inline-flex items-center justify-center rounded-full bg-slate-800 mr-2">${idx+1}</span><strong class="text-white">${t.name}</strong></td>
                 <td class="p-3">${t.completedCount} / ${t.assignedCount}</td>
                 <td class="p-3 text-center font-bold ${t.gpsRate>=80?'text-emerald-400':'text-amber-400'}">${t.gpsRate}%</td>
-                <td class="p-3 text-center font-bold ${parseFloat(t.avgDev)<15?'text-emerald-400':'text-rose-400'}">${t.avgDev}%</td>
+                <td class="p-3 text-center font-bold ${parseFloat(t.avgDev)<15?'text-emerald-400':'text-rose-400'}">${t.avgDev === 'N/D' ? 'Sin datos' : t.avgDev}</td>
                 <td class="p-3"><div class="flex items-center gap-2"><div class="w-20 bg-slate-800 h-2 rounded-full overflow-hidden"><div class="h-full ${t.performanceScore>=80?'bg-emerald-500':'bg-amber-500'}" style="width:${t.performanceScore}%"></div></div><span class="font-bold text-white">${t.performanceScore}/100</span></div></td>
               </tr>
             `).join('')}
@@ -1277,7 +1323,9 @@
     }
 
     // Funciones CRUD Logistica
-    function openVehicleModal(id = null) {
+    
+
+function openVehicleModal(id = null) {
       document.getElementById('vehicleAssignedTo').innerHTML = '<option value="">-- Sin asignar --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
       if (id) {
         const v = appData.vehicles.find(item => item.id === id);
@@ -1331,11 +1379,17 @@
     }
 
     function resetTechPinDirectly() {
-      const t = appData.technicians.find(item => item.id === document.getElementById('techEditId').value);
-      if(t && confirm(`\u00bfRestablecer PIN de ${t.name} a 1234?`)) { t.pin = '1234'; saveData(); alert('PIN restablecido a 1234.'); }
+      if (!currentAuthUser || currentAuthUser.role !== 'admin') { alert('Acción no disponible.'); return; }
+      const tech = appData.technicians.find(item => item.id === document.getElementById('techEditId').value);
+      if (tech && confirm('Se borrará el PIN local de este perfil. El técnico deberá crear uno nuevo al próximo acceso. ¿Continuar?')) {
+        const previousPin = tech.pin;
+        tech.pin = '';
+        if (!saveData()) { tech.pin = previousPin; return; }
+        alert('PIN local restablecido.');
+      }
     }
 
-    function handleSaveTechnician(e) {
+function handleSaveTechnician(e) {
       e.preventDefault();
       const id = document.getElementById('techEditId').value;
       const tData = {
@@ -1349,7 +1403,7 @@
         const t = appData.technicians.find(item => item.id === id);
         if(t.name !== tData.name) { appData.projects.forEach(p => { if(p.techLeader === t.name) p.techLeader = tData.name; }); }
         Object.assign(t, tData);
-      } else { appData.technicians.push({ id: 'T_' + Date.now(), pin: '1234', ...tData }); }
+      } else { appData.technicians.push({ id: 'T_' + Date.now(), pin: '', ...tData }); }
       closeModal('techModal'); populateTechSelect(); saveData();
     }
 
@@ -1389,6 +1443,7 @@
     function openEditProjectModal(projId) {
       const p = appData.projects.find(item => item.id === projId);
       if (!p) return;
+      if (p.tracking && p.tracking.legacyTargetNeedsReview) showToast('Revisa las coordenadas históricas antes de confirmar la geocerca.');
       document.getElementById('editProjectId').value = p.id;
       document.getElementById('editProjectCode').value = p.code || '';
       document.getElementById('editProjectTitle').value = p.title || '';
@@ -1413,7 +1468,7 @@
       openModal('editProjectModal');
     }
 
-    function openQuotationModal(projId) {
+function openQuotationModal(projId) {
       const p = appData.projects.find(item => item.id === projId);
       if (!p) return;
 
@@ -1443,44 +1498,76 @@
       openModal('quoteModal');
     }
 
-    function handleEditPDFUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const fileReader = new FileReader();
-      fileReader.onload = function() {
-        const typedarray = new Uint8Array(this.result);
-        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-          pdf.getPage(1).then(page => {
-            page.getTextContent().then(textContent => {
-              const fullText = textContent.items.map(item => item.str).join(' ');
-              
-              const codeMatch = fullText.match(/C\u00f3digo\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
-              const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+C\u00f3digo\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
-              const addrMatch = fullText.match(/Direcci\u00f3n\s+del\s+Servicio[\s\S]*?(?:Persona\s+Contacto)?:?\s*([^]+?)\s+Fecha\s+Planificada/i);
-              const obsMatch = fullText.match(/Observaciones:\s*([^]+?)(?:Cliente:|T\u00e9cnicos)/i);
-
-              if(codeMatch) document.getElementById('editProjectCode').value = codeMatch[1].trim() || codeMatch[0].trim();
-              if(clientMatch) document.getElementById('editProjectClient').value = clientMatch[1].trim();
-              if(addrMatch) document.getElementById('editProjectAddress').value = addrMatch[1].trim().substring(0,60);
-              
-              if(obsMatch) document.getElementById('editProjectTitle').value = "SERVICIO: " + obsMatch[1].trim().substring(0,30);
-              
-              alert('Datos extra\u00eddos del PDF (beta). Por favor revisa los campos completados.');
-            });
-          });
-        });
-      };
-      fileReader.readAsArrayBuffer(file);
+    function validateLocalAttachment(file) {
+      const maxBytes = 2 * 1024 * 1024;
+      if (!file || !Number.isFinite(file.size) || file.size > maxBytes) {
+        showToast('Cada adjunto puede pesar hasta 2 MB en el modo local.');
+        return false;
+      }
+      return true;
     }
 
-  
+    function readFileAsArrayBuffer(file) {
+      if (file && typeof file.arrayBuffer === 'function') return file.arrayBuffer();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+        reader.readAsArrayBuffer(file);
+      });
+    }
 
-    // ===================================================================
-    // DETALLES DE PROYECTO, EDICI\u00d3N, LEVANTAMIENTO, GPS, COTIZACI\u00d3N Y PDF
-    // ===================================================================
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('No se pudo leer el archivo.'));
+        reader.readAsDataURL(file);
+      });
+    }
 
-    function openProjectDetailModal(projId) {
+    async function extractPdfTextFromAllPages(file) {
+      if (typeof pdfjsLib === 'undefined' || !pdfjsLib.getDocument) throw new Error('El lector PDF no está disponible.');
+      const buffer = await readFileAsArrayBuffer(file);
+      const pdf = await pdfjsLib.getDocument(new Uint8Array(buffer)).promise;
+      const pages = [];
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+        const page = await pdf.getPage(pageNumber);
+        const content = await page.getTextContent();
+        pages.push(content.items.map(item => item.str).join(' '));
+      }
+      return { text: pages.join('\n'), pageCount: pdf.numPages };
+    }
+
+    async function handleEditPDFUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
+      try {
+        const result = await extractPdfTextFromAllPages(file);
+        const fullText = result.text || '';
+        if (!fullText.trim()) { alert('No se encontró texto extraíble en el PDF. No se rellenaron campos.'); return; }
+        const codeMatch = fullText.match(/Código\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
+        const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+Código\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
+        const addrMatch = fullText.match(/Dirección\s+del\s+Servicio:\s*([\s\S]*?)(?:Persona\s+Contacto|Fecha\s+Planificada)/i);
+        const obsMatch = fullText.match(/Observaciones:\s*([\s\S]*?)(?:Cliente:|Técnicos|$)/i);
+        let found = false;
+        const codeField = document.getElementById('editProjectCode');
+        const clientField = document.getElementById('editProjectClient');
+        const addressField = document.getElementById('editProjectAddress');
+        const titleField = document.getElementById('editProjectTitle');
+        if (codeMatch && codeField) { codeField.value = (codeMatch[1] || codeMatch[0]).trim(); found = true; }
+        if (clientMatch && clientField) { clientField.value = clientMatch[1].trim(); found = true; }
+        if (addrMatch && addressField) { addressField.value = addrMatch[1].trim().slice(0, 120); found = true; }
+        if (titleMatch && titleField) { titleField.value = titleMatch[1].trim(); found = true; }
+        alert(found ? 'Se revisaron ' + result.pageCount + ' páginas. Verifica cada campo antes de guardar; los campos no reconocidos quedaron intactos.' : 'No se reconocieron campos compatibles. No se modificó el formulario.');
+      } catch (err) {
+        alert('No se pudo procesar el PDF. No se guardaron datos inventados.');
+        console.error('PDF edit extraction failed:', err && err.name ? err.name : 'error');
+      } finally { if (e.target) e.target.value = ''; }
+    }
+
+function openProjectDetailModal(projId) {
       currentDetailProjectId = projId;
       const p = appData.projects.find(x => x.id === projId);
       if (!p) return;
@@ -1522,11 +1609,15 @@
       document.getElementById('detailProjectDuration').innerText = (p.tracking && p.tracking.hoursWorked) ? p.tracking.hoursWorked : '';
       
       const distEl = document.getElementById('detailProjectDistance');
-      if (p.tracking && p.tracking.distanceFromTargetMeters !== null && p.tracking.distanceFromTargetMeters !== undefined) {
-        distEl.innerText = `Distancia a geocerca: ${p.tracking.distanceFromTargetMeters} m`;
-      } else {
-        distEl.innerText = '';
+      const gpsLines = [];
+      if (p.tracking && p.tracking.checkIn) {
+        let arrivalStatus = p.tracking.isVerifiedOnSite ? 'Llegada GPS verificada' : 'Llegada GPS sin verificación';
+        if (p.tracking.distanceFromTargetMeters !== null && p.tracking.distanceFromTargetMeters !== undefined) arrivalStatus += ' (' + Math.round(Number(p.tracking.distanceFromTargetMeters)) + ' m)';
+        gpsLines.push(arrivalStatus);
       }
+      if (p.tracking && p.tracking.checkOut) gpsLines.push('Salida GPS ' + (p.tracking.checkOutVerified ? 'verificada' : 'sin verificación'));
+      if (p.tracking && p.tracking.legacyTargetNeedsReview) gpsLines.push('Geocerca histórica pendiente de revisión');
+      distEl.innerText = gpsLines.length ? gpsLines.join(' · ') : 'Sin registro GPS';
 
       document.getElementById('detailProjectOrderFileName').innerText = p.serviceOrderFile ? p.serviceOrderFile.name : 'Orden_Servicio.pdf';
 
@@ -1641,7 +1732,7 @@
       openModal('projectDetailModal');
     }
 
-    function downloadQuotationFile(projId) {
+function downloadQuotationFile(projId) {
       const p = appData.projects.find(x => x.id === projId);
       if (p && p.quotation && p.quotation.fileData) {
         triggerFileDownload({ name: p.quotation.fileName || 'Cotizacion.pdf', data: p.quotation.fileData });
@@ -1685,8 +1776,12 @@
       p.plannedDate = document.getElementById('editProjectPlannedDate').value.trim();
       p.address = document.getElementById('editProjectAddress').value.trim();
       p.status = document.getElementById('editProjectStatus').value;
-      p.targetLat = parseFloat(document.getElementById('editProjectLat').value) || null;
-      p.targetLng = parseFloat(document.getElementById('editProjectLng').value) || null;
+      const latValue = document.getElementById('editProjectLat').value.trim();
+      const lngValue = document.getElementById('editProjectLng').value.trim();
+      p.targetLat = latValue === '' ? null : Number(latValue);
+      p.targetLng = lngValue === '' ? null : Number(lngValue);
+      if (!p.tracking) p.tracking = {};
+      p.tracking.legacyTargetNeedsReview = false;
       p.techLeader = newLeader;
       
       const crewVal = document.getElementById('editProjectTechCrew').value;
@@ -1701,7 +1796,7 @@
       openProjectDetailModal(p.id);
     }
 
-    function deleteProjectPrompt() {
+function deleteProjectPrompt() {
       const id = document.getElementById('editProjectId').value;
       if (confirm('\u00bfEliminar definitivamente este proyecto?')) {
         appData.projects = appData.projects.filter(x => x.id !== id);
@@ -1724,6 +1819,7 @@
     function handleQuoteFileUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
+      if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
       tempQuoteFileName = file.name;
       document.getElementById('quoteFileLabel').innerText = file.name;
       
@@ -1754,7 +1850,7 @@
       reader.readAsDataURL(file);
     }
 
-    function handleSaveQuotation(e) {
+function handleSaveQuotation(e) {
       e.preventDefault();
       const projId = document.getElementById('quoteProjectId').value || activeQuotationProjectId;
       const p = appData.projects.find(item => item.id === projId);
@@ -1795,7 +1891,7 @@
           </table>
           <p><strong>Direcci\u00f3n / Contacto:</strong> ${p.address} (${p.contact || 'N/A'})</p>
           <hr style="border:1px solid #ccc; margin: 15px 0;">
-          <h4>Presupuesto Interno (Servicios Profesionales + Materiales)</h4>
+          <h4>Estimaci&#243;n de presupuesto local (revisar tarifas antes de cotizar)</h4>
           <p>Servicios Profesionales: RD$ ${totalServices.toLocaleString()} | Equipos y Materiales: RD$ ${totalMat.toLocaleString()} | <strong>Total Base: RD$ ${(totalServices+totalMat).toLocaleString()}</strong></p>
           ${p.quotation ? `<div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin-top: 15px;"><h4>Cotizaci\u00f3n Oficial: ${p.quotation.number}</h4><p><strong>Monto Total Cotizado:</strong> RD$ ${Number(p.quotation.amount).toLocaleString()}</p><p><strong>Condiciones:</strong> ${p.quotation.notes}</p></div>` : '<p>Sin cotizaci\u00f3n formalizada.</p>'}
         </div>
@@ -1838,73 +1934,35 @@
       const p = appData.projects.find(item => item.id === currentDetailProjectId);
       if (!p) return;
       if (!p.tracking) p.tracking = {};
-
-      let completed = false;
-      const fallBackTimer = setTimeout(() => {
-        if (completed) return;
-        completed = true;
-        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        p.tracking.checkIn = `${timeStr} (GPS Local)`;
+      if (!navigator.geolocation) { showToast('Este navegador no ofrece GPS. No se registró una llegada verificada.'); return; }
+      showToast('Solicitando ubicación GPS…');
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = Number(pos.coords.latitude);
+        const lng = Number(pos.coords.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) { showToast('El dispositivo devolvió coordenadas inválidas. No se registró la llegada.'); return; }
+        const hasTarget = !p.tracking.legacyTargetNeedsReview && p.targetLat !== '' && p.targetLat !== null && p.targetLat !== undefined && p.targetLng !== '' && p.targetLng !== null && p.targetLng !== undefined && Number.isFinite(Number(p.targetLat)) && Number.isFinite(Number(p.targetLng));
+        const distance = hasTarget ? calculateHaversineDistance(lat, lng, Number(p.targetLat), Number(p.targetLng)) : null;
+        const radius = Number(p.geofenceRadiusMeters) > 0 ? Number(p.geofenceRadiusMeters) : 300;
+        const verified = hasTarget && Number.isFinite(distance) && distance <= radius;
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        p.tracking.checkIn = time;
         p.tracking.checkInRaw = Date.now();
-        p.tracking.isVerifiedOnSite = true;
-        p.tracking.distanceFromTargetMeters = 15;
+        p.tracking.checkInCoords = { lat: lat, lng: lng, accuracy: Number(pos.coords.accuracy) || null };
+        p.tracking.distanceFromTargetMeters = hasTarget ? Math.round(distance) : null;
+        p.tracking.isVerifiedOnSite = Boolean(verified);
         p.status = 'En Curso';
-        saveData();
-        showToast(`Llegada registrada a las ${timeStr}`);
+        if (!saveData()) return;
+        const note = verified ? 'Llegada GPS verificada' : (hasTarget ? 'Llegada GPS registrada fuera de la geocerca; no verificada' : 'Llegada GPS registrada, pero el proyecto no tiene geocerca configurada; no verificada');
+        addNotification('admin', '📍 ' + (currentAuthUser ? currentAuthUser.name : 'Técnico') + ' — ' + note + ' en ' + p.code + '.');
+        showToast(note + '.');
         openProjectDetailModal(p.id);
-      }, 3500);
-
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          pos => {
-            if (completed) return;
-            completed = true;
-            clearTimeout(fallBackTimer);
-            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const userLat = pos.coords.latitude;
-            const userLng = pos.coords.longitude;
-            p.tracking.checkInCoords = { lat: userLat, lng: userLng };
-            p.tracking.checkInRaw = Date.now();
-            let distanceMeters = 0;
-            let isVerified = true;
-
-            if (p.targetLat && p.targetLng) {
-              distanceMeters = calculateHaversineDistance(userLat, userLng, p.targetLat, p.targetLng);
-              isVerified = distanceMeters <= (p.geofenceRadiusMeters || 300);
-            } else {
-              p.targetLat = userLat;
-              p.targetLng = userLng;
-            }
-
-            p.tracking.distanceFromTargetMeters = distanceMeters;
-            p.tracking.isVerifiedOnSite = isVerified;
-            p.tracking.checkIn = `${timeStr}`;
-            p.status = 'En Curso';
-            saveData();
-            addNotification('admin', `\ud83d\udccd ${currentAuthUser ? currentAuthUser.name : 'T\u00e9cnico'} marc\u00f3 llegada en ${p.code} (${distanceMeters}m).`);
-            showToast(`Llegada GPS confirmada (${distanceMeters}m)`);
-            openProjectDetailModal(p.id);
-          },
-          () => {
-            if (completed) return;
-            completed = true;
-            clearTimeout(fallBackTimer);
-            const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            p.tracking.checkIn = `${timeStr} (Verificado)`;
-            p.tracking.checkInRaw = Date.now();
-            p.tracking.isVerifiedOnSite = true;
-            p.tracking.distanceFromTargetMeters = 0;
-            p.status = 'En Curso';
-            saveData();
-            showToast(`Llegada registrada a las ${timeStr}`);
-            openProjectDetailModal(p.id);
-          },
-          { enableHighAccuracy: true, timeout: 3000, maximumAge: 0 }
-        );
-      }
+      }, error => {
+        const messages = { 1: 'Permiso de ubicación denegado', 2: 'Ubicación no disponible', 3: 'La solicitud GPS agotó el tiempo de espera' };
+        showToast((messages[error && error.code] || 'No se pudo obtener la ubicación GPS') + '. No se registró llegada verificada.');
+      }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
     }
 
-    function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
+function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
       const R = 6371e3;
       const p1 = lat1 * Math.PI/180;
       const p2 = lat2 * Math.PI/180;
@@ -1920,21 +1978,46 @@
       const p = appData.projects.find(item => item.id === currentDetailProjectId);
       if (!p) return;
       if (!p.tracking) p.tracking = {};
-      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      p.tracking.checkOut = `${timeStr}`;
-      if (p.tracking.checkInRaw) {
-        const ms = Date.now() - p.tracking.checkInRaw;
-        const mins = Math.max(1, Math.floor(ms / 60000));
-        p.tracking.hoursWorked = `${Math.floor(mins/60)}h ${mins%60}m en obra`;
-      } else {
-        p.tracking.hoursWorked = 'Jornada completada';
-      }
-      saveData();
-      showToast(`Salida registrada a las ${timeStr}.`);
-      openProjectDetailModal(p.id);
+      const departureAt = Date.now();
+      const recordDeparture = (coords, locationMessage) => {
+        const time = new Date(departureAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        p.tracking.checkOut = time;
+        p.tracking.checkOutRaw = departureAt;
+        if (coords) {
+          p.tracking.checkOutCoords = coords;
+          const hasTarget = !p.tracking.legacyTargetNeedsReview && p.targetLat !== '' && p.targetLat !== null && p.targetLat !== undefined && p.targetLng !== '' && p.targetLng !== null && p.targetLng !== undefined && Number.isFinite(Number(p.targetLat)) && Number.isFinite(Number(p.targetLng));
+          const distance = hasTarget ? calculateHaversineDistance(coords.lat, coords.lng, Number(p.targetLat), Number(p.targetLng)) : null;
+          const radius = Number(p.geofenceRadiusMeters) > 0 ? Number(p.geofenceRadiusMeters) : 300;
+          p.tracking.checkOutVerified = hasTarget && Number.isFinite(distance) && distance <= radius;
+          p.tracking.checkOutDistanceMeters = hasTarget ? Math.round(distance) : null;
+          p.tracking.checkOutLocationStatus = p.tracking.checkOutVerified ? 'GPS verificado' : 'GPS obtenido, pero salida no verificada';
+        } else {
+          p.tracking.checkOutCoords = null;
+          p.tracking.checkOutVerified = false;
+          p.tracking.checkOutDistanceMeters = null;
+          p.tracking.checkOutLocationStatus = locationMessage || 'Salida registrada sin GPS';
+        }
+        if (p.tracking.checkInRaw) {
+          const mins = Math.max(1, Math.floor((departureAt - p.tracking.checkInRaw) / 60000));
+          p.tracking.hoursWorked = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm en obra';
+        } else p.tracking.hoursWorked = 'Jornada completada';
+        if (!saveData()) return;
+        showToast(coords ? p.tracking.checkOutLocationStatus + '.' : 'Salida registrada; ubicación no verificada.');
+        openProjectDetailModal(p.id);
+      };
+      if (!navigator.geolocation) { recordDeparture(null, 'GPS no disponible'); return; }
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = Number(pos.coords.latitude);
+        const lng = Number(pos.coords.longitude);
+        if (!Number.isFinite(lat) || !Number.isFinite(lng)) { recordDeparture(null, 'Coordenadas GPS inválidas'); return; }
+        recordDeparture({ lat: lat, lng: lng, accuracy: Number(pos.coords.accuracy) || null }, '');
+      }, error => {
+        const messages = { 1: 'Permiso GPS denegado', 2: 'Ubicación GPS no disponible', 3: 'Tiempo de espera GPS agotado' };
+        recordDeparture(null, messages[error && error.code] || 'No se pudo obtener GPS');
+      }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
     }
 
-    function triggerTechSurvey() {
+function triggerTechSurvey() {
       if (!currentDetailProjectId) return;
       openSurveyModal(currentDetailProjectId);
     }
@@ -1964,52 +2047,59 @@
       openModal('surveyModal');
     }
 
-    function handleSurveyDocUpload(e) {
-      const file = e.target.files[0];
+    async function handleSurveyDocUpload(e) {
+      const file = e.target.files && e.target.files[0];
       if (!file) return;
+      if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
       const badge = document.getElementById('ocrStatusBadge');
       const nameL = file.name.toLowerCase();
-
-      if (nameL.endsWith('.docx') || nameL.endsWith('.doc')) {
-        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Leyendo Word...';
-        const r = new FileReader();
-        r.onload = function(evt) {
-          mammoth.extractRawText({ arrayBuffer: evt.target.result }).then(res => {
-            processExtractedSurveyText(res.value);
-            tempSurveyDoc = { name: file.name, type: 'word', data: evt.target.result, text: res.value };
-            updateSurveyModalFileCards();
-            badge.innerHTML = '<span class="text-emerald-400 font-bold">Word procesado</span>';
-          });
-        };
-        r.readAsArrayBuffer(file);
-      } else if (file.type && file.type.startsWith('image/')) {
-        badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Digitalizando OCR...';
-        const r = new FileReader();
-        r.onload = function(evt) {
-          tempSurveyDoc = { name: file.name, type: file.type, data: evt.target.result };
+      try {
+        if (nameL.endsWith('.docx')) {
+          badge.innerText = 'Leyendo Word…';
+          const buffer = await readFileAsArrayBuffer(file);
+          const dataUrl = await readFileAsDataURL(file);
+          const result = await mammoth.extractRawText({ arrayBuffer: buffer });
+          const text = result.value || '';
+          if (text.trim()) processExtractedSurveyText(text);
+          tempSurveyDoc = { name: file.name, type: 'word', data: dataUrl, text: text };
           updateSurveyModalFileCards();
-          Tesseract.recognize(evt.target.result, 'spa').then(({ data: { text } }) => {
-            processExtractedSurveyText(text);
-            badge.innerHTML = '<span class="text-emerald-400 font-bold">OCR Completo</span>';
-          }).catch(() => {
-            badge.innerText = 'Imagen cargada';
-          });
-        };
-        r.readAsDataURL(file);
-      } else {
-        const r = new FileReader();
-        r.onload = function(evt) {
-          tempSurveyDoc = { name: file.name, type: file.type || 'application/octet-stream', data: evt.target.result };
+          badge.innerText = text.trim() ? 'Word leído; revisa los datos' : 'Word adjunto sin texto extraíble';
+        } else if (file.type && file.type.startsWith('image/')) {
+          badge.innerText = 'Digitalizando imagen…';
+          const dataUrl = await readFileAsDataURL(file);
+          tempSurveyDoc = { name: file.name, type: file.type, data: dataUrl };
           updateSurveyModalFileCards();
-          badge.innerText = 'Documento cargado';
-        };
-        r.readAsDataURL(file);
-      }
+          if (typeof Tesseract === 'undefined') throw new Error('OCR no disponible');
+          const result = await Tesseract.recognize(dataUrl, 'spa');
+          const text = result && result.data ? result.data.text : '';
+          if (text.trim()) processExtractedSurveyText(text);
+          badge.innerText = text.trim() ? 'OCR leído; revisa los datos' : 'Imagen adjunta sin texto reconocido';
+        } else if (file.type === 'application/pdf' || nameL.endsWith('.pdf')) {
+          badge.innerText = 'Leyendo todas las páginas PDF…';
+          const result = await extractPdfTextFromAllPages(file);
+          const dataUrl = await readFileAsDataURL(file);
+          const text = result.text || '';
+          tempSurveyDoc = { name: file.name, type: 'application/pdf', data: dataUrl, text: text };
+          updateSurveyModalFileCards();
+          if (text.trim()) processExtractedSurveyText(text);
+          badge.innerText = text.trim() ? 'PDF de ' + result.pageCount + ' páginas leído; revisa los datos' : 'PDF adjunto sin texto extraíble';
+        } else {
+          const dataUrl = await readFileAsDataURL(file);
+          tempSurveyDoc = { name: file.name, type: file.type || 'application/octet-stream', data: dataUrl };
+          updateSurveyModalFileCards();
+          badge.innerText = 'Adjunto guardado; no se extrajo texto';
+        }
+      } catch (err) {
+        badge.innerText = 'No se pudo procesar el archivo';
+        showToast('No se guardó texto inventado. Revisa el archivo y vuelve a intentarlo.');
+        console.error('Survey file processing failed:', err && err.name ? err.name : 'error');
+      } finally { if (e.target) e.target.value = ''; }
     }
 
-    function handlePlanDocUpload(e) {
+function handlePlanDocUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
+      if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
       const r = new FileReader();
       r.onload = function(evt) {
         tempPlanDoc = { name: file.name, type: file.type || 'application/octet-stream', data: evt.target.result };
@@ -2018,7 +2108,7 @@
       r.readAsDataURL(file);
     }
 
-    function updateSurveyModalFileCards() {
+function updateSurveyModalFileCards() {
       const docCard = document.getElementById('surveyDocCard');
       if (tempSurveyDoc) { docCard.classList.remove('hidden'); document.getElementById('surveyDocName').innerText = tempSurveyDoc.name; }
       else { docCard.classList.add('hidden'); }
@@ -2085,11 +2175,10 @@
     }
 
     function processManualOCRFake() {
-      processExtractedSurveyText('Se requieren 120 metros de canalizaci\u00f3n, 4 c\u00e1maras IP y 1 rollo de cable UTP.');
-      showToast('Datos extra\u00eddos por OCR y agregados al presupuesto.');
+      showToast('La lectura manual de ejemplo está desactivada. Adjunta una imagen real para ejecutar OCR.');
     }
 
-    function searchOmegaCatalog() {
+function searchOmegaCatalog() {
       const q = document.getElementById('omegaSearchInput').value.toLowerCase();
       const resBox = document.getElementById('omegaResults');
       const omegaProducts = [
@@ -2172,7 +2261,7 @@
       };
 
       // Extraer presupuesto autom\u00e1tico de Servicios Profesionales y Materiales
-      p.budget = { approved: false, services: [], materials: [] };
+      p.budget = { approved: false, services: [], materials: [], isEstimate: true, estimateNote: 'Tarifas de referencia locales; verifica antes de cotizar.' };
       
       // C\u00e1lculo autom\u00e1tico de Servicios Profesionales (Mano de Obra por puntos y metraje)
       const totalEquipCount = tempSurveyItemsEquip.reduce((acc, i) => acc + (i.qty || 1), 0);
@@ -2293,105 +2382,73 @@
     /* -----------------------------------------------------------------
        IMPORTACI\u00d3N AUTOM\u00c1TICA DE ORDEN PDF (FORMATO TORRE WASHINGTON)
        ----------------------------------------------------------------- */
-    function handlePDFUpload(e) {
-      const file = e.target.files[0];
+    async function handlePDFUpload(e) {
+      const file = e.target.files && e.target.files[0];
       if (!file) return;
-
-      const fileReader = new FileReader();
-      fileReader.onload = function() {
-        const typedarray = new Uint8Array(this.result);
-        pdfjsLib.getDocument(typedarray).promise.then(pdf => {
-          pdf.getPage(1).then(page => {
-            page.getTextContent().then(textContent => {
-              const fullText = textContent.items.map(item => item.str).join(' ');
-              
-              const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || fullText.match(/C\u00f3digo\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i);
-              const projMatch = fullText.match(/Proyecto:\s*(.+?)\s*C\u00f3digo\s+del\s+Proyecto/i);
-              const clientMatch = fullText.match(/Cliente:\s*(.+?)\s*C\u00f3digo\s+interno/i);
-              const addrMatch = fullText.match(/Persona\s+Contacto:\s*(.+?)\s*Fecha\s+Planificada/i);
-              const obsMatch = fullText.match(/Observaciones:\s*(.+?)\s*Cliente:/i);
-              const dateMatch = fullText.match(/Fecha\s+Planificada:\s*(\d{2}\/\d{2}\/\d{4})/i);
-              const respMatch = fullText.match(/T\u00e9cnicos\s+Responsables:\s*(.*?)\s*T\u00e9cnicos\s+Adicionales:/i);
-              const adicMatch = fullText.match(/T\u00e9cnicos\s+Adicionales:\s*(.+?)\s*Cantidad\s+Total/i);
-
-              let extractedLeader = (respMatch && respMatch[1] && respMatch[1].trim()) ? respMatch[1].trim() : '';
-              let extractedCrew = [];
-              if (adicMatch && adicMatch[1]) {
-                const parts = adicMatch[1].split(',').map(s => s.trim()).filter(Boolean);
-                if (!extractedLeader && parts.length > 0) {
-                  extractedLeader = parts[0];
-                  extractedCrew = parts.slice(1);
-                } else {
-                  extractedCrew = parts;
-                }
-              }
-              if (!extractedLeader) extractedLeader = 'Enmanuel Matos';
-
-              // Registrar t\u00e9cnicos nuevos autom\u00e1ticamente si no existen en la plantilla
-              [extractedLeader, ...extractedCrew].forEach(tName => {
-                if (tName && !appData.technicians.find(t => t.name.toLowerCase() === tName.toLowerCase())) {
-                  appData.technicians.push({ id: 'T_' + Date.now() + Math.random().toString().slice(2,5), name: tName, level: 'Especialista A', phone: '809-555-0000', address: 'Santo Domingo', vehiclePlate: '', pin: '1234' });
-                }
-              });
-              populateTechSelect();
-
-              const rawContactAddr = addrMatch && addrMatch[1] ? addrMatch[1].trim() : 'Torre Washington en el malecom, Ana Milagros Guzman +1 (829) 762-8952';
-
-              const newProj = {
-                id: 'P_' + Date.now(),
-                code: codeMatch ? (codeMatch[1] || codeMatch[0]).trim() : 'CX-SGE-2026-005',
-                title: projMatch && projMatch[1] ? projMatch[1].trim() : 'CAMARAS CONDOMINIO TORRE WASHINGTON',
-                serviceType: 'INSTALACI\u00d3N (3255.73)',
-                client: clientMatch && clientMatch[1] ? clientMatch[1].trim() : 'CONDOMINIO TORRE WASHINGTON',
-                contact: rawContactAddr,
-                address: rawContactAddr,
-                targetLat: 18.463200,
-                targetLng: -69.905600,
-                geofenceRadiusMeters: 300,
-                plannedDate: dateMatch && dateMatch[1] ? dateMatch[1] : '26/10/2026',
-                techLeader: extractedLeader,
-                techCrew: extractedCrew,
-                status: 'Levantamiento',
-                observations: obsMatch && obsMatch[1] ? obsMatch[1].trim() : 'INSTALACION DE CAMARAS EN AREA DE ELEVADOR',
-                survey: { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V Regulada con UPS', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
-                serviceOrderFile: { name: file.name, type: 'application/pdf' },
-                quotation: null,
-                budget: { approved: false, services: [], materials: [] },
-                tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
-              };
-
-              const existingProj = appData.projects.find(p => p.code && p.code.trim().toUpperCase() === newProj.code.trim().toUpperCase());
-              if (existingProj) {
-                existingProj.title = newProj.title || existingProj.title;
-                existingProj.client = newProj.client || existingProj.client;
-                existingProj.serviceType = newProj.serviceType || existingProj.serviceType;
-                existingProj.contact = newProj.contact || existingProj.contact;
-                existingProj.address = newProj.address || existingProj.address;
-                existingProj.plannedDate = newProj.plannedDate || existingProj.plannedDate;
-                existingProj.techLeader = newProj.techLeader || existingProj.techLeader;
-                if (newProj.techCrew && newProj.techCrew.length > 0) existingProj.techCrew = newProj.techCrew;
-                existingProj.observations = newProj.observations || existingProj.observations;
-                existingProj.serviceOrderFile = newProj.serviceOrderFile;
-                existingProj.status = 'En Curso';
-                saveData();
-                closeModal('pdfModal');
-                showToast(`Proyecto ${existingProj.code} unificado y actualizado a EN CURSO.`);
-                openProjectDetailModal(existingProj.id);
-              } else {
-                appData.projects.unshift(newProj);
-                saveData();
-                closeModal('pdfModal');
-                showToast(`Orden ${newProj.code} creada y asignada a ${newProj.techLeader}`);
-                openProjectDetailModal(newProj.id);
-              }
-            });
+      if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
+      try {
+        const result = await extractPdfTextFromAllPages(file);
+        const fullText = result.text || '';
+        if (!fullText.trim()) { alert('El PDF no contiene texto extraíble. No se creó ningún proyecto.'); return; }
+        const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || fullText.match(/Código\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i);
+        const projMatch = fullText.match(/Proyecto:\s*(.+?)\s*Código\s+del\s+Proyecto/i);
+        const clientMatch = fullText.match(/Cliente:\s*(.+?)\s*Código\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
+        const addressMatch = fullText.match(/Dirección\s+del\s+Servicio:\s*([\s\S]*?)(?:Persona\s+Contacto|Fecha\s+Planificada)/i);
+        const contactMatch = fullText.match(/Persona\s+Contacto:\s*(.+?)\s*Fecha\s+Planificada/i);
+        const obsMatch = fullText.match(/Observaciones:\s*(.+?)\s*Cliente:/i);
+        const dateMatch = fullText.match(/Fecha\s+Planificada:\s*(\d{2}\/\d{2}\/\d{4})/i);
+        const leaderMatch = fullText.match(/Técnicos\s+Responsables:\s*(.*?)\s*Técnicos\s+Adicionales:/i);
+        const crewMatch = fullText.match(/Técnicos\s+Adicionales:\s*(.+?)\s*Cantidad\s+Total/i);
+        const code = codeMatch ? (codeMatch[1] || codeMatch[0]).trim() : '';
+        const title = projMatch && projMatch[1] ? projMatch[1].trim() : '';
+        const client = clientMatch && clientMatch[1] ? clientMatch[1].trim() : '';
+        if (!code || !title || !client) { alert('Faltan código, proyecto o cliente reconocibles. No se creó ningún proyecto; revisa el formato o completa el formulario manualmente.'); return; }
+        const existing = appData.projects.find(p => p.code && p.code.trim().toUpperCase() === code.toUpperCase());
+        const leaderName = leaderMatch && leaderMatch[1] ? leaderMatch[1].trim() : '';
+        const leader = appData.technicians.find(t => t.name.toLowerCase() === leaderName.toLowerCase());
+        const crewNames = crewMatch && crewMatch[1] ? crewMatch[1].split(',').map(name => name.trim()).filter(Boolean) : [];
+        const crew = crewNames.map(name => appData.technicians.find(t => t.name.toLowerCase() === name.toLowerCase())).filter(Boolean).map(t => t.name);
+        const extracted = {
+          code: code, title: title, client: client,
+          serviceType: '',
+          contact: contactMatch && contactMatch[1] ? contactMatch[1].trim() : '',
+          address: addressMatch && addressMatch[1] ? addressMatch[1].trim() : '',
+          plannedDate: dateMatch ? dateMatch[1] : '',
+          techLeader: leader ? leader.name : '',
+          techCrew: crew,
+          observations: obsMatch && obsMatch[1] ? obsMatch[1].trim() : '',
+          serviceOrderFile: { name: file.name, type: 'application/pdf' }
+        };
+        let projectId;
+        if (existing) {
+          Object.keys(extracted).forEach(key => {
+            const value = extracted[key];
+            if (key === 'techCrew') { if (value.length) existing[key] = value; }
+            else if (value && typeof value === 'object') existing[key] = value;
+            else if (typeof value === 'string' && value.trim()) existing[key] = value;
           });
-        });
-      };
-      fileReader.readAsArrayBuffer(file);
+          projectId = existing.id;
+        } else {
+          const newProject = Object.assign({
+            id: 'P' + Date.now(), targetLat: null, targetLng: null, geofenceRadiusMeters: 300,
+            status: 'Levantamiento', survey: { meters: 0, structure: '', power: '', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+            quotation: null, budget: { approved: false, services: [], materials: [], isEstimate: true },
+            tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', checkOutCoords: null, hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+          }, extracted);
+          appData.projects.unshift(newProject);
+          projectId = newProject.id;
+        }
+        if (!saveData()) return;
+        closeModal('pdfModal');
+        showToast('Se importaron campos detectados en ' + result.pageCount + ' páginas. Revisa los datos y asigna técnicos que no se reconocieron.');
+        openProjectDetailModal(projectId);
+      } catch (err) {
+        alert('No se pudo leer el PDF. No se creó un proyecto con datos de ejemplo.');
+        console.error('PDF project import failed:', err && err.name ? err.name : 'error');
+      } finally { if (e.target) e.target.value = ''; }
     }
 
-    function loadSampleTorreWashington() {
+function loadSampleTorreWashington() {
       const newProj = {
         id: 'P_' + Date.now(),
         code: 'CX-SGE-2026-005',
@@ -2436,149 +2493,32 @@
     /* ===================================================================
        CAMBIO DE CLAVE DEL COORDINADOR Y SINCRONIZACION EN TIEMPO REAL (PC <-> MOVIL)
        =================================================================== */
-    const CLOUD_ROOM_KEY = 'centroxpert_cloud_room_v2';
-    const CLOUD_BLOB_ID_KEY = 'centroxpert_cloud_blob_id_v2';
-    const DEFAULT_CLOUD_ROOM = 'centroxpert-omega-rd';
-    const CLIENT_INSTANCE_ID = 'cx_' + Math.random().toString(36).substring(2, 10);
+    let lastCloudStatus = 'Modo local';
 
-    let mqttClient = null;
-    let isSyncingCloud = false;
-    let lastCloudStatus = 'Conectando...';
+    function getCloudRoom() { return 'local-only'; }
 
-    function getCloudRoom() {
-      return (localStorage.getItem(CLOUD_ROOM_KEY) || DEFAULT_CLOUD_ROOM).trim().toLowerCase();
-    }
+function getMqttTopic() { return ''; }
 
-    function getMqttTopic() {
-      const cleanRoom = getCloudRoom().replace(/[^a-z0-9_-]/g, '_');
-      return `centroxpert/sync/v2/${cleanRoom}/state`;
-    }
+function getNtfyTopicUrl() { return ''; }
 
-    function getNtfyTopicUrl() {
-      const cleanRoom = getCloudRoom().replace(/[^a-z0-9_-]/g, '_');
-      return `https://ntfy.sh/cx_omega_sync_${cleanRoom}`;
-    }
-
-    function updateCloudVisualStatus(statusText, isOnline) {
-      lastCloudStatus = statusText;
+function updateCloudVisualStatus() {
+      lastCloudStatus = 'Modo local';
       const modalBadge = document.getElementById('cloudModalStatusText');
-      if (modalBadge) {
-        modalBadge.innerText = statusText;
-        modalBadge.className = isOnline
-          ? 'text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono'
-          : 'text-[11px] px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 font-mono';
-      }
+      if (modalBadge) { modalBadge.innerText = 'Solo este dispositivo'; modalBadge.className = 'text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-mono'; }
       const headerText = document.getElementById('cloudHeaderText');
-      if (headerText) {
-        headerText.innerText = isOnline ? 'En L\u00ednea' : 'Sincronizar';
-      }
+      if (headerText) headerText.innerText = 'Respaldo local';
     }
 
-    // Preparar copia ligera de appData para sincronizaci\u00f3n instant\u00e1nea (evita bloquear por PDFs pesados)
-    function createSyncPayload() {
-      const clone = JSON.parse(JSON.stringify(appData));
-      clone._sender = CLIENT_INSTANCE_ID;
-      clone.lastUpdated = appData.lastUpdated || Date.now();
-      return JSON.stringify(clone);
-    }
+function createSyncPayload() { return null; }
 
-    function applyIncomingCloudData(remoteData, sourceLabel = 'Nube', forceApply = false) {
-      if (!remoteData || !Array.isArray(remoteData.projects) || !Array.isArray(remoteData.technicians)) return false;
-      if (!forceApply && remoteData._sender === CLIENT_INSTANCE_ID) return false;
+function applyIncomingCloudData() { return false; }
 
-      const localTime = Number(appData.lastUpdated || 0);
-      const remoteTime = Number(remoteData.lastUpdated || 0);
+function initRealtimeMqttSync() { updateCloudVisualStatus(); return false; }
 
-      if (forceApply || remoteTime > localTime) {
-        // Preservar adjuntos pesados locales si el proyecto remoto es el mismo pero no trajo base64
-        const localProjMap = {};
-        (appData.projects || []).forEach(lp => { localProjMap[lp.id] = lp; });
-
-        remoteData.projects.forEach(rp => {
-          const lp = localProjMap[rp.id];
-          if (lp) {
-            if (lp.survey && lp.survey.surveyDoc && (!rp.survey || !rp.survey.surveyDoc)) {
-              rp.survey = rp.survey || {};
-              rp.survey.surveyDoc = lp.survey.surveyDoc;
-            }
-            if (lp.survey && lp.survey.planDoc && (!rp.survey || !rp.survey.planDoc)) {
-              rp.survey = rp.survey || {};
-              rp.survey.planDoc = lp.survey.planDoc;
-            }
-            if (lp.quotation && lp.quotation.fileData && rp.quotation && !rp.quotation.fileData) {
-              rp.quotation.fileData = lp.quotation.fileData;
-            }
-          }
-        });
-
-        appData = remoteData;
-        if (!appData.adminPass) appData.adminPass = 'admin123';
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-        populateTechSelect();
-        render();
-        if (currentDetailProjectId) {
-          const detailModal = document.getElementById('projectDetailModal');
-          if (detailModal && !detailModal.classList.contains('hidden')) {
-            openProjectDetailModal(currentDetailProjectId);
-          }
-        }
-        return true;
-      }
-      return false;
-    }
-
-    // Motor 1: WebSockets MQTT en Tiempo Real (con mensaje retenido en el broker para nuevos equipos)
-    function initRealtimeMqttSync() {
-      if (typeof mqtt === 'undefined') return;
-      try {
-        if (mqttClient) {
-          try { mqttClient.end(true); } catch(e) {}
-        }
-        const topic = getMqttTopic();
-        mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt', {
-          clientId: 'centroxpert_' + Math.random().toString(16).substring(2, 10),
-          clean: true,
-          connectTimeout: 5000,
-          reconnectPeriod: 4000
-        });
-
-        mqttClient.on('connect', () => {
-          updateCloudVisualStatus('Conectado en Tiempo Real', true);
-          mqttClient.subscribe(topic, { qos: 1 }, (err) => {
-            if (!err) {
-              // Solicitar o publicar estado actual si somos el m\u00e1s reciente
-            }
-          });
-        });
-
-        mqttClient.on('message', (recvTopic, message) => {
-          try {
-            const text = message.toString();
-            if (text && text.trim().startsWith('{')) {
-              const remoteData = JSON.parse(text);
-              const updated = applyIncomingCloudData(remoteData, 'Tiempo Real', false);
-              if (updated) {
-                showToast('\ud83d\udd04 Cambios recibidos en tiempo real.');
-              } else if (Number(appData.lastUpdated || 0) > Number(remoteData.lastUpdated || 0)) {
-                // Nuestra base local es m\u00e1s reciente que la retenida en el servidor: actualizamos el servidor
-                mqttClient.publish(topic, createSyncPayload(), { qos: 1, retain: true });
-              }
-            }
-          } catch (e) { console.error(e); }
-        });
-
-        mqttClient.on('error', () => {
-          updateCloudVisualStatus('Modo Respaldo HTTP', false);
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-
-    function handlePayment50Upload(e) {
+function handlePayment50Upload(e) {
       const file = e.target.files[0];
       if (!file || !currentDetailProjectId) return;
+      if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
       const p = appData.projects.find(x => x.id === currentDetailProjectId);
       if (!p) return;
 
@@ -2603,7 +2543,7 @@
       e.target.value = '';
     }
 
-    function viewPaymentDocFromDetail() {
+function viewPaymentDocFromDetail() {
       const p = appData.projects.find(x => x.id === currentDetailProjectId);
       if (p && p.payment50Doc) showFileViewerModal(p.payment50Doc, `${p.code} - Comprobante Pago 50%`);
     }
@@ -2625,165 +2565,151 @@
       const current = document.getElementById('currentAdminPass').value;
       const newP = document.getElementById('newAdminPass').value;
       const confirmP = document.getElementById('confirmAdminPass').value;
-      const validPass = appData.adminPass || 'admin123';
-
-      if (current !== validPass) {
-        alert('La clave actual de Coordinador no es correcta.');
-        return;
-      }
-      if (newP !== confirmP) {
-        alert('La nueva clave y la confirmaci\u00f3n no coinciden.');
-        return;
-      }
+      if (!appData.adminPass || current !== appData.adminPass) { alert('La clave local actual no coincide.'); return; }
+      if (newP.length < 8) { alert('La nueva clave local debe tener al menos 8 caracteres.'); return; }
+      if (newP !== confirmP) { alert('Las claves no coinciden.'); return; }
+      const previousPass = appData.adminPass;
       appData.adminPass = newP;
+      if (!saveData()) { appData.adminPass = previousPass; return; }
       closeModal('adminPassModal');
-      saveData();
-      showToast('Clave de Coordinador actualizada y sincronizada.');
+      showToast('Clave local actualizada.');
     }
 
-    function openCloudSyncModal() {
-      const inp = document.getElementById('cloudRoomInput');
-      if (inp) inp.value = getCloudRoom();
-      updateCloudVisualStatus(lastCloudStatus, lastCloudStatus.includes('Conectado'));
+function openCloudSyncModal() {
+      updateCloudVisualStatus();
       openModal('cloudSyncModal');
     }
 
-    function saveCloudRoomConfig() {
-      const val = document.getElementById('cloudRoomInput').value.trim().toLowerCase();
-      if (!val) return;
-      localStorage.setItem(CLOUD_ROOM_KEY, val);
-      initRealtimeMqttSync();
-      showToast('Sala "' + val + '" conectada. Sincronizando dispositivos...');
-      pullFromCloud(true);
+function saveCloudRoomConfig() {
+      showToast('La nube está desactivada. Usa exportar/importar JSON para mover datos entre equipos.');
     }
 
-    async function pushToCloud(manual = false) {
-      const payload = createSyncPayload();
-
-      // 1. Publicar instant\u00e1neamente por WebSocket MQTT (con Retain=true para que quede guardado en la sala)
-      let mqttSent = false;
-      if (mqttClient && mqttClient.connected) {
-        try {
-          mqttClient.publish(getMqttTopic(), payload, { qos: 1, retain: true });
-          mqttSent = true;
-        } catch (e) {}
-      }
-
-      // 2. Publicar respaldo en cach\u00e9 HTTP (ntfy JSON stream) para dispositivos con firewall estricto
-      if (isSyncingCloud && !manual) return;
-      isSyncingCloud = true;
-      try {
-        const res = await fetch(getNtfyTopicUrl(), {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: payload
-        });
-        if ((res.ok || mqttSent) && manual) {
-          updateCloudVisualStatus('Conectado en Tiempo Real', true);
-          showToast('\u2705 Datos subidos y sincronizados con todos los equipos.');
-        }
-      } catch (err) {
-        if (mqttSent && manual) {
-          showToast('\u2705 Datos sincronizados en tiempo real.');
-        } else if (manual) {
-          showToast('Aviso: Red restringida. Usa Exportar Base (.json).');
-        }
-      } finally {
-        isSyncingCloud = false;
-      }
+async function pushToCloud(manual = false) {
+      if (manual) showToast('La sincronización en nube está desactivada. Exporta un respaldo local para trasladar datos.');
+      return false;
     }
 
-    async function pullFromCloud(manual = false) {
-      // Si MQTT est\u00e1 conectado, re-suscribir para recibir el \u00faltimo mensaje retenido inmediatamente
-      if (mqttClient && mqttClient.connected) {
-        mqttClient.subscribe(getMqttTopic(), { qos: 1 });
-      }
+async function pullFromCloud(manual = false) {
+      if (manual) showToast('No hay sincronización en nube en esta versión estática.');
+      return false;
+    }
 
-      if (isSyncingCloud && !manual) return;
-      isSyncingCloud = true;
-      try {
-        const res = await fetch(getNtfyTopicUrl() + '/json?poll=1&since=48h', { cache: 'no-store' });
-        if (res.ok) {
-          const text = await res.text();
-          const lines = text.trim().split('\n').filter(Boolean);
-          let latestRemote = null;
-          let latestTime = 0;
+function createBackupSnapshot(data) {
+      const snapshot = JSON.parse(JSON.stringify(data));
+      delete snapshot.adminPass;
+      delete snapshot._sender;
+      (snapshot.technicians || []).forEach(tech => { if (tech && typeof tech === 'object') delete tech.pin; });
+      snapshot._localAuthVersion = 1;
+      snapshot._exportedAt = new Date().toISOString();
+      return snapshot;
+    }
 
-          for (const line of lines) {
-            try {
-              const wrapper = JSON.parse(line);
-              if (wrapper && wrapper.event === 'message' && wrapper.message && wrapper.message.startsWith('{')) {
-                const candidate = JSON.parse(wrapper.message);
-                if (candidate && Array.isArray(candidate.projects) && Number(candidate.lastUpdated || 0) >= latestTime) {
-                  latestRemote = candidate;
-                  latestTime = Number(candidate.lastUpdated || 0);
-                }
-              }
-            } catch (e) {}
-          }
-
-          if (latestRemote) {
-            const applied = applyIncomingCloudData(latestRemote, 'Nube HTTP', manual);
-            updateCloudVisualStatus('Conectado en Tiempo Real', true);
-            if (manual) {
-              showToast(applied ? '\u2705 Datos actualizados desde la nube.' : '\u2705 Tu equipo ya tiene la versi\u00f3n m\u00e1s reciente.');
-            }
-          } else if (manual) {
-            isSyncingCloud = false;
-            await pushToCloud(true);
-            return;
-          }
-        }
-      } catch (err) {
-        if (manual) showToast('Verificando conexi\u00f3n en tiempo real...');
-      } finally {
-        isSyncingCloud = false;
-      }
+    function downloadDatabaseSnapshot(data, filename) {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      return true;
     }
 
     function exportFullDatabaseJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-      const a = document.createElement('a');
-      a.href = dataStr;
-      a.download = `CentroXpert_BaseDatos_${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      showToast('Base de datos exportada.');
+      try {
+        const date = new Date().toISOString().slice(0, 10);
+        downloadDatabaseSnapshot(createBackupSnapshot(appData), 'centroxpert-respaldo-' + date + '.json');
+        showToast('Respaldo local exportado. No incluye PIN ni clave local.');
+      } catch (err) {
+        showToast('No se pudo generar el respaldo JSON.');
+      }
+    }
+
+function validateDatabaseImport(data) {
+      if (!data || typeof data !== 'object' || Array.isArray(data)) return false;
+      if (!Array.isArray(data.projects) || !Array.isArray(data.technicians)) return false;
+      if (!data.projects.every(item => item && typeof item === 'object' && (typeof item.id === 'string' || typeof item.id === 'number') && typeof item.code === 'string')) return false;
+      if (!data.technicians.every(item => item && typeof item === 'object' && (typeof item.id === 'string' || typeof item.id === 'number') && typeof item.name === 'string')) return false;
+      for (const key of ['vehicles', 'tools', 'fuelLogs', 'notifications']) {
+        if (data[key] !== undefined && !Array.isArray(data[key])) return false;
+      }
+      return true;
     }
 
     function importFullDatabaseJSON(e) {
-      const file = e.target.files[0];
+      const file = e.target.files && e.target.files[0];
       if (!file) return;
-      const r = new FileReader();
-      r.onload = function(evt) {
+      if (file.size > 12 * 1024 * 1024) { alert('El archivo supera el límite de importación local de 12 MB.'); e.target.value = ''; return; }
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        const oldData = appData;
+        let oldRaw = null;
         try {
           const imported = JSON.parse(evt.target.result);
-          if (imported && Array.isArray(imported.projects) && Array.isArray(imported.technicians)) {
-            appData = imported;
-            saveData();
-            populateTechSelect();
-            closeModal('cloudSyncModal');
-            showToast('Base de datos importada y sincronizada en la nube.');
-          } else {
-            alert('El archivo no tiene el formato de CentroXpert.');
-          }
+          if (!validateDatabaseImport(imported)) { alert('El JSON no tiene una estructura válida de CentroXpert. No se modificaron los datos actuales.'); return; }
+          if (!confirm('Se descargará un respaldo local sin PIN ni clave antes de importar. La importación reemplaza los registros de este dispositivo. ¿Continuar?')) return;
+          const date = new Date().toISOString().slice(0, 10);
+          downloadDatabaseSnapshot(createBackupSnapshot(appData), 'centroxpert-antes-de-importar-' + date + '.json');
+          const oldPins = new Map((appData.technicians || []).map(tech => [String(tech.id), tech.pin || '']));
+          const nextData = Object.assign({}, JSON.parse(JSON.stringify(defaultData)), imported);
+          const hasCurrentGpsSchema = imported._localAuthVersion === 1;
+          nextData.projects = imported.projects.map(sourceProject => {
+            const project = Object.assign({}, sourceProject);
+            if (!Array.isArray(project.techCrew)) project.techCrew = [];
+            if (!project.tracking || typeof project.tracking !== 'object' || Array.isArray(project.tracking)) project.tracking = {};
+            if (!project.survey || typeof project.survey !== 'object' || Array.isArray(project.survey)) project.survey = {};
+            if (!Array.isArray(project.survey.itemsEquip)) project.survey.itemsEquip = [];
+            if (!Array.isArray(project.survey.itemsMat)) project.survey.itemsMat = [];
+            if (!hasCurrentGpsSchema) {
+              project.tracking.isVerifiedOnSite = false;
+              project.tracking.distanceFromTargetMeters = null;
+              project.tracking.checkOutVerified = false;
+              project.tracking.checkOutDistanceMeters = null;
+              const hasOldTarget = project.targetLat !== '' && project.targetLat !== null && project.targetLat !== undefined && project.targetLng !== '' && project.targetLng !== null && project.targetLng !== undefined;
+              if (hasOldTarget) project.tracking.legacyTargetNeedsReview = true;
+            }
+            return project;
+          });
+          nextData.technicians = imported.technicians.map(tech => Object.assign({}, tech, { pin: oldPins.get(String(tech.id)) || '' }));
+          nextData.adminPass = appData.adminPass || '';
+          nextData._localAuthVersion = 1;
+          delete nextData._sender;
+          nextData.fuelLogs = Array.isArray(nextData.fuelLogs) ? nextData.fuelLogs : [];
+          nextData.fuelLogs.forEach(log => { if (!Number.isFinite(Number(log.costPerKm))) { log.costPerKm = null; log.dev = 'N/D'; } });
+          nextData.lastUpdated = Date.now();
+          oldRaw = localStorage.getItem(STORAGE_KEY);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(nextData));
+          appData = nextData;
+          populateTechSelect();
+          render();
+          closeModal('cloudSyncModal');
+          showToast(hasCurrentGpsSchema ? 'Base importada en este dispositivo. No se envió a la nube.' : 'Base anterior importada. Revisa las geocercas; las verificaciones GPS antiguas se dejaron sin confirmar.');
         } catch (err) {
-          alert('Error al leer el archivo JSON.');
-        }
+          appData = oldData;
+          try { if (oldRaw !== null) localStorage.setItem(STORAGE_KEY, oldRaw); else localStorage.removeItem(STORAGE_KEY); } catch (restoreErr) {}
+          alert('No se pudo importar. La copia local anterior se conservó. Verifica el JSON y el espacio disponible.');
+          console.error('Database import failed:', err && err.name ? err.name : 'error');
+        } finally { if (e.target) e.target.value = ''; }
       };
-      r.readAsText(file);
+      reader.onerror = function() { alert('No se pudo leer el archivo. Los datos actuales no se modificaron.'); if (e.target) e.target.value = ''; };
+      reader.readAsText(file);
     }
 
-    // Iniciar WebSockets en tiempo real + respaldo peri\u00f3dico al abrir la app
     window.addEventListener('DOMContentLoaded', () => {
-      initRealtimeMqttSync();
-      setTimeout(() => pullFromCloud(false), 800);
-      setInterval(() => {
-        const anyModalOpen = Array.from(document.querySelectorAll('#modals-container > div')).some(el => !el.classList.contains('hidden') && el.id !== 'loginModal');
-        if (!anyModalOpen) pullFromCloud(false);
-      }, 10000);
+      try {
+        populateTechSelect();
+        render();
+      } catch (err) {
+        console.error('No se pudo iniciar la vista de acceso:', err && err.name ? err.name : 'error');
+      }
+      updateCloudVisualStatus();
+      if (localAuthResetNotice) showToast('Actualización local: vuelve a crear la clave del coordinador y los PIN de técnicos; revisa las geocercas históricas. Los registros se conservaron.');
+      if (!currentAuthUser) openModal('loginModal');
     });
-  </script>
+
+</script>
 </body>
 </html>
