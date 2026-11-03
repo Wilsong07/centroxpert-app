@@ -144,19 +144,37 @@
           <p id="detailProjectContact" class="text-slate-400 mt-1">Cont</p>
           <div class="mt-2.5"><a id="detailProjectMapBtn" href="#" target="_blank" class="bg-emerald-800/80 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 shadow"><i class="fa-solid fa-diamond-turn-right"></i> Mapa GPS</a></div>
         </div>
-        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-          <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Personal Asignado</span>
-          <div class="mt-1"><span class="text-slate-400">L&#237;der:</span> <p id="detailProjectLeader" class="text-rose-400 font-bold text-sm"></p></div>
-          <div class="mt-1.5"><span class="text-slate-400">Cuadrilla / Adicionales:</span> <p id="detailProjectCrew" class="text-white font-medium"></p></div>
-        </div>
-        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-          <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">GPS Control</span>
-          <div class="space-y-1 mt-1">
-            <div><span class="text-slate-400">Llegada:</span> <span id="detailProjectCheckIn" class="text-white font-bold"></span></div>
-            <div><span class="text-slate-400">Salida:</span> <span id="detailProjectCheckOut" class="text-white font-bold"></span></div>
-            <div id="detailProjectDuration" class="text-emerald-400 font-bold text-[11px]"></div>
-            <div id="detailProjectDistance" class="text-slate-400 font-mono text-[10px]"></div>
+        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-slate-400 font-semibold uppercase text-[10px]">Equipo T&#233;cnico M&#250;ltiple</span>
+              <span id="detailCrewCountBadge" class="text-[10px] bg-rose-950 text-rose-300 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">0 asig.</span>
+            </div>
+            <div class="mt-1"><span class="text-slate-400">L&#237;der:</span> <span id="detailProjectLeader" class="text-rose-400 font-bold text-xs ml-1"></span></div>
+            <div class="mt-1.5">
+              <span class="text-slate-400 block mb-1">Cuadrilla Asignada (1 a N):</span>
+              <div id="detailProjectCrew" class="flex flex-wrap gap-1"></div>
+            </div>
           </div>
+          <div id="detailQuickAddTechBar" class="mt-2.5 pt-2 border-t border-slate-800/80 flex gap-1.5">
+            <select id="detailQuickAddTechSelect" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-white"></select>
+            <button type="button" onclick="quickAddTechToDetailProject()" class="bg-rose-800 hover:bg-rose-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap">+ Agregar</button>
+          </div>
+        </div>
+        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-slate-400 font-semibold uppercase text-[10px]">Monitoreo GPS Individual en Sitio</span>
+              <select id="detailActiveTechGpsSelect" onchange="refreshDetailGpsForSelectedTech()" class="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-[10px] text-emerald-300 font-bold"></select>
+            </div>
+            <div class="space-y-1 mt-1">
+              <div><span class="text-slate-400">Llegada:</span> <span id="detailProjectCheckIn" class="text-white font-bold font-mono"></span></div>
+              <div><span class="text-slate-400">Salida:</span> <span id="detailProjectCheckOut" class="text-white font-bold font-mono"></span></div>
+              <div id="detailProjectDuration" class="text-emerald-400 font-bold text-[11px]"></div>
+              <div id="detailProjectDistance" class="text-slate-400 font-mono text-[10px]"></div>
+            </div>
+          </div>
+          <div id="detailPerTechGpsSummaryList" class="mt-2 pt-2 border-t border-slate-800/80 space-y-1 max-h-24 overflow-y-auto"></div>
         </div>
       </div>
 
@@ -328,11 +346,27 @@
           </div>
         </div>
 
-        <div class="bg-slate-950/60 border border-slate-800 p-3 rounded-xl space-y-3">
-          <div class="text-xs font-bold text-rose-400 uppercase"><i class="fa-solid fa-users mr-1"></i> Equipo T&#233;cnico Asignado</div>
+        <div class="bg-slate-950/60 border border-slate-800 p-3.5 rounded-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="text-xs font-bold text-rose-400 uppercase"><i class="fa-solid fa-users mr-1"></i> Asignaci&#243;n M&#250;ltiple de T&#233;cnicos (L&#237;der + Cuadrilla Din&#225;mica)</div>
+            <span class="text-[10px] text-slate-400">Relaci&#243;n 1 a N por proyecto</span>
+          </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div><label class="block text-xs text-slate-300 mb-1">L&#237;der</label><select id="editProjectTechLeader" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-bold text-rose-400"></select></div>
-            <div><label class="block text-xs text-slate-300 mb-1">Cuadrilla</label><select id="editProjectTechCrew" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select></div>
+            <div>
+              <label class="block text-xs text-slate-300 mb-1">T&#233;cnico L&#237;der Responsable</label>
+              <select id="editProjectTechLeader" onchange="syncLeaderWithCrewChip()" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-bold text-rose-400"></select>
+            </div>
+            <div>
+              <label class="block text-xs text-slate-300 mb-1">A&#241;adir T&#233;cnicos a la Cuadrilla</label>
+              <div class="flex gap-2">
+                <select id="editProjectTechCrew" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select>
+                <button type="button" onclick="addTechToEditCrewList()" class="bg-rose-700 hover:bg-rose-600 text-white px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap shadow">+ Agregar</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-1.5">Miembros de Cuadrilla Asignados (Haz clic en <i class="fa-solid fa-xmark text-rose-400"></i> para remover):</label>
+            <div id="editProjectCrewChipsContainer" class="flex flex-wrap gap-1.5 min-h-[34px] bg-slate-900/90 border border-slate-800 p-2 rounded-xl"></div>
           </div>
         </div>
         <div class="flex justify-between items-center pt-3 border-t border-slate-800 mt-4">
@@ -454,9 +488,20 @@
           <div id="omegaResults" class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1"></div>
         </div>
 
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 space-y-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-bold uppercase text-emerald-400"><i class="fa-solid fa-boxes-stacked mr-1.5"></i>Vincular Material o Equipo desde Inventario OCR al Proyecto</span>
+            <div class="flex flex-wrap gap-2">
+              <select id="surveyInventoryPicker" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white"></select>
+              <input type="number" id="surveyInventoryQty" min="1" value="1" class="w-16 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white font-mono text-center" title="Cantidad">
+              <button type="button" onclick="addInventoryItemToSurvey()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">+ Vincular al Proyecto</button>
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800"><div class="flex justify-between mb-2"><h4 class="text-xs font-bold text-rose-400 uppercase">Equipos Activos</h4><button type="button" onclick="promptAddManualItem('equip')" class="text-[11px] bg-rose-950 hover:bg-rose-900 text-rose-300 px-2 rounded border border-rose-800">+ Manual</button></div><div id="surveyEquipList" class="space-y-2 text-xs min-h-[60px]"></div></div>
-          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800"><div class="flex justify-between mb-2"><h4 class="text-xs font-bold text-amber-400 uppercase">Materiales</h4><button type="button" onclick="promptAddManualItem('mat')" class="text-[11px] bg-amber-950 hover:bg-amber-900 text-amber-300 px-2 rounded border border-amber-800">+ Manual</button></div><div id="surveyMaterialList" class="space-y-2 text-xs min-h-[60px]"></div></div>
+          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800"><div class="flex justify-between mb-2"><h4 class="text-xs font-bold text-rose-400 uppercase">Equipos Activos (Cantidades Editables)</h4><button type="button" onclick="promptAddManualItem('equip')" class="text-[11px] bg-rose-950 hover:bg-rose-900 text-rose-300 px-2 rounded border border-rose-800">+ Manual</button></div><div id="surveyEquipList" class="space-y-2 text-xs min-h-[60px]"></div></div>
+          <div class="bg-slate-800/50 p-3.5 rounded-xl border border-slate-800"><div class="flex justify-between mb-2"><h4 class="text-xs font-bold text-amber-400 uppercase">Materiales Vinculados (Cantidades Editables)</h4><button type="button" onclick="promptAddManualItem('mat')" class="text-[11px] bg-amber-950 hover:bg-amber-900 text-amber-300 px-2 rounded border border-amber-800">+ Manual</button></div><div id="surveyMaterialList" class="space-y-2 text-xs min-h-[60px]"></div></div>
         </div>
 
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800 mt-4">
@@ -932,8 +977,19 @@
             </select>
           </div>
           <div class="col-span-2 sm:col-span-1">
-            <label class="block text-slate-300 font-semibold mb-1">Ubicaci&#243;n / Custodio</label>
+            <label class="block text-slate-300 font-semibold mb-1">Ubicaci&#243;n / Almac&#233;n</label>
             <input type="text" id="invLocation" required value="Almac&#233;n Central" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-slate-950/70 border border-slate-800 p-3 rounded-xl">
+          <div>
+            <label class="block text-emerald-400 font-bold mb-1"><i class="fa-solid fa-diagram-project mr-1"></i>Vincular a Proyecto (Opcional)</label>
+            <select id="invProjectCode" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs"></select>
+          </div>
+          <div>
+            <label class="block text-blue-400 font-bold mb-1"><i class="fa-solid fa-users-gear mr-1"></i>Asignar a T&#233;cnico / Cuadrilla</label>
+            <select id="invAssignedTech" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs"></select>
           </div>
         </div>
 
@@ -1129,6 +1185,21 @@
             }
             if (!Array.isArray(project.techCrew)) project.techCrew = [];
             if (!project.tracking || typeof project.tracking !== 'object' || Array.isArray(project.tracking)) project.tracking = {};
+            if (!project.tracking.techTracking || typeof project.tracking.techTracking !== 'object' || Array.isArray(project.tracking.techTracking)) {
+              project.tracking.techTracking = {};
+              if (project.techLeader && project.tracking.checkIn) {
+                project.tracking.techTracking[project.techLeader] = {
+                  checkIn: project.tracking.checkIn,
+                  checkInRaw: project.tracking.checkInRaw || null,
+                  checkInCoords: project.tracking.checkInCoords || null,
+                  checkOut: project.tracking.checkOut || '',
+                  checkOutRaw: project.tracking.checkOutRaw || null,
+                  hoursWorked: project.tracking.hoursWorked || '',
+                  isVerifiedOnSite: Boolean(project.tracking.isVerifiedOnSite),
+                  distanceFromTargetMeters: project.tracking.distanceFromTargetMeters ?? null
+                };
+              }
+            }
             if (!project.survey || typeof project.survey !== 'object' || Array.isArray(project.survey)) project.survey = {};
             if (!Array.isArray(project.survey.itemsEquip)) project.survey.itemsEquip = [];
             if (!Array.isArray(project.survey.itemsMat)) project.survey.itemsMat = [];
@@ -1542,6 +1613,8 @@ function render() {
           Proyecto: p.title,
           Cliente: p.client,
           Tecnico_Lider: p.techLeader || 'Sin asignar',
+          Cuadrilla_Asignada: (p.techCrew || []).join(' | ') || 'Sin adicionales',
+          Total_Tecnicos_Asignados: getAllProjectTechs(p).length,
           Estado: p.status,
           Fecha_Creacion: lc.createdAtStr,
           Fecha_Inicio_Aprobado: lc.startStr,
@@ -1903,6 +1976,149 @@ function render() {
     /* ===================================================================
        1. CREACION DE NUEVO PROYECTO Y GESTION DE TIEMPOS
        =================================================================== */
+    /* ===================================================================
+       GESTION DINAMICA DE MULTIPLES TECNICOS POR PROYECTO (1 A N) Y GPS INDIVIDUAL
+       =================================================================== */
+    let tempEditCrewList = [];
+
+    function getAllProjectTechs(p) {
+      if (!p) return [];
+      const set = new Set();
+      if (p.techLeader && String(p.techLeader).trim()) set.add(String(p.techLeader).trim());
+      if (Array.isArray(p.techCrew)) {
+        p.techCrew.forEach(name => {
+          if (name && String(name).trim()) set.add(String(name).trim());
+        });
+      }
+      return Array.from(set);
+    }
+
+    function getTechTrackingForProject(p, techName) {
+      if (!p || !p.tracking) return null;
+      const map = (p.tracking.techTracking && typeof p.tracking.techTracking === 'object') ? p.tracking.techTracking : {};
+      if (techName && map[techName]) return map[techName];
+      // Si es el l\u00edder o el \u00fanico registro legado
+      if (techName && p.techLeader === techName && p.tracking.checkIn) {
+        return {
+          checkIn: p.tracking.checkIn,
+          checkInRaw: p.tracking.checkInRaw || null,
+          checkOut: p.tracking.checkOut || '',
+          hoursWorked: p.tracking.hoursWorked || '',
+          isVerifiedOnSite: Boolean(p.tracking.isVerifiedOnSite),
+          distanceFromTargetMeters: p.tracking.distanceFromTargetMeters ?? null
+        };
+      }
+      return null;
+    }
+
+    function renderEditCrewChips() {
+      const box = document.getElementById('editProjectCrewChipsContainer');
+      if (!box) return;
+      const leader = document.getElementById('editProjectTechLeader')?.value || '';
+      tempEditCrewList = tempEditCrewList.filter(name => name && name !== leader);
+      if (tempEditCrewList.length === 0) {
+        box.innerHTML = '<span class="text-slate-500 italic text-[11px]">Sin t\u00e9cnicos adicionales en la cuadrilla. Usa "+ Agregar" para asignar m\u00faltiples t\u00e9cnicos.</span>';
+        return;
+      }
+      box.innerHTML = tempEditCrewList.map((name, idx) => `
+        <span class="inline-flex items-center gap-1.5 bg-slate-800 text-white border border-slate-700 px-2.5 py-1 rounded-lg text-xs font-semibold">
+          <i class="fa-solid fa-user-gear text-rose-400 text-[10px]"></i> ${name}
+          <button type="button" onclick="removeTechFromEditCrewList(${idx})" class="text-slate-400 hover:text-rose-400 ml-1" title="Quitar de la cuadrilla">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </span>
+      `).join('');
+    }
+
+    function syncLeaderWithCrewChip() {
+      renderEditCrewChips();
+    }
+
+    function addTechToEditCrewList() {
+      const sel = document.getElementById('editProjectTechCrew');
+      const leader = document.getElementById('editProjectTechLeader')?.value || '';
+      if (!sel || !sel.value) return;
+      const techName = sel.value.trim();
+      if (techName === leader) {
+        showToast('Ese t\u00e9cnico ya est\u00e1 asignado como L\u00edder del proyecto.');
+        return;
+      }
+      if (!tempEditCrewList.includes(techName)) {
+        tempEditCrewList.push(techName);
+        renderEditCrewChips();
+      } else {
+        showToast('El t\u00e9cnico ya forma parte de la cuadrilla.');
+      }
+      sel.value = '';
+    }
+
+    function removeTechFromEditCrewList(idx) {
+      tempEditCrewList.splice(idx, 1);
+      renderEditCrewChips();
+    }
+
+    function quickAddTechToDetailProject() {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      const sel = document.getElementById('detailQuickAddTechSelect');
+      if (!p || !sel || !sel.value) return;
+      const techName = sel.value.trim();
+      if (!Array.isArray(p.techCrew)) p.techCrew = [];
+      if (!p.techLeader) {
+        p.techLeader = techName;
+      } else if (p.techLeader !== techName && !p.techCrew.includes(techName)) {
+        p.techCrew.push(techName);
+      } else {
+        showToast(`${techName} ya est\u00e1 asignado a este proyecto.`);
+        return;
+      }
+      addNotification(techName, `\ud83d\udccb Has sido asignado al equipo del proyecto ${p.code} - ${p.title}.`);
+      saveData();
+      openProjectDetailModal(p.id);
+      showToast(`${techName} agregado al proyecto ${p.code}.`);
+    }
+
+    function removeTechFromDetailProject(techName) {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (!p) return;
+      if (Array.isArray(p.techCrew)) {
+        p.techCrew = p.techCrew.filter(n => n !== techName);
+      }
+      if (p.techLeader === techName) {
+        p.techLeader = p.techCrew.length > 0 ? p.techCrew.shift() : '';
+      }
+      saveData();
+      openProjectDetailModal(p.id);
+      showToast(`${techName} removido del proyecto ${p.code}.`);
+    }
+
+    function refreshDetailGpsForSelectedTech() {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (!p) return;
+      const sel = document.getElementById('detailActiveTechGpsSelect');
+      const selectedTech = (sel && sel.value) ? sel.value : (p.techLeader || '');
+      const trk = getTechTrackingForProject(p, selectedTech) || p.tracking || {};
+      const isInSite = Boolean(trk.checkIn && !trk.checkOut);
+
+      document.getElementById('detailProjectCheckIn').innerText = trk.checkIn || 'No registrada';
+      document.getElementById('detailProjectCheckOut').innerText = trk.checkOut || (isInSite ? 'Trabajando en sitio...' : 'Pendiente');
+      document.getElementById('detailProjectDuration').innerText = trk.hoursWorked || '';
+
+      const distEl = document.getElementById('detailProjectDistance');
+      const gpsLines = [];
+      if (trk.checkIn) {
+        let arrivalStatus = trk.isVerifiedOnSite ? 'Llegada GPS verificada' : 'Llegada GPS sin verificaci\u00f3n';
+        if (trk.distanceFromTargetMeters !== null && trk.distanceFromTargetMeters !== undefined) {
+          arrivalStatus += ' (' + Math.round(Number(trk.distanceFromTargetMeters)) + ' m)';
+        }
+        gpsLines.push(arrivalStatus);
+      }
+      if (trk.checkOut) gpsLines.push('Salida GPS ' + (trk.checkOutVerified ? 'verificada' : 'registrada'));
+      distEl.innerText = gpsLines.length ? gpsLines.join(' \u00b7 ') : 'Sin registro GPS para ' + (selectedTech || 'este t\u00e9cnico');
+    }
+
     function openNewProjectModal() {
       editingProjectId = null;
       document.getElementById('editProjectId').value = '';
@@ -1925,7 +2141,9 @@ function render() {
       const crewSelect = document.getElementById('editProjectTechCrew');
       const opts = '<option value="">Sin Asignar</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
       techSelect.innerHTML = opts;
-      crewSelect.innerHTML = opts;
+      crewSelect.innerHTML = '<option value="">-- Seleccionar t\u00e9cnico --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
+      tempEditCrewList = [];
+      renderEditCrewChips();
       openModal('editProjectModal');
     }
 
@@ -1956,11 +2174,16 @@ function render() {
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               ${appData.technicians.map(t => {
-                const currentProj = appData.projects.find(p => (p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name))) && p.tracking && p.tracking.checkIn && !p.tracking.checkOut)
-                  || appData.projects.find(p => p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name)));
-                const isOnSite = currentProj && currentProj.tracking && currentProj.tracking.checkIn && !currentProj.tracking.checkOut;
-                const isVerified = currentProj && currentProj.tracking && currentProj.tracking.isVerifiedOnSite;
-                const distM = (currentProj && currentProj.tracking && currentProj.tracking.distanceFromTargetMeters != null) ? currentProj.tracking.distanceFromTargetMeters + ' m de geocerca' : 'Sin lectura GPS reciente';
+                const currentProj = appData.projects.find(p => {
+                  const assigned = p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name));
+                  if (!assigned) return false;
+                  const trk = getTechTrackingForProject(p, t.name);
+                  return trk && trk.checkIn && !trk.checkOut;
+                }) || appData.projects.find(p => p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name)));
+                const myTrk = currentProj ? getTechTrackingForProject(currentProj, t.name) : null;
+                const isOnSite = Boolean(myTrk && myTrk.checkIn && !myTrk.checkOut);
+                const isVerified = Boolean(myTrk && myTrk.isVerifiedOnSite);
+                const distM = (myTrk && myTrk.distanceFromTargetMeters != null) ? myTrk.distanceFromTargetMeters + ' m de geocerca' : 'Sin lectura GPS reciente';
                 const veh = appData.vehicles.find(v => v.assignedTo === t.name || (t.vehiclePlate && v.plate === t.vehiclePlate));
                 const toolsCount = appData.tools.filter(tl => tl.assignedTo === t.name).length;
                 const mapQuery = (currentProj && currentProj.targetLat && currentProj.targetLng) ? `${currentProj.targetLat},${currentProj.targetLng}` : encodeURIComponent(currentProj ? currentProj.address : 'Santo Domingo');
@@ -1987,8 +2210,8 @@ function render() {
                           <div class="text-white font-semibold truncate">${currentProj.title}</div>
                           <div class="text-[11px] text-slate-400 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${currentProj.address}</div>
                           <div class="pt-1 border-t border-slate-800/80 flex justify-between font-mono text-[11px]">
-                            <span>Entrada: <strong class="text-emerald-400">${(currentProj.tracking && currentProj.tracking.checkIn) || '--:--'}</strong></span>
-                            <span>Salida: <strong class="text-amber-300">${(currentProj.tracking && currentProj.tracking.checkOut) || '--:--'}</strong></span>
+                            <span>Entrada: <strong class="text-emerald-400">${(myTrk && myTrk.checkIn) || '--:--'}</strong></span>
+                            <span>Salida: <strong class="text-amber-300">${(myTrk && myTrk.checkOut) || '--:--'}</strong></span>
                           </div>
                           <div class="text-[10px] text-slate-400 font-mono">Precisi\u00f3n: ${distM}</div>
                         ` : `<div class="text-slate-500 italic py-2">Sin orden asignada actualmente</div>`}
@@ -2077,7 +2300,10 @@ function render() {
                     <tr class="hover:bg-slate-800/40">
                       <td class="p-3 font-mono font-bold text-blue-400">${item.sku}</td>
                       <td class="p-3 font-bold text-white">${item.name}</td>
-                      <td class="p-3 text-slate-300">${item.category}<div class="text-[10px] text-slate-500">${item.location || 'Almac\u00e9n'}</div></td>
+                      <td class="p-3 text-slate-300">
+                        <div>${item.category} <span class="text-[10px] text-slate-500">(${item.location || 'Almac\u00e9n'})</span></div>
+                        ${item.projectCode ? `<div class="text-[10px] font-mono text-rose-400 font-bold mt-0.5"><i class="fa-solid fa-link mr-1"></i>${item.projectCode} ${item.assignedTech ? '\u00b7 ' + item.assignedTech : ''}</div>` : `<div class="text-[10px] text-slate-500">${item.assignedTech ? 'Custodio: ' + item.assignedTech : 'Stock libre en almac\u00e9n'}</div>`}
+                      </td>
                       <td class="p-3 text-center">
                         <div class="inline-flex items-center gap-1.5">
                           <button type="button" onclick="adjustInventoryStock('${item.id}', -1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">-</button>
@@ -2105,6 +2331,16 @@ function render() {
       if (!Array.isArray(appData.inventory)) appData.inventory = [];
       const statusEl = document.getElementById('inventoryOcrStatus');
       if (statusEl) statusEl.innerText = 'Detecta SKU, modelo, cantidad y precio desde una foto o PDF';
+      const projSel = document.getElementById('invProjectCode');
+      const techSel = document.getElementById('invAssignedTech');
+      if (projSel) {
+        projSel.innerHTML = '<option value="">-- Sin proyecto vinculado (Stock Almac\u00e9n) --</option>' +
+          (appData.projects || []).map(p => `<option value="${p.code}">${p.code} \u2014 ${p.title}</option>`).join('');
+      }
+      if (techSel) {
+        techSel.innerHTML = '<option value="">-- Almac\u00e9n General --</option>' +
+          (appData.technicians || []).map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
+      }
       if (id) {
         const item = appData.inventory.find(x => x.id === id);
         if (!item) return;
@@ -2116,6 +2352,8 @@ function render() {
         document.getElementById('invStock').value = item.stock ?? 0;
         document.getElementById('invMinStock').value = item.minStock ?? 3;
         document.getElementById('invUnitCost').value = item.unitCost ?? 0;
+        if (projSel) projSel.value = item.projectCode || '';
+        if (techSel) techSel.value = item.assignedTech || '';
       } else {
         document.getElementById('invEditId').value = '';
         document.getElementById('invSku').value = 'SKU-' + Date.now().toString().slice(-4);
@@ -2125,6 +2363,8 @@ function render() {
         document.getElementById('invStock').value = 10;
         document.getElementById('invMinStock').value = 3;
         document.getElementById('invUnitCost').value = 2500;
+        if (projSel) projSel.value = '';
+        if (techSel) techSel.value = '';
       }
       openModal('inventoryModal');
     }
@@ -2177,7 +2417,9 @@ function render() {
         name: document.getElementById('invName').value.trim(),
         stock: parseInt(document.getElementById('invStock').value) || 0,
         minStock: parseInt(document.getElementById('invMinStock').value) || 0,
-        unitCost: parseFloat(document.getElementById('invUnitCost').value) || 0
+        unitCost: parseFloat(document.getElementById('invUnitCost').value) || 0,
+        projectCode: document.getElementById('invProjectCode')?.value || '',
+        assignedTech: document.getElementById('invAssignedTech')?.value || ''
       };
       if (id) {
         const existing = appData.inventory.find(x => x.id === id);
@@ -2664,9 +2906,12 @@ function renderStaffLogistics() {
       return appData.technicians.map(t => {
         const assignedProj = appData.projects.filter(p => p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name)));
         const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
-        const checkedIn = assignedProj.filter(p => p.tracking && p.tracking.checkIn);
-        const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
-        const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
+        const techTrackList = assignedProj.map(p => ({ p, trk: getTechTrackingForProject(p, t.name) })).filter(x => x.trk && x.trk.checkIn);
+        const onSiteVerified = techTrackList.filter(x => x.trk.isVerifiedOnSite).length;
+        const gpsRate = techTrackList.length > 0 ? Math.round((onSiteVerified / techTrackList.length) * 100) : 100;
+        const myFieldExpensesRD = (appData.fieldExpenses || [])
+          .filter(exp => exp.techName && exp.techName.toLowerCase() === t.name.toLowerCase())
+          .reduce((acc, exp) => acc + (Number(exp.amount) || 0), 0);
 
         // M\u00e9tricas de Ciclo de Vida, Duraci\u00f3n Real vs Estimada y Descuento Autom\u00e1tico por Retraso (OVERDUE)
         const lifecycleList = assignedProj.map(p => computeProjectLifecycleInfo(p));
@@ -2709,13 +2954,12 @@ function renderStaffLogistics() {
         const actualGallons = Number((actualFuelCostRD / fuelPriceGal).toFixed(2));
         const fuelBalanceRD = actualFuelCostRD - estCostProjectsRD;
 
-        // \u00daltimo registro de hora de llegada y salida
-        const withTimes = assignedProj.filter(p => p.tracking && (p.tracking.checkIn || p.tracking.checkOut));
-        const lastProjWithTime = withTimes.length > 0 ? withTimes[0] : (assignedProj[0] || null);
-        const lastCheckIn = (lastProjWithTime && lastProjWithTime.tracking && lastProjWithTime.tracking.checkIn) ? lastProjWithTime.tracking.checkIn : 'Sin registro';
-        const lastCheckOut = (lastProjWithTime && lastProjWithTime.tracking && lastProjWithTime.tracking.checkOut) ? lastProjWithTime.tracking.checkOut : 'Pendiente';
-        const lastHours = (lastProjWithTime && lastProjWithTime.tracking && lastProjWithTime.tracking.hoursWorked) ? lastProjWithTime.tracking.hoursWorked : '\u2014';
-        const lastProjCode = lastProjWithTime ? lastProjWithTime.code : '\u2014';
+        // \u00daltimo registro individual de hora de llegada y salida para este t\u00e9cnico
+        const lastEntry = techTrackList.length > 0 ? techTrackList[0] : (assignedProj[0] ? { p: assignedProj[0], trk: getTechTrackingForProject(assignedProj[0], t.name) } : null);
+        const lastCheckIn = (lastEntry && lastEntry.trk && lastEntry.trk.checkIn) ? lastEntry.trk.checkIn : 'Sin registro';
+        const lastCheckOut = (lastEntry && lastEntry.trk && lastEntry.trk.checkOut) ? lastEntry.trk.checkOut : 'Pendiente';
+        const lastHours = (lastEntry && lastEntry.trk && lastEntry.trk.hoursWorked) ? lastEntry.trk.hoursWorked : '\u2014';
+        const lastProjCode = (lastEntry && lastEntry.p) ? lastEntry.p.code : '\u2014';
 
         // Evaluaciones manuales e incidencias de este t\u00e9cnico
         const myEvals = appData.kpiEvaluations.filter(ev => ev.techName && ev.techName.toLowerCase() === t.name.toLowerCase());
@@ -2758,6 +3002,7 @@ function renderStaffLogistics() {
           actualOdoKm,
           actualGallons,
           fuelBalanceRD,
+          myFieldExpensesRD,
           lastCheckIn,
           lastCheckOut,
           lastHours,
@@ -2991,7 +3236,10 @@ function renderStaffLogistics() {
                           <div class="font-mono font-bold text-rose-400">${p.code}</div>
                           <div class="text-white font-semibold truncate max-w-[190px]">${p.title}</div>
                         </td>
-                        <td class="p-3 text-slate-200 font-semibold">${p.techLeader || 'Sin asignar'}</td>
+                        <td class="p-3">
+                          <div class="text-slate-200 font-semibold">${p.techLeader || 'Sin asignar'}</div>
+                          ${p.techCrew && p.techCrew.length ? `<div class="text-[10px] text-rose-300 font-mono">+ ${p.techCrew.length} en cuadrilla (${p.techCrew.join(', ')})</div>` : `<div class="text-[10px] text-slate-500">Individual</div>`}
+                        </td>
                         <td class="p-3 font-mono text-slate-300">${lc.createdAtStr}</td>
                         <td class="p-3 font-mono text-emerald-400 font-semibold">${lc.startStr}</td>
                         <td class="p-3 text-center font-mono">
@@ -3538,10 +3786,12 @@ function handleSaveTechnician(e) {
       const crewSelect = document.getElementById('editProjectTechCrew');
       
       let opts = '<option value="">Sin Asignar</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
-      techSelect.innerHTML = opts; crewSelect.innerHTML = opts;
+      techSelect.innerHTML = opts;
+      crewSelect.innerHTML = '<option value="">-- Seleccionar t\u00e9cnico --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
       
       techSelect.value = p.techLeader || '';
-      crewSelect.value = p.techCrew && p.techCrew.length > 0 ? p.techCrew[0] : '';
+      tempEditCrewList = Array.isArray(p.techCrew) ? [...p.techCrew] : [];
+      renderEditCrewChips();
       
       openModal('editProjectModal');
     }
@@ -3679,23 +3929,62 @@ function openProjectDetailModal(projId) {
         mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${query}`;
       }
 
+      const allTechs = getAllProjectTechs(p);
+      const isTechUser = currentAuthUser && currentAuthUser.role === 'tech';
       document.getElementById('detailProjectLeader').innerText = p.techLeader || 'Sin asignar';
-      document.getElementById('detailProjectCrew').innerText = (p.techCrew && p.techCrew.length > 0) ? p.techCrew.join(', ') : 'N/A';
+      const crewBadgeEl = document.getElementById('detailCrewCountBadge');
+      if (crewBadgeEl) crewBadgeEl.innerText = `${allTechs.length} t\u00e9cnico(s)`;
 
-      document.getElementById('detailProjectCheckIn').innerText = (p.tracking && p.tracking.checkIn) ? p.tracking.checkIn : 'No registrada';
-      document.getElementById('detailProjectCheckOut').innerText = (p.tracking && p.tracking.checkOut) ? p.tracking.checkOut : (isInSite ? 'Trabajando en sitio...' : 'Pendiente');
-      document.getElementById('detailProjectDuration').innerText = (p.tracking && p.tracking.hoursWorked) ? p.tracking.hoursWorked : '';
-      
-      const distEl = document.getElementById('detailProjectDistance');
-      const gpsLines = [];
-      if (p.tracking && p.tracking.checkIn) {
-        let arrivalStatus = p.tracking.isVerifiedOnSite ? 'Llegada GPS verificada' : 'Llegada GPS sin verificaci\u00f3n';
-        if (p.tracking.distanceFromTargetMeters !== null && p.tracking.distanceFromTargetMeters !== undefined) arrivalStatus += ' (' + Math.round(Number(p.tracking.distanceFromTargetMeters)) + ' m)';
-        gpsLines.push(arrivalStatus);
+      const crewBox = document.getElementById('detailProjectCrew');
+      if (crewBox) {
+        const crewArr = Array.isArray(p.techCrew) ? p.techCrew : [];
+        if (crewArr.length === 0) {
+          crewBox.innerHTML = '<span class="text-slate-500 italic text-[11px]">Sin cuadrilla adicional</span>';
+        } else {
+          crewBox.innerHTML = crewArr.map(name => `
+            <span class="inline-flex items-center gap-1 bg-slate-900 text-slate-200 border border-slate-700 px-2 py-0.5 rounded-lg text-[11px] font-semibold">
+              ${name}
+              ${!isTechUser ? `<button type="button" onclick="removeTechFromDetailProject('${name}')" class="text-slate-400 hover:text-rose-400 ml-0.5" title="Quitar de proyecto"><i class="fa-solid fa-xmark"></i></button>` : ''}
+            </span>
+          `).join('');
+        }
       }
-      if (p.tracking && p.tracking.checkOut) gpsLines.push('Salida GPS ' + (p.tracking.checkOutVerified ? 'verificada' : 'sin verificaci\u00f3n'));
-      if (p.tracking && p.tracking.legacyTargetNeedsReview) gpsLines.push('Geocerca hist\u00f3rica pendiente de revisi\u00f3n');
-      distEl.innerText = gpsLines.length ? gpsLines.join(' \u00b7 ') : 'Sin registro GPS';
+
+      const quickAddBar = document.getElementById('detailQuickAddTechBar');
+      const quickAddSel = document.getElementById('detailQuickAddTechSelect');
+      if (quickAddBar && quickAddSel) {
+        quickAddBar.style.display = isTechUser ? 'none' : 'flex';
+        const unassignedTechs = appData.technicians.filter(t => !allTechs.includes(t.name));
+        quickAddSel.innerHTML = '<option value="">+ A\u00f1adir t\u00e9cnico al proyecto...</option>' +
+          unassignedTechs.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
+      }
+
+      const gpsTechSelect = document.getElementById('detailActiveTechGpsSelect');
+      if (gpsTechSelect) {
+        const defaultTechForGps = (isTechUser && allTechs.includes(currentAuthUser.name))
+          ? currentAuthUser.name
+          : (allTechs[0] || (currentAuthUser ? currentAuthUser.name : ''));
+        const optsList = allTechs.length > 0 ? allTechs : appData.technicians.map(t => t.name);
+        gpsTechSelect.innerHTML = optsList.map(name => `<option value="${name}" ${name === defaultTechForGps ? 'selected' : ''}>${name}</option>`).join('');
+      }
+      refreshDetailGpsForSelectedTech();
+
+      const perTechSummaryEl = document.getElementById('detailPerTechGpsSummaryList');
+      if (perTechSummaryEl) {
+        if (allTechs.length === 0) {
+          perTechSummaryEl.innerHTML = '';
+        } else {
+          perTechSummaryEl.innerHTML = allTechs.map(name => {
+            const trk = getTechTrackingForProject(p, name);
+            const activeNow = trk && trk.checkIn && !trk.checkOut;
+            const stText = trk && trk.checkIn ? `E: ${trk.checkIn}${trk.checkOut ? ' \u00b7 S: ' + trk.checkOut : ' (En Sitio)'}` : 'Sin marcar';
+            return `<div class="flex items-center justify-between text-[10px] font-mono bg-slate-900/80 px-2 py-1 rounded border border-slate-800">
+              <span class="text-slate-200 font-sans font-semibold truncate max-w-[120px]">${name}</span>
+              <span class="${activeNow ? 'text-emerald-400 font-bold' : (trk && trk.checkOut ? 'text-amber-300' : 'text-slate-500')}">${stText}</span>
+            </div>`;
+          }).join('');
+        }
+      }
 
       // Ciclo de Vida del Proyecto, Fechas y Alertas en Tiempo Real
       const lc = computeProjectLifecycleInfo(p);
@@ -3918,8 +4207,11 @@ function downloadQuotationFile(projId) {
       p.tracking.legacyTargetNeedsReview = false;
       p.techLeader = newLeader;
       
-      const crewVal = document.getElementById('editProjectTechCrew').value;
-      p.techCrew = crewVal ? [crewVal] : [];
+      const pendingCrewSelectVal = document.getElementById('editProjectTechCrew')?.value || '';
+      if (pendingCrewSelectVal && pendingCrewSelectVal !== newLeader && !tempEditCrewList.includes(pendingCrewSelectVal)) {
+        tempEditCrewList.push(pendingCrewSelectVal);
+      }
+      p.techCrew = tempEditCrewList.filter(name => name && name !== newLeader);
 
       if (oldLeader !== newLeader && newLeader) {
         addNotification(newLeader, `\ud83d\udccb Tienes un proyecto asignado: ${p.code} - ${p.title}.`);
@@ -4079,12 +4371,27 @@ function handleSaveQuotation(e) {
         const radius = Number(p.geofenceRadiusMeters) > 0 ? Number(p.geofenceRadiusMeters) : 300;
         const verified = hasTarget && Number.isFinite(distance) && distance <= radius;
         const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const nowRaw = Date.now();
+        const activeTechName = (currentAuthUser && currentAuthUser.role === 'tech')
+          ? currentAuthUser.name
+          : (document.getElementById('detailActiveTechGpsSelect')?.value || p.techLeader || 'T\u00e9cnico');
+        if (!p.tracking.techTracking || typeof p.tracking.techTracking !== 'object') p.tracking.techTracking = {};
+        p.tracking.techTracking[activeTechName] = {
+          checkIn: time,
+          checkInRaw: nowRaw,
+          checkInCoords: { lat: lat, lng: lng, accuracy: Number(pos.coords.accuracy) || null },
+          checkOut: '',
+          checkOutRaw: null,
+          hoursWorked: 'En sitio ahora',
+          distanceFromTargetMeters: hasTarget ? Math.round(distance) : null,
+          isVerifiedOnSite: Boolean(verified)
+        };
         p.tracking.checkIn = time;
-        p.tracking.checkInRaw = Date.now();
+        p.tracking.checkInRaw = nowRaw;
         p.tracking.checkInCoords = { lat: lat, lng: lng, accuracy: Number(pos.coords.accuracy) || null };
         p.tracking.distanceFromTargetMeters = hasTarget ? Math.round(distance) : null;
         p.tracking.isVerifiedOnSite = Boolean(verified);
-        p.status = 'En Curso';
+        applyProjectLifecycleTransition(p, 'En Curso');
         if (!saveData()) return;
         const note = verified ? 'Llegada GPS verificada' : (hasTarget ? 'Llegada GPS registrada fuera de la geocerca; no verificada' : 'Llegada GPS registrada, pero el proyecto no tiene geocerca configurada; no verificada');
         addNotification('admin', '\ud83d\udccd ' + (currentAuthUser ? currentAuthUser.name : 'T\u00e9cnico') + ' \u2014 ' + note + ' en ' + p.code + '.');
@@ -4115,6 +4422,12 @@ function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
       const departureAt = Date.now();
       const recordDeparture = (coords, locationMessage) => {
         const time = new Date(departureAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const activeTechName = (currentAuthUser && currentAuthUser.role === 'tech')
+          ? currentAuthUser.name
+          : (document.getElementById('detailActiveTechGpsSelect')?.value || p.techLeader || 'T\u00e9cnico');
+        if (!p.tracking.techTracking || typeof p.tracking.techTracking !== 'object') p.tracking.techTracking = {};
+        const prevTechTrk = p.tracking.techTracking[activeTechName] || {};
+
         p.tracking.checkOut = time;
         p.tracking.checkOutRaw = departureAt;
         if (coords) {
@@ -4131,10 +4444,19 @@ function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
           p.tracking.checkOutDistanceMeters = null;
           p.tracking.checkOutLocationStatus = locationMessage || 'Salida registrada sin GPS';
         }
-        if (p.tracking.checkInRaw) {
-          const mins = Math.max(1, Math.floor((departureAt - p.tracking.checkInRaw) / 60000));
+        const refCheckInRaw = prevTechTrk.checkInRaw || p.tracking.checkInRaw;
+        if (refCheckInRaw) {
+          const mins = Math.max(1, Math.floor((departureAt - refCheckInRaw) / 60000));
           p.tracking.hoursWorked = Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm en obra';
         } else p.tracking.hoursWorked = 'Jornada completada';
+
+        p.tracking.techTracking[activeTechName] = Object.assign({}, prevTechTrk, {
+          checkIn: prevTechTrk.checkIn || p.tracking.checkIn || time,
+          checkOut: time,
+          checkOutRaw: departureAt,
+          checkOutVerified: p.tracking.checkOutVerified,
+          hoursWorked: p.tracking.hoursWorked
+        });
         if (!saveData()) return;
         showToast(coords ? p.tracking.checkOutLocationStatus + '.' : 'Salida registrada; ubicaci\u00f3n no verificada.');
         openProjectDetailModal(p.id);
@@ -4178,6 +4500,11 @@ function triggerTechSurvey() {
       tempSurveyDoc = (p.survey && p.survey.surveyDoc) ? { ...p.survey.surveyDoc } : null;
       tempPlanDoc = (p.survey && p.survey.planDoc) ? { ...p.survey.planDoc } : null;
 
+      const invPicker = document.getElementById('surveyInventoryPicker');
+      if (invPicker) {
+        invPicker.innerHTML = '<option value="">-- Seleccionar del Inventario OCR --</option>' +
+          (appData.inventory || []).map(inv => `<option value="${inv.id}">[${inv.sku}] ${inv.name} (Stock: ${inv.stock} \u00b7 RD$ ${inv.unitCost})</option>`).join('');
+      }
       updateSurveyModalFileCards();
       renderSurveyItemLists();
       openModal('surveyModal');
@@ -4535,6 +4862,52 @@ const OMEGA_VERIFIED_CATALOG = [
       renderSurveyItemLists();
     }
 
+    function addInventoryItemToSurvey() {
+      const picker = document.getElementById('surveyInventoryPicker');
+      const qtyInput = document.getElementById('surveyInventoryQty');
+      if (!picker || !picker.value) { showToast('Selecciona un material o equipo del inventario.'); return; }
+      const inv = (appData.inventory || []).find(x => x.id === picker.value);
+      if (!inv) return;
+      const qty = Math.max(1, parseInt(qtyInput?.value) || 1);
+      const isEquip = inv.category && inv.category.toLowerCase().includes('equipo');
+      const targetArr = isEquip ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      const existing = targetArr.find(x => x.sku === inv.sku);
+      if (existing) {
+        existing.qty = (Number(existing.qty) || 1) + qty;
+      } else {
+        targetArr.push({
+          name: `[Ref: ${inv.sku}] ${inv.name}`,
+          qty: qty,
+          sku: inv.sku,
+          price: Number(inv.unitCost) || 0,
+          invId: inv.id
+        });
+      }
+      if (currentSurveyProjectId) {
+        const p = appData.projects.find(x => x.id === currentSurveyProjectId);
+        if (p) {
+          inv.projectCode = p.code;
+          inv.assignedTech = getAllProjectTechs(p).join(', ');
+        }
+      }
+      renderSurveyItemLists();
+      showToast(`${qty}x ${inv.sku} vinculado al proyecto.`);
+    }
+
+    function updateSurveyItemQty(type, idx, newVal) {
+      const target = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      if (!target[idx]) return;
+      target[idx].qty = Math.max(1, parseInt(newVal) || 1);
+      renderSurveyItemLists();
+    }
+
+    function updateSurveyItemPrice(type, idx, newVal) {
+      const target = type === 'equip' ? tempSurveyItemsEquip : tempSurveyItemsMat;
+      if (!target[idx]) return;
+      target[idx].price = Math.max(0, parseFloat(newVal) || 0);
+      renderSurveyItemLists();
+    }
+
     function removeSurveyItem(type, idx) {
       if (type === 'equip') tempSurveyItemsEquip.splice(idx, 1);
       else tempSurveyItemsMat.splice(idx, 1);
@@ -4546,7 +4919,15 @@ const OMEGA_VERIFIED_CATALOG = [
       const matBox = document.getElementById('surveyMaterialList');
       const genHtml = (arr, type) => arr.length ? arr.map((item, idx) => `
         <div class="bg-slate-900 border border-slate-700/80 p-2 rounded-lg flex items-center justify-between gap-2 shadow-sm text-[11px]">
-          <div class="flex-1 truncate"><span class="font-bold text-white">${item.name}</span><br><span class="text-slate-400 font-mono">Cant: ${item.qty} | RD$ ${(item.price||0).toLocaleString()}</span></div>
+          <div class="flex-1 truncate">
+            <span class="font-bold text-white block truncate" title="${item.name}">${item.name}</span>
+            <div class="flex items-center gap-1.5 mt-1 font-mono text-[10px] text-slate-300">
+              <span>Cant:</span>
+              <input type="number" min="1" value="${item.qty || 1}" onchange="updateSurveyItemQty('${type}', ${idx}, this.value)" class="w-12 bg-slate-800 border border-slate-700 rounded px-1 py-0.5 text-center text-emerald-400 font-bold">
+              <span>RD$:</span>
+              <input type="number" step="0.01" min="0" value="${item.price || 0}" onchange="updateSurveyItemPrice('${type}', ${idx}, this.value)" class="w-20 bg-slate-800 border border-slate-700 rounded px-1 py-0.5 text-white">
+            </div>
+          </div>
           <button type="button" onclick="removeSurveyItem('${type}', ${idx})" class="text-red-400 hover:text-red-300 px-1.5"><i class="fa-solid fa-xmark"></i></button>
         </div>
       `).join('') : '<span class="text-slate-500 italic text-[11px]">Sin \u00edtems</span>';
@@ -5194,6 +5575,21 @@ function validateDatabaseImport(data) {
             const project = Object.assign({}, sourceProject);
             if (!Array.isArray(project.techCrew)) project.techCrew = [];
             if (!project.tracking || typeof project.tracking !== 'object' || Array.isArray(project.tracking)) project.tracking = {};
+            if (!project.tracking.techTracking || typeof project.tracking.techTracking !== 'object' || Array.isArray(project.tracking.techTracking)) {
+              project.tracking.techTracking = {};
+              if (project.techLeader && project.tracking.checkIn) {
+                project.tracking.techTracking[project.techLeader] = {
+                  checkIn: project.tracking.checkIn,
+                  checkInRaw: project.tracking.checkInRaw || null,
+                  checkInCoords: project.tracking.checkInCoords || null,
+                  checkOut: project.tracking.checkOut || '',
+                  checkOutRaw: project.tracking.checkOutRaw || null,
+                  hoursWorked: project.tracking.hoursWorked || '',
+                  isVerifiedOnSite: Boolean(project.tracking.isVerifiedOnSite),
+                  distanceFromTargetMeters: project.tracking.distanceFromTargetMeters ?? null
+                };
+              }
+            }
             if (!project.survey || typeof project.survey !== 'object' || Array.isArray(project.survey)) project.survey = {};
             if (!Array.isArray(project.survey.itemsEquip)) project.survey.itemsEquip = [];
             if (!Array.isArray(project.survey.itemsMat)) project.survey.itemsMat = [];
