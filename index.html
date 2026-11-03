@@ -160,6 +160,45 @@
         </div>
       </div>
 
+      <!-- CICLO DE VIDA DEL PROYECTO, FECHAS Y ALERTAS EN TIEMPO REAL -->
+      <div id="detailProjectLifecycleCard" class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3 text-xs">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+          <div class="font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-check text-emerald-400"></i> Ciclo de Vida del Proyecto &amp; Control de Plazos
+          </div>
+          <div id="detailLifecycleAlertBadge" class="px-2.5 py-1 rounded-full text-[11px] font-bold"></div>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+            <span class="text-[10px] uppercase text-slate-400 block">1. Fecha Creaci&#243;n</span>
+            <span id="detailCreatedAt" class="text-white font-mono font-bold text-xs mt-0.5 block">--/--/----</span>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+            <span class="text-[10px] uppercase text-emerald-400 font-semibold block">2. Inicio (Aprobado)</span>
+            <span id="detailStartDate" class="text-emerald-300 font-mono font-bold text-xs mt-0.5 block">Pendiente</span>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+            <span class="text-[10px] uppercase text-amber-400 font-semibold block">3. D&#237;as Estimados</span>
+            <div class="flex items-center gap-1 mt-0.5">
+              <input type="number" id="detailEstDaysInput" min="1" max="365" onchange="updateEstimatedDaysFromDetail(this.value)" class="w-14 bg-slate-800 border border-amber-700/70 rounded px-1.5 py-0.5 text-white font-mono font-bold text-xs">
+              <span class="text-[10px] text-slate-400">d&#237;as</span>
+            </div>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+            <span class="text-[10px] uppercase text-blue-400 font-semibold block">4. Transcurridos / L&#237;mite</span>
+            <span id="detailElapsedDays" class="text-white font-mono font-bold text-xs mt-0.5 block">0 d&#237;as</span>
+            <span id="detailDeadlineDate" class="text-[10px] text-slate-400 font-mono block">L&#237;mite: --</span>
+          </div>
+          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg col-span-2 sm:col-span-1">
+            <span class="text-[10px] uppercase text-purple-400 font-semibold block">5. Fecha Cierre</span>
+            <span id="detailCompletedAt" class="text-purple-300 font-mono font-bold text-xs mt-0.5 block">En ejecuci&#243;n</span>
+          </div>
+        </div>
+        <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+          <div id="detailLifecycleProgressBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
       <!-- BOTONES T&#201;CNICOS EN EL DETALLE -->
       <div id="techActionButtonsContainer" class="bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-lg my-2">
         <h3 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-3"><i class="fa-solid fa-helmet-safety mr-1.5"></i> Panel de Acci&#243;n (GPS / Levantamiento &amp; Plano)</h3>
@@ -270,9 +309,10 @@
           <div><label class="block text-xs text-slate-300 mb-1">Cliente</label><input type="text" id="editProjectClient" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
           <div><label class="block text-xs text-slate-300 mb-1">Servicio</label><input type="text" id="editProjectServiceType" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div><label class="block text-xs text-slate-300 mb-1">Contacto / Tel</label><input type="text" id="editProjectContact" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
-          <div><label class="block text-xs text-slate-300 mb-1">Fecha</label><input type="text" id="editProjectPlannedDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+          <div><label class="block text-xs text-slate-300 mb-1">Fecha Planificada</label><input type="text" id="editProjectPlannedDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+          <div><label class="block text-xs text-amber-400 font-bold mb-1">D&#237;as Estimados Ejec.</label><input type="number" id="editProjectEstimatedDays" min="1" max="365" value="5" class="w-full bg-slate-800 border border-amber-600/80 rounded-xl px-3 py-2 text-sm text-white font-mono font-bold"></div>
         </div>
         <div><label class="block text-xs text-slate-300 mb-1">Direcci&#243;n</label><input type="text" id="editProjectAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
 
@@ -373,8 +413,9 @@
       <div class="mb-3 p-2.5 rounded-lg bg-amber-950/40 border border-amber-800/60 text-[11px] text-amber-200">El presupuesto autom&#225;tico usa tarifas de referencia locales. Verifica y ajusta los importes antes de cotizar.</div>
       <form onsubmit="handleSaveSurvey(event)" class="space-y-4">
         <input type="hidden" id="surveyProjectId">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
           <div><label class="block text-xs font-medium text-slate-300 mb-1">Metros Lineales</label><input type="number" id="surveyMeters" placeholder="160" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+          <div><label class="block text-xs font-bold text-amber-400 mb-1"><i class="fa-regular fa-clock mr-1"></i>D&#237;as Estimados Duraci&#243;n</label><input type="number" id="surveyEstimatedDays" min="1" max="365" required placeholder="Ej: 5" class="w-full bg-slate-800 border border-amber-600/80 rounded-xl px-3 py-2 text-sm text-white font-mono font-bold"></div>
           <div><label class="block text-xs font-medium text-slate-300 mb-1">Estructura / Canalizaci&#243;n</label>
             <select id="surveyStructure" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
               <option>Ducter&#237;a EMT Existente</option><option>Cielo Raso / Drywall</option><option>Estructura Abierta / Techo Industrial</option><option>Zanja Exterior / Soterrado</option><option>Canaleta Pl&#225;stica Superficial</option>
@@ -974,6 +1015,13 @@
           projectKm: 24,
           geofenceRadiusMeters: 300,
           plannedDate: '30/10/2026',
+          estimatedDays: 5,
+          createdAt: '28/10/2026',
+          createdAtMs: 1761660000000,
+          startDate: '31/10/2026',
+          startDateMs: 1761919200000,
+          completedAt: '',
+          completedAtMs: null,
           techLeader: 'JUAN PACHECO',
           techCrew: [],
           status: 'Levantamiento',
@@ -997,6 +1045,13 @@
           projectKm: 28,
           geofenceRadiusMeters: 300,
           plannedDate: '26/10/2026',
+          estimatedDays: 4,
+          createdAt: '24/10/2026',
+          createdAtMs: 1761314400000,
+          startDate: '28/10/2026',
+          startDateMs: 1761660000000,
+          completedAt: '',
+          completedAtMs: null,
           techLeader: 'Enmanuel Matos',
           techCrew: ['WESLY ALEJANDRO MOJICA'],
           status: 'Levantamiento',
@@ -1055,6 +1110,23 @@
           });
           data.projects.forEach(project => {
             if (!Number.isFinite(Number(project.projectKm)) || Number(project.projectKm) <= 0) project.projectKm = 25;
+            if (!Number.isFinite(Number(project.estimatedDays)) || Number(project.estimatedDays) <= 0) {
+              project.estimatedDays = (project.survey && Number(project.survey.estimatedDays) > 0) ? Number(project.survey.estimatedDays) : 5;
+            }
+            if (!project.createdAt) {
+              project.createdAt = project.plannedDate || new Date().toLocaleDateString('es-DO');
+            }
+            if (!Number.isFinite(Number(project.createdAtMs))) {
+              project.createdAtMs = Date.now() - (3 * 86400000);
+            }
+            if ((project.status === 'Aprobado' || project.status === 'En Curso' || project.status === 'Finalizado') && !project.startDate) {
+              project.startDate = project.createdAt;
+              project.startDateMs = project.createdAtMs;
+            }
+            if (project.status === 'Finalizado' && !project.completedAt) {
+              project.completedAt = new Date().toLocaleDateString('es-DO');
+              project.completedAtMs = Date.now();
+            }
             if (!Array.isArray(project.techCrew)) project.techCrew = [];
             if (!project.tracking || typeof project.tracking !== 'object' || Array.isArray(project.tracking)) project.tracking = {};
             if (!project.survey || typeof project.survey !== 'object' || Array.isArray(project.survey)) project.survey = {};
@@ -1260,6 +1332,255 @@ function render() {
       `;
     }
 
+    /* ===================================================================
+       MOTOR DE CICLO DE VIDA, PLAZOS Y ALERTAS PREVENTIVAS EN TIEMPO REAL
+       =================================================================== */
+    function parseEsDoDateToMs(str) {
+      if (!str || typeof str !== 'string') return null;
+      const parts = str.trim().split(/[\/\-]/);
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+          return isNaN(d.getTime()) ? null : d.getTime();
+        } else {
+          const d = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+          return isNaN(d.getTime()) ? null : d.getTime();
+        }
+      }
+      const parsed = Date.parse(str);
+      return isNaN(parsed) ? null : parsed;
+    }
+
+    function applyProjectLifecycleTransition(p, newStatus) {
+      if (!p) return;
+      const nowMs = Date.now();
+      const todayStr = new Date(nowMs).toLocaleDateString('es-DO');
+
+      if (!p.createdAt) {
+        p.createdAt = todayStr;
+        p.createdAtMs = nowMs;
+      }
+      if (!Number.isFinite(Number(p.estimatedDays)) || Number(p.estimatedDays) <= 0) {
+        p.estimatedDays = (p.survey && Number(p.survey.estimatedDays) > 0) ? Number(p.survey.estimatedDays) : 5;
+      }
+
+      // Asignaci\u00f3n autom\u00e1tica de fecha de inicio cuando pasa a estado Aprobado (o En Curso si no ten\u00eda)
+      if ((newStatus === 'Aprobado' || newStatus === 'En Curso') && !p.startDate) {
+        p.startDate = todayStr;
+        p.startDateMs = nowMs;
+        addNotification('admin', `\ud83d\ude80 Proyecto ${p.code} iniciado oficialmente el ${todayStr} (Plazo estimado: ${p.estimatedDays} d\u00edas).`);
+        if (p.techLeader) {
+          addNotification(p.techLeader, `\ud83d\ude80 Inicio oficial activado en ${p.code} (${todayStr}). Plazo estimado: ${p.estimatedDays} d\u00edas.`);
+        }
+      }
+
+      // Registro autom\u00e1tico de fecha de finalizaci\u00f3n al cerrarse
+      if (newStatus === 'Finalizado') {
+        if (!p.startDate) {
+          p.startDate = p.createdAt || todayStr;
+          p.startDateMs = p.createdAtMs || nowMs;
+        }
+        p.completedAt = todayStr;
+        p.completedAtMs = nowMs;
+        const info = computeProjectLifecycleInfo(p);
+        addNotification('admin', `\ud83c\udfc1 Proyecto ${p.code} cerrado el ${todayStr}. Duraci\u00f3n real: ${info.elapsedDays} d\u00eda(s) vs ${info.estimatedDays} estimado(s).`);
+      }
+
+      p.status = newStatus;
+    }
+
+    function computeProjectLifecycleInfo(p) {
+      const nowMs = Date.now();
+      const todayStr = new Date(nowMs).toLocaleDateString('es-DO');
+      const estDays = (Number(p.estimatedDays) > 0)
+        ? Number(p.estimatedDays)
+        : ((p.survey && Number(p.survey.estimatedDays) > 0) ? Number(p.survey.estimatedDays) : 5);
+
+      const createdAtStr = p.createdAt || p.plannedDate || todayStr;
+      const createdMs = Number(p.createdAtMs) || parseEsDoDateToMs(createdAtStr) || nowMs;
+
+      const hasStarted = Boolean(p.startDate) || p.status === 'Aprobado' || p.status === 'En Curso' || p.status === 'Finalizado';
+      const startStr = p.startDate || (hasStarted ? createdAtStr : 'Pendiente Aprobaci\u00f3n');
+      const startMs = Number(p.startDateMs) || parseEsDoDateToMs(p.startDate) || (hasStarted ? createdMs : null);
+
+      const isClosed = p.status === 'Finalizado';
+      const completedStr = isClosed ? (p.completedAt || todayStr) : 'En ejecuci\u00f3n';
+      const completedMs = isClosed ? (Number(p.completedAtMs) || parseEsDoDateToMs(p.completedAt) || nowMs) : null;
+
+      let elapsedDays = 0;
+      let remainingDays = estDays;
+      let deviationDays = 0;
+      let deadlineStr = 'Al aprobar';
+      let progressPct = 0;
+      let alertLevel = 'NOT_STARTED'; // NOT_STARTED | ON_TIME | NEAR_DEADLINE | OVERDUE | COMPLETED_ON_TIME | COMPLETED_LATE
+      let badgeText = 'Sin Iniciar (Pdte. Aprobaci\u00f3n)';
+      let badgeClass = 'bg-slate-800 text-slate-300 border border-slate-700';
+
+      if (hasStarted && startMs) {
+        const endRefMs = isClosed && completedMs ? completedMs : nowMs;
+        const rawDiffDays = Math.max(1, Math.ceil((endRefMs - startMs) / 86400000));
+        elapsedDays = rawDiffDays;
+        remainingDays = estDays - elapsedDays;
+        deviationDays = elapsedDays - estDays; // Positivo = d\u00edas de retraso, Negativo o 0 = en tiempo / ahorro
+        const deadlineMs = startMs + (estDays * 86400000);
+        deadlineStr = new Date(deadlineMs).toLocaleDateString('es-DO');
+        progressPct = Math.min(100, Math.round((elapsedDays / Math.max(1, estDays)) * 100));
+
+        if (isClosed) {
+          if (deviationDays <= 0) {
+            alertLevel = 'COMPLETED_ON_TIME';
+            badgeText = `Cerrado a Tiempo (${elapsedDays}/${estDays}d)`;
+            badgeClass = 'bg-emerald-950 text-emerald-300 border border-emerald-800';
+          } else {
+            alertLevel = 'COMPLETED_LATE';
+            badgeText = `Cerrado con +${deviationDays}d Retraso (${elapsedDays}/${estDays}d)`;
+            badgeClass = 'bg-rose-950 text-rose-300 border border-rose-800';
+          }
+        } else {
+          if (remainingDays < 0) {
+            alertLevel = 'OVERDUE';
+            badgeText = `\u00a1VENCIDO! (+${Math.abs(remainingDays)}d sobre l\u00edmite)`;
+            badgeClass = 'bg-rose-950 text-rose-300 border border-rose-700 animate-pulse';
+          } else if (remainingDays <= 1 || progressPct >= 80) {
+            alertLevel = 'NEAR_DEADLINE';
+            badgeText = remainingDays === 0 ? '\u00a1Vence Hoy! (\u00daltimo d\u00eda)' : `Pr\u00f3ximo a Vencer (Resta ${remainingDays}d)`;
+            badgeClass = 'bg-amber-950 text-amber-300 border border-amber-700';
+          } else {
+            alertLevel = 'ON_TIME';
+            badgeText = `En Tiempo (D\u00eda ${elapsedDays} de ${estDays})`;
+            badgeClass = 'bg-emerald-950 text-emerald-300 border border-emerald-800';
+          }
+        }
+      }
+
+      return {
+        createdAtStr,
+        startStr,
+        completedStr,
+        estimatedDays: estDays,
+        elapsedDays,
+        remainingDays,
+        deviationDays,
+        deadlineStr,
+        progressPct,
+        alertLevel,
+        badgeText,
+        badgeClass,
+        hasStarted,
+        isClosed
+      };
+    }
+
+    let deadlineAlertsCheckedThisSession = false;
+    function checkAndDispatchDeadlineAlerts() {
+      if (deadlineAlertsCheckedThisSession) return;
+      deadlineAlertsCheckedThisSession = true;
+      (appData.projects || []).forEach(p => {
+        const info = computeProjectLifecycleInfo(p);
+        if (info.alertLevel === 'OVERDUE' || info.alertLevel === 'NEAR_DEADLINE') {
+          const alertKey = `alert_${p.id}_${info.alertLevel}_${new Date().toLocaleDateString('es-DO')}`;
+          if (!sessionStorage.getItem(alertKey)) {
+            sessionStorage.setItem(alertKey, '1');
+            const msg = info.alertLevel === 'OVERDUE'
+              ? `\ud83d\udea8 ALERTA DE PLAZO: ${p.code} (${p.title}) supera los ${info.estimatedDays} d\u00edas estimados (${info.elapsedDays} d\u00edas transcurridos).`
+              : `\u23f3 ALERTA PREVENTIVA: ${p.code} (${p.title}) se acerca a su fecha l\u00edmite (${info.deadlineStr}). D\u00eda ${info.elapsedDays} de ${info.estimatedDays}.`;
+            showToast(msg);
+          }
+        }
+      });
+    }
+
+    function updateEstimatedDaysFromDetail(val) {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (!p) return;
+      const days = Math.max(1, parseInt(val) || 1);
+      p.estimatedDays = days;
+      if (p.survey) p.survey.estimatedDays = days;
+      saveData();
+      openProjectDetailModal(p.id);
+      showToast(`Plazo estimado de ${p.code} actualizado a ${days} d\u00eda(s).`);
+    }
+
+    function updateEstimatedDaysInline(projId, val) {
+      const p = appData.projects.find(x => x.id === projId);
+      if (!p) return;
+      const days = Math.max(1, parseInt(val) || 1);
+      p.estimatedDays = days;
+      if (p.survey) p.survey.estimatedDays = days;
+      saveData();
+      showToast(`D\u00edas estimados de ${p.code}: ${days} d\u00eda(s).`);
+    }
+
+    function downloadCSVFromRows(filename, rows) {
+      if (!rows || !rows.length) { showToast('No hay datos para exportar a CSV.'); return; }
+      const headers = Object.keys(rows[0]);
+      const csvLines = [
+        headers.join(','),
+        ...rows.map(row => headers.map(h => {
+          const val = row[h] === null || row[h] === undefined ? '' : String(row[h]);
+          return '"' + val.replace(/"/g, '""') + '"';
+        }).join(','))
+      ];
+      const blob = new Blob(['\uFEFF' + csvLines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast(`Archivo ${filename} exportado correctamente.`);
+    }
+
+    function exportProjectsToCSV() {
+      const rows = (appData.projects || []).map(p => {
+        const lc = computeProjectLifecycleInfo(p);
+        return {
+          Codigo: p.code,
+          Proyecto: p.title,
+          Cliente: p.client,
+          Tecnico_Lider: p.techLeader || 'Sin asignar',
+          Estado: p.status,
+          Fecha_Creacion: lc.createdAtStr,
+          Fecha_Inicio_Aprobado: lc.startStr,
+          Dias_Estimados: lc.estimatedDays,
+          Dias_Reales_Transcurridos: lc.elapsedDays,
+          Desviacion_Dias: lc.deviationDays,
+          Fecha_Limite: lc.deadlineStr,
+          Fecha_Finalizacion: lc.completedStr,
+          Alerta_Plazo: lc.badgeText,
+          KM_Proyecto: p.projectKm || 25
+        };
+      });
+      downloadCSVFromRows('Proyectos_CicloVida_CentroXpert.csv', rows);
+    }
+
+    function exportKpiToCSV() {
+      const stats = computeAllTechKPIStats().sort((a, b) => b.performanceScore - a.performanceScore);
+      const rows = stats.map((t, idx) => ({
+        Posicion: idx + 1,
+        Tecnico: t.name,
+        Rango: t.level,
+        Tareas_Cerradas: `${t.completedCount}/${t.assignedCount}`,
+        Cumplimiento_Plazos_Pct: t.onTimeRate + '%',
+        Promedio_Dias_Ejecucion: t.avgActualDays,
+        Proyectos_Retrasados: t.overdueCount,
+        Descuento_Retrasos_Pts: t.overduePenaltyPoints,
+        Hora_Llegada: t.lastCheckIn,
+        Hora_Salida: t.lastCheckOut,
+        Cumplimiento_GPS_Pct: t.gpsRate + '%',
+        KM_Proyectos: t.totalProjectsKm,
+        Combustible_Est_RD: t.estCostProjectsRD,
+        Combustible_Real_RD: t.actualFuelCostRD,
+        Puntos_Penalizacion_Manual: t.manualPenaltyPoints,
+        Puntos_Penalizacion_Total: t.penaltyPoints,
+        Score_Ranking: t.performanceScore
+      }));
+      downloadCSVFromRows('Analiticas_KPI_CentroXpert.csv', rows);
+    }
+
     function getStatusBadge(status) {
       switch(status) {
         case 'Levantamiento': return 'bg-amber-950 text-amber-300 border border-amber-800';
@@ -1299,17 +1620,23 @@ function render() {
                 <div class="overflow-x-auto">
                   <table class="w-full text-xs text-left">
                     <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase">
-                      <tr><th class="p-3">Proyecto</th><th class="p-3">GPS / Llegada</th><th class="p-3 text-right">Acci\u00f3n</th></tr>
+                      <tr><th class="p-3">Proyecto / Fechas</th><th class="p-3">Plazo &amp; D\u00edas (Real vs Est.)</th><th class="p-3">GPS / Llegada</th><th class="p-3 text-right">Acci\u00f3n</th></tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800">
-                      ${myProjects.length === 0 ? `<tr><td colspan="3" class="p-4 text-center text-slate-500">No hay tareas asignadas.</td></tr>` : myProjects.map(p => {
+                      ${myProjects.length === 0 ? `<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay tareas asignadas.</td></tr>` : myProjects.map(p => {
                         const isInSite = p.tracking && p.tracking.checkIn && !p.tracking.checkOut;
                         const isVerif = p.tracking && p.tracking.isVerifiedOnSite;
+                        const lc = computeProjectLifecycleInfo(p);
                         return `
                         <tr class="table-row-hover transition" onclick="openProjectDetailModal('${p.id}')">
                           <td class="p-3">
                             <div class="font-bold text-white">${p.title}</div>
                             <div class="text-[10px] text-slate-400">${p.code} \u2014 ${p.client}</div>
+                            <div class="text-[10px] text-slate-500 font-mono mt-0.5">Creado: ${lc.createdAtStr} | Inicio: ${lc.startStr}</div>
+                          </td>
+                          <td class="p-3">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${lc.badgeClass}">${lc.badgeText}</span>
+                            <div class="text-[10px] text-slate-400 font-mono mt-1">Est: ${lc.estimatedDays}d | L\u00edmite: ${lc.deadlineStr}</div>
                           </td>
                           <td class="p-3">
                             ${isInSite ? `<span class="px-2 py-0.5 rounded font-bold text-[10px] ${isVerif ? 'bg-emerald-950 text-emerald-400':'bg-amber-950 text-amber-400'}">EN SITIO</span>` : `<span class="text-slate-500 text-[10px]">Pendiente</span>`}
@@ -1375,7 +1702,8 @@ function render() {
               <div class="flex flex-wrap gap-2">
                 <button type="button" onclick="openNewProjectModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow"><i class="fa-solid fa-plus mr-1"></i> Nuevo Proyecto</button>
                 <button type="button" onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> Importar PDF</button>
-                <button type="button" onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Exportar a Excel</button>
+                <button type="button" onclick="exportProjectsToCSV()" class="bg-teal-900/80 hover:bg-teal-800 text-teal-100 text-xs font-bold px-3 py-2 rounded-xl border border-teal-700/60"><i class="fa-solid fa-file-csv mr-1"></i> Exportar CSV</button>
+                <button type="button" onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Exportar Excel</button>
               </div>
             ` : ''}
             ${currentNavTab === 'logistics' ? `
@@ -1464,39 +1792,76 @@ function render() {
     }
 
     function renderAdminProjects() {
+      checkAndDispatchDeadlineAlerts();
       const filtered = filterProjectsList(appData.projects);
+      const alertProjects = appData.projects.map(p => ({ p, lc: computeProjectLifecycleInfo(p) }))
+        .filter(x => x.lc.alertLevel === 'OVERDUE' || x.lc.alertLevel === 'NEAR_DEADLINE');
+
       return `
         <div class="space-y-4">
+          ${alertProjects.length > 0 ? `
+            <div class="bg-amber-950/40 border border-amber-800/80 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div class="flex items-center gap-2 text-amber-200 font-semibold">
+                <i class="fa-solid fa-bell text-amber-400 live-pulse"></i>
+                <span>Alertas Preventivas de Plazo Activas (${alertProjects.length}):</span>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                ${alertProjects.map(x => `
+                  <button type="button" onclick="openProjectDetailModal('${x.p.id}')" class="px-2.5 py-1 rounded-lg font-mono text-[11px] font-bold ${x.lc.badgeClass}">
+                    ${x.p.code}: ${x.lc.badgeText}
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
           <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow">
-            <input type="text" value="${projectSearchQuery}" oninput="handleSearchInput(this.value)" placeholder="Buscar CX-..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+            <input type="text" value="${projectSearchQuery}" oninput="handleSearchInput(this.value)" placeholder="Buscar por c\u00f3digo CX o cliente..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
             <select onchange="handleStatusFilter(this.value)" class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-              <option value="ALL">Todos</option><option value="Levantamiento">Levantamiento</option><option value="En Presupuesto">En Presupuesto</option><option value="Cotizado Pendiente de Aprobacion">Cotizado</option><option value="Aprobado">Aprobado</option><option value="En Curso">En Curso</option><option value="Finalizado">Finalizado</option>
+              <option value="ALL">Todos los Estados</option><option value="Levantamiento">Levantamiento</option><option value="En Presupuesto">En Presupuesto</option><option value="Cotizado Pendiente de Aprobacion">Cotizado</option><option value="Aprobado">Aprobado</option><option value="En Curso">En Curso</option><option value="Finalizado">Finalizado</option>
             </select>
           </div>
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
             <div class="overflow-x-auto">
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase">
-                  <tr><th class="p-3">C\u00f3digo / Fecha</th><th class="p-3">Proyecto / Cliente</th><th class="p-3">T\u00e9cnico / Cuadrilla</th><th class="p-3">Control de Tiempos &amp; GPS</th><th class="p-3">Estatus</th><th class="p-3 text-right">Acci\u00f3n</th></tr>
+                  <tr>
+                    <th class="p-3">C\u00f3digo / Creaci\u00f3n</th>
+                    <th class="p-3">Proyecto / Cliente</th>
+                    <th class="p-3">T\u00e9cnico / Cuadrilla</th>
+                    <th class="p-3">Ciclo de Vida &amp; Plazo (Real vs Est.)</th>
+                    <th class="p-3">Control GPS / Horas</th>
+                    <th class="p-3">Estatus</th>
+                    <th class="p-3 text-right">Acci\u00f3n</th>
+                  </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800">
                   ${filtered.map(p => {
                     const cIn = (p.tracking && p.tracking.checkIn) ? p.tracking.checkIn : 'Sin entrada';
                     const cOut = (p.tracking && p.tracking.checkOut) ? p.tracking.checkOut : ((p.tracking && p.tracking.checkIn) ? 'En obra...' : 'Pendiente');
                     const hrs = (p.tracking && p.tracking.hoursWorked) ? p.tracking.hoursWorked : '\u2014';
+                    const lc = computeProjectLifecycleInfo(p);
                     return `
                     <tr class="table-row-hover transition" onclick="openProjectDetailModal('${p.id}')">
                       <td class="p-3">
                         <div class="font-mono font-bold text-rose-400">${p.code}</div>
-                        <div class="text-[10px] text-slate-400 font-mono"><i class="fa-regular fa-calendar mr-1"></i>${p.plannedDate || 'S/F'} \u00b7 ${p.projectKm || 25} KM</div>
+                        <div class="text-[10px] text-slate-400 font-mono">Creado: ${lc.createdAtStr}</div>
+                        <div class="text-[10px] text-emerald-400/90 font-mono">Inicio: ${lc.startStr}</div>
                       </td>
                       <td class="p-3">
                         <div class="font-bold text-white">${p.title}</div>
-                        <div class="text-[10px] text-slate-400">${p.client}</div>
+                        <div class="text-[10px] text-slate-400">${p.client} \u00b7 ${p.projectKm || 25} KM</div>
                       </td>
                       <td class="p-3">
                         <div class="text-slate-200 font-semibold">${p.techLeader || 'Sin asignar'}</div>
                         ${p.techCrew && p.techCrew.length ? `<div class="text-[10px] text-slate-400">+ ${p.techCrew.join(', ')}</div>` : ''}
+                      </td>
+                      <td class="p-3">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-block ${lc.badgeClass}">${lc.badgeText}</span>
+                        <div class="text-[10px] text-slate-400 font-mono mt-1">
+                          Est: <strong>${lc.estimatedDays}d</strong> | L\u00edmite: ${lc.deadlineStr}
+                          ${lc.isClosed ? ` | Cierre: <strong class="text-purple-300">${lc.completedStr}</strong>` : ''}
+                        </div>
                       </td>
                       <td class="p-3 font-mono text-[11px]">
                         <div><span class="text-emerald-400">E:</span> ${cIn} <span class="text-amber-300 ml-1">S:</span> ${cOut}</div>
@@ -1553,6 +1918,8 @@ function render() {
       document.getElementById('editProjectLng').value = '-69.939000';
       const kmInput = document.getElementById('editProjectKm');
       if (kmInput) kmInput.value = 25;
+      const estDaysField = document.getElementById('editProjectEstimatedDays');
+      if (estDaysField) estDaysField.value = 5;
 
       const techSelect = document.getElementById('editProjectTechLeader');
       const crewSelect = document.getElementById('editProjectTechCrew');
@@ -2301,6 +2668,22 @@ function renderStaffLogistics() {
         const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
         const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
 
+        // M\u00e9tricas de Ciclo de Vida, Duraci\u00f3n Real vs Estimada y Descuento Autom\u00e1tico por Retraso (OVERDUE)
+        const lifecycleList = assignedProj.map(p => computeProjectLifecycleInfo(p));
+        const startedList = lifecycleList.filter(lc => lc.hasStarted);
+        const onTimeList = startedList.filter(lc => lc.deviationDays <= 0);
+        const overdueList = startedList.filter(lc => lc.deviationDays > 0);
+        const onTimeRate = startedList.length > 0 ? Math.round((onTimeList.length / startedList.length) * 100) : 100;
+        const avgActualDays = startedList.length > 0
+          ? Number((startedList.reduce((acc, lc) => acc + lc.elapsedDays, 0) / startedList.length).toFixed(1))
+          : 0;
+        const avgEstDays = assignedProj.length > 0
+          ? Number((lifecycleList.reduce((acc, lc) => acc + lc.estimatedDays, 0) / assignedProj.length).toFixed(1))
+          : 5;
+        const totalDelayDays = overdueList.reduce((acc, lc) => acc + Math.max(0, lc.deviationDays), 0);
+        // Descuento autom\u00e1tico en el Ranking KPI: -10 pts por proyecto vencido/retrasado (OVERDUE / COMPLETED_LATE)
+        const overduePenaltyPoints = overdueList.length * -10;
+
         // Veh\u00edculo asignado y rendimiento (KM por Gal\u00f3n / Precio por Gal\u00f3n)
         const myVehicle = appData.vehicles.find(v => (v.assignedTo && v.assignedTo.toLowerCase() === t.name.toLowerCase()) || (t.vehiclePlate && v.plate === t.vehiclePlate)) || null;
         const vehiclePlate = myVehicle ? myVehicle.plate : (t.vehiclePlate || 'Sin Veh\u00edculo');
@@ -2324,7 +2707,7 @@ function renderStaffLogistics() {
         const actualTicketsCount = myFuelLogs.reduce((acc, f) => acc + (Number(f.ticketCount) || Math.round((Number(f.cost) || 0) / 500)), 0);
         const actualOdoKm = myFuelLogs.reduce((acc, f) => acc + (Number(f.dist) || 0), 0);
         const actualGallons = Number((actualFuelCostRD / fuelPriceGal).toFixed(2));
-        const fuelBalanceRD = actualFuelCostRD - estCostProjectsRD; // Positivo = Exceso sobre proyectos, Negativo = Ahorro
+        const fuelBalanceRD = actualFuelCostRD - estCostProjectsRD;
 
         // \u00daltimo registro de hora de llegada y salida
         const withTimes = assignedProj.filter(p => p.tracking && (p.tracking.checkIn || p.tracking.checkOut));
@@ -2336,16 +2719,18 @@ function renderStaffLogistics() {
 
         // Evaluaciones manuales e incidencias de este t\u00e9cnico
         const myEvals = appData.kpiEvaluations.filter(ev => ev.techName && ev.techName.toLowerCase() === t.name.toLowerCase());
-        const penaltyPoints = myEvals.reduce((acc, ev) => acc + (Number(ev.pointsDelta) || 0), 0);
+        const manualPenaltyPoints = myEvals.reduce((acc, ev) => acc + (Number(ev.pointsDelta) || 0), 0);
+        const penaltyPoints = manualPenaltyPoints + overduePenaltyPoints;
         const conductCount = myEvals.filter(ev => ev.conduct).length;
         const overBudgetCount = myEvals.filter(ev => ev.overBudget).length;
         const omittedItemCount = myEvals.filter(ev => ev.omittedItem).length;
         const projectErrorCount = myEvals.filter(ev => ev.projectError).length;
         const scheduleCount = myEvals.filter(ev => ev.scheduleIssue).length;
 
-        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 50 : 40;
-        const gpsScore = (gpsRate / 100) * 50;
-        const baseScore = Math.round(closeScore + gpsScore);
+        const closeScore = assignedProj.length > 0 ? (completed / assignedProj.length) * 40 : 35;
+        const gpsScore = (gpsRate / 100) * 35;
+        const deadlineScore = (onTimeRate / 100) * 25;
+        const baseScore = Math.round(closeScore + gpsScore + deadlineScore);
         const performanceScore = Math.max(0, Math.min(100, Math.round(baseScore + penaltyPoints)));
 
         return {
@@ -2353,6 +2738,13 @@ function renderStaffLogistics() {
           assignedCount: assignedProj.length,
           completedCount: completed,
           gpsRate,
+          onTimeRate,
+          avgActualDays,
+          avgEstDays,
+          overdueCount: overdueList.length,
+          totalDelayDays,
+          overduePenaltyPoints,
+          manualPenaltyPoints,
           vehiclePlate,
           vehicleModel,
           kmPerGal,
@@ -2404,6 +2796,7 @@ function renderStaffLogistics() {
     }
 
     function renderAdminKPIs() {
+      checkAndDispatchDeadlineAlerts();
       const techStats = computeAllTechKPIStats().sort((a, b) => b.performanceScore - a.performanceScore);
       const allEvals = Array.isArray(appData.kpiEvaluations) ? appData.kpiEvaluations : [];
       const totalQuotedRD = appData.projects.reduce((acc, p) => acc + (p.quotation && Number(p.quotation.amount) ? Number(p.quotation.amount) : 0), 0);
@@ -2411,13 +2804,27 @@ function renderStaffLogistics() {
       const totalFieldExpensesRD = (appData.fieldExpenses || []).reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
       const totalInventoryValueRD = (appData.inventory || []).reduce((acc, i) => acc + ((Number(i.stock) || 0) * (Number(i.unitCost) || 0)), 0);
 
+      const allLifecycles = appData.projects.map(p => computeProjectLifecycleInfo(p));
+      const startedLifecycles = allLifecycles.filter(lc => lc.hasStarted);
+      const globalOnTimeRate = startedLifecycles.length > 0
+        ? Math.round((startedLifecycles.filter(lc => lc.deviationDays <= 0).length / startedLifecycles.length) * 100)
+        : 100;
+      const globalAvgDays = startedLifecycles.length > 0
+        ? Number((startedLifecycles.reduce((a, b) => a + b.elapsedDays, 0) / startedLifecycles.length).toFixed(1))
+        : 0;
+
       return `
         <div class="space-y-6">
           <!-- RESUMEN EJECUTIVO DE ANALITICAS Y REPORTES -->
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-calendar-check text-emerald-400 mr-1"></i>Cumplimiento Plazos</div>
+              <div class="text-xl font-black text-emerald-400 font-mono mt-1">${globalOnTimeRate}% <span class="text-xs text-slate-400 font-normal">(${globalAvgDays}d prom.)</span></div>
+              <div class="text-[10px] text-slate-500 mt-0.5">-10 pts auto por obra vencida</div>
+            </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
               <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-file-invoice-dollar text-emerald-400 mr-1"></i>Volumen Cotizado</div>
-              <div class="text-xl font-black text-emerald-400 font-mono mt-1">RD$ ${totalQuotedRD.toLocaleString('es-DO')}</div>
+              <div class="text-xl font-black text-white font-mono mt-1">RD$ ${totalQuotedRD.toLocaleString('es-DO')}</div>
               <div class="text-[10px] text-slate-500 mt-0.5">${appData.projects.filter(p=>p.status==='Finalizado').length} de ${appData.projects.length} proyectos cerrados</div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
@@ -2430,25 +2837,29 @@ function renderStaffLogistics() {
               <div class="text-xl font-black text-rose-400 font-mono mt-1">RD$ ${totalFieldExpensesRD.toLocaleString('es-DO')}</div>
               <div class="text-[10px] text-slate-500 mt-0.5">${(appData.fieldExpenses || []).length} comprobantes registrados</div>
             </div>
-            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow col-span-2 lg:col-span-1">
               <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-boxes-stacked text-blue-400 mr-1"></i>Valor Inventario OCR</div>
               <div class="text-xl font-black text-blue-400 font-mono mt-1">RD$ ${totalInventoryValueRD.toLocaleString('es-DO')}</div>
               <div class="text-[10px] text-slate-500 mt-0.5">${(appData.inventory || []).length} referencias en almac\u00e9n</div>
             </div>
           </div>
-          <!-- TABLA 1: RANKING TECNICO CON LLEGADA/SALIDA, COMBUSTIBLE Y PENALIZACIONES -->
+
+          <!-- TABLA 1: RANKING TECNICO CON PLAZOS, HORARIOS, COMBUSTIBLE Y PENALIZACIONES AUTOMATICAS + MANUALES -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
             <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico, Horarios, Combustible &amp; Penalizaciones</h3>
-                <p class="text-[11px] text-slate-400">Mide cierres, GPS, hora de llegada/salida, uso de combustible seg\u00fan KM de proyectos y descuentos manuales de puntos</p>
+                <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico, Plazos de Ejecuti\u00f3n, Combustible &amp; Penalizaciones</h3>
+                <p class="text-[11px] text-slate-400">Integra descuento autom\u00e1tico de -10 pts por proyecto vencido (OVERDUE), m\u00e1s evaluaciones manuales de conducta, exceso de presupuesto y omisi\u00f3n de equipos</p>
               </div>
               <div class="flex flex-wrap gap-2">
                 <button type="button" onclick="openKpiEvalModal()" class="bg-rose-700 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
                   <i class="fa-solid fa-user-pen"></i> Evaluar / Penalizar T\u00e9cnico
                 </button>
+                <button type="button" onclick="exportKpiToCSV()" class="bg-teal-900 hover:bg-teal-800 text-teal-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                  <i class="fa-solid fa-file-csv mr-1"></i> Exportar CSV
+                </button>
                 <button type="button" onclick="exportKpiFullToExcel()" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded-xl text-xs font-bold transition">
-                  <i class="fa-solid fa-file-excel mr-1"></i> Exportar KPI Excel
+                  <i class="fa-solid fa-file-excel mr-1"></i> Exportar Excel
                 </button>
                 <button type="button" onclick="exportKPIReportToPDF()" class="bg-slate-800 hover:bg-slate-700 text-rose-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold transition">
                   <i class="fa-solid fa-file-pdf mr-1"></i> Imprimir PDF
@@ -2460,11 +2871,11 @@ function renderStaffLogistics() {
                 <thead class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
                   <tr>
                     <th class="p-3">Pos / T\u00e9cnico</th>
-                    <th class="p-3">Cierre Tareas</th>
+                    <th class="p-3">Cierres / Plazo</th>
                     <th class="p-3">Hora Llegada / Salida</th>
-                    <th class="p-3">Combustible Proyectos vs Despachado</th>
+                    <th class="p-3">Combustible Proyectos vs Real</th>
                     <th class="p-3 text-center">Cumpl. GPS</th>
-                    <th class="p-3">Incidencias / Errores</th>
+                    <th class="p-3">Incidencias (Retrasos + Manuales)</th>
                     <th class="p-3 text-center">Pts Restados</th>
                     <th class="p-3">Score Ranking</th>
                     <th class="p-3 text-right">Acci\u00f3n</th>
@@ -2482,7 +2893,10 @@ function renderStaffLogistics() {
                           </div>
                         </div>
                       </td>
-                      <td class="p-3 font-mono font-bold text-slate-200">${t.completedCount} / ${t.assignedCount}</td>
+                      <td class="p-3 font-mono">
+                        <div class="font-bold text-slate-200">${t.completedCount} / ${t.assignedCount} cerrados</div>
+                        <div class="text-[10px] ${t.onTimeRate >= 80 ? 'text-emerald-400' : 'text-amber-400'}">En plazo: ${t.onTimeRate}% (${t.avgActualDays}d real vs ${t.avgEstDays}d est.)</div>
+                      </td>
                       <td class="p-3">
                         <div class="text-[11px]">
                           <span class="text-emerald-400 font-semibold">Entrada:</span> <span class="text-white font-mono">${t.lastCheckIn}</span>
@@ -2502,8 +2916,9 @@ function renderStaffLogistics() {
                       </td>
                       <td class="p-3 text-center font-bold ${t.gpsRate>=80?'text-emerald-400':'text-amber-400'}">${t.gpsRate}%</td>
                       <td class="p-3">
-                        ${t.evalCount === 0 ? `<span class="text-[11px] text-emerald-400/80"><i class="fa-solid fa-circle-check mr-1"></i>Sin faltas</span>` : `
+                        ${(t.evalCount === 0 && t.overdueCount === 0) ? `<span class="text-[11px] text-emerald-400/80"><i class="fa-solid fa-circle-check mr-1"></i>Sin faltas ni retrasos</span>` : `
                           <div class="flex flex-wrap gap-1">
+                            ${t.overdueCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-700 text-[10px] font-bold"><i class="fa-solid fa-clock mr-0.5"></i>Plazo Vencido (${t.overdueCount}: ${t.overduePenaltyPoints} pts)</span>` : ''}
                             ${t.conductCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 text-[10px] font-semibold">Conducta (${t.conductCount})</span>` : ''}
                             ${t.overBudgetCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-orange-950 text-orange-300 border border-orange-800 text-[10px] font-semibold">Exceso Mat/Presup (${t.overBudgetCount})</span>` : ''}
                             ${t.omittedItemCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 text-[10px] font-semibold">Omiti\u00f3 Equipo/Mat (${t.omittedItemCount})</span>` : ''}
@@ -2512,8 +2927,11 @@ function renderStaffLogistics() {
                           </div>
                         `}
                       </td>
-                      <td class="p-3 text-center font-mono font-bold ${t.penaltyPoints < 0 ? 'text-rose-400' : t.penaltyPoints > 0 ? 'text-emerald-400' : 'text-slate-400'}">
-                        ${t.penaltyPoints > 0 ? '+' + t.penaltyPoints : t.penaltyPoints} pts
+                      <td class="p-3 text-center font-mono">
+                        <div class="font-bold ${t.penaltyPoints < 0 ? 'text-rose-400' : t.penaltyPoints > 0 ? 'text-emerald-400' : 'text-slate-400'}">
+                          ${t.penaltyPoints > 0 ? '+' + t.penaltyPoints : t.penaltyPoints} pts
+                        </div>
+                        ${t.overduePenaltyPoints < 0 ? `<div class="text-[9px] text-rose-400/80">Auto plazo: ${t.overduePenaltyPoints}</div>` : ''}
                       </td>
                       <td class="p-3">
                         <div class="flex items-center gap-2">
@@ -2531,6 +2949,66 @@ function renderStaffLogistics() {
                       </td>
                     </tr>
                   `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TABLA NUEVA: CICLO DE VIDA, FECHAS, DESVIACIONES Y DURACION REAL POR PROYECTO -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h4 class="text-xs font-bold text-white uppercase"><i class="fa-solid fa-calendar-days mr-1.5 text-amber-400"></i>Rendimiento Hist\u00f3rico de Ciclo de Vida, Fechas y Desviaci\u00f3n de Plazos por Proyecto</h4>
+                <p class="text-[11px] text-slate-400">Compara la fecha de creaci\u00f3n, fecha de inicio al aprobar, d\u00edas estimados por el t\u00e9cnico, d\u00edas reales transcurridos, desviaci\u00f3n y fecha de cierre</p>
+              </div>
+              <button type="button" onclick="exportProjectsToCSV()" class="text-xs bg-teal-900/80 hover:bg-teal-800 text-teal-200 border border-teal-700 px-3 py-1.5 rounded-xl font-bold">
+                <i class="fa-solid fa-file-csv mr-1"></i> Descargar CSV de Plazos
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
+                  <tr>
+                    <th class="p-3">Proyecto / Cliente</th>
+                    <th class="p-3">T\u00e9cnico L\u00edder</th>
+                    <th class="p-3">Creaci\u00f3n</th>
+                    <th class="p-3">Inicio (Aprobado)</th>
+                    <th class="p-3 text-center">D\u00edas Estimados</th>
+                    <th class="p-3 text-center">D\u00edas Reales</th>
+                    <th class="p-3 text-center">Desviaci\u00f3n</th>
+                    <th class="p-3">Fecha L\u00edmite / Cierre</th>
+                    <th class="p-3">Estado del Plazo</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  ${appData.projects.map(p => {
+                    const lc = computeProjectLifecycleInfo(p);
+                    const devText = !lc.hasStarted ? '\u2014' : (lc.deviationDays > 0 ? `+${lc.deviationDays} d\u00eda(s) retraso` : `${lc.deviationDays} d\u00eda(s) (En plazo)`);
+                    const devColor = !lc.hasStarted ? 'text-slate-500' : (lc.deviationDays > 0 ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold');
+                    return `
+                      <tr class="hover:bg-slate-800/40">
+                        <td class="p-3 cursor-pointer" onclick="openProjectDetailModal('${p.id}')">
+                          <div class="font-mono font-bold text-rose-400">${p.code}</div>
+                          <div class="text-white font-semibold truncate max-w-[190px]">${p.title}</div>
+                        </td>
+                        <td class="p-3 text-slate-200 font-semibold">${p.techLeader || 'Sin asignar'}</td>
+                        <td class="p-3 font-mono text-slate-300">${lc.createdAtStr}</td>
+                        <td class="p-3 font-mono text-emerald-400 font-semibold">${lc.startStr}</td>
+                        <td class="p-3 text-center font-mono">
+                          <input type="number" min="1" max="365" value="${lc.estimatedDays}" onchange="updateEstimatedDaysInline('${p.id}', this.value)" class="w-14 bg-slate-800 border border-amber-700/70 rounded px-1.5 py-0.5 text-amber-300 font-mono font-bold text-center text-xs" title="Ajustar d\u00edas estimados">
+                        </td>
+                        <td class="p-3 text-center font-mono font-bold text-white">${lc.hasStarted ? lc.elapsedDays + ' d' : '0 d'}</td>
+                        <td class="p-3 text-center font-mono ${devColor}">${devText}</td>
+                        <td class="p-3 font-mono text-[11px]">
+                          <div class="text-slate-300">L\u00edmite: ${lc.deadlineStr}</div>
+                          <div class="text-purple-300 text-[10px]">Cierre: ${lc.completedStr}</div>
+                        </td>
+                        <td class="p-3">
+                          <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${lc.badgeClass}">${lc.badgeText}</span>
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
                 </tbody>
               </table>
             </div>
@@ -2865,6 +3343,26 @@ function renderStaffLogistics() {
       }));
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rankingSheet), "Ranking_KPI");
 
+      const cicloVidaSheet = appData.projects.map(p => {
+        const lc = computeProjectLifecycleInfo(p);
+        return {
+          Codigo_Proyecto: p.code,
+          Proyecto: p.title,
+          Cliente: p.client,
+          Tecnico_Lider: p.techLeader || 'Sin asignar',
+          Estado: p.status,
+          Fecha_Creacion: lc.createdAtStr,
+          Fecha_Inicio_Aprobado: lc.startStr,
+          Dias_Estimados: lc.estimatedDays,
+          Dias_Reales_Transcurridos: lc.elapsedDays,
+          Desviacion_Dias: lc.deviationDays,
+          Fecha_Limite: lc.deadlineStr,
+          Fecha_Cierre: lc.completedStr,
+          Estado_Plazo: lc.badgeText
+        };
+      });
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(cicloVidaSheet), "Ciclo_Vida_Plazos");
+
       const horariosSheet = appData.projects.map(p => ({
         Codigo_Proyecto: p.code,
         Proyecto: p.title,
@@ -3033,6 +3531,8 @@ function handleSaveTechnician(e) {
       document.getElementById('editProjectLng').value = p.targetLng || '';
       const kmInput = document.getElementById('editProjectKm');
       if (kmInput) kmInput.value = p.projectKm || 25;
+      const estDaysField = document.getElementById('editProjectEstimatedDays');
+      if (estDaysField) estDaysField.value = p.estimatedDays || (p.survey && p.survey.estimatedDays) || 5;
 
       const techSelect = document.getElementById('editProjectTechLeader');
       const crewSelect = document.getElementById('editProjectTechCrew');
@@ -3197,6 +3697,32 @@ function openProjectDetailModal(projId) {
       if (p.tracking && p.tracking.legacyTargetNeedsReview) gpsLines.push('Geocerca hist\u00f3rica pendiente de revisi\u00f3n');
       distEl.innerText = gpsLines.length ? gpsLines.join(' \u00b7 ') : 'Sin registro GPS';
 
+      // Ciclo de Vida del Proyecto, Fechas y Alertas en Tiempo Real
+      const lc = computeProjectLifecycleInfo(p);
+      const createdEl = document.getElementById('detailCreatedAt');
+      const startEl = document.getElementById('detailStartDate');
+      const estDaysInputEl = document.getElementById('detailEstDaysInput');
+      const elapsedEl = document.getElementById('detailElapsedDays');
+      const deadlineEl = document.getElementById('detailDeadlineDate');
+      const completedEl = document.getElementById('detailCompletedAt');
+      const alertBadgeEl = document.getElementById('detailLifecycleAlertBadge');
+      const progressBarEl = document.getElementById('detailLifecycleProgressBar');
+
+      if (createdEl) createdEl.innerText = lc.createdAtStr;
+      if (startEl) startEl.innerText = lc.startStr;
+      if (estDaysInputEl) estDaysInputEl.value = lc.estimatedDays;
+      if (elapsedEl) elapsedEl.innerText = lc.hasStarted ? `${lc.elapsedDays} de ${lc.estimatedDays} d\u00edas` : `0 de ${lc.estimatedDays} d\u00edas`;
+      if (deadlineEl) deadlineEl.innerText = `L\u00edmite: ${lc.deadlineStr}`;
+      if (completedEl) completedEl.innerText = lc.completedStr;
+      if (alertBadgeEl) {
+        alertBadgeEl.innerText = lc.badgeText;
+        alertBadgeEl.className = `px-2.5 py-1 rounded-full text-[11px] font-bold ${lc.badgeClass}`;
+      }
+      if (progressBarEl) {
+        progressBarEl.style.width = `${lc.progressPct}%`;
+        progressBarEl.className = `h-full transition-all duration-300 ${lc.alertLevel === 'OVERDUE' || lc.alertLevel === 'COMPLETED_LATE' ? 'bg-rose-500' : lc.alertLevel === 'NEAR_DEADLINE' ? 'bg-amber-400' : 'bg-emerald-500'}`;
+      }
+
       document.getElementById('detailProjectOrderFileName').innerText = p.serviceOrderFile ? p.serviceOrderFile.name : 'Orden_Servicio.pdf';
 
       const surveyDocName = document.getElementById('detailProjectSurveyDocName');
@@ -3324,7 +3850,10 @@ function downloadQuotationFile(projId) {
 
     function changeProjectStatus(id, newStatus) {
       const p = appData.projects.find(x => x.id === id);
-      if (p) { p.status = newStatus; saveData(); }
+      if (p) {
+        applyProjectLifecycleTransition(p, newStatus);
+        saveData();
+      }
     }
 
     function editCurrentDetailProject() {
@@ -3343,8 +3872,16 @@ function downloadQuotationFile(projId) {
       let p = appData.projects.find(item => item.id === id);
       const isNew = !p;
       if (isNew) {
+        const nowMs = Date.now();
         p = {
-          id: 'P_' + Date.now(),
+          id: 'P_' + nowMs,
+          createdAt: new Date(nowMs).toLocaleDateString('es-DO'),
+          createdAtMs: nowMs,
+          startDate: '',
+          startDateMs: null,
+          completedAt: '',
+          completedAtMs: null,
+          estimatedDays: 5,
           geofenceRadiusMeters: 300,
           observations: '',
           survey: { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V Regulada con UPS', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
@@ -3366,7 +3903,11 @@ function downloadQuotationFile(projId) {
       p.contact = document.getElementById('editProjectContact').value.trim();
       p.plannedDate = document.getElementById('editProjectPlannedDate').value.trim();
       p.address = document.getElementById('editProjectAddress').value.trim();
-      p.status = document.getElementById('editProjectStatus').value;
+      const estDaysEdit = parseInt(document.getElementById('editProjectEstimatedDays')?.value) || p.estimatedDays || 5;
+      p.estimatedDays = Math.max(1, estDaysEdit);
+      if (p.survey) p.survey.estimatedDays = p.estimatedDays;
+      const selectedStatus = document.getElementById('editProjectStatus').value;
+      applyProjectLifecycleTransition(p, selectedStatus);
       const latValue = document.getElementById('editProjectLat').value.trim();
       const lngValue = document.getElementById('editProjectLng').value.trim();
       p.targetLat = latValue === '' ? null : Number(latValue);
@@ -3626,6 +4167,8 @@ function triggerTechSurvey() {
       document.getElementById('surveyProjectId').value = id;
       document.getElementById('surveyProjectTitle').innerText = `${p.code} - ${p.title}`;
       document.getElementById('surveyMeters').value = (p.survey && p.survey.meters) ? p.survey.meters : '';
+      const estDaysEl = document.getElementById('surveyEstimatedDays');
+      if (estDaysEl) estDaysEl.value = (p.estimatedDays && Number(p.estimatedDays) > 0) ? p.estimatedDays : ((p.survey && Number(p.survey.estimatedDays) > 0) ? p.survey.estimatedDays : 5);
       document.getElementById('surveyStructure').value = (p.survey && p.survey.structure) ? p.survey.structure : 'Ducter\u00eda EMT Existente';
       document.getElementById('surveyPower').value = (p.survey && p.survey.power) ? p.survey.power : '110V Regulada con UPS';
       document.getElementById('surveyNotes').value = (p.survey && p.survey.notes) ? p.survey.notes : '';
@@ -4017,8 +4560,11 @@ const OMEGA_VERIFIED_CATALOG = [
       if (!p) return;
 
       const meters = parseInt(document.getElementById('surveyMeters').value) || 0;
+      const estDaysInput = parseInt(document.getElementById('surveyEstimatedDays')?.value) || p.estimatedDays || 5;
+      p.estimatedDays = Math.max(1, estDaysInput);
       p.survey = {
         meters: meters,
+        estimatedDays: p.estimatedDays,
         structure: document.getElementById('surveyStructure').value,
         power: document.getElementById('surveyPower').value,
         notes: document.getElementById('surveyNotes').value,
@@ -4197,8 +4743,9 @@ const OMEGA_VERIFIED_CATALOG = [
           });
           projectId = existing.id;
         } else {
+          const nowMs = Date.now();
           const newProject = Object.assign({
-            id: 'P' + Date.now(), targetLat: null, targetLng: null, geofenceRadiusMeters: 300,
+            id: 'P' + nowMs, createdAt: new Date(nowMs).toLocaleDateString('es-DO'), createdAtMs: nowMs, startDate: '', startDateMs: null, completedAt: '', completedAtMs: null, estimatedDays: 5, projectKm: 25, targetLat: null, targetLng: null, geofenceRadiusMeters: 300,
             status: 'Levantamiento', survey: { meters: 0, structure: '', power: '', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
             quotation: null, budget: { approved: false, services: [], materials: [], isEstimate: true },
             tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', checkOutCoords: null, hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
@@ -4434,7 +4981,7 @@ function handlePayment50Upload(e) {
           data: evt.target.result,
           date: new Date().toLocaleDateString('es-DO')
         };
-        p.status = 'Aprobado';
+        applyProjectLifecycleTransition(p, 'Aprobado');
         if (p.budget) p.budget.approved = true;
         saveData();
         if (p.techLeader) {
