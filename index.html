@@ -167,6 +167,7 @@
           <button type="button" onclick="triggerTechArrival()" class="flex-1 min-w-[140px] bg-blue-800/90 hover:bg-blue-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-blue-600/50 shadow"><i class="fa-solid fa-location-crosshairs text-base"></i> Registrar Llegada</button>
           <button type="button" onclick="triggerTechDeparture()" class="flex-1 min-w-[140px] bg-amber-800/90 hover:bg-amber-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-amber-600/50 shadow"><i class="fa-solid fa-flag-checkered text-base"></i> Registrar Salida</button>
           <button type="button" onclick="triggerTechSurvey()" class="flex-1 min-w-[140px] bg-rose-700 hover:bg-rose-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-rose-500/50 shadow shadow-rose-900/40"><i class="fa-solid fa-file-pen text-base"></i> Cargar Levantamiento & Plano</button>
+          <button type="button" onclick="openExpenseModalFromProject()" class="flex-1 min-w-[140px] bg-emerald-800/90 hover:bg-emerald-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-emerald-600/50 shadow"><i class="fa-solid fa-receipt text-base"></i> Registrar Gasto Campo</button>
         </div>
       </div>
 
@@ -280,9 +281,10 @@
             <span class="text-xs font-bold text-emerald-400 uppercase flex items-center gap-1.5"><i class="fa-solid fa-satellite"></i> GPS Destino (Geocerca)</span>
             <button type="button" onclick="captureProjectGPSCurrentLocation()" class="text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded font-bold">Fijar GPS actual</button>
           </div>
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-3 gap-3">
             <div><label class="block text-[11px] text-slate-400">Latitud</label><input type="number" step="0.000001" id="editProjectLat" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono"></div>
             <div><label class="block text-[11px] text-slate-400">Longitud</label><input type="number" step="0.000001" id="editProjectLng" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono"></div>
+            <div><label class="block text-[11px] text-emerald-400 font-bold">Distancia Obra (KM Ida/Vuelta)</label><input type="number" step="0.1" min="0" id="editProjectKm" placeholder="Ej: 28" class="w-full bg-slate-800 border border-emerald-700/70 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono"></div>
           </div>
         </div>
 
@@ -581,6 +583,10 @@
           <div><label class="block text-xs text-slate-300 mb-1">Od&#243;metro (KM)</label><input type="number" id="vehicleOdo" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
           <div><label class="block text-xs text-slate-300 mb-1">Estatus</label><select id="vehicleStatus" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"><option>Operativo</option><option>Mantenimiento</option><option>Fuera de Servicio</option></select></div>
         </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-xs text-emerald-400 font-semibold mb-1">Rendimiento (KM / Gal&#243;n)</label><input type="number" step="0.1" min="1" id="vehicleKmPerGal" required value="32" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+          <div><label class="block text-xs text-amber-400 font-semibold mb-1">Costo Gal&#243;n (RD$)</label><input type="number" step="0.1" min="1" id="vehicleFuelPrice" required value="290" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
+        </div>
         <div><label class="block text-xs text-slate-300 mb-1">Custodio</label><select id="vehicleAssignedTo" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></select></div>
         <div class="flex justify-end gap-2 pt-3 border-t border-slate-800 mt-4">
           <button type="button" onclick="closeModal('vehicleModal')" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-xl text-xs font-semibold text-slate-300">Cancelar</button>
@@ -771,6 +777,153 @@
     </div>
   </div>
 
+
+  <!-- Modal Registrar Gasto Operativo en Campo (con OCR) -->
+  <div id="expenseModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('expenseModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl my-8 relative space-y-4" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-receipt mr-2 text-emerald-400"></i>Registrar Gasto Operativo en Campo</h3>
+          <p class="text-xs text-slate-400">Registra vi&#225;ticos, peajes, parqueos o materiales de emergencia con lectura OCR de factura</p>
+        </div>
+        <button type="button" onclick="closeModal('expenseModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-2 text-xs">
+        <div>
+          <div class="font-bold text-emerald-400"><i class="fa-solid fa-camera mr-1"></i> Escanear Factura / Voucher con OCR</div>
+          <div id="expenseOcrStatus" class="text-[10px] text-slate-400">Extrae monto RD$, RNC/NCF y concepto autom&#225;ticamente</div>
+        </div>
+        <button type="button" onclick="document.getElementById('expenseReceiptInput').click()" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-xl border border-slate-700 font-bold whitespace-nowrap">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400 mr-1"></i> Subir Recibo
+        </button>
+        <input type="file" id="expenseReceiptInput" accept="image/*,application/pdf" class="hidden" onchange="handleExpenseReceiptOcr(event)">
+      </div>
+
+      <form onsubmit="handleSaveFieldExpense(event)" class="space-y-3 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">T&#233;cnico Responsable</label>
+            <select id="expenseTechSelect" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold"></select>
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Proyecto Asociado</label>
+            <select id="expenseProjectSelect" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono"></select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Categor&#237;a de Gasto</label>
+            <select id="expenseCategory" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+              <option value="Materiales de Emergencia">Materiales de Emergencia</option>
+              <option value="Dieta / Alimentacion">Dieta / Alimentaci&#243;n</option>
+              <option value="Peaje / Parqueo">Peaje / Parqueo</option>
+              <option value="Combustible Extra">Combustible Extra</option>
+              <option value="Transporte / Concho">Transporte / Apoyo</option>
+              <option value="Otros">Otros Gastos</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-emerald-400 font-bold mb-1">Monto Total (RD$)</label>
+            <input type="number" step="0.01" min="1" id="expenseAmount" required placeholder="Ej: 850.00" class="w-full bg-slate-800 border border-emerald-700/80 rounded-xl px-3 py-2 text-emerald-400 font-mono font-bold">
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-slate-300 font-semibold mb-1">Fecha</label>
+            <input type="date" id="expenseDate" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Concepto / NCF / Detalle del Gasto</label>
+          <textarea id="expenseNotes" rows="2" required placeholder="Ej: Compra de 10 conectores RJ45 y cinta aislante en ferreter&#237;a local (NCF B010000...)" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white"></textarea>
+        </div>
+
+        <div id="expenseReceiptPreviewCard" class="hidden bg-slate-950 border border-slate-800 p-2.5 rounded-xl flex items-center justify-between">
+          <span id="expenseReceiptFileName" class="text-slate-300 font-mono truncate text-[11px]"></span>
+          <button type="button" onclick="clearTempExpenseReceipt()" class="text-rose-400 hover:text-rose-300 text-xs font-bold">Quitar</button>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="closeModal('expenseModal')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl font-semibold">Cancelar</button>
+          <button type="submit" class="bg-emerald-700 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl font-bold shadow-lg"><i class="fa-solid fa-floppy-disk mr-1"></i> Guardar Gasto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Gestion de Inventario con OCR -->
+  <div id="inventoryModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('inventoryModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl my-8 relative space-y-4" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-base font-bold text-white" id="inventoryModalTitle"><i class="fa-solid fa-boxes-stacked mr-2 text-blue-400"></i>Gesti&#243;n de Inventario &amp; Escaneo OCR</h3>
+          <p class="text-xs text-slate-400">Registra equipos o materiales de almac&#233;n o escanea conduce / etiqueta con OCR</p>
+        </div>
+        <button type="button" onclick="closeModal('inventoryModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-3 flex items-center justify-between gap-2 text-xs">
+        <div>
+          <div class="font-bold text-blue-400"><i class="fa-solid fa-barcode mr-1"></i> Escaneo OCR de Etiqueta / Factura / Conduce</div>
+          <div id="inventoryOcrStatus" class="text-[10px] text-slate-400">Detecta SKU, modelo, cantidad y precio desde una foto o PDF</div>
+        </div>
+        <button type="button" onclick="document.getElementById('inventoryOcrInput').click()" class="bg-blue-900/80 hover:bg-blue-800 text-blue-100 px-3 py-2 rounded-xl border border-blue-700 font-bold whitespace-nowrap">
+          <i class="fa-solid fa-camera mr-1"></i> Escanear OCR
+        </button>
+        <input type="file" id="inventoryOcrInput" accept="image/*,application/pdf" class="hidden" onchange="handleInventoryOcrUpload(event)">
+      </div>
+
+      <form onsubmit="handleSaveInventoryItem(event)" class="space-y-3 text-xs">
+        <input type="hidden" id="invEditId">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">SKU / Referencia</label>
+            <input type="text" id="invSku" required placeholder="Ej: DS-2CD1043G2" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono uppercase">
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Categor&#237;a</label>
+            <select id="invCategory" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+              <option value="Equipos Activos">Equipos Activos (CCTV/Redes)</option>
+              <option value="Materiales / Cableado">Materiales / Cableado</option>
+              <option value="Canalizacion / EMT">Canalizaci&#243;n / Tuber&#237;a</option>
+              <option value="Herrajes / Accesorios">Herrajes / Accesorios</option>
+            </select>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-slate-300 font-semibold mb-1">Ubicaci&#243;n / Custodio</label>
+            <input type="text" id="invLocation" required value="Almac&#233;n Central" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Descripci&#243;n del Equipo o Material</label>
+          <input type="text" id="invName" required placeholder="Ej: C&#225;mara IP Bullet Hikvision 4MP Dual Light" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white">
+        </div>
+
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-emerald-400 font-bold mb-1">Stock Actual</label>
+            <input type="number" id="invStock" required min="0" value="10" class="w-full bg-slate-800 border border-emerald-700/70 rounded-xl px-3 py-2 text-emerald-400 font-mono font-bold">
+          </div>
+          <div>
+            <label class="block text-amber-400 font-bold mb-1">Stock M&#237;nimo</label>
+            <input type="number" id="invMinStock" required min="0" value="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-amber-300 font-mono">
+          </div>
+          <div>
+            <label class="block text-slate-300 font-semibold mb-1">Costo Unit. (RD$)</label>
+            <input type="number" step="0.01" min="0" id="invUnitCost" required value="2500" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono">
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="closeModal('inventoryModal')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl font-semibold">Cancelar</button>
+          <button type="submit" class="bg-blue-700 hover:bg-blue-600 text-white px-5 py-2 rounded-xl font-bold shadow-lg"><i class="fa-solid fa-floppy-disk mr-1"></i> Guardar en Inventario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </div>
 
   <script>
@@ -790,9 +943,9 @@
         { id: 'T5', name: 'JUAN PACHECO', level: 'Especialista A', phone: '809-555-0199', address: 'Santo Domingo', vehiclePlate: '', pin: '' }
       ],
       vehicles: [
-        { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520, lastFuelKm: 48120 },
-        { id: 'V2', plate: 'L389104', model: 'Nissan Frontier 2019', assignedTo: 'WESLY ALEJANDRO MOJICA', status: 'Operativo', odo: 74210, lastFuelKm: 73800 },
-        { id: 'V3', plate: 'L451299', model: 'Isuzu D-Max 2022', assignedTo: 'Carlos Morales', status: 'Operativo', odo: 31050, lastFuelKm: 30600 }
+        { id: 'V1', plate: 'L428901', model: 'Toyota Hilux 2021', assignedTo: 'Enmanuel Matos', status: 'Operativo', odo: 48520, lastFuelKm: 48120, kmPerGal: 32, fuelPriceGal: 290 },
+        { id: 'V2', plate: 'L389104', model: 'Nissan Frontier 2019', assignedTo: 'WESLY ALEJANDRO MOJICA', status: 'Operativo', odo: 74210, lastFuelKm: 73800, kmPerGal: 30, fuelPriceGal: 290 },
+        { id: 'V3', plate: 'L451299', model: 'Isuzu D-Max 2022', assignedTo: 'Carlos Morales', status: 'Operativo', odo: 31050, lastFuelKm: 30600, kmPerGal: 35, fuelPriceGal: 290 }
       ],
       tools: [
         { id: 'H1', code: 'TL-01', name: 'Fusionadora', assignedTo: 'Enmanuel Matos', condition: 'Excelente', date: '2026-01-15' },
@@ -800,6 +953,13 @@
       ],
       fuelLogs: [],
       kpiEvaluations: [],
+      fieldExpenses: [],
+      inventory: [
+        { id: 'INV1', sku: 'DS-2CD1043G2-LIUF', name: 'HIKVISION CAMARA BULLET IP 4MP DUAL LIGHT IP67', category: 'Equipos Activos', stock: 12, minStock: 4, unitCost: 4850, location: 'Almac\u00e9n Central' },
+        { id: 'INV2', sku: 'AB356NXT32', name: 'BOBINA CABLE UTP NEXXT CAT6 1000 PIES 100% COBRE', category: 'Materiales / Cableado', stock: 8, minStock: 3, unitCost: 13462.12, location: 'Almac\u00e9n Central' },
+        { id: 'INV3', sku: 'DS-3E1510P-SI', name: 'SWITCH 8 PUERTOS POE GIGABIT HIKVISION + 2 SFP', category: 'Equipos Activos', stock: 5, minStock: 2, unitCost: 9935.86, location: 'Almac\u00e9n Central' },
+        { id: 'INV4', sku: 'TUB-EMT-34', name: 'TUBO CONDUIT EMT 3/4 PULGADA GALVANIZADO (3M)', category: 'Canalizacion / EMT', stock: 45, minStock: 15, unitCost: 450, location: 'Almac\u00e9n Herrera' }
+      ],
       projects: [
         {
           id: 'P2',
@@ -811,6 +971,7 @@
           address: 'Bella Casa Internacional, Santo Domingo',
           targetLat: 18.472000,
           targetLng: -69.939000,
+          projectKm: 24,
           geofenceRadiusMeters: 300,
           plannedDate: '30/10/2026',
           techLeader: 'JUAN PACHECO',
@@ -833,6 +994,7 @@
           address: 'Torre Washington, Av. George Washington, Santo Domingo',
           targetLat: 18.463200,
           targetLng: -69.905600,
+          projectKm: 28,
           geofenceRadiusMeters: 300,
           plannedDate: '26/10/2026',
           techLeader: 'Enmanuel Matos',
@@ -882,12 +1044,17 @@
           if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed) || !Array.isArray(parsed.projects) || !Array.isArray(parsed.technicians)) continue;
           if (!parsed.projects.every(project => project && typeof project === 'object' && !Array.isArray(project)) || !parsed.technicians.every(tech => tech && typeof tech === 'object' && !Array.isArray(tech))) continue;
           const data = Object.assign({}, defaults, parsed);
-          for (const key of ['projects', 'technicians', 'vehicles', 'tools', 'fuelLogs', 'notifications', 'kpiEvaluations']) {
+          for (const key of ['projects', 'technicians', 'vehicles', 'tools', 'fuelLogs', 'notifications', 'kpiEvaluations', 'fieldExpenses', 'inventory']) {
             if (!Array.isArray(data[key])) data[key] = Array.isArray(defaults[key]) ? defaults[key] : [];
           }
           const needsAuthAndGpsMigration = parsed._localAuthVersion !== 1;
           let needsWrite = storageKey !== STORAGE_KEY || needsAuthAndGpsMigration;
+          data.vehicles.forEach(v => {
+            if (!Number.isFinite(Number(v.kmPerGal)) || Number(v.kmPerGal) <= 0) v.kmPerGal = 32;
+            if (!Number.isFinite(Number(v.fuelPriceGal)) || Number(v.fuelPriceGal) <= 0) v.fuelPriceGal = 290;
+          });
           data.projects.forEach(project => {
+            if (!Number.isFinite(Number(project.projectKm)) || Number(project.projectKm) <= 0) project.projectKm = 25;
             if (!Array.isArray(project.techCrew)) project.techCrew = [];
             if (!project.tracking || typeof project.tracking !== 'object' || Array.isArray(project.tracking)) project.tracking = {};
             if (!project.survey || typeof project.survey !== 'object' || Array.isArray(project.survey)) project.survey = {};
@@ -1117,12 +1284,13 @@ function render() {
 
       return `
         <div class="space-y-6">
-          <div class="flex border-b border-slate-800">
-            <button type="button" onclick="setTechTab('my_tasks')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_tasks' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}"><i class="fa-solid fa-list-check mr-2"></i>Mis Tareas Asignadas (${allMyProjects.length})</button>
+          <div class="flex flex-wrap border-b border-slate-800">
+            <button type="button" onclick="setTechTab('my_tasks')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_tasks' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}"><i class="fa-solid fa-list-check mr-2"></i>Mis Tareas &amp; Tiempos (${allMyProjects.length})</button>
+            <button type="button" onclick="setTechTab('my_expenses')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_expenses' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}"><i class="fa-solid fa-receipt mr-2"></i>Mis Gastos en Campo</button>
             <button type="button" onclick="setTechTab('my_assets')" class="px-4 py-3 font-semibold text-sm border-b-2 ${currentTechTab === 'my_assets' ? 'border-rose-600 text-rose-400' : 'border-transparent text-slate-400 hover:text-slate-200'}"><i class="fa-solid fa-truck-pickup mr-2"></i>Mis Activos Asignados</button>
           </div>
 
-          ${currentTechTab === 'my_tasks' ? `
+          ${currentTechTab === 'my_expenses' ? renderTechExpensesTab(myTechName) : currentTechTab === 'my_tasks' ? `
             <div class="space-y-4">
               <div class="bg-slate-900 border border-slate-800 p-3.5 rounded-2xl flex items-center justify-between gap-3 shadow">
                 <input type="text" value="${projectSearchQuery}" oninput="handleSearchInput(this.value)" placeholder="Buscar cliente o c\u00f3digo..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-rose-500">
@@ -1198,12 +1366,14 @@ function render() {
 
           <div class="flex flex-wrap items-center justify-between border-b border-slate-800 pb-2 gap-3">
             <div class="flex flex-wrap gap-2">
-              <button type="button" onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-list-check mr-1"></i> Proyectos</button>
-              <button type="button" onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-truck-ramp-box mr-1"></i> Log\u00edstica</button>
-              <button type="button" onclick="setNavTab('kpis')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'kpis' ? 'bg-emerald-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-chart-line mr-1"></i> Informes KPI</button>
+              <button type="button" onclick="setNavTab('projects')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'projects' ? 'bg-rose-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-list-check mr-1"></i> Proyectos &amp; Tiempos</button>
+              <button type="button" onclick="setNavTab('monitoring')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'monitoring' ? 'bg-blue-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-satellite-dish mr-1"></i> Monitoreo en Campo</button>
+              <button type="button" onclick="setNavTab('logistics')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'logistics' ? 'bg-rose-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-boxes-stacked mr-1"></i> Log\u00edstica, Inventario &amp; Gastos</button>
+              <button type="button" onclick="setNavTab('kpis')" class="px-4 py-2 rounded-xl text-xs font-bold transition ${currentNavTab === 'kpis' ? 'bg-emerald-700 text-white' : 'bg-slate-800 text-slate-400 hover:text-white'}"><i class="fa-solid fa-chart-line mr-1"></i> Anal\u00edticas &amp; KPI</button>
             </div>
             ${currentNavTab === 'projects' ? `
-              <div class="flex gap-2">
+              <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="openNewProjectModal()" class="bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow"><i class="fa-solid fa-plus mr-1"></i> Nuevo Proyecto</button>
                 <button type="button" onclick="openModal('pdfModal')" class="bg-rose-900/80 hover:bg-rose-800 text-rose-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-pdf mr-1"></i> Importar PDF</button>
                 <button type="button" onclick="exportProjectsToExcel()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs font-bold px-3 py-2 rounded-xl"><i class="fa-solid fa-file-excel mr-1"></i> Exportar a Excel</button>
               </div>
@@ -1215,7 +1385,7 @@ function render() {
             ` : ''}
           </div>
 
-          ${currentNavTab === 'projects' ? renderAdminProjects() : currentNavTab === 'logistics' ? renderAdminLogistics() : renderAdminKPIs()}
+          ${currentNavTab === 'projects' ? renderAdminProjects() : currentNavTab === 'monitoring' ? renderAdminFieldMonitoring() : currentNavTab === 'logistics' ? renderAdminLogistics() : renderAdminKPIs()}
         </div>
       `;
     }
@@ -1238,11 +1408,18 @@ function render() {
 
     function exportLogisticsToExcel() {
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.vehicles), "Veh\u00edculos");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.technicians), "T\u00e9cnicos");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.vehicles), "Vehiculos");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.fuelLogs || []), "Combustible_Tickets");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.inventory || []), "Inventario_OCR");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet((appData.fieldExpenses || []).map(x => ({
+        Fecha: x.date, Tecnico: x.techName, Proyecto: x.projectCode || 'General', Categoria: x.category, Monto_RD: x.amount, Estatus: x.status, Detalle: x.notes
+      }))), "Gastos_Campo");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.technicians.map(t => ({
+        ID: t.id, Nombre: t.name, Rango: t.level, Telefono: t.phone, Direccion: t.address, Vehiculo: t.vehiclePlate
+      }))), "Tecnicos");
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.tools), "Herramientas");
-      XLSX.writeFile(wb, "Logistica_CentroXpert.xlsx");
-      showToast("Log\u00edstica exportada a Excel.");
+      XLSX.writeFile(wb, "Logistica_Inventario_Gastos_CentroXpert.xlsx");
+      showToast("Log\u00edstica, Inventario y Gastos exportados a Excel.");
     }
     
     function exportKPIReportToPDF() {
@@ -1300,18 +1477,35 @@ function render() {
             <div class="overflow-x-auto">
               <table class="w-full text-xs text-left">
                 <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800 uppercase">
-                  <tr><th class="p-3">C\u00f3digo</th><th class="p-3">Cliente</th><th class="p-3">T\u00e9cnico</th><th class="p-3">Estatus</th><th class="p-3 text-right">Acci\u00f3n</th></tr>
+                  <tr><th class="p-3">C\u00f3digo / Fecha</th><th class="p-3">Proyecto / Cliente</th><th class="p-3">T\u00e9cnico / Cuadrilla</th><th class="p-3">Control de Tiempos &amp; GPS</th><th class="p-3">Estatus</th><th class="p-3 text-right">Acci\u00f3n</th></tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800">
-                  ${filtered.map(p => `
+                  ${filtered.map(p => {
+                    const cIn = (p.tracking && p.tracking.checkIn) ? p.tracking.checkIn : 'Sin entrada';
+                    const cOut = (p.tracking && p.tracking.checkOut) ? p.tracking.checkOut : ((p.tracking && p.tracking.checkIn) ? 'En obra...' : 'Pendiente');
+                    const hrs = (p.tracking && p.tracking.hoursWorked) ? p.tracking.hoursWorked : '\u2014';
+                    return `
                     <tr class="table-row-hover transition" onclick="openProjectDetailModal('${p.id}')">
-                      <td class="p-3 font-mono font-bold text-rose-400">${p.code}</td>
-                      <td class="p-3 font-bold text-white">${p.title}</td>
-                      <td class="p-3 text-slate-200">${p.techLeader}</td>
+                      <td class="p-3">
+                        <div class="font-mono font-bold text-rose-400">${p.code}</div>
+                        <div class="text-[10px] text-slate-400 font-mono"><i class="fa-regular fa-calendar mr-1"></i>${p.plannedDate || 'S/F'} \u00b7 ${p.projectKm || 25} KM</div>
+                      </td>
+                      <td class="p-3">
+                        <div class="font-bold text-white">${p.title}</div>
+                        <div class="text-[10px] text-slate-400">${p.client}</div>
+                      </td>
+                      <td class="p-3">
+                        <div class="text-slate-200 font-semibold">${p.techLeader || 'Sin asignar'}</div>
+                        ${p.techCrew && p.techCrew.length ? `<div class="text-[10px] text-slate-400">+ ${p.techCrew.join(', ')}</div>` : ''}
+                      </td>
+                      <td class="p-3 font-mono text-[11px]">
+                        <div><span class="text-emerald-400">E:</span> ${cIn} <span class="text-amber-300 ml-1">S:</span> ${cOut}</div>
+                        <div class="text-[10px] text-slate-400">Tiempo: <strong class="text-white">${hrs}</strong></div>
+                      </td>
                       <td class="p-3"><span class="px-2 py-0.5 rounded-full font-bold ${getStatusBadge(p.status)}">${p.status}</span></td>
                       <td class="p-3 text-right"><button type="button" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg border border-slate-700">Ver Detalle <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i></button></td>
                     </tr>
-                  `).join('')}
+                  `}).join('')}
                 </tbody>
               </table>
             </div>
@@ -1323,16 +1517,557 @@ function render() {
     function renderAdminLogistics() {
       return `
         <div class="space-y-4">
-          <div class="flex gap-2 border-b border-slate-800 pb-1">
-            <button type="button" onclick="setLogisticsSubtab('vehicles')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='vehicles'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Veh\u00edculos</button>
-            <button type="button" onclick="setLogisticsSubtab('fuel')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='fuel'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Combustible</button>
-            <button type="button" onclick="setLogisticsSubtab('staff')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='staff'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">T\u00e9cnicos</button>
-            <button type="button" onclick="setLogisticsSubtab('tools')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='tools'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}">Herramientas</button>
+          <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-1">
+            <button type="button" onclick="setLogisticsSubtab('vehicles')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='vehicles'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}"><i class="fa-solid fa-truck-pickup mr-1"></i>Veh\u00edculos</button>
+            <button type="button" onclick="setLogisticsSubtab('fuel')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='fuel'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}"><i class="fa-solid fa-gas-pump mr-1"></i>Combustible (Tickets RD$ 500)</button>
+            <button type="button" onclick="setLogisticsSubtab('inventory')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='inventory'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}"><i class="fa-solid fa-boxes-stacked mr-1"></i>Inventario con OCR</button>
+            <button type="button" onclick="setLogisticsSubtab('expenses')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='expenses'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}"><i class="fa-solid fa-receipt mr-1"></i>Gastos en Campo</button>
+            <button type="button" onclick="setLogisticsSubtab('staff')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='staff'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}"><i class="fa-solid fa-users-gear mr-1"></i>T\u00e9cnicos</button>
+            <button type="button" onclick="setLogisticsSubtab('tools')" class="px-3 py-2 text-xs font-bold border-b-2 ${currentLogisticsSubtab==='tools'?'border-rose-600 text-rose-400':'border-transparent text-slate-400'}"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>Herramientas</button>
           </div>
           ${currentLogisticsSubtab === 'vehicles' ? renderVehiclesLogistics() : ''}
           ${currentLogisticsSubtab === 'fuel' ? renderFuelLogistics() : ''}
+          ${currentLogisticsSubtab === 'inventory' ? renderInventoryLogistics() : ''}
+          ${currentLogisticsSubtab === 'expenses' ? renderExpensesLogistics() : ''}
           ${currentLogisticsSubtab === 'staff' ? renderStaffLogistics() : ''}
           ${currentLogisticsSubtab === 'tools' ? renderToolsLogistics() : ''}
+        </div>
+      `;
+    }
+
+    /* ===================================================================
+       1. CREACION DE NUEVO PROYECTO Y GESTION DE TIEMPOS
+       =================================================================== */
+    function openNewProjectModal() {
+      editingProjectId = null;
+      document.getElementById('editProjectId').value = '';
+      document.getElementById('editProjectCode').value = 'CX-SGE-' + new Date().getFullYear() + '-' + String(appData.projects.length + 35).padStart(3, '0');
+      document.getElementById('editProjectTitle').value = '';
+      document.getElementById('editProjectClient').value = '';
+      document.getElementById('editProjectServiceType').value = 'INSTALACI\u00d3N';
+      document.getElementById('editProjectContact').value = '';
+      document.getElementById('editProjectPlannedDate').value = new Date().toLocaleDateString('es-DO');
+      document.getElementById('editProjectAddress').value = '';
+      document.getElementById('editProjectStatus').value = 'Levantamiento';
+      document.getElementById('editProjectLat').value = '18.472000';
+      document.getElementById('editProjectLng').value = '-69.939000';
+      const kmInput = document.getElementById('editProjectKm');
+      if (kmInput) kmInput.value = 25;
+
+      const techSelect = document.getElementById('editProjectTechLeader');
+      const crewSelect = document.getElementById('editProjectTechCrew');
+      const opts = '<option value="">Sin Asignar</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      techSelect.innerHTML = opts;
+      crewSelect.innerHTML = opts;
+      openModal('editProjectModal');
+    }
+
+    /* ===================================================================
+       2. MONITOREO DE PERSONAL EN CAMPO (GPS EN VIVO, GEOCERCAS Y TIEMPOS)
+       =================================================================== */
+    function renderAdminFieldMonitoring() {
+      const stats = computeAllTechKPIStats();
+      const activeProjects = appData.projects.filter(p => p.tracking && p.tracking.checkIn && !p.tracking.checkOut);
+      const completedToday = appData.projects.filter(p => p.tracking && p.tracking.checkOut);
+
+      return `
+        <div class="space-y-6">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+              <div>
+                <h3 class="text-sm font-bold text-white uppercase flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 live-pulse"></span>
+                  Monitoreo de Personal en Campo &amp; Geocercas GPS
+                </h3>
+                <p class="text-[11px] text-slate-400">Supervisi\u00f3n en tiempo real de ubicaci\u00f3n, distancia al objetivo, hora de llegada/salida, veh\u00edculo y herramientas en terreno</p>
+              </div>
+              <div class="flex gap-2 text-xs">
+                <span class="px-3 py-1.5 rounded-xl bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold">En Obra Ahora: ${activeProjects.length}</span>
+                <span class="px-3 py-1.5 rounded-xl bg-blue-950 text-blue-300 border border-blue-800 font-bold">Salidas Registradas: ${completedToday.length}</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              ${appData.technicians.map(t => {
+                const currentProj = appData.projects.find(p => (p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name))) && p.tracking && p.tracking.checkIn && !p.tracking.checkOut)
+                  || appData.projects.find(p => p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name)));
+                const isOnSite = currentProj && currentProj.tracking && currentProj.tracking.checkIn && !currentProj.tracking.checkOut;
+                const isVerified = currentProj && currentProj.tracking && currentProj.tracking.isVerifiedOnSite;
+                const distM = (currentProj && currentProj.tracking && currentProj.tracking.distanceFromTargetMeters != null) ? currentProj.tracking.distanceFromTargetMeters + ' m de geocerca' : 'Sin lectura GPS reciente';
+                const veh = appData.vehicles.find(v => v.assignedTo === t.name || (t.vehiclePlate && v.plate === t.vehiclePlate));
+                const toolsCount = appData.tools.filter(tl => tl.assignedTo === t.name).length;
+                const mapQuery = (currentProj && currentProj.targetLat && currentProj.targetLng) ? `${currentProj.targetLat},${currentProj.targetLng}` : encodeURIComponent(currentProj ? currentProj.address : 'Santo Domingo');
+
+                return `
+                  <div class="bg-slate-950/90 border ${isOnSite ? (isVerified ? 'border-emerald-700/80' : 'border-amber-700/80') : 'border-slate-800'} rounded-2xl p-4 flex flex-col justify-between space-y-3 shadow">
+                    <div>
+                      <div class="flex items-start justify-between gap-2">
+                        <div>
+                          <div class="font-bold text-white text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-Astronaut text-rose-400"></i> ${t.name}
+                          </div>
+                          <div class="text-[11px] text-slate-400">${t.level} \u00b7 Tel: <span class="font-mono text-slate-300">${t.phone}</span></div>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isOnSite ? (isVerified ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800') : 'bg-slate-800 text-slate-400'}">
+                          ${isOnSite ? (isVerified ? 'EN GEOCERCA' : 'FUERA DE RANGO') : 'EN RUTA / BASE'}
+                        </span>
+                      </div>
+
+                      <div class="mt-3 bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs space-y-1">
+                        <div class="text-[10px] uppercase font-bold text-slate-400">Proyecto Activo / Asignado</div>
+                        ${currentProj ? `
+                          <div class="font-bold text-rose-400 font-mono">${currentProj.code}</div>
+                          <div class="text-white font-semibold truncate">${currentProj.title}</div>
+                          <div class="text-[11px] text-slate-400 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${currentProj.address}</div>
+                          <div class="pt-1 border-t border-slate-800/80 flex justify-between font-mono text-[11px]">
+                            <span>Entrada: <strong class="text-emerald-400">${(currentProj.tracking && currentProj.tracking.checkIn) || '--:--'}</strong></span>
+                            <span>Salida: <strong class="text-amber-300">${(currentProj.tracking && currentProj.tracking.checkOut) || '--:--'}</strong></span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 font-mono">Precisi\u00f3n: ${distM}</div>
+                        ` : `<div class="text-slate-500 italic py-2">Sin orden asignada actualmente</div>`}
+                      </div>
+                    </div>
+
+                    <div class="space-y-2 pt-1">
+                      <div class="flex items-center justify-between text-[11px] text-slate-300 bg-slate-900/60 px-2.5 py-1.5 rounded-lg border border-slate-800">
+                        <span><i class="fa-solid fa-truck-pickup text-blue-400 mr-1"></i> ${veh ? veh.plate + ' (' + veh.model + ')' : 'Sin unidad'}</span>
+                        <span><i class="fa-solid fa-screwdriver-wrench text-amber-400 mr-1"></i> ${toolsCount} herr.</span>
+                      </div>
+                      <div class="flex gap-2">
+                        ${currentProj ? `<button type="button" onclick="openProjectDetailModal('${currentProj.id}')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-1.5 px-2.5 rounded-xl text-xs font-bold border border-slate-700">Ficha &amp; Tiempos</button>` : ''}
+                        <a href="https://www.google.com/maps/search/?api=1&query=${mapQuery}" target="_blank" class="flex-1 bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 py-1.5 px-2.5 rounded-xl text-xs font-bold border border-emerald-700 text-center">
+                          <i class="fa-solid fa-map-location-dot mr-1"></i> Mapa GPS
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ===================================================================
+       3. GESTION DE INVENTARIO CON ESCANEO OCR
+       =================================================================== */
+    let inventorySearchQuery = '';
+    function handleInventorySearch(val) {
+      inventorySearchQuery = (val || '').trim().toLowerCase();
+      render();
+    }
+
+    function renderInventoryLogistics() {
+      if (!Array.isArray(appData.inventory)) appData.inventory = [];
+      const list = appData.inventory.filter(item =>
+        !inventorySearchQuery ||
+        (item.sku && item.sku.toLowerCase().includes(inventorySearchQuery)) ||
+        (item.name && item.name.toLowerCase().includes(inventorySearchQuery)) ||
+        (item.category && item.category.toLowerCase().includes(inventorySearchQuery))
+      );
+      const totalValue = appData.inventory.reduce((acc, i) => acc + ((Number(i.stock) || 0) * (Number(i.unitCost) || 0)), 0);
+      const lowStockCount = appData.inventory.filter(i => Number(i.stock) <= Number(i.minStock || 2)).length;
+
+      return `
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow space-y-4 p-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-boxes-stacked text-blue-400 mr-1.5"></i> Inventario Centralizado con Escaneo OCR</h3>
+              <p class="text-[11px] text-slate-400">Control de existencias, alertas de stock m\u00ednimo, valorizaci\u00f3n en RD$ y captura por OCR de etiquetas o conduces</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-400 font-bold">Valor Stock: RD$ ${totalValue.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
+              ${lowStockCount > 0 ? `<span class="px-3 py-1.5 rounded-xl bg-rose-950 border border-rose-800 text-xs font-bold text-rose-300"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Stock Bajo: ${lowStockCount}</span>` : ''}
+              <button type="button" onclick="openInventoryModal()" class="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-camera"></i> + Agregar / Escanear con OCR
+              </button>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <input type="text" value="${inventorySearchQuery}" oninput="handleInventorySearch(this.value)" placeholder="Buscar por SKU, descripci\u00f3n o categor\u00eda..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950 text-slate-400 uppercase border-b border-slate-800">
+                <tr>
+                  <th class="p-3">SKU / Referencia</th>
+                  <th class="p-3">Equipo / Material</th>
+                  <th class="p-3">Categor\u00eda / Ubicaci\u00f3n</th>
+                  <th class="p-3 text-center">Stock Actual</th>
+                  <th class="p-3">Costo Unit. (RD$)</th>
+                  <th class="p-3">Subtotal (RD$)</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${list.length === 0 ? `<tr><td colspan="7" class="p-4 text-center text-slate-500 italic">No hay art\u00edculos en inventario con ese filtro.</td></tr>` : list.map(item => {
+                  const isLow = Number(item.stock) <= Number(item.minStock || 2);
+                  const sub = (Number(item.stock) || 0) * (Number(item.unitCost) || 0);
+                  return `
+                    <tr class="hover:bg-slate-800/40">
+                      <td class="p-3 font-mono font-bold text-blue-400">${item.sku}</td>
+                      <td class="p-3 font-bold text-white">${item.name}</td>
+                      <td class="p-3 text-slate-300">${item.category}<div class="text-[10px] text-slate-500">${item.location || 'Almac\u00e9n'}</div></td>
+                      <td class="p-3 text-center">
+                        <div class="inline-flex items-center gap-1.5">
+                          <button type="button" onclick="adjustInventoryStock('${item.id}', -1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">-</button>
+                          <span class="font-mono font-bold px-2 py-0.5 rounded ${isLow ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'}">${item.stock}</span>
+                          <button type="button" onclick="adjustInventoryStock('${item.id}', 1)" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">+</button>
+                        </div>
+                      </td>
+                      <td class="p-3 font-mono text-slate-200">RD$ ${Number(item.unitCost || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                      <td class="p-3 font-mono font-bold text-emerald-400">RD$ ${sub.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                      <td class="p-3 text-right">
+                        <button type="button" onclick="openInventoryModal('${item.id}')" class="text-blue-400 mr-1.5 p-1.5 bg-slate-800 hover:bg-slate-700 rounded"><i class="fa-solid fa-pen"></i></button>
+                        <button type="button" onclick="deleteInventoryItem('${item.id}')" class="text-rose-400 p-1.5 bg-red-950 hover:bg-red-900 rounded"><i class="fa-solid fa-trash"></i></button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function openInventoryModal(id = null) {
+      if (!Array.isArray(appData.inventory)) appData.inventory = [];
+      const statusEl = document.getElementById('inventoryOcrStatus');
+      if (statusEl) statusEl.innerText = 'Detecta SKU, modelo, cantidad y precio desde una foto o PDF';
+      if (id) {
+        const item = appData.inventory.find(x => x.id === id);
+        if (!item) return;
+        document.getElementById('invEditId').value = item.id;
+        document.getElementById('invSku').value = item.sku || '';
+        document.getElementById('invCategory').value = item.category || 'Equipos Activos';
+        document.getElementById('invLocation').value = item.location || 'Almac\u00e9n Central';
+        document.getElementById('invName').value = item.name || '';
+        document.getElementById('invStock').value = item.stock ?? 0;
+        document.getElementById('invMinStock').value = item.minStock ?? 3;
+        document.getElementById('invUnitCost').value = item.unitCost ?? 0;
+      } else {
+        document.getElementById('invEditId').value = '';
+        document.getElementById('invSku').value = 'SKU-' + Date.now().toString().slice(-4);
+        document.getElementById('invCategory').value = 'Equipos Activos';
+        document.getElementById('invLocation').value = 'Almac\u00e9n Central';
+        document.getElementById('invName').value = '';
+        document.getElementById('invStock').value = 10;
+        document.getElementById('invMinStock').value = 3;
+        document.getElementById('invUnitCost').value = 2500;
+      }
+      openModal('inventoryModal');
+    }
+
+    async function handleInventoryOcrUpload(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const statusEl = document.getElementById('inventoryOcrStatus');
+      if (statusEl) statusEl.innerText = 'Ejecutando reconocimiento OCR en documento...';
+      try {
+        let extractedText = '';
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+          const pdfRes = await extractPdfTextFromAllPages(file);
+          extractedText = pdfRes.text || '';
+        } else if (typeof Tesseract !== 'undefined') {
+          const dataUrl = await readFileAsDataURL(file);
+          const res = await Tesseract.recognize(dataUrl, 'spa');
+          extractedText = (res && res.data && res.data.text) ? res.data.text : '';
+        }
+        if (extractedText.trim()) {
+          const skuMatch = extractedText.match(/(?:SKU|Ref|Modelo|Part|Cod)\s*[:#-]?\s*([A-Z0-9-_/]{4,22})/i) || extractedText.match(/\b([A-Z]{2,4}-[A-Z0-9-]{3,16})\b/);
+          const priceMatch = extractedText.match(/(?:RD\$|\$|Precio|Costo|Total)\s*([\d,]+(?:\.\d{2})?)/i);
+          const qtyMatch = extractedText.match(/(?:Cant|Qty|Stock|Unidades)\s*[:#-]?\s*(\d{1,4})/i);
+          const firstLine = extractedText.split('\n').map(l => l.trim()).find(l => l.length > 6) || '';
+
+          if (skuMatch) document.getElementById('invSku').value = skuMatch[1].toUpperCase();
+          if (priceMatch) document.getElementById('invUnitCost').value = parseFloat(priceMatch[1].replace(/,/g, '')) || 0;
+          if (qtyMatch) document.getElementById('invStock').value = parseInt(qtyMatch[1]) || 1;
+          if (firstLine && !document.getElementById('invName').value) document.getElementById('invName').value = firstLine.slice(0, 90);
+          if (statusEl) statusEl.innerText = 'OCR completado: verifica los campos detectados antes de guardar.';
+          showToast('Datos de inventario extra\u00eddos por OCR.');
+        } else {
+          if (statusEl) statusEl.innerText = 'No se detect\u00f3 texto claro; completa los datos manualmente.';
+        }
+      } catch (err) {
+        if (statusEl) statusEl.innerText = 'Error al leer OCR. Puedes ingresar los datos manualmente.';
+      } finally {
+        e.target.value = '';
+      }
+    }
+
+    function handleSaveInventoryItem(e) {
+      e.preventDefault();
+      if (!Array.isArray(appData.inventory)) appData.inventory = [];
+      const id = document.getElementById('invEditId').value;
+      const itemData = {
+        sku: document.getElementById('invSku').value.trim().toUpperCase(),
+        category: document.getElementById('invCategory').value,
+        location: document.getElementById('invLocation').value.trim(),
+        name: document.getElementById('invName').value.trim(),
+        stock: parseInt(document.getElementById('invStock').value) || 0,
+        minStock: parseInt(document.getElementById('invMinStock').value) || 0,
+        unitCost: parseFloat(document.getElementById('invUnitCost').value) || 0
+      };
+      if (id) {
+        const existing = appData.inventory.find(x => x.id === id);
+        if (existing) Object.assign(existing, itemData);
+      } else {
+        appData.inventory.unshift({ id: 'INV_' + Date.now(), ...itemData });
+      }
+      closeModal('inventoryModal');
+      saveData();
+      showToast('Inventario actualizado correctamente.');
+    }
+
+    function adjustInventoryStock(id, delta) {
+      const item = (appData.inventory || []).find(x => x.id === id);
+      if (!item) return;
+      item.stock = Math.max(0, (Number(item.stock) || 0) + delta);
+      saveData();
+    }
+
+    function deleteInventoryItem(id) {
+      if (!confirm('\u00bfEliminar este art\u00edculo del inventario?')) return;
+      appData.inventory = (appData.inventory || []).filter(x => x.id !== id);
+      saveData();
+    }
+
+    /* ===================================================================
+       4. MODULO DE GASTOS OPERATIVOS EN CAMPO (CON ESCANEO OCR DE RECIBOS)
+       =================================================================== */
+    let tempExpenseReceiptDoc = null;
+
+    function openExpenseModal(defaultTech = '', defaultProjCode = '') {
+      const techSel = document.getElementById('expenseTechSelect');
+      const projSel = document.getElementById('expenseProjectSelect');
+      if (!techSel || !projSel) return;
+
+      techSel.innerHTML = appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+      if (defaultTech) techSel.value = defaultTech;
+      else if (currentAuthUser && currentAuthUser.role === 'tech') techSel.value = currentAuthUser.name;
+
+      projSel.innerHTML = '<option value="">-- Gasto Operativo General --</option>' +
+        appData.projects.map(p => `<option value="${p.code}">${p.code} \u2014 ${p.title}</option>`).join('');
+      if (defaultProjCode) projSel.value = defaultProjCode;
+
+      document.getElementById('expenseCategory').value = 'Materiales de Emergencia';
+      document.getElementById('expenseAmount').value = '';
+      document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('expenseNotes').value = '';
+      clearTempExpenseReceipt();
+      openModal('expenseModal');
+    }
+
+    function openExpenseModalFromProject() {
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      const techName = (currentAuthUser && currentAuthUser.role === 'tech') ? currentAuthUser.name : (p ? p.techLeader : '');
+      openExpenseModal(techName, p ? p.code : '');
+    }
+
+    function clearTempExpenseReceipt() {
+      tempExpenseReceiptDoc = null;
+      const card = document.getElementById('expenseReceiptPreviewCard');
+      if (card) card.classList.add('hidden');
+    }
+
+    async function handleExpenseReceiptOcr(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
+      const statusEl = document.getElementById('expenseOcrStatus');
+      if (statusEl) statusEl.innerText = 'Leyendo factura/recibo con OCR...';
+      try {
+        const dataUrl = await readFileAsDataURL(file);
+        tempExpenseReceiptDoc = { name: file.name, type: file.type || 'image/jpeg', data: dataUrl };
+        const card = document.getElementById('expenseReceiptPreviewCard');
+        const nameEl = document.getElementById('expenseReceiptFileName');
+        if (card && nameEl) {
+          nameEl.innerText = file.name;
+          card.classList.remove('hidden');
+        }
+
+        let text = '';
+        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+          const pdfRes = await extractPdfTextFromAllPages(file);
+          text = pdfRes.text || '';
+        } else if (typeof Tesseract !== 'undefined') {
+          const res = await Tesseract.recognize(dataUrl, 'spa');
+          text = (res && res.data && res.data.text) ? res.data.text : '';
+        }
+        if (text.trim()) {
+          const amountMatch = text.match(/(?:Total|Monto|RD\$|\$|Importe|Pagar)\s*[:#-]?\s*([\d,]+(?:\.\d{2})?)/i);
+          const ncfMatch = text.match(/\b(B0[1245]\d{8}|E3[1234]\d{10})\b/i);
+          if (amountMatch && !document.getElementById('expenseAmount').value) {
+            document.getElementById('expenseAmount').value = parseFloat(amountMatch[1].replace(/,/g, '')) || '';
+          }
+          const notesEl = document.getElementById('expenseNotes');
+          const prefix = ncfMatch ? `[NCF: ${ncfMatch[1].toUpperCase()}] ` : '[OCR Recibo]: ';
+          notesEl.value = (notesEl.value ? notesEl.value + ' | ' : '') + prefix + text.replace(/\s+/g, ' ').trim().slice(0, 120);
+          if (statusEl) statusEl.innerText = 'Factura le\u00edda por OCR. Revisa el monto RD$.';
+        } else {
+          if (statusEl) statusEl.innerText = 'Comprobante adjuntado.';
+        }
+      } catch (err) {
+        if (statusEl) statusEl.innerText = 'Comprobante adjuntado; completa el monto manualmente.';
+      } finally {
+        e.target.value = '';
+      }
+    }
+
+    function handleSaveFieldExpense(e) {
+      e.preventDefault();
+      if (!Array.isArray(appData.fieldExpenses)) appData.fieldExpenses = [];
+      const techName = document.getElementById('expenseTechSelect').value;
+      const projectCode = document.getElementById('expenseProjectSelect').value;
+      const category = document.getElementById('expenseCategory').value;
+      const amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
+      const date = document.getElementById('expenseDate').value;
+      const notes = document.getElementById('expenseNotes').value.trim();
+
+      const newExp = {
+        id: 'EXP_' + Date.now(),
+        techName,
+        projectCode,
+        category,
+        amount,
+        date,
+        notes,
+        status: (currentAuthUser && currentAuthUser.role === 'admin') ? 'Aprobado' : 'Pendiente',
+        receiptDoc: tempExpenseReceiptDoc
+      };
+      appData.fieldExpenses.unshift(newExp);
+      saveData();
+      addNotification('admin', `\ud83e\uddfe Gasto en campo registrado por ${techName}: RD$ ${amount.toLocaleString('es-DO')} (${category}).`);
+      showToast('Gasto operativo en campo guardado.');
+      closeModal('expenseModal');
+    }
+
+    function toggleExpenseApproval(expId) {
+      const exp = (appData.fieldExpenses || []).find(x => x.id === expId);
+      if (!exp) return;
+      exp.status = exp.status === 'Aprobado' ? 'Pendiente' : 'Aprobado';
+      saveData();
+      showToast(`Estado del gasto cambiado a ${exp.status}.`);
+    }
+
+    function viewExpenseReceipt(expId) {
+      const exp = (appData.fieldExpenses || []).find(x => x.id === expId);
+      if (exp && exp.receiptDoc) {
+        showFileViewerModal(exp.receiptDoc, `${exp.techName} - ${exp.category} (RD$ ${exp.amount})`);
+      }
+    }
+
+    function deleteFieldExpense(expId) {
+      if (!confirm('\u00bfEliminar este registro de gasto operativo?')) return;
+      appData.fieldExpenses = (appData.fieldExpenses || []).filter(x => x.id !== expId);
+      saveData();
+    }
+
+    function renderExpensesLogistics() {
+      if (!Array.isArray(appData.fieldExpenses)) appData.fieldExpenses = [];
+      const totalExpenses = appData.fieldExpenses.reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
+      const approvedExpenses = appData.fieldExpenses.filter(x => x.status === 'Aprobado').reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
+
+      return `
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-receipt text-emerald-400 mr-1.5"></i> Gastos Operativos en Campo (Vi\u00e1ticos, Peajes, Materiales Extra)</h3>
+              <p class="text-[11px] text-slate-400">Control de desembolsos en terreno por t\u00e9cnico y proyecto con soporte de facturas escaneadas por OCR</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-white">Total: <strong class="text-emerald-400">RD$ ${totalExpenses.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</strong></span>
+              <span class="px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-800 text-xs font-mono text-emerald-300">Aprobado: RD$ ${approvedExpenses.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
+              <button type="button" onclick="openExpenseModal()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> Registrar Gasto Campo
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950 text-slate-400 uppercase border-b border-slate-800">
+                <tr>
+                  <th class="p-3">Fecha</th>
+                  <th class="p-3">T\u00e9cnico / Proyecto</th>
+                  <th class="p-3">Categor\u00eda</th>
+                  <th class="p-3">Concepto / NCF</th>
+                  <th class="p-3">Monto (RD$)</th>
+                  <th class="p-3 text-center">Comprobante</th>
+                  <th class="p-3 text-center">Estatus</th>
+                  <th class="p-3 text-right">Acciones</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.fieldExpenses.length === 0 ? `<tr><td colspan="8" class="p-4 text-center text-slate-500 italic">No hay gastos operativos en campo registrados.</td></tr>` : appData.fieldExpenses.map(exp => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-3 font-mono text-[11px]">${exp.date}</td>
+                    <td class="p-3"><strong class="text-white">${exp.techName}</strong><div class="text-[10px] font-mono text-rose-400">${exp.projectCode || 'General'}</div></td>
+                    <td class="p-3 text-slate-200 font-semibold">${exp.category}</td>
+                    <td class="p-3 text-slate-300 max-w-xs truncate" title="${exp.notes || ''}">${exp.notes || '\u2014'}</td>
+                    <td class="p-3 font-mono font-bold text-emerald-400">RD$ ${Number(exp.amount || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                    <td class="p-3 text-center">
+                      ${exp.receiptDoc ? `<button type="button" onclick="viewExpenseReceipt('${exp.id}')" class="bg-slate-800 hover:bg-slate-700 text-blue-400 px-2 py-1 rounded text-[11px] font-bold"><i class="fa-solid fa-eye mr-1"></i>Ver</button>` : `<span class="text-slate-500 text-[10px]">Sin foto</span>`}
+                    </td>
+                    <td class="p-3 text-center">
+                      <button type="button" onclick="toggleExpenseApproval('${exp.id}')" class="px-2 py-0.5 rounded-full text-[10px] font-bold ${exp.status === 'Aprobado' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">
+                        ${exp.status || 'Pendiente'}
+                      </button>
+                    </td>
+                    <td class="p-3 text-right">
+                      <button type="button" onclick="deleteFieldExpense('${exp.id}')" class="text-rose-400 p-1.5 bg-red-950 hover:bg-red-900 rounded"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTechExpensesTab(techName) {
+      if (!Array.isArray(appData.fieldExpenses)) appData.fieldExpenses = [];
+      const myExps = appData.fieldExpenses.filter(x => x.techName && x.techName.toLowerCase() === techName.toLowerCase());
+      const myTotal = myExps.reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
+
+      return `
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-receipt text-emerald-400 mr-1.5"></i> Mis Gastos Operativos en Campo</h3>
+              <p class="text-[11px] text-slate-400">Reporta compras de emergencia, peajes o dieta adjuntando foto del voucher con OCR</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-xl text-emerald-400 font-bold">Total Reportado: RD$ ${myTotal.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</span>
+              <button type="button" onclick="openExpenseModal('${techName}')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">
+                <i class="fa-solid fa-camera mr-1"></i> + Nuevo Gasto
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950 text-slate-400 uppercase border-b border-slate-800">
+                <tr><th class="p-2.5">Fecha</th><th class="p-2.5">Proyecto</th><th class="p-2.5">Categor\u00eda / Detalle</th><th class="p-2.5">Monto RD$</th><th class="p-2.5">Estado</th></tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${myExps.length === 0 ? `<tr><td colspan="5" class="p-4 text-center text-slate-500 italic">No has registrado gastos en campo todav\u00eda.</td></tr>` : myExps.map(exp => `
+                  <tr>
+                    <td class="p-2.5 font-mono">${exp.date}</td>
+                    <td class="p-2.5 font-mono text-rose-400 font-bold">${exp.projectCode || 'General'}</td>
+                    <td class="p-2.5"><strong class="text-white">${exp.category}</strong><div class="text-[10px] text-slate-400">${exp.notes || ''}</div></td>
+                    <td class="p-2.5 font-mono font-bold text-emerald-400">RD$ ${Number(exp.amount || 0).toLocaleString('es-DO', { minimumFractionDigits: 2 })}</td>
+                    <td class="p-2.5"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${exp.status === 'Aprobado' ? 'bg-emerald-950 text-emerald-300' : 'bg-amber-950 text-amber-300'}">${exp.status || 'Pendiente'}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
         </div>
       `;
     }
@@ -1345,11 +2080,16 @@ function render() {
               <i class="fa-solid fa-plus mr-1"></i> Registrar Veh\u00edculo
             </button>
           </div>
-          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Placa</th><th class="p-3">Modelo</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acci\u00f3n</th></tr></thead>
+          <table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400 border-b border-slate-800"><tr><th class="p-3">Placa</th><th class="p-3">Modelo</th><th class="p-3">Rendimiento</th><th class="p-3">Custodio</th><th class="p-3 text-right">Acci\u00f3n</th></tr></thead>
           <tbody class="divide-y divide-slate-800">
             ${appData.vehicles.map(v => `
-              <tr><td class="p-3 text-white font-mono">${v.plate}</td><td class="p-3 text-slate-300">${v.model}</td><td class="p-3 text-blue-400">${v.assignedTo || 'Ninguno'}</td>
-              <td class="p-3 text-right"><button type="button" onclick="openVehicleModal('${v.id}')" class="text-blue-400 mr-2 p-1.5 bg-slate-800 hover:bg-slate-700 rounded"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteVehicle('${v.id}')" class="text-rose-400 p-1.5 bg-red-950 hover:bg-red-900 rounded"><i class="fa-solid fa-trash"></i></button></td></tr>
+              <tr>
+                <td class="p-3 text-white font-mono font-bold">${v.plate}</td>
+                <td class="p-3 text-slate-300">${v.model}</td>
+                <td class="p-3 font-mono text-emerald-400">${v.kmPerGal || 32} KM/Gal <span class="text-slate-500 text-[10px]">(RD$ ${v.fuelPriceGal || 290}/Gal)</span></td>
+                <td class="p-3 text-blue-400 font-semibold">${v.assignedTo || 'Ninguno'}</td>
+                <td class="p-3 text-right"><button type="button" onclick="openVehicleModal('${v.id}')" class="text-blue-400 mr-2 p-1.5 bg-slate-800 hover:bg-slate-700 rounded"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteVehicle('${v.id}')" class="text-rose-400 p-1.5 bg-red-950 hover:bg-red-900 rounded"><i class="fa-solid fa-trash"></i></button></td>
+              </tr>
             `).join('')}
           </tbody></table>
         </div>
@@ -1357,58 +2097,161 @@ function render() {
     }
 
     function renderFuelLogistics() {
+      const firstVeh = appData.vehicles[0] || null;
+      const defaultPrevKm = firstVeh ? (firstVeh.lastFuelKm || firstVeh.odo || 0) : 0;
       return `
         <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
-          <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Registro de combustible & costo por kil\u00f3metro</h3>
-          <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <div><label class="block text-[10px] text-slate-400 mb-1">Placa</label><select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs">${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate}</option>`).join('')}</select></div>
-            <div><label class="block text-[10px] text-slate-400 mb-1">Km Anterior</label><input type="number" id="fuelPrevKm" readonly class="w-full bg-slate-950 border border-slate-700 text-slate-400 px-2 py-1.5 rounded text-xs"></div>
-            <div><label class="block text-[10px] text-slate-400 mb-1">Km Actual</label><input type="number" id="fuelCurrentKm" required class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs"></div>
-            <div><label class="block text-[10px] text-slate-400 mb-1">Cantidad de tickets</label><input type="number" id="fuelTicketsCount" min="0" class="w-full bg-slate-800 border border-slate-700 text-white px-2 py-1.5 rounded text-xs"></div>
-            <div><label class="block text-[10px] text-slate-400 mb-1">Total (RD$)</label><input type="number" id="fuelCost" min="0" step="0.01" required class="w-full bg-slate-950 border border-slate-700 text-emerald-400 px-2 py-1.5 rounded text-xs font-bold"></div>
-            <div class="md:col-span-5 text-right mt-2"><button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg">Guardar Combustible</button></div>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Llenado de Combustible (Tickets de RD$ 500)</h3>
+              <p class="text-[11px] text-slate-400">Al digitar la cantidad de tickets de RD$ 500 se calcula autom\u00e1ticamente el total en pesos RD$ y el consumo por t\u00e9cnico</p>
+            </div>
+            <span class="text-xs font-mono bg-emerald-950 text-emerald-300 border border-emerald-800 px-2.5 py-1 rounded-lg">1 Ticket = RD$ 500.00</span>
+          </div>
+          <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-6 gap-3">
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">Placa / Veh\u00edculo</label>
+              <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs font-mono">
+                ${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate} (${v.assignedTo || 'Libre'})</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">T\u00e9cnico Responsable</label>
+              <select id="fuelDriverSelect" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs">
+                ${appData.technicians.map(t=>`<option value="${t.name}" ${firstVeh && firstVeh.assignedTo === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">Km Anterior</label>
+              <input type="number" id="fuelPrevKm" value="${defaultPrevKm}" readonly class="w-full bg-slate-950 border border-slate-700 text-slate-400 px-2.5 py-2 rounded-lg text-xs font-mono">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">Km Actual</label>
+              <input type="number" id="fuelCurrentKm" required placeholder="${defaultPrevKm + 180}" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs font-mono">
+            </div>
+            <div>
+              <label class="block text-[10px] text-amber-400 font-bold mb-1">Tickets de RD$ 500</label>
+              <input type="number" id="fuelTicketsCount" min="0" step="1" value="6" oninput="calculateFuelTotalMonto()" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 border border-amber-600/80 text-white px-2.5 py-2 rounded-lg text-xs font-mono font-bold">
+            </div>
+            <div>
+              <label class="block text-[10px] text-emerald-400 font-bold mb-1">Total Autom\u00e1tico (RD$)</label>
+              <input type="number" id="fuelCost" min="0" step="0.01" value="3000" required class="w-full bg-slate-950 border border-emerald-700 text-emerald-400 px-2.5 py-2 rounded-lg text-xs font-mono font-bold">
+            </div>
+            <div class="col-span-2 md:col-span-6 flex justify-end mt-1">
+              <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-1.5">
+                <i class="fa-solid fa-gas-pump"></i> Registrar Llenado de Combustible
+              </button>
+            </div>
           </form>
-          <div class="overflow-x-auto"><table class="w-full text-xs text-left"><thead class="bg-slate-950 text-slate-400"><tr><th class="p-2">Fecha</th><th class="p-2">Placa</th><th class="p-2">Dist</th><th class="p-2">Monto</th><th class="p-2">Tickets</th><th class="p-2">Costo/KM</th></tr></thead>
-          <tbody class="divide-y divide-slate-800">
-            ${appData.fuelLogs.map(l => `<tr><td class="p-2">${l.date}</td><td class="p-2">${l.plate}</td><td class="p-2 text-emerald-400">${l.dist == null ? 'N/D' : l.dist + ' KM'}</td><td class="p-2">RD$ ${l.cost}</td><td class="p-2">${l.ticketCount == null ? '\u2014' : l.ticketCount}</td><td class="p-2 font-bold ${l.costPerKm == null ? 'text-slate-500' : 'text-emerald-400'}">${l.costPerKm == null ? 'Sin datos' : 'RD$ ' + Number(l.costPerKm).toFixed(2)}</td></tr>`).join('')}
-          </tbody></table></div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-950 text-slate-400 uppercase border-b border-slate-800">
+                <tr>
+                  <th class="p-2.5">Fecha</th>
+                  <th class="p-2.5">Placa / T\u00e9cnico</th>
+                  <th class="p-2.5">Recorrido Od\u00f3metro</th>
+                  <th class="p-2.5">Tickets (RD$ 500)</th>
+                  <th class="p-2.5">Total RD$</th>
+                  <th class="p-2.5">Galones Est.</th>
+                  <th class="p-2.5">Rendimiento Real</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800">
+                ${appData.fuelLogs.length === 0 ? `<tr><td colspan="7" class="p-4 text-center text-slate-500 italic">No hay despachos de combustible registrados todav\u00eda.</td></tr>` : appData.fuelLogs.map(l => `
+                  <tr class="hover:bg-slate-800/40">
+                    <td class="p-2.5 font-mono text-[11px]">${l.date}</td>
+                    <td class="p-2.5"><strong class="text-white font-mono">${l.plate}</strong><div class="text-[10px] text-blue-400">${l.driver || 'Sin t\u00e9cnico'}</div></td>
+                    <td class="p-2.5 text-emerald-400 font-mono">${l.dist == null ? 'N/D' : l.dist + ' KM'}</td>
+                    <td class="p-2.5 font-mono font-bold text-amber-300">${l.ticketCount == null ? '\u2014' : l.ticketCount + ' tkts'}</td>
+                    <td class="p-2.5 font-mono font-bold text-emerald-400">RD$ ${Number(l.cost || 0).toLocaleString('es-DO')}</td>
+                    <td class="p-2.5 font-mono text-slate-300">${l.gallons ? Number(l.gallons).toFixed(2) + ' Gal' : '\u2014'}</td>
+                    <td class="p-2.5 font-mono font-bold ${l.costPerKm == null ? 'text-slate-500' : 'text-white'}">${l.costPerKm == null ? 'Sin datos' : 'RD$ ' + Number(l.costPerKm).toFixed(2) + '/KM'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
         </div>
       `;
     }
 
-function calculateFuelTotalMonto() { return false; }
+    function calculateFuelTotalMonto() {
+      const ticketsInput = document.getElementById('fuelTicketsCount');
+      const costInput = document.getElementById('fuelCost');
+      if (!ticketsInput || !costInput) return;
+      const count = parseFloat(ticketsInput.value);
+      if (Number.isFinite(count) && count >= 0) {
+        costInput.value = Math.round(count * 500);
+      } else {
+        costInput.value = 0;
+      }
+    }
 
-function updateFuelPlateHelper() {
+    function updateFuelPlateHelper() {
       const plate = document.getElementById('fuelPlateSelect').value;
       const v = appData.vehicles.find(x => x.plate === plate);
-      document.getElementById('fuelPrevKm').value = v ? v.lastFuelKm : 0;
+      const prevInput = document.getElementById('fuelPrevKm');
+      if (prevInput) prevInput.value = v ? (v.lastFuelKm || v.odo || 0) : 0;
+      const driverSelect = document.getElementById('fuelDriverSelect');
+      if (driverSelect && v && v.assignedTo) {
+        driverSelect.value = v.assignedTo;
+      }
     }
 
     function handleFuelSubmit(e) {
       e.preventDefault();
       const plate = document.getElementById('fuelPlateSelect').value;
+      const driverEl = document.getElementById('fuelDriverSelect');
       const currentKm = Number(document.getElementById('fuelCurrentKm').value);
-      const cost = Number(document.getElementById('fuelCost').value);
       const ticketField = document.getElementById('fuelTicketsCount');
       const ticketRaw = ticketField ? String(ticketField.value || '').trim() : '';
       const ticketCount = ticketRaw === '' ? null : Number(ticketRaw);
+
+      // Si hay cantidad de tickets, calcular autom\u00e1ticamente a RD$ 500 por ticket si el costo no fue editado manualmente
+      let cost = Number(document.getElementById('fuelCost').value);
+      if (ticketCount !== null && Number.isFinite(ticketCount) && ticketCount > 0) {
+        cost = ticketCount * 500;
+        document.getElementById('fuelCost').value = cost;
+      }
+
       const vehicle = appData.vehicles.find(item => item.plate === plate);
+      const driver = (driverEl && driverEl.value) ? driverEl.value : (vehicle && vehicle.assignedTo ? vehicle.assignedTo : '');
       const typedPrevious = Number(document.getElementById('fuelPrevKm').value);
-      const prevKm = typedPrevious > 0 ? typedPrevious : Number(vehicle && vehicle.lastFuelKm ? vehicle.lastFuelKm : 0);
-      if (!plate || !Number.isFinite(currentKm) || currentKm <= 0 || !Number.isFinite(cost) || cost < 0 || (ticketCount !== null && (!Number.isInteger(ticketCount) || ticketCount < 0))) {
-        alert('Verifica la placa, el kilometraje y el monto del combustible.');
+      const prevKm = typedPrevious > 0 ? typedPrevious : Number(vehicle && (vehicle.lastFuelKm || vehicle.odo) ? (vehicle.lastFuelKm || vehicle.odo) : 0);
+
+      if (!plate || !Number.isFinite(currentKm) || currentKm <= 0 || !Number.isFinite(cost) || cost < 0) {
+        alert('Verifica la placa, el kilometraje actual y los tickets de combustible.');
         return;
       }
       if (prevKm > 0 && currentKm <= prevKm) {
-        alert('El kilometraje actual debe ser mayor que el anterior.');
+        alert('El kilometraje actual debe ser mayor que el anterior (' + prevKm + ' KM).');
         return;
       }
+
       const dist = prevKm > 0 ? currentKm - prevKm : null;
       const costPerKm = dist > 0 ? Number((cost / dist).toFixed(2)) : null;
-      appData.fuelLogs.unshift({ id: Date.now(), date: new Date().toLocaleDateString('es-DO'), plate: plate, dist: dist, cost: cost, ticketCount: ticketCount, costPerKm: costPerKm, dev: 'N/D' });
-      if (vehicle) vehicle.lastFuelKm = currentKm;
+      const fuelPriceGal = (vehicle && Number(vehicle.fuelPriceGal) > 0) ? Number(vehicle.fuelPriceGal) : 290;
+      const gallons = Number((cost / fuelPriceGal).toFixed(2));
+
+      appData.fuelLogs.unshift({
+        id: Date.now(),
+        date: new Date().toLocaleDateString('es-DO'),
+        plate: plate,
+        driver: driver,
+        dist: dist,
+        cost: cost,
+        ticketCount: ticketCount,
+        gallons: gallons,
+        costPerKm: costPerKm,
+        dev: 'N/D'
+      });
+
+      if (vehicle) {
+        vehicle.lastFuelKm = currentKm;
+        vehicle.odo = currentKm;
+      }
       if (!saveData()) return;
-      showToast('Registro guardado. El consumo requiere registrar litros; no se estim\u00f3 un porcentaje.');
+      showToast(`Llenado registrado: ${ticketCount || 0} tickets = RD$ ${cost.toLocaleString('es-DO')} (${gallons} Gal).`);
     }
 
 function renderStaffLogistics() {
@@ -1458,6 +2301,31 @@ function renderStaffLogistics() {
         const onSiteVerified = checkedIn.filter(p => p.tracking.isVerifiedOnSite).length;
         const gpsRate = checkedIn.length > 0 ? Math.round((onSiteVerified / checkedIn.length) * 100) : 100;
 
+        // Veh\u00edculo asignado y rendimiento (KM por Gal\u00f3n / Precio por Gal\u00f3n)
+        const myVehicle = appData.vehicles.find(v => (v.assignedTo && v.assignedTo.toLowerCase() === t.name.toLowerCase()) || (t.vehiclePlate && v.plate === t.vehiclePlate)) || null;
+        const vehiclePlate = myVehicle ? myVehicle.plate : (t.vehiclePlate || 'Sin Veh\u00edculo');
+        const vehicleModel = myVehicle ? myVehicle.model : 'Est\u00e1ndar';
+        const kmPerGal = (myVehicle && Number(myVehicle.kmPerGal) > 0) ? Number(myVehicle.kmPerGal) : 32;
+        const fuelPriceGal = (myVehicle && Number(myVehicle.fuelPriceGal) > 0) ? Number(myVehicle.fuelPriceGal) : 290;
+
+        // C\u00e1lculo de KM de Proyectos Asignados y Consumo Estimado del Veh\u00edculo
+        const totalProjectsKm = assignedProj.reduce((acc, p) => acc + (Number(p.projectKm) > 0 ? Number(p.projectKm) : 25), 0);
+        const estGallonsProjects = Number((totalProjectsKm / kmPerGal).toFixed(2));
+        const estCostProjectsRD = Math.round(estGallonsProjects * fuelPriceGal);
+        const estTicketsProjects = Number((estCostProjectsRD / 500).toFixed(1));
+
+        // Combustible Real Despachado al T\u00e9cnico / Veh\u00edculo en Log\u00edstica
+        const myFuelLogs = (appData.fuelLogs || []).filter(f =>
+          (f.driver && f.driver.toLowerCase() === t.name.toLowerCase()) ||
+          (myVehicle && f.plate === myVehicle.plate) ||
+          (t.vehiclePlate && f.plate === t.vehiclePlate)
+        );
+        const actualFuelCostRD = myFuelLogs.reduce((acc, f) => acc + (Number(f.cost) || 0), 0);
+        const actualTicketsCount = myFuelLogs.reduce((acc, f) => acc + (Number(f.ticketCount) || Math.round((Number(f.cost) || 0) / 500)), 0);
+        const actualOdoKm = myFuelLogs.reduce((acc, f) => acc + (Number(f.dist) || 0), 0);
+        const actualGallons = Number((actualFuelCostRD / fuelPriceGal).toFixed(2));
+        const fuelBalanceRD = actualFuelCostRD - estCostProjectsRD; // Positivo = Exceso sobre proyectos, Negativo = Ahorro
+
         // \u00daltimo registro de hora de llegada y salida
         const withTimes = assignedProj.filter(p => p.tracking && (p.tracking.checkIn || p.tracking.checkOut));
         const lastProjWithTime = withTimes.length > 0 ? withTimes[0] : (assignedProj[0] || null);
@@ -1468,7 +2336,7 @@ function renderStaffLogistics() {
 
         // Evaluaciones manuales e incidencias de este t\u00e9cnico
         const myEvals = appData.kpiEvaluations.filter(ev => ev.techName && ev.techName.toLowerCase() === t.name.toLowerCase());
-        const penaltyPoints = myEvals.reduce((acc, ev) => acc + (Number(ev.pointsDelta) || 0), 0); // usualmente negativo
+        const penaltyPoints = myEvals.reduce((acc, ev) => acc + (Number(ev.pointsDelta) || 0), 0);
         const conductCount = myEvals.filter(ev => ev.conduct).length;
         const overBudgetCount = myEvals.filter(ev => ev.overBudget).length;
         const omittedItemCount = myEvals.filter(ev => ev.omittedItem).length;
@@ -1485,6 +2353,19 @@ function renderStaffLogistics() {
           assignedCount: assignedProj.length,
           completedCount: completed,
           gpsRate,
+          vehiclePlate,
+          vehicleModel,
+          kmPerGal,
+          fuelPriceGal,
+          totalProjectsKm,
+          estGallonsProjects,
+          estCostProjectsRD,
+          estTicketsProjects,
+          actualFuelCostRD,
+          actualTicketsCount,
+          actualOdoKm,
+          actualGallons,
+          fuelBalanceRD,
           lastCheckIn,
           lastCheckOut,
           lastHours,
@@ -1502,19 +2383,65 @@ function renderStaffLogistics() {
       });
     }
 
+    function updateProjectKmFromKpi(projId, val) {
+      const p = appData.projects.find(x => x.id === projId);
+      if (!p) return;
+      const num = parseFloat(val);
+      if (!Number.isFinite(num) || num <= 0) return;
+      p.projectKm = num;
+      saveData();
+      showToast(`Distancia de ${p.code} actualizada a ${num} KM.`);
+    }
+
+    function updateVehicleYieldFromKpi(plate, val) {
+      const v = appData.vehicles.find(x => x.plate === plate);
+      if (!v) return;
+      const num = parseFloat(val);
+      if (!Number.isFinite(num) || num <= 0) return;
+      v.kmPerGal = num;
+      saveData();
+      showToast(`Rendimiento de ${v.plate} actualizado a ${num} KM/Gal.`);
+    }
+
     function renderAdminKPIs() {
       const techStats = computeAllTechKPIStats().sort((a, b) => b.performanceScore - a.performanceScore);
-      const allAttendanceProjects = appData.projects.filter(p => p.tracking && (p.tracking.checkIn || p.tracking.checkOut));
       const allEvals = Array.isArray(appData.kpiEvaluations) ? appData.kpiEvaluations : [];
+      const totalQuotedRD = appData.projects.reduce((acc, p) => acc + (p.quotation && Number(p.quotation.amount) ? Number(p.quotation.amount) : 0), 0);
+      const totalFuelDispatchedRD = (appData.fuelLogs || []).reduce((acc, f) => acc + (Number(f.cost) || 0), 0);
+      const totalFieldExpensesRD = (appData.fieldExpenses || []).reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
+      const totalInventoryValueRD = (appData.inventory || []).reduce((acc, i) => acc + ((Number(i.stock) || 0) * (Number(i.unitCost) || 0)), 0);
 
       return `
         <div class="space-y-6">
-          <!-- TABLA 1: RANKING TECNICO CON LLEGADA/SALIDA Y PENALIZACIONES -->
+          <!-- RESUMEN EJECUTIVO DE ANALITICAS Y REPORTES -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-file-invoice-dollar text-emerald-400 mr-1"></i>Volumen Cotizado</div>
+              <div class="text-xl font-black text-emerald-400 font-mono mt-1">RD$ ${totalQuotedRD.toLocaleString('es-DO')}</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">${appData.projects.filter(p=>p.status==='Finalizado').length} de ${appData.projects.length} proyectos cerrados</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-gas-pump text-amber-400 mr-1"></i>Combustible Despachado</div>
+              <div class="text-xl font-black text-amber-300 font-mono mt-1">RD$ ${totalFuelDispatchedRD.toLocaleString('es-DO')}</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">${Math.round(totalFuelDispatchedRD / 500)} tickets de RD$ 500</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-receipt text-rose-400 mr-1"></i>Gastos en Campo</div>
+              <div class="text-xl font-black text-rose-400 font-mono mt-1">RD$ ${totalFieldExpensesRD.toLocaleString('es-DO')}</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">${(appData.fieldExpenses || []).length} comprobantes registrados</div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
+              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-boxes-stacked text-blue-400 mr-1"></i>Valor Inventario OCR</div>
+              <div class="text-xl font-black text-blue-400 font-mono mt-1">RD$ ${totalInventoryValueRD.toLocaleString('es-DO')}</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">${(appData.inventory || []).length} referencias en almac\u00e9n</div>
+            </div>
+          </div>
+          <!-- TABLA 1: RANKING TECNICO CON LLEGADA/SALIDA, COMBUSTIBLE Y PENALIZACIONES -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
             <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico, Horarios &amp; Penalizaciones</h3>
-                <p class="text-[11px] text-slate-400">Mide cierres, GPS, hora de llegada/salida y resta puntos por conducta, excesos de material/presupuesto u omisi\u00f3n de equipos</p>
+                <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico, Horarios, Combustible &amp; Penalizaciones</h3>
+                <p class="text-[11px] text-slate-400">Mide cierres, GPS, hora de llegada/salida, uso de combustible seg\u00fan KM de proyectos y descuentos manuales de puntos</p>
               </div>
               <div class="flex flex-wrap gap-2">
                 <button type="button" onclick="openKpiEvalModal()" class="bg-rose-700 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
@@ -1534,9 +2461,10 @@ function renderStaffLogistics() {
                   <tr>
                     <th class="p-3">Pos / T\u00e9cnico</th>
                     <th class="p-3">Cierre Tareas</th>
-                    <th class="p-3">Hora Llegada / Salida (\u00dalt. Obra)</th>
+                    <th class="p-3">Hora Llegada / Salida</th>
+                    <th class="p-3">Combustible Proyectos vs Despachado</th>
                     <th class="p-3 text-center">Cumpl. GPS</th>
-                    <th class="p-3">Incidencias (Conducta / Presupuesto / Omisi\u00f3n)</th>
+                    <th class="p-3">Incidencias / Errores</th>
                     <th class="p-3 text-center">Pts Restados</th>
                     <th class="p-3">Score Ranking</th>
                     <th class="p-3 text-right">Acci\u00f3n</th>
@@ -1550,23 +2478,31 @@ function renderStaffLogistics() {
                           <span class="w-5 h-5 inline-flex items-center justify-center rounded-full font-bold text-[11px] ${idx===0?'bg-amber-500 text-slate-950':idx===1?'bg-slate-300 text-slate-950':idx===2?'bg-amber-700 text-white':'bg-slate-800 text-slate-300'}">${idx+1}</span>
                           <div>
                             <strong class="text-white block">${t.name}</strong>
-                            <span class="text-[10px] text-slate-400">${t.level}</span>
+                            <span class="text-[10px] text-slate-400">${t.level} \u00b7 <span class="text-blue-400 font-mono">${t.vehiclePlate}</span></span>
                           </div>
                         </div>
                       </td>
                       <td class="p-3 font-mono font-bold text-slate-200">${t.completedCount} / ${t.assignedCount}</td>
                       <td class="p-3">
                         <div class="text-[11px]">
-                          <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-right-to-bracket mr-1"></i>Entrada:</span> <span class="text-white font-mono">${t.lastCheckIn}</span>
+                          <span class="text-emerald-400 font-semibold">Entrada:</span> <span class="text-white font-mono">${t.lastCheckIn}</span>
                         </div>
                         <div class="text-[11px] mt-0.5">
-                          <span class="text-amber-400 font-semibold"><i class="fa-solid fa-right-from-bracket mr-1"></i>Salida:</span> <span class="text-white font-mono">${t.lastCheckOut}</span>
+                          <span class="text-amber-400 font-semibold">Salida:</span> <span class="text-white font-mono">${t.lastCheckOut}</span>
                         </div>
                         <div class="text-[10px] text-slate-400 font-mono mt-0.5">${t.lastProjCode} (${t.lastHours})</div>
                       </td>
+                      <td class="p-3">
+                        <div class="text-[11px] text-slate-200 font-mono">
+                          <span class="text-blue-400 font-bold">${t.totalProjectsKm} KM</span> (${t.estGallonsProjects} Gal) \u2192 <span class="text-emerald-400 font-bold">Est: RD$ ${t.estCostProjectsRD.toLocaleString('es-DO')}</span>
+                        </div>
+                        <div class="text-[10px] text-slate-400 font-mono mt-0.5">
+                          Despachado: <strong class="text-amber-300">RD$ ${t.actualFuelCostRD.toLocaleString('es-DO')}</strong> (${t.actualTicketsCount} tkts) \u00b7 Rend: ${t.kmPerGal} KM/Gal
+                        </div>
+                      </td>
                       <td class="p-3 text-center font-bold ${t.gpsRate>=80?'text-emerald-400':'text-amber-400'}">${t.gpsRate}%</td>
                       <td class="p-3">
-                        ${t.evalCount === 0 ? `<span class="text-[11px] text-emerald-400/80"><i class="fa-solid fa-circle-check mr-1"></i>Sin faltas registradas</span>` : `
+                        ${t.evalCount === 0 ? `<span class="text-[11px] text-emerald-400/80"><i class="fa-solid fa-circle-check mr-1"></i>Sin faltas</span>` : `
                           <div class="flex flex-wrap gap-1">
                             ${t.conductCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 text-[10px] font-semibold">Conducta (${t.conductCount})</span>` : ''}
                             ${t.overBudgetCount > 0 ? `<span class="px-1.5 py-0.5 rounded bg-orange-950 text-orange-300 border border-orange-800 text-[10px] font-semibold">Exceso Mat/Presup (${t.overBudgetCount})</span>` : ''}
@@ -1600,11 +2536,78 @@ function renderStaffLogistics() {
             </div>
           </div>
 
-          <!-- TABLA 2: CONTROL DETALLADO DE HORA DE LLEGADA Y SALIDA POR PROYECTO -->
+          <!-- TABLA 2: USO DE COMBUSTIBLE POR TECNICO SEGUN PROYECTOS ASIGNADOS, KM Y CONSUMO DEL VEHICULO -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
+            <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h4 class="text-xs font-bold text-white uppercase"><i class="fa-solid fa-gas-pump mr-1.5 text-emerald-400"></i>Control de Uso de Combustible por T\u00e9cnico (Seg\u00fan Proyectos Asignados, KM y Consumo del Veh\u00edculo)</h4>
+                <p class="text-[11px] text-slate-400">Calcula los kil\u00f3metros totales de los proyectos asignados, los galones requeridos seg\u00fan el rendimiento del veh\u00edculo y compara contra los tickets de RD$ 500 despachados</p>
+              </div>
+              <button type="button" onclick="setNavTab('logistics'); setLogisticsSubtab('fuel');" class="text-xs bg-emerald-900/80 hover:bg-emerald-800 text-emerald-200 border border-emerald-700 px-3 py-1.5 rounded-xl font-bold">
+                <i class="fa-solid fa-ticket mr-1"></i> Ir a Llenado de Tickets (RD$ 500)
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
+                  <tr>
+                    <th class="p-3">T\u00e9cnico</th>
+                    <th class="p-3">Veh\u00edculo / Rendimiento</th>
+                    <th class="p-3 text-center">Proy. Asignados</th>
+                    <th class="p-3 text-center">KM Totales Proyectos</th>
+                    <th class="p-3 text-center">Consumo Est. (Galones)</th>
+                    <th class="p-3">Costo Est. Proyectos (RD$)</th>
+                    <th class="p-3">Despachado Real (Tickets RD$ 500)</th>
+                    <th class="p-3">Balance / Variaci\u00f3n</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  ${techStats.map(t => {
+                    const isExcess = t.actualFuelCostRD > 0 && t.fuelBalanceRD > 500;
+                    return `
+                      <tr class="hover:bg-slate-800/40">
+                        <td class="p-3 font-bold text-white">${t.name}</td>
+                        <td class="p-3">
+                          <div class="font-mono text-blue-400 font-bold">${t.vehiclePlate} <span class="text-slate-400 font-normal text-[10px]">(${t.vehicleModel})</span></div>
+                          <div class="text-[10px] text-slate-300 mt-0.5 flex items-center gap-1">
+                            <span>Rendimiento:</span>
+                            ${t.vehiclePlate !== 'Sin Veh\u00edculo' ? `<input type="number" step="0.5" min="5" value="${t.kmPerGal}" onchange="updateVehicleYieldFromKpi('${t.vehiclePlate}', this.value)" class="w-14 bg-slate-800 border border-slate-700 rounded px-1.5 py-0.5 text-emerald-400 font-mono text-[10px]" title="Editar KM por Gal\u00f3n"> <span class="text-slate-400">KM/Gal</span>` : `<span class="font-mono text-emerald-400">${t.kmPerGal} KM/Gal (Ref)</span>`}
+                          </div>
+                        </td>
+                        <td class="p-3 text-center font-mono font-bold text-white">${t.assignedCount}</td>
+                        <td class="p-3 text-center font-mono font-bold text-blue-300">${t.totalProjectsKm} KM</td>
+                        <td class="p-3 text-center font-mono font-bold text-amber-300">${t.estGallonsProjects} Gal</td>
+                        <td class="p-3 font-mono">
+                          <div class="font-bold text-emerald-400">RD$ ${t.estCostProjectsRD.toLocaleString('es-DO')}</div>
+                          <div class="text-[10px] text-slate-400">\u2248 ${t.estTicketsProjects} tickets de RD$ 500</div>
+                        </td>
+                        <td class="p-3 font-mono">
+                          <div class="font-bold text-white">RD$ ${t.actualFuelCostRD.toLocaleString('es-DO')}</div>
+                          <div class="text-[10px] text-amber-300">${t.actualTicketsCount} tickets (${t.actualGallons} Gal \u00b7 ${t.actualOdoKm} KM od\u00f3m.)</div>
+                        </td>
+                        <td class="p-3 font-mono">
+                          ${t.actualFuelCostRD === 0 ? `<span class="text-slate-500 text-[11px]">Sin despachos registrados</span>` : `
+                            <span class="px-2 py-0.5 rounded font-bold text-[11px] ${isExcess ? 'bg-rose-950 text-rose-300 border border-rose-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'}">
+                              ${t.fuelBalanceRD > 0 ? '+RD$ ' + t.fuelBalanceRD.toLocaleString('es-DO') + ' (Exceso)' : 'RD$ ' + Math.abs(t.fuelBalanceRD).toLocaleString('es-DO') + ' (En Rango)'}
+                            </span>
+                          `}
+                        </td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TABLA 3 Y 4: HORARIOS + KM POR PROYECTO Y BITACORA DE EVALUACIONES MANUALES -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
               <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
-                <h4 class="text-xs font-bold text-white uppercase"><i class="fa-solid fa-clock mr-1.5 text-blue-400"></i>Control de Hora de Llegada y Salida por Proyecto</h4>
+                <div>
+                  <h4 class="text-xs font-bold text-white uppercase"><i class="fa-solid fa-route mr-1.5 text-blue-400"></i>Kil\u00f3metros, Consumo y Horario por Proyecto</h4>
+                  <p class="text-[10px] text-slate-400">Puedes ajustar los KM (ida y vuelta) de cada proyecto directamente aqu\u00ed</p>
+                </div>
                 <span class="text-[10px] text-slate-400 font-mono">${appData.projects.length} proyecto(s)</span>
               </div>
               <div class="overflow-x-auto max-h-80">
@@ -1612,8 +2615,8 @@ function renderStaffLogistics() {
                   <thead class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
                     <tr>
                       <th class="p-2.5">Proyecto / T\u00e9cnico</th>
-                      <th class="p-2.5">Hora Llegada</th>
-                      <th class="p-2.5">Hora Salida</th>
+                      <th class="p-2.5">KM Proyecto / Consumo</th>
+                      <th class="p-2.5">Llegada / Salida</th>
                       <th class="p-2.5">Tiempo / GPS</th>
                     </tr>
                   </thead>
@@ -1623,14 +2626,29 @@ function renderStaffLogistics() {
                       const cOut = (p.tracking && p.tracking.checkOut) ? p.tracking.checkOut : 'Pendiente';
                       const hrs = (p.tracking && p.tracking.hoursWorked) ? p.tracking.hoursWorked : '\u2014';
                       const verif = p.tracking && p.tracking.isVerifiedOnSite;
+                      const pKm = Number(p.projectKm) > 0 ? Number(p.projectKm) : 25;
+                      const leaderVeh = appData.vehicles.find(v => v.assignedTo && p.techLeader && v.assignedTo.toLowerCase() === p.techLeader.toLowerCase());
+                      const vYield = (leaderVeh && Number(leaderVeh.kmPerGal) > 0) ? Number(leaderVeh.kmPerGal) : 32;
+                      const vPrice = (leaderVeh && Number(leaderVeh.fuelPriceGal) > 0) ? Number(leaderVeh.fuelPriceGal) : 290;
+                      const pGal = (pKm / vYield).toFixed(2);
+                      const pCostRD = Math.round((pKm / vYield) * vPrice);
                       return `
-                        <tr class="hover:bg-slate-800/40 cursor-pointer" onclick="openProjectDetailModal('${p.id}')">
-                          <td class="p-2.5">
+                        <tr class="hover:bg-slate-800/40">
+                          <td class="p-2.5 cursor-pointer" onclick="openProjectDetailModal('${p.id}')">
                             <div class="font-mono font-bold text-rose-400 text-[11px]">${p.code}</div>
-                            <div class="text-white font-semibold truncate max-w-[180px]">${p.techLeader || 'Sin asignar'}</div>
+                            <div class="text-white font-semibold truncate max-w-[160px]">${p.techLeader || 'Sin asignar'}</div>
                           </td>
-                          <td class="p-2.5 font-mono ${cIn !== 'Sin marcar' ? 'text-emerald-400 font-bold' : 'text-slate-500'}">${cIn}</td>
-                          <td class="p-2.5 font-mono ${cOut !== 'Pendiente' ? 'text-amber-300 font-bold' : 'text-slate-500'}">${cOut}</td>
+                          <td class="p-2.5 font-mono">
+                            <div class="flex items-center gap-1">
+                              <input type="number" step="1" min="1" value="${pKm}" onchange="updateProjectKmFromKpi('${p.id}', this.value)" class="w-14 bg-slate-800 border border-slate-700 rounded px-1.5 py-0.5 text-white font-mono text-xs">
+                              <span class="text-slate-400 text-[10px]">KM</span>
+                            </div>
+                            <div class="text-[10px] text-emerald-400 mt-0.5">${pGal} Gal \u2248 RD$ ${pCostRD.toLocaleString('es-DO')}</div>
+                          </td>
+                          <td class="p-2.5 font-mono text-[11px]">
+                            <div class="${cIn !== 'Sin marcar' ? 'text-emerald-400 font-bold' : 'text-slate-500'}">E: ${cIn}</div>
+                            <div class="${cOut !== 'Pendiente' ? 'text-amber-300 font-bold' : 'text-slate-500'}">S: ${cOut}</div>
+                          </td>
                           <td class="p-2.5">
                             <div class="text-white font-mono text-[11px]">${hrs}</div>
                             <span class="text-[10px] ${verif ? 'text-emerald-400' : 'text-slate-400'}">${verif ? 'GPS Verificado' : 'Sin geocerca/GPS'}</span>
@@ -1643,7 +2661,7 @@ function renderStaffLogistics() {
               </div>
             </div>
 
-            <!-- TABLA 3: BITACORA DE EVALUACIONES MANUALES Y DESCUENTO DE PUNTOS -->
+            <!-- TABLA 4: BITACORA DE EVALUACIONES MANUALES Y DESCUENTO DE PUNTOS -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
               <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
                 <h4 class="text-xs font-bold text-white uppercase"><i class="fa-solid fa-clipboard-List mr-1.5 text-rose-400"></i>Historial de Evaluaciones Manuales &amp; Errores</h4>
@@ -1830,6 +2848,13 @@ function renderStaffLogistics() {
         Hora_Llegada: t.lastCheckIn,
         Hora_Salida: t.lastCheckOut,
         Tiempo_Trabajado: t.lastHours,
+        Vehiculo: t.vehiclePlate,
+        Rendimiento_KM_Gal: t.kmPerGal,
+        KM_Totales_Proyectos: t.totalProjectsKm,
+        Galones_Estimados_Proyectos: t.estGallonsProjects,
+        Combustible_Estimado_Proyectos_RD: t.estCostProjectsRD,
+        Tickets_500_Despachados: t.actualTicketsCount,
+        Combustible_Despachado_Real_RD: t.actualFuelCostRD,
         Cumplimiento_GPS_Pct: t.gpsRate + '%',
         Faltas_Conducta: t.conductCount,
         Exceso_Material_Presupuesto: t.overBudgetCount,
@@ -1881,10 +2906,14 @@ function openVehicleModal(id = null) {
         document.getElementById('vehicleOdo').value = v.odo;
         document.getElementById('vehicleStatus').value = v.status;
         document.getElementById('vehicleAssignedTo').value = v.assignedTo || '';
+        document.getElementById('vehicleKmPerGal').value = v.kmPerGal || 32;
+        document.getElementById('vehicleFuelPrice').value = v.fuelPriceGal || 290;
       } else {
         document.getElementById('vehicleModalTitle').innerText = 'Registrar Veh\u00edculo';
         document.getElementById('vehicleEditId').value = '';
         document.getElementById('vehiclePlate').value = ''; document.getElementById('vehicleModel').value = ''; document.getElementById('vehicleOdo').value = 0; document.getElementById('vehicleStatus').value = 'Operativo'; document.getElementById('vehicleAssignedTo').value = '';
+        document.getElementById('vehicleKmPerGal').value = 32;
+        document.getElementById('vehicleFuelPrice').value = 290;
       }
       openModal('vehicleModal');
     }
@@ -1897,7 +2926,9 @@ function openVehicleModal(id = null) {
         model: document.getElementById('vehicleModel').value.trim(),
         odo: parseInt(document.getElementById('vehicleOdo').value) || 0,
         status: document.getElementById('vehicleStatus').value,
-        assignedTo: document.getElementById('vehicleAssignedTo').value
+        assignedTo: document.getElementById('vehicleAssignedTo').value,
+        kmPerGal: parseFloat(document.getElementById('vehicleKmPerGal').value) || 32,
+        fuelPriceGal: parseFloat(document.getElementById('vehicleFuelPrice').value) || 290
       };
       if (id) { Object.assign(appData.vehicles.find(item => item.id === id), vData); } 
       else { appData.vehicles.push({ id: 'V_' + Date.now(), lastFuelKm: vData.odo, ...vData }); }
@@ -2000,6 +3031,8 @@ function handleSaveTechnician(e) {
       document.getElementById('editProjectStatus').value = p.status || 'Levantamiento';
       document.getElementById('editProjectLat').value = p.targetLat || '';
       document.getElementById('editProjectLng').value = p.targetLng || '';
+      const kmInput = document.getElementById('editProjectKm');
+      if (kmInput) kmInput.value = p.projectKm || 25;
 
       const techSelect = document.getElementById('editProjectTechLeader');
       const crewSelect = document.getElementById('editProjectTechCrew');
@@ -2307,8 +3340,21 @@ function downloadQuotationFile(projId) {
     function handleSaveEditedProject(e) {
       e.preventDefault();
       const id = document.getElementById('editProjectId').value;
-      const p = appData.projects.find(item => item.id === id);
-      if (!p) return;
+      let p = appData.projects.find(item => item.id === id);
+      const isNew = !p;
+      if (isNew) {
+        p = {
+          id: 'P_' + Date.now(),
+          geofenceRadiusMeters: 300,
+          observations: '',
+          survey: { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V Regulada con UPS', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+          serviceOrderFile: null,
+          quotation: null,
+          budget: { approved: false, services: [], materials: [] },
+          tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+        };
+        appData.projects.unshift(p);
+      }
       
       const oldLeader = p.techLeader;
       const newLeader = document.getElementById('editProjectTechLeader').value;
@@ -2325,6 +3371,8 @@ function downloadQuotationFile(projId) {
       const lngValue = document.getElementById('editProjectLng').value.trim();
       p.targetLat = latValue === '' ? null : Number(latValue);
       p.targetLng = lngValue === '' ? null : Number(lngValue);
+      const kmField = document.getElementById('editProjectKm');
+      if (kmField) p.projectKm = parseFloat(kmField.value) || 25;
       if (!p.tracking) p.tracking = {};
       p.tracking.legacyTargetNeedsReview = false;
       p.techLeader = newLeader;
@@ -3572,7 +4620,7 @@ function validateDatabaseImport(data) {
       if (!Array.isArray(data.projects) || !Array.isArray(data.technicians)) return false;
       if (!data.projects.every(item => item && typeof item === 'object' && (typeof item.id === 'string' || typeof item.id === 'number') && typeof item.code === 'string')) return false;
       if (!data.technicians.every(item => item && typeof item === 'object' && (typeof item.id === 'string' || typeof item.id === 'number') && typeof item.name === 'string')) return false;
-      for (const key of ['vehicles', 'tools', 'fuelLogs', 'notifications', 'kpiEvaluations']) {
+      for (const key of ['vehicles', 'tools', 'fuelLogs', 'notifications', 'kpiEvaluations', 'fieldExpenses', 'inventory']) {
         if (data[key] !== undefined && !Array.isArray(data[key])) return false;
       }
       return true;
