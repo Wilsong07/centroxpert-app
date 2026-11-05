@@ -12,6 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://unpkg.com/mqtt@5.3.4/dist/mqtt.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -58,7 +59,8 @@
     </div>
   </header>
 
-  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 no-print" id="mainContainer"></main>
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-24 md:pb-6 no-print" id="mainContainer"></main>
+  <nav id="techMobileBottomNav" class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 z-50 hidden no-print shadow-2xl"></nav>
   <div id="printContainer" class="hidden print-area"></div>
 
 <div id="modals-container" class="no-print">
@@ -225,6 +227,9 @@
           <button type="button" onclick="triggerTechDeparture()" class="flex-1 min-w-[140px] bg-amber-800/90 hover:bg-amber-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-amber-600/50 shadow"><i class="fa-solid fa-flag-checkered text-base"></i> Registrar Salida</button>
           <button type="button" onclick="triggerTechSurvey()" class="flex-1 min-w-[140px] bg-rose-700 hover:bg-rose-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-rose-500/50 shadow shadow-rose-900/40"><i class="fa-solid fa-file-pen text-base"></i> Cargar Levantamiento & Plano</button>
           <button type="button" onclick="openExpenseModalFromProject()" class="flex-1 min-w-[140px] bg-emerald-800/90 hover:bg-emerald-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-emerald-600/50 shadow"><i class="fa-solid fa-receipt text-base"></i> Registrar Gasto Campo</button>
+          <button type="button" onclick="openQrScannerModal('project')" class="flex-1 min-w-[140px] bg-teal-800/90 hover:bg-teal-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-teal-600/50 shadow"><i class="fa-solid fa-qrcode text-base"></i> Escanear QR Equipo</button>
+          <button type="button" onclick="openDeliverySignatureModal(currentDetailProjectId)" class="flex-1 min-w-[140px] bg-purple-800/90 hover:bg-purple-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-purple-500/50 shadow"><i class="fa-solid fa-file-signature text-base"></i> Acta &amp; Firma Entrega</button>
+          <button type="button" onclick="shareProjectViaWhatsApp(currentDetailProjectId)" class="flex-1 min-w-[140px] bg-green-700 hover:bg-green-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-green-500/50 shadow"><i class="fa-brands fa-whatsapp text-base"></i> Compartir WhatsApp</button>
         </div>
       </div>
 
@@ -275,6 +280,7 @@
       </div>
 
       <div id="detailProjectBudgetContainer" class="space-y-3"></div>
+      <div id="detailProjectSignatureContainer" class="hidden"></div>
 
       <!-- BOTONERA ACCIONES DEL COORDINADOR -->
       <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800" id="adminButtonsSection">
@@ -285,6 +291,8 @@
           <button type="button" id="detailProjectQuoteBtn" onclick="quoteCurrentDetailProject()" class="text-xs bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-file-invoice-dollar"></i> Cargar Cotizaci&#243;n</button>
           <button type="button" id="detailProjectPaymentBtn" onclick="document.getElementById('payment50Input').click()" class="text-xs bg-teal-700 hover:bg-teal-600 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow border border-teal-500/50"><i class="fa-solid fa-money-check-dollar"></i> Adjuntar Pago 50%</button>
           <input type="file" id="payment50Input" accept="image/*,application/pdf,.docx,.xlsx" class="hidden" onchange="handlePayment50Upload(event)">
+          <button type="button" onclick="openDeliverySignatureModal(currentDetailProjectId)" class="text-xs bg-purple-800 hover:bg-purple-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-file-signature"></i> Firma Cliente</button>
+          <button type="button" onclick="shareProjectViaWhatsApp(currentDetailProjectId)" class="text-xs bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
           <button type="button" onclick="printCurrentDetailProjectPDF()" class="text-xs bg-rose-900 hover:bg-rose-800 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-print"></i> Imprimir Ficha</button>
         </div>
       </div>
@@ -495,6 +503,7 @@
               <select id="surveyInventoryPicker" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white"></select>
               <input type="number" id="surveyInventoryQty" min="1" value="1" class="w-16 bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white font-mono text-center" title="Cantidad">
               <button type="button" onclick="addInventoryItemToSurvey()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold">+ Vincular al Proyecto</button>
+              <button type="button" onclick="openQrScannerModal('survey')" class="bg-teal-700 hover:bg-teal-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-qrcode"></i> Escanear QR en Vivo</button>
             </div>
           </div>
         </div>
@@ -938,6 +947,92 @@
     </div>
   </div>
 
+  <!-- Modal Escaner QR / Codigo de Barras en Vivo (html5-qrcode) -->
+  <div id="qrScannerModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[140] flex items-center justify-center p-4 hidden no-print" onclick="stopLiveQrScannerAndClose()">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-5 shadow-2xl space-y-4 relative" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-qrcode mr-2 text-emerald-400"></i>Esc&#225;ner QR / C&#243;digo de Barras en Vivo</h3>
+          <p class="text-[11px] text-slate-400" id="qrScannerSubtitle">Apunta la c&#225;mara a la etiqueta del equipo para vincularlo autom&#225;ticamente al proyecto</p>
+        </div>
+        <button type="button" onclick="stopLiveQrScannerAndClose()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-emerald-400 mb-1">Proyecto Destino</label>
+          <select id="qrTargetProjectSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white font-mono text-xs"></select>
+        </div>
+        <div>
+          <label class="block text-[10px] uppercase font-bold text-blue-400 mb-1">T&#233;cnico Responsable</label>
+          <select id="qrTargetTechSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-white text-xs"></select>
+        </div>
+      </div>
+
+      <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden min-h-[250px] flex flex-col items-center justify-center relative p-2">
+        <div id="qrReaderContainer" class="w-full max-w-[360px]"></div>
+        <div id="qrScannerStatusText" class="text-xs text-slate-400 mt-2 text-center font-mono">Iniciando c&#225;mara o selecciona imagen de etiqueta...</div>
+      </div>
+
+      <div class="bg-slate-950/80 border border-slate-800 p-3 rounded-xl space-y-2 text-xs">
+        <div class="font-bold text-slate-300 text-[11px] uppercase"><i class="fa-solid fa-keyboard mr-1 text-amber-400"></i> Entrada R&#225;pida / Lectura de Imagen QR</div>
+        <div class="flex flex-wrap gap-2">
+          <input type="text" id="qrManualCodeInput" placeholder="SKU o C&#243;digo escaneado (Ej: DS-2CD1043G2-LIUF)" class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-white font-mono text-xs">
+          <button type="button" onclick="processScannedQrCode(document.getElementById('qrManualCodeInput').value)" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold">Vincular</button>
+          <button type="button" onclick="document.getElementById('qrImageFallbackInput').click()" class="bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 px-2.5 py-1.5 rounded-lg font-semibold"><i class="fa-solid fa-camera mr-1"></i>Foto QR</button>
+          <input type="file" id="qrImageFallbackInput" accept="image/*" class="hidden" onchange="handleQrImageFileScan(event)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Acta de Entrega Digital y Firma del Cliente -->
+  <div id="deliverySignatureModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[145] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('deliverySignatureModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 relative my-8" onclick="event.stopPropagation();">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-base font-bold text-white"><i class="fa-solid fa-file-signature mr-2 text-purple-400"></i>Acta de Entrega Digital &amp; Firma de Conformidad</h3>
+          <p class="text-xs text-slate-400" id="sigModalProjectLabel">Cierre formal del proyecto y recepci&#243;n conforme del cliente</p>
+        </div>
+        <button type="button" onclick="closeModal('deliverySignatureModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">Recibido por (Nombre del Cliente / Encargado)</label>
+          <input type="text" id="sigClientNameInput" required placeholder="Ej: Ing. Ana Milagros Guzm&#225;n" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold">
+        </div>
+        <div>
+          <label class="block text-slate-300 font-semibold mb-1">C&#233;dula / RNC / Cargo</label>
+          <input type="text" id="sigClientIdInput" placeholder="Ej: Administraci&#243;n / 001-0000000-0" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono">
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <label class="text-xs font-bold text-purple-300 uppercase"><i class="fa-solid fa-pen-nib mr-1"></i> Firma Digital del Cliente en Pantalla</label>
+          <button type="button" onclick="clearDeliverySignatureCanvas()" class="text-[11px] bg-slate-800 hover:bg-slate-700 text-rose-300 px-2.5 py-1 rounded-lg border border-slate-700 font-semibold"><i class="fa-solid fa-eraser mr-1"></i>Limpiar Firma</button>
+        </div>
+        <div class="bg-white rounded-xl border-2 border-purple-600/70 overflow-hidden shadow-inner flex justify-center">
+          <canvas id="deliverySignatureCanvas" width="520" height="200" class="bg-white touch-none cursor-crosshair w-full h-[180px]"></canvas>
+        </div>
+        <p class="text-[10px] text-slate-400 mt-1">El cliente puede firmar con el dedo en el celular o con el cursor. La firma se inyecta de forma inamovible en el PDF del reporte final.</p>
+      </div>
+
+      <div>
+        <label class="block text-xs text-slate-300 font-semibold mb-1">Observaciones Finales de Entrega</label>
+        <textarea id="sigDeliveryNotes" rows="2" placeholder="Equipos operando al 100%, pruebas realizadas en presencia del cliente..." class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white"></textarea>
+      </div>
+
+      <div class="flex flex-wrap justify-end gap-2 pt-3 border-t border-slate-800">
+        <button type="button" onclick="closeModal('deliverySignatureModal')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-semibold">Cancelar</button>
+        <button type="button" onclick="saveDeliverySignatureAndFinalize()" class="bg-purple-700 hover:bg-purple-600 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-1.5">
+          <i class="fa-solid fa-check-double"></i> Guardar Acta Firmada y Finalizar Proyecto
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal Gestion de Inventario con OCR -->
   <div id="inventoryModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('inventoryModal')">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl my-8 relative space-y-4" onclick="event.stopPropagation();">
@@ -954,9 +1049,14 @@
           <div class="font-bold text-blue-400"><i class="fa-solid fa-barcode mr-1"></i> Escaneo OCR de Etiqueta / Factura / Conduce</div>
           <div id="inventoryOcrStatus" class="text-[10px] text-slate-400">Detecta SKU, modelo, cantidad y precio desde una foto o PDF</div>
         </div>
-        <button type="button" onclick="document.getElementById('inventoryOcrInput').click()" class="bg-blue-900/80 hover:bg-blue-800 text-blue-100 px-3 py-2 rounded-xl border border-blue-700 font-bold whitespace-nowrap">
-          <i class="fa-solid fa-camera mr-1"></i> Escanear OCR
-        </button>
+        <div class="flex gap-1.5">
+          <button type="button" onclick="openQrScannerModal('inventory')" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl border border-emerald-600 font-bold whitespace-nowrap">
+            <i class="fa-solid fa-qrcode mr-1"></i> QR Vivo
+          </button>
+          <button type="button" onclick="document.getElementById('inventoryOcrInput').click()" class="bg-blue-900/80 hover:bg-blue-800 text-blue-100 px-3 py-2 rounded-xl border border-blue-700 font-bold whitespace-nowrap">
+            <i class="fa-solid fa-camera mr-1"></i> Escanear OCR
+          </button>
+        </div>
         <input type="file" id="inventoryOcrInput" accept="image/*,application/pdf" class="hidden" onchange="handleInventoryOcrUpload(event)">
       </div>
 
@@ -1234,17 +1334,273 @@
       return defaults;
     }
 
+    /* ===================================================================
+       EPICA 1 & 5: ALMACENAMIENTO HIBRIDO (IndexedDB + LocalStorage),
+       COMPRESION CLIENT-SIDE (MAX 800px) Y MARCA DE AGUA INAMOVIBLE (GPS + FECHA/HORA)
+       =================================================================== */
+    const IDB_NAME = 'centroxpert_files_db_v86';
+    const IDB_STORE = 'heavy_files';
+    let idbInstance = null;
+
+    function openCentroXpertIDB() {
+      if (idbInstance) return Promise.resolve(idbInstance);
+      return new Promise((resolve) => {
+        if (typeof indexedDB === 'undefined') { resolve(null); return; }
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(IDB_STORE)) {
+            db.createObjectStore(IDB_STORE, { keyPath: 'id' });
+          }
+        };
+        req.onsuccess = (e) => { idbInstance = e.target.result; resolve(idbInstance); };
+        req.onerror = () => resolve(null);
+      });
+    }
+
+    async function saveHeavyFileToIDB(id, dataUrl) {
+      if (!id || !dataUrl) return false;
+      const db = await openCentroXpertIDB();
+      if (!db) return false;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(IDB_STORE, 'readwrite');
+          tx.objectStore(IDB_STORE).put({ id: String(id), data: dataUrl, updatedAt: Date.now() });
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => resolve(false);
+        } catch (err) { resolve(false); }
+      });
+    }
+
+    async function getHeavyFileFromIDB(id) {
+      if (!id) return null;
+      const db = await openCentroXpertIDB();
+      if (!db) return null;
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(IDB_STORE, 'readonly');
+          const req = tx.objectStore(IDB_STORE).get(String(id));
+          req.onsuccess = () => resolve(req.result ? req.result.data : null);
+          req.onerror = () => resolve(null);
+        } catch (err) { resolve(null); }
+      });
+    }
+
+    // Hidrata en memoria (appData) todos los archivos Base64 guardados en IndexedDB sin inflar localStorage
+    async function hydrateHeavyFilesFromIDB() {
+      const db = await openCentroXpertIDB();
+      if (!db) return;
+      let hydratedAny = false;
+      for (const p of (appData.projects || [])) {
+        if (p.survey && p.survey.surveyDoc && p.survey.surveyDoc.idbKey && !p.survey.surveyDoc.data) {
+          const d = await getHeavyFileFromIDB(p.survey.surveyDoc.idbKey);
+          if (d) { p.survey.surveyDoc.data = d; hydratedAny = true; }
+        }
+        if (p.survey && p.survey.planDoc && p.survey.planDoc.idbKey && !p.survey.planDoc.data) {
+          const d = await getHeavyFileFromIDB(p.survey.planDoc.idbKey);
+          if (d) { p.survey.planDoc.data = d; hydratedAny = true; }
+        }
+        if (p.quotation && p.quotation.idbKey && !p.quotation.fileData) {
+          const d = await getHeavyFileFromIDB(p.quotation.idbKey);
+          if (d) { p.quotation.fileData = d; hydratedAny = true; }
+        }
+        if (p.payment50Doc && p.payment50Doc.idbKey && !p.payment50Doc.data) {
+          const d = await getHeavyFileFromIDB(p.payment50Doc.idbKey);
+          if (d) { p.payment50Doc.data = d; hydratedAny = true; }
+        }
+        if (p.serviceOrderFile && p.serviceOrderFile.idbKey && !p.serviceOrderFile.data) {
+          const d = await getHeavyFileFromIDB(p.serviceOrderFile.idbKey);
+          if (d) { p.serviceOrderFile.data = d; hydratedAny = true; }
+        }
+        if (p.deliverySignature && p.deliverySignature.idbKey && !p.deliverySignature.dataUrl) {
+          const d = await getHeavyFileFromIDB(p.deliverySignature.idbKey);
+          if (d) { p.deliverySignature.dataUrl = d; hydratedAny = true; }
+        }
+      }
+      for (const exp of (appData.fieldExpenses || [])) {
+        if (exp.receiptDoc && exp.receiptDoc.idbKey && !exp.receiptDoc.data) {
+          const d = await getHeavyFileFromIDB(exp.receiptDoc.idbKey);
+          if (d) { exp.receiptDoc.data = d; hydratedAny = true; }
+        }
+      }
+      if (hydratedAny) render();
+    }
+
+    // Extrae Base64 pesados a IndexedDB y devuelve un clon ligero para localStorage (evita QuotaExceededError de 5MB)
+    function buildLightweightStorageClone(sourceData) {
+      const clone = JSON.parse(JSON.stringify(sourceData));
+      const offloadDoc = (docObj, keyPrefix) => {
+        if (!docObj || typeof docObj !== 'object') return;
+        if (docObj.data && typeof docObj.data === 'string' && docObj.data.length > 1500) {
+          const idbKey = docObj.idbKey || (keyPrefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7));
+          docObj.idbKey = idbKey;
+          saveHeavyFileToIDB(idbKey, docObj.data);
+          delete docObj.data;
+        }
+      };
+
+      (clone.projects || []).forEach((p, idx) => {
+        const pid = p.id || ('P' + idx);
+        if (p.survey) {
+          if (p.survey.surveyDoc) {
+            if (!sourceData.projects[idx].survey.surveyDoc.idbKey && sourceData.projects[idx].survey.surveyDoc.data) {
+              sourceData.projects[idx].survey.surveyDoc.idbKey = `surv_${pid}`;
+            }
+            offloadDoc(p.survey.surveyDoc, `surv_${pid}`);
+          }
+          if (p.survey.planDoc) {
+            if (!sourceData.projects[idx].survey.planDoc.idbKey && sourceData.projects[idx].survey.planDoc.data) {
+              sourceData.projects[idx].survey.planDoc.idbKey = `plan_${pid}`;
+            }
+            offloadDoc(p.survey.planDoc, `plan_${pid}`);
+          }
+        }
+        if (p.quotation && p.quotation.fileData && p.quotation.fileData.length > 1500) {
+          const qKey = p.quotation.idbKey || `quote_${pid}`;
+          p.quotation.idbKey = qKey;
+          if (sourceData.projects[idx].quotation) sourceData.projects[idx].quotation.idbKey = qKey;
+          saveHeavyFileToIDB(qKey, p.quotation.fileData);
+          delete p.quotation.fileData;
+        }
+        if (p.payment50Doc) {
+          if (!sourceData.projects[idx].payment50Doc.idbKey && sourceData.projects[idx].payment50Doc.data) {
+            sourceData.projects[idx].payment50Doc.idbKey = `pay50_${pid}`;
+          }
+          offloadDoc(p.payment50Doc, `pay50_${pid}`);
+        }
+        if (p.serviceOrderFile) {
+          offloadDoc(p.serviceOrderFile, `order_${pid}`);
+        }
+        if (p.deliverySignature && p.deliverySignature.dataUrl && p.deliverySignature.dataUrl.length > 1500) {
+          const sKey = p.deliverySignature.idbKey || `sig_${pid}`;
+          p.deliverySignature.idbKey = sKey;
+          if (sourceData.projects[idx].deliverySignature) sourceData.projects[idx].deliverySignature.idbKey = sKey;
+          saveHeavyFileToIDB(sKey, p.deliverySignature.dataUrl);
+        }
+      });
+
+      (clone.fieldExpenses || []).forEach((exp, idx) => {
+        if (exp.receiptDoc) {
+          const eid = exp.id || ('EXP' + idx);
+          if (sourceData.fieldExpenses[idx] && sourceData.fieldExpenses[idx].receiptDoc) {
+            sourceData.fieldExpenses[idx].receiptDoc.idbKey = sourceData.fieldExpenses[idx].receiptDoc.idbKey || `exp_${eid}`;
+          }
+          offloadDoc(exp.receiptDoc, `exp_${eid}`);
+        }
+      });
+
+      return clone;
+    }
+
+    // Obtiene coordenadas GPS r\u00e1pidas (con fallback instant\u00e1neo si el navegador tarda o bloquea) para estampar en la marca de agua
+    function getQuickGpsCoordsForWatermark(timeoutMs = 3200) {
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) {
+          resolve({ label: 'GPS: Santo Domingo, RD (Local)', lat: null, lng: null });
+          return;
+        }
+        let settled = false;
+        const timer = setTimeout(() => {
+          if (!settled) {
+            settled = true;
+            resolve({ label: 'GPS: Lectura diferida (En Terreno)', lat: null, lng: null });
+          }
+        }, timeoutMs);
+
+        navigator.geolocation.getCurrentPosition(pos => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          const lat = Number(pos.coords.latitude).toFixed(5);
+          const lng = Number(pos.coords.longitude).toFixed(5);
+          resolve({ label: `GPS: ${lat}, ${lng}`, lat: Number(lat), lng: Number(lng) });
+        }, () => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          resolve({ label: 'GPS: Sin se\u00f1al directa (Campo)', lat: null, lng: null });
+        }, { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 60000 });
+      });
+    }
+
+    // Compresi\u00f3n Client-Side (Max 800px) + Estampado Inamovible de Marca de Agua (Fecha, Hora y Coordenadas GPS)
+    async function compressAndWatermarkImageFile(file, tagPrefix = 'EVIDENCIA CAMPO', maxDimension = 800, quality = 0.78) {
+      const rawDataUrl = await readFileAsDataURL(file);
+      if (!file.type || !file.type.startsWith('image/')) {
+        return rawDataUrl;
+      }
+      const gpsInfo = await getQuickGpsCoordsForWatermark(3000);
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          let w = img.width || 800;
+          let h = img.height || 600;
+          if (w > maxDimension || h > maxDimension) {
+            if (w >= h) {
+              h = Math.round((h * maxDimension) / w);
+              w = maxDimension;
+            } else {
+              w = Math.round((w * maxDimension) / h);
+              h = maxDimension;
+            }
+          }
+          const c = document.createElement('canvas');
+          c.width = w;
+          c.height = h;
+          const context = c.getContext('2d');
+          context.drawImage(img, 0, 0, w, h);
+
+          // Estampado de Marca de Agua Anti-Fraude en la esquina inferior
+          const now = new Date();
+          const dateTimeStr = now.toLocaleDateString('es-DO') + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          const techLabel = (currentAuthUser && currentAuthUser.name) ? currentAuthUser.name : 'CentroXpert';
+          const line1 = `CENTROXPERT \u00b7 ${tagPrefix} \u00b7 ${techLabel}`;
+          const line2 = `${dateTimeStr} \u00b7 ${gpsInfo.label}`;
+
+          const barHeight = Math.max(40, Math.round(h * 0.095));
+          context.fillStyle = 'rgba(11, 17, 32, 0.80)';
+          context.fillRect(0, h - barHeight, w, barHeight);
+
+          context.strokeStyle = '#e11d48';
+          context.lineWidth = 2;
+          context.beginPath();
+          context.moveTo(0, h - barHeight);
+          context.lineTo(w, h - barHeight);
+          context.stroke();
+
+          const fontSize1 = Math.max(10, Math.min(14, Math.round(w * 0.022)));
+          const fontSize2 = Math.max(9, Math.min(13, Math.round(w * 0.020)));
+          context.fillStyle = '#fda4af';
+          context.font = `bold ${fontSize1}px monospace`;
+          context.fillText(line1, 10, h - barHeight + fontSize1 + 5);
+
+          context.fillStyle = '#6ee7b7';
+          context.font = `bold ${fontSize2}px monospace`;
+          context.fillText(line2, 10, h - 7);
+
+          resolve(c.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => resolve(rawDataUrl);
+        img.src = rawDataUrl;
+      });
+    }
+
 function saveData(skipCloudPush = false) {
       const previousUpdated = appData.lastUpdated;
       appData.lastUpdated = Date.now();
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        // Almacenamiento H\u00edbrido: migra autom\u00e1ticamente archivos Base64 pesados a IndexedDB y guarda JSON ligero en localStorage (centroxpert_data_v86)
+        const lightClone = buildLightweightStorageClone(appData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(lightClone));
       } catch (err) {
-        appData.lastUpdated = previousUpdated;
-        const isQuota = err && (err.name === 'QuotaExceededError' || err.code === 22 || err.code === 1014);
-        showToast(isQuota ? 'No hay espacio local suficiente. Exporta una copia y reduce el tama\u00f1o de los adjuntos.' : 'No se pudieron guardar los cambios en este navegador.');
-        console.error('CentroXpert local save failed:', err && err.name ? err.name : 'storage error');
-        return false;
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        } catch (err2) {
+          appData.lastUpdated = previousUpdated;
+          const isQuota = err2 && (err2.name === 'QuotaExceededError' || err2.code === 22 || err2.code === 1014);
+          showToast(isQuota ? 'Almacenamiento optimizado en IndexedDB activo.' : 'No se pudieron guardar los cambios en este navegador.');
+          return false;
+        }
       }
       render();
       if (!skipCloudPush && typeof pushToCloud === 'function') {
@@ -1369,8 +1725,46 @@ function logout() { currentAuthUser = null; document.getElementById('loginTecPin
       closeModal('pinModal');
     }
 
+function renderTechMobileBottomNav() {
+      const bottomNav = document.getElementById('techMobileBottomNav');
+      if (!bottomNav) return;
+      if (!currentAuthUser || currentAuthUser.role !== 'tech') {
+        bottomNav.classList.add('hidden');
+        bottomNav.innerHTML = '';
+        return;
+      }
+      bottomNav.classList.remove('hidden');
+      const myTechName = currentAuthUser.name;
+      const myTasksCount = (appData.projects || []).filter(p => p.techLeader === myTechName || (Array.isArray(p.techCrew) && p.techCrew.includes(myTechName))).length;
+      bottomNav.innerHTML = `
+        <div class="grid grid-cols-5 h-16 px-1 text-[10px]">
+          <button type="button" onclick="setTechTab('my_tasks')" class="flex flex-col items-center justify-center gap-1 font-bold transition ${currentTechTab === 'my_tasks' ? 'text-rose-400 border-t-2 border-rose-500 bg-rose-950/20' : 'text-slate-400 hover:text-white'}">
+            <i class="fa-solid fa-list-check text-sm"></i>
+            <span>Tareas (${myTasksCount})</span>
+          </button>
+          <button type="button" onclick="openExpenseModal('${myTechName}')" class="flex flex-col items-center justify-center gap-1 font-bold transition ${currentTechTab === 'my_expenses' ? 'text-emerald-400 border-t-2 border-emerald-500 bg-emerald-950/20' : 'text-slate-400 hover:text-white'}">
+            <i class="fa-solid fa-receipt text-sm text-emerald-400"></i>
+            <span>+ Gasto OCR</span>
+          </button>
+          <button type="button" onclick="openQrScannerModal('tech_nav')" class="flex flex-col items-center justify-center gap-1 font-bold text-teal-300 bg-teal-950/40 rounded-xl my-1.5 border border-teal-700/60 shadow">
+            <i class="fa-solid fa-qrcode text-base"></i>
+            <span>QR Equipo</span>
+          </button>
+          <button type="button" onclick="setTechTab('my_expenses')" class="flex flex-col items-center justify-center gap-1 font-bold transition ${currentTechTab === 'my_expenses' ? 'text-amber-400' : 'text-slate-400 hover:text-white'}">
+            <i class="fa-solid fa-wallet text-sm"></i>
+            <span>Mis Gastos</span>
+          </button>
+          <button type="button" onclick="setTechTab('my_assets')" class="flex flex-col items-center justify-center gap-1 font-bold transition ${currentTechTab === 'my_assets' ? 'text-blue-400 border-t-2 border-blue-500 bg-blue-950/20' : 'text-slate-400 hover:text-white'}">
+            <i class="fa-solid fa-truck-pickup text-sm"></i>
+            <span>Activos</span>
+          </button>
+        </div>
+      `;
+    }
+
 function render() {
       renderHeader();
+      renderTechMobileBottomNav();
       const container = document.getElementById('mainContainer');
       if (!currentAuthUser) { container.innerHTML = `<div class="text-center p-10"><button type="button" onclick="openModal('loginModal')" class="bg-rose-700 text-white px-4 py-2 rounded">Iniciar Sesi\u00f3n</button></div>`; return; }
       if (currentAuthUser.role === 'tech') container.innerHTML = renderTechView(); else container.innerHTML = renderAdminView();
@@ -1606,7 +2000,8 @@ function render() {
     }
 
     function exportProjectsToCSV() {
-      const rows = (appData.projects || []).map(p => {
+      const projPool = currentNavTab === 'kpis' ? getFilteredProjectsForKpi() : filterProjectsList(appData.projects || []);
+      const rows = projPool.map(p => {
         const lc = computeProjectLifecycleInfo(p);
         return {
           Codigo: p.code,
@@ -2377,6 +2772,369 @@ function render() {
       `;
     }
 
+    /* ===================================================================
+       EPICA 3: ESCANER QR / CODIGO DE BARRAS EN VIVO (html5-qrcode) Y VINCULACION
+       =================================================================== */
+    let html5QrScannerInstance = null;
+    let currentQrScannerContext = 'inventory'; // 'inventory' | 'survey' | 'project' | 'tech_nav'
+
+    function openQrScannerModal(contextMode = 'inventory') {
+      currentQrScannerContext = contextMode || 'inventory';
+      const projSel = document.getElementById('qrTargetProjectSelect');
+      const techSel = document.getElementById('qrTargetTechSelect');
+      if (projSel) {
+        const activeProj = (currentDetailProjectId && appData.projects.find(p => p.id === currentDetailProjectId))
+          || (currentSurveyProjectId && appData.projects.find(p => p.id === currentSurveyProjectId))
+          || appData.projects[0] || null;
+        projSel.innerHTML = (appData.projects || []).map(p => `<option value="${p.code}" ${activeProj && activeProj.code === p.code ? 'selected' : ''}>${p.code} \u2014 ${p.title}</option>`).join('');
+      }
+      if (techSel) {
+        const defaultTech = (currentAuthUser && currentAuthUser.role === 'tech')
+          ? currentAuthUser.name
+          : ((appData.projects[0] && appData.projects[0].techLeader) || (appData.technicians[0] && appData.technicians[0].name) || '');
+        techSel.innerHTML = (appData.technicians || []).map(t => `<option value="${t.name}" ${t.name === defaultTech ? 'selected' : ''}>${t.name} (${t.level})</option>`).join('');
+      }
+      const manualInp = document.getElementById('qrManualCodeInput');
+      if (manualInp) manualInp.value = '';
+      openModal('qrScannerModal');
+      setTimeout(() => startLiveQrCamera(), 180);
+    }
+
+    async function startLiveQrCamera() {
+      const statusEl = document.getElementById('qrScannerStatusText');
+      if (typeof Html5Qrcode === 'undefined') {
+        if (statusEl) statusEl.innerText = 'Usa "Foto QR" o ingresa el c\u00f3digo abajo para vincular al instante.';
+        return;
+      }
+      try {
+        if (html5QrScannerInstance) {
+          try { await html5QrScannerInstance.stop(); } catch (e) {}
+          html5QrScannerInstance = null;
+        }
+        html5QrScannerInstance = new Html5Qrcode('qrReaderContainer');
+        if (statusEl) statusEl.innerText = 'C\u00e1mara activa: enfoca el c\u00f3digo QR o c\u00f3digo de barras de la etiqueta...';
+        await html5QrScannerInstance.start(
+          { facingMode: 'environment' },
+          { fps: 10, qrbox: { width: 220, height: 160 } },
+          (decodedText) => {
+            if (decodedText) {
+              processScannedQrCode(decodedText);
+            }
+          },
+          () => {}
+        );
+      } catch (err) {
+        if (statusEl) {
+          statusEl.innerText = 'C\u00e1mara en espera de permiso o dispositivo sin c\u00e1mara directa. Puedes usar "Foto QR" o digitar el SKU.';
+        }
+      }
+    }
+
+    async function stopLiveQrScannerAndClose() {
+      if (html5QrScannerInstance) {
+        try { await html5QrScannerInstance.stop(); } catch (e) {}
+        try { html5QrScannerInstance.clear(); } catch (e) {}
+        html5QrScannerInstance = null;
+      }
+      closeModal('qrScannerModal');
+      if (currentQrScannerContext === 'survey' && currentSurveyProjectId) {
+        openModal('surveyModal');
+      } else if (currentQrScannerContext === 'project' && currentDetailProjectId) {
+        openProjectDetailModal(currentDetailProjectId);
+      }
+    }
+
+    async function handleQrImageFileScan(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const statusEl = document.getElementById('qrScannerStatusText');
+      if (statusEl) statusEl.innerText = 'Escaneando c\u00f3digo QR/Barras desde imagen...';
+      try {
+        if (typeof Html5Qrcode !== 'undefined') {
+          const tempScanner = new Html5Qrcode('qrReaderContainer');
+          const decoded = await tempScanner.scanFile(file, true);
+          if (decoded) {
+            processScannedQrCode(decoded);
+            e.target.value = '';
+            return;
+          }
+        }
+      } catch (err) {
+        // Fallback con OCR si es etiqueta de texto/barras
+      }
+      try {
+        const dataUrl = await compressAndWatermarkImageFile(file, 'ESCANEO QR', 800, 0.80);
+        if (typeof Tesseract !== 'undefined') {
+          const res = await Tesseract.recognize(dataUrl, 'spa');
+          const txt = (res && res.data && res.data.text) ? res.data.text.trim() : '';
+          const match = txt.match(/\b([A-Z0-9-_/]{4,24})\b/i);
+          if (match) {
+            processScannedQrCode(match[1]);
+            e.target.value = '';
+            return;
+          }
+        }
+      } catch (e2) {}
+      if (statusEl) statusEl.innerText = 'No se detect\u00f3 un QR est\u00e1ndar en la imagen. Ingresa o confirma el SKU manualmente.';
+      e.target.value = '';
+    }
+
+    async function processScannedQrCode(rawCode) {
+      const cleanCode = String(rawCode || '').trim().toUpperCase();
+      if (!cleanCode) {
+        showToast('Ingresa o escanea un c\u00f3digo QR / SKU v\u00e1lido.');
+        return;
+      }
+      if (html5QrScannerInstance) {
+        try { await html5QrScannerInstance.stop(); } catch (e) {}
+        html5QrScannerInstance = null;
+      }
+
+      const targetProjCode = document.getElementById('qrTargetProjectSelect')?.value || '';
+      const targetTechName = document.getElementById('qrTargetTechSelect')?.value || ((currentAuthUser && currentAuthUser.name) || '');
+      const exactNowStr = new Date().toLocaleDateString('es-DO') + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (!Array.isArray(appData.inventory)) appData.inventory = [];
+      let invItem = appData.inventory.find(i => i.sku && (i.sku.toUpperCase() === cleanCode || cleanCode.includes(i.sku.toUpperCase())));
+      const omegaMatch = OMEGA_VERIFIED_CATALOG.find(o => o.sku.toUpperCase() === cleanCode || cleanCode.includes(o.sku.toUpperCase()));
+
+      if (!invItem) {
+        invItem = {
+          id: 'INV_' + Date.now(),
+          sku: omegaMatch ? omegaMatch.sku : cleanCode.slice(0, 28),
+          name: omegaMatch ? omegaMatch.name : `Equipo Escaneado QR (${cleanCode.slice(0, 28)})`,
+          category: (omegaMatch && omegaMatch.category === 'Materiales') ? 'Materiales / Cableado' : 'Equipos Activos',
+          stock: 5,
+          minStock: 2,
+          unitCost: omegaMatch ? omegaMatch.priceRD : 3200,
+          location: 'Vinculado por QR en Campo',
+          projectCode: targetProjCode,
+          assignedTech: targetTechName,
+          linkedAt: exactNowStr
+        };
+        appData.inventory.unshift(invItem);
+      } else {
+        invItem.projectCode = targetProjCode;
+        invItem.assignedTech = targetTechName;
+        invItem.linkedAt = exactNowStr;
+      }
+
+      // Vincular autom\u00e1ticamente al proyecto seleccionado y a su presupuesto / levantamiento
+      const proj = (appData.projects || []).find(p => p.code === targetProjCode);
+      if (proj) {
+        if (!proj.survey) proj.survey = { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V', notes: '', itemsEquip: [], itemsMat: [] };
+        if (!Array.isArray(proj.survey.itemsEquip)) proj.survey.itemsEquip = [];
+        if (!Array.isArray(proj.survey.itemsMat)) proj.survey.itemsMat = [];
+        const isMat = invItem.category && invItem.category.toLowerCase().includes('material');
+        const listRef = isMat ? proj.survey.itemsMat : proj.survey.itemsEquip;
+        const existingInProj = listRef.find(x => x.sku === invItem.sku);
+        if (existingInProj) {
+          existingInProj.qty = (Number(existingInProj.qty) || 1) + 1;
+        } else {
+          listRef.push({
+            name: `[QR: ${invItem.sku}] ${invItem.name}`,
+            qty: 1,
+            sku: invItem.sku,
+            price: Number(invItem.unitCost) || 0,
+            linkedBy: targetTechName,
+            linkedAt: exactNowStr
+          });
+        }
+        // Si el modal de levantamiento est\u00e1 activo en memoria, sincronizar tambi\u00e9n las listas temporales
+        if (currentQrScannerContext === 'survey' && currentSurveyProjectId === proj.id) {
+          const tempList = isMat ? tempSurveyItemsMat : tempSurveyItemsEquip;
+          const exTemp = tempList.find(x => x.sku === invItem.sku);
+          if (exTemp) exTemp.qty = (Number(exTemp.qty) || 1) + 1;
+          else tempList.push({ name: `[QR: ${invItem.sku}] ${invItem.name}`, qty: 1, sku: invItem.sku, price: Number(invItem.unitCost) || 0 });
+          renderSurveyItemLists();
+        }
+      }
+
+      saveData();
+      closeModal('qrScannerModal');
+      showToast(`\u2705 Etiqueta ${invItem.sku} vinculada a ${targetProjCode || 'Inventario'} (${targetTechName}) el ${exactNowStr}.`);
+
+      if (currentQrScannerContext === 'survey' && currentSurveyProjectId) {
+        openModal('surveyModal');
+      } else if (currentQrScannerContext === 'project' && currentDetailProjectId) {
+        openProjectDetailModal(currentDetailProjectId);
+      } else if (currentQrScannerContext === 'inventory') {
+        openInventoryModal(invItem.id);
+      }
+    }
+
+    /* ===================================================================
+       EPICA 5: ACTA DE ENTREGA DIGITAL (FIRMA EN CANVAS) & WHATSAPP API
+       =================================================================== */
+    let sigCanvas = null, sigCtx = null, isDrawingSignature = false, hasDrawnSignatureStroke = false, activeSignatureProjectId = null;
+
+    function openDeliverySignatureModal(projId) {
+      const targetId = projId || currentDetailProjectId;
+      const p = (appData.projects || []).find(x => x.id === targetId);
+      if (!p) return;
+      activeSignatureProjectId = p.id;
+
+      const lbl = document.getElementById('sigModalProjectLabel');
+      if (lbl) lbl.innerText = `${p.code} \u2014 ${p.title} (${p.client})`;
+
+      const clientNameInp = document.getElementById('sigClientNameInput');
+      const clientIdInp = document.getElementById('sigClientIdInput');
+      const notesInp = document.getElementById('sigDeliveryNotes');
+
+      if (clientNameInp) clientNameInp.value = (p.deliverySignature && p.deliverySignature.clientName) ? p.deliverySignature.clientName : (p.contact || p.client || '');
+      if (clientIdInp) clientIdInp.value = (p.deliverySignature && p.deliverySignature.clientId) ? p.deliverySignature.clientId : '';
+      if (notesInp) notesInp.value = (p.deliverySignature && p.deliverySignature.notes) ? p.deliverySignature.notes : 'Instalaci\u00f3n y configuraci\u00f3n verificadas en sitio. Equipos entregados en \u00f3ptimas condiciones operativas.';
+
+      openModal('deliverySignatureModal');
+      setTimeout(() => initDeliverySignatureCanvas(p.deliverySignature ? p.deliverySignature.dataUrl : null), 90);
+    }
+
+    function initDeliverySignatureCanvas(existingDataUrl = null) {
+      sigCanvas = document.getElementById('deliverySignatureCanvas');
+      if (!sigCanvas) return;
+      sigCtx = sigCanvas.getContext('2d');
+      clearDeliverySignatureCanvas();
+
+      if (existingDataUrl) {
+        const img = new Image();
+        img.onload = () => {
+          sigCtx.drawImage(img, 0, 0, sigCanvas.width, sigCanvas.height);
+          hasDrawnSignatureStroke = true;
+        };
+        img.src = existingDataUrl;
+      }
+
+      const getPos = (e) => {
+        const rect = sigCanvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * (sigCanvas.width / rect.width),
+          y: (clientY - rect.top) * (sigCanvas.height / rect.height)
+        };
+      };
+
+      const startSig = (e) => {
+        if (e.cancelable) e.preventDefault();
+        isDrawingSignature = true;
+        hasDrawnSignatureStroke = true;
+        const pos = getPos(e);
+        sigCtx.beginPath();
+        sigCtx.moveTo(pos.x, pos.y);
+      };
+
+      const moveSig = (e) => {
+        if (!isDrawingSignature) return;
+        if (e.cancelable) e.preventDefault();
+        const pos = getPos(e);
+        sigCtx.strokeStyle = '#0f172a';
+        sigCtx.lineWidth = 2.6;
+        sigCtx.lineCap = 'round';
+        sigCtx.lineJoin = 'round';
+        sigCtx.lineTo(pos.x, pos.y);
+        sigCtx.stroke();
+      };
+
+      const endSig = () => { isDrawingSignature = false; };
+
+      sigCanvas.onmousedown = startSig;
+      sigCanvas.onmousemove = moveSig;
+      sigCanvas.onmouseup = endSig;
+      sigCanvas.onmouseleave = endSig;
+      sigCanvas.ontouchstart = startSig;
+      sigCanvas.ontouchmove = moveSig;
+      sigCanvas.ontouchend = endSig;
+    }
+
+    function clearDeliverySignatureCanvas() {
+      if (!sigCanvas || !sigCtx) return;
+      sigCtx.fillStyle = '#ffffff';
+      sigCtx.fillRect(0, 0, sigCanvas.width, sigCanvas.height);
+      sigCtx.strokeStyle = '#cbd5e1';
+      sigCtx.lineWidth = 1;
+      sigCtx.beginPath();
+      sigCtx.moveTo(40, sigCanvas.height - 38);
+      sigCtx.lineTo(sigCanvas.width - 40, sigCanvas.height - 38);
+      sigCtx.stroke();
+      sigCtx.fillStyle = '#64748b';
+      sigCtx.font = '11px Arial';
+      sigCtx.fillText('Firma de Conformidad del Cliente \u2014 CentroXpert Ingenier\u00eda y Servicios', 45, sigCanvas.height - 18);
+      hasDrawnSignatureStroke = false;
+    }
+
+    async function saveDeliverySignatureAndFinalize() {
+      const p = (appData.projects || []).find(x => x.id === activeSignatureProjectId);
+      if (!p) return;
+      const clientName = document.getElementById('sigClientNameInput')?.value.trim() || p.client || 'Cliente';
+      const clientId = document.getElementById('sigClientIdInput')?.value.trim() || 'N/A';
+      const notes = document.getElementById('sigDeliveryNotes')?.value.trim() || '';
+
+      if (!hasDrawnSignatureStroke) {
+        if (!confirm('\u00bfEl cliente a\u00fan no ha trazado su firma en el recuadro. Deseas registrar el Acta de Entrega igualmente?')) return;
+      }
+
+      const gpsSnap = await getQuickGpsCoordsForWatermark(2500);
+      const signedAtStr = new Date().toLocaleDateString('es-DO') + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dataUrl = sigCanvas ? sigCanvas.toDataURL('image/png') : '';
+
+      p.deliverySignature = {
+        clientName,
+        clientId,
+        notes,
+        signedAt: signedAtStr,
+        signedByTech: (currentAuthUser && currentAuthUser.name) ? currentAuthUser.name : (p.techLeader || 'Coordinador'),
+        gpsLabel: gpsSnap.label,
+        dataUrl,
+        idbKey: `sig_${p.id}`
+      };
+
+      await saveHeavyFileToIDB(`sig_${p.id}`, dataUrl);
+      applyProjectLifecycleTransition(p, 'Finalizado');
+      saveData();
+      closeModal('deliverySignatureModal');
+      showToast(`\ud83c\udfc1 Proyecto ${p.code} finalizado con Acta de Entrega Digital firmada por ${clientName}.`);
+      openProjectDetailModal(p.id);
+    }
+
+    function shareProjectViaWhatsApp(projId) {
+      const p = (appData.projects || []).find(x => x.id === (projId || currentDetailProjectId));
+      if (!p) return;
+      const lc = computeProjectLifecycleInfo(p);
+      const totalServices = (p.budget && p.budget.services) ? p.budget.services.reduce((a, c) => a + (c.subtotal || 0), 0) : 0;
+      const totalMat = (p.budget && p.budget.materials) ? p.budget.materials.reduce((a, c) => a + (c.subtotal || 0), 0) : 0;
+      const totalBase = totalServices + totalMat;
+      const quoteStr = p.quotation
+        ? `Cotizaci\u00f3n Oficial *${p.quotation.number}*: *RD$ ${Number(p.quotation.amount || 0).toLocaleString('es-DO')}*`
+        : `Presupuesto Base Estimado: *RD$ ${totalBase.toLocaleString('es-DO')}*`;
+      const sigStr = p.deliverySignature
+        ? `\u2705 *Acta de Entrega Firmada por:* ${p.deliverySignature.clientName} (${p.deliverySignature.signedAt})`
+        : `\ud83d\udcc5 *Plazo:* ${lc.badgeText} (L\u00edmite: ${lc.deadlineStr})`;
+
+      const messageLines = [
+        `*CENTROXPERT \u2014 INGENIER\u00cdA Y SERVICIOS*`,
+        `\ud83d\udccb *Reporte / Cotizaci\u00f3n de Proyecto:* ${p.code}`,
+        `\ud83c\udfe2 *Cliente:* ${p.client}`,
+        `\ud83d\udee0\ufe0f *Proyecto:* ${p.title}`,
+        `\ud83d\udccd *Ubicaci\u00f3n:* ${p.address}`,
+        `\ud83d\udc77 *Equipo T\u00e9cnico:* ${getAllProjectTechs(p).join(', ') || 'Por asignar'}`,
+        `\ud83d\udcca *Estatus:* ${p.status}`,
+        `\ud83d\udcb0 ${quoteStr}`,
+        sigStr
+      ];
+
+      // Extraer tel\u00e9fono limpio si existe en el contacto del proyecto
+      const phoneDigits = String(p.contact || '').replace(/\D/g, '');
+      const validDomPhone = (phoneDigits.length === 10 && /^(809|829|849)/.test(phoneDigits))
+        ? '1' + phoneDigits
+        : (phoneDigits.length === 11 && /^1(809|829|849)/.test(phoneDigits) ? phoneDigits : '');
+
+      const waUrl = validDomPhone
+        ? `https://wa.me/${validDomPhone}?text=${encodeURIComponent(messageLines.join('\n'))}`
+        : `https://wa.me/?text=${encodeURIComponent(messageLines.join('\n'))}`;
+
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
+    }
+
     function openInventoryModal(id = null) {
       if (!Array.isArray(appData.inventory)) appData.inventory = [];
       const statusEl = document.getElementById('inventoryOcrStatus');
@@ -2430,7 +3188,7 @@ function render() {
           const pdfRes = await extractPdfTextFromAllPages(file);
           extractedText = pdfRes.text || '';
         } else if (typeof Tesseract !== 'undefined') {
-          const dataUrl = await readFileAsDataURL(file);
+          const dataUrl = await compressAndWatermarkImageFile(file, 'ETIQUETA INVENTARIO', 800, 0.80);
           const res = await Tesseract.recognize(dataUrl, 'spa');
           extractedText = (res && res.data && res.data.text) ? res.data.text : '';
         }
@@ -2540,8 +3298,10 @@ function render() {
       const statusEl = document.getElementById('expenseOcrStatus');
       if (statusEl) statusEl.innerText = 'Leyendo factura/recibo con OCR...';
       try {
-        const dataUrl = await readFileAsDataURL(file);
-        tempExpenseReceiptDoc = { name: file.name, type: file.type || 'image/jpeg', data: dataUrl };
+        const dataUrl = (file.type && file.type.startsWith('image/'))
+          ? await compressAndWatermarkImageFile(file, 'RECIBO GASTO CAMPO', 800, 0.78)
+          : await readFileAsDataURL(file);
+        tempExpenseReceiptDoc = { name: file.name, type: (file.type && file.type.startsWith('image/')) ? 'image/jpeg' : (file.type || 'image/jpeg'), data: dataUrl };
         const card = document.getElementById('expenseReceiptPreviewCard');
         const nameEl = document.getElementById('expenseReceiptFileName');
         if (card && nameEl) {
@@ -2824,6 +3584,24 @@ function render() {
       render();
     }
 
+    function applyFuelQuickPeriod(mode) {
+      const now = new Date();
+      const toIso = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      if (mode === 'MONTH') {
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        fuelFilterStartDate = toIso(start);
+        fuelFilterEndDate = toIso(end);
+      } else if (mode === 'QUARTER') {
+        const qStartMonth = Math.floor(now.getMonth() / 3) * 3;
+        const start = new Date(now.getFullYear(), qStartMonth, 1);
+        const end = new Date(now.getFullYear(), qStartMonth + 3, 0);
+        fuelFilterStartDate = toIso(start);
+        fuelFilterEndDate = toIso(end);
+      }
+      render();
+    }
+
     function resetFuelFilters() {
       fuelFilterStartDate = '';
       fuelFilterEndDate = '';
@@ -2924,14 +3702,12 @@ function render() {
                 </h4>
                 <p class="text-[11px] text-slate-400">Filtra por rango de fechas (Inicio y Fin) y por T\u00e9cnico o Veh\u00edculo espec\u00edfico para recalcular indicadores y exportar a Excel</p>
               </div>
-              <div class="flex flex-wrap items-center gap-2">
-                ${hasActiveFilters ? `
-                  <button type="button" onclick="resetFuelFilters()" class="bg-slate-800 hover:bg-rose-950 text-rose-300 border border-rose-800/70 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
-                    <i class="fa-solid fa-filter-circle-xmark"></i> Limpiar Filtros
-                  </button>
-                ` : ''}
-                <button type="button" onclick="exportLogisticsToExcel()" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
-                  <i class="fa-solid fa-file-excel"></i> Exportar Vista Filtrada (Excel)
+              <div class="flex flex-wrap items-center gap-1.5">
+                <button type="button" onclick="applyFuelQuickPeriod('MONTH')" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 border border-slate-700 px-2.5 py-1.5 rounded-xl text-[11px] font-bold">Mes Actual</button>
+                <button type="button" onclick="applyFuelQuickPeriod('QUARTER')" class="bg-slate-800 hover:bg-slate-700 text-blue-300 border border-slate-700 px-2.5 py-1.5 rounded-xl text-[11px] font-bold">Trimestre</button>
+                <button type="button" onclick="resetFuelFilters()" class="bg-slate-800 hover:bg-rose-950 text-rose-300 border border-slate-700 px-2.5 py-1.5 rounded-xl text-[11px] font-bold">Todo</button>
+                <button type="button" onclick="exportLogisticsToExcel()" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1">
+                  <i class="fa-solid fa-file-excel"></i> Exportar Excel Filtrado
                 </button>
               </div>
             </div>
@@ -3199,15 +3975,85 @@ function renderStaffLogistics() {
       `;
     }
 
+    /* ===================================================================
+       EPICA 4: FILTROS DE FECHA GLOBALES EN ANALITICAS & KPI (INICIO/FIN, MES ACTUAL, TRIMESTRE)
+       Y RECALCULO DINAMICO EN TIEMPO REAL + EXPORTACION FILTRADA (CSV, EXCEL, PDF)
+       =================================================================== */
+    let kpiFilterStartDate = '';
+    let kpiFilterEndDate = '';
+    let kpiFilterPreset = 'ALL'; // 'ALL' | 'MONTH' | 'QUARTER' | 'CUSTOM'
+
+    function matchKpiDateRange(dateStr) {
+      if (!kpiFilterStartDate && !kpiFilterEndDate) return true;
+      const ms = normalizeLogDateToDayBounds(dateStr);
+      if (!ms) return false;
+      if (kpiFilterStartDate) {
+        const p = kpiFilterStartDate.split('-');
+        const sMs = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 0, 0, 0, 0).getTime();
+        if (ms < sMs) return false;
+      }
+      if (kpiFilterEndDate) {
+        const p = kpiFilterEndDate.split('-');
+        const eMs = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 23, 59, 59, 999).getTime();
+        if (ms > eMs) return false;
+      }
+      return true;
+    }
+
+    function matchProjectInKpiDateRange(p) {
+      if (!kpiFilterStartDate && !kpiFilterEndDate) return true;
+      const candidates = [p.createdAt, p.startDate, p.plannedDate, p.completedAt].filter(Boolean);
+      if (candidates.length === 0) return true;
+      return candidates.some(dStr => matchKpiDateRange(dStr));
+    }
+
+    function handleKpiDateFilterChange(which, val) {
+      kpiFilterPreset = 'CUSTOM';
+      if (which === 'start') kpiFilterStartDate = val || '';
+      if (which === 'end') kpiFilterEndDate = val || '';
+      render();
+    }
+
+    function applyKpiQuickPeriod(preset) {
+      kpiFilterPreset = preset;
+      const now = new Date();
+      const toIso = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      if (preset === 'ALL') {
+        kpiFilterStartDate = '';
+        kpiFilterEndDate = '';
+      } else if (preset === 'MONTH') {
+        const s = new Date(now.getFullYear(), now.getMonth(), 1);
+        const e = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        kpiFilterStartDate = toIso(s);
+        kpiFilterEndDate = toIso(e);
+      } else if (preset === 'QUARTER') {
+        const qMonth = Math.floor(now.getMonth() / 3) * 3;
+        const s = new Date(now.getFullYear(), qMonth, 1);
+        const e = new Date(now.getFullYear(), qMonth + 3, 0);
+        kpiFilterStartDate = toIso(s);
+        kpiFilterEndDate = toIso(e);
+      }
+      render();
+    }
+
+    function getFilteredProjectsForKpi() {
+      return (appData.projects || []).filter(p => matchProjectInKpiDateRange(p));
+    }
+
     function computeAllTechKPIStats() {
       if (!Array.isArray(appData.kpiEvaluations)) appData.kpiEvaluations = [];
+      const activeProjectsPool = getFilteredProjectsForKpi();
+      const activeFuelPool = (appData.fuelLogs || []).filter(f => matchKpiDateRange(f.date));
+      const activeExpensePool = (appData.fieldExpenses || []).filter(x => matchKpiDateRange(x.date));
+      const activeEvalsPool = (appData.kpiEvaluations || []).filter(ev => matchKpiDateRange(ev.date));
+
       return appData.technicians.map(t => {
-        const assignedProj = appData.projects.filter(p => p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name)));
+        const assignedProj = activeProjectsPool.filter(p => p.techLeader === t.name || (Array.isArray(p.techCrew) && p.techCrew.includes(t.name)));
         const completed = assignedProj.filter(p => p.status === 'Finalizado').length;
         const techTrackList = assignedProj.map(p => ({ p, trk: getTechTrackingForProject(p, t.name) })).filter(x => x.trk && x.trk.checkIn);
         const onSiteVerified = techTrackList.filter(x => x.trk.isVerifiedOnSite).length;
         const gpsRate = techTrackList.length > 0 ? Math.round((onSiteVerified / techTrackList.length) * 100) : 100;
-        const myFieldExpensesRD = (appData.fieldExpenses || [])
+        const myFieldExpensesRD = activeExpensePool
           .filter(exp => exp.techName && exp.techName.toLowerCase() === t.name.toLowerCase())
           .reduce((acc, exp) => acc + (Number(exp.amount) || 0), 0);
 
@@ -3224,7 +4070,6 @@ function renderStaffLogistics() {
           ? Number((lifecycleList.reduce((acc, lc) => acc + lc.estimatedDays, 0) / assignedProj.length).toFixed(1))
           : 5;
         const totalDelayDays = overdueList.reduce((acc, lc) => acc + Math.max(0, lc.deviationDays), 0);
-        // Descuento autom\u00e1tico en el Ranking KPI: -10 pts por proyecto vencido/retrasado (OVERDUE / COMPLETED_LATE)
         const overduePenaltyPoints = overdueList.length * -10;
 
         // Veh\u00edculo asignado y rendimiento (KM por Gal\u00f3n / Precio por Gal\u00f3n)
@@ -3234,14 +4079,14 @@ function renderStaffLogistics() {
         const kmPerGal = (myVehicle && Number(myVehicle.kmPerGal) > 0) ? Number(myVehicle.kmPerGal) : 32;
         const fuelPriceGal = (myVehicle && Number(myVehicle.fuelPriceGal) > 0) ? Number(myVehicle.fuelPriceGal) : 290;
 
-        // C\u00e1lculo de KM de Proyectos Asignados y Consumo Estimado del Veh\u00edculo
+        // C\u00e1lculo de KM de Proyectos Asignados en el Periodo y Consumo Estimado del Veh\u00edculo
         const totalProjectsKm = assignedProj.reduce((acc, p) => acc + (Number(p.projectKm) > 0 ? Number(p.projectKm) : 25), 0);
         const estGallonsProjects = Number((totalProjectsKm / kmPerGal).toFixed(2));
         const estCostProjectsRD = Math.round(estGallonsProjects * fuelPriceGal);
         const estTicketsProjects = Number((estCostProjectsRD / 500).toFixed(1));
 
-        // Combustible Real Despachado al T\u00e9cnico / Veh\u00edculo en Log\u00edstica
-        const myFuelLogs = (appData.fuelLogs || []).filter(f =>
+        // Combustible Real Despachado al T\u00e9cnico / Veh\u00edculo en el Periodo Filtrado
+        const myFuelLogs = activeFuelPool.filter(f =>
           (f.driver && f.driver.toLowerCase() === t.name.toLowerCase()) ||
           (myVehicle && f.plate === myVehicle.plate) ||
           (t.vehiclePlate && f.plate === t.vehiclePlate)
@@ -3259,8 +4104,8 @@ function renderStaffLogistics() {
         const lastHours = (lastEntry && lastEntry.trk && lastEntry.trk.hoursWorked) ? lastEntry.trk.hoursWorked : '\u2014';
         const lastProjCode = (lastEntry && lastEntry.p) ? lastEntry.p.code : '\u2014';
 
-        // Evaluaciones manuales e incidencias de este t\u00e9cnico
-        const myEvals = appData.kpiEvaluations.filter(ev => ev.techName && ev.techName.toLowerCase() === t.name.toLowerCase());
+        // Evaluaciones manuales e incidencias de este t\u00e9cnico en el periodo
+        const myEvals = activeEvalsPool.filter(ev => ev.techName && ev.techName.toLowerCase() === t.name.toLowerCase());
         const manualPenaltyPoints = myEvals.reduce((acc, ev) => acc + (Number(ev.pointsDelta) || 0), 0);
         const penaltyPoints = manualPenaltyPoints + overduePenaltyPoints;
         const conductCount = myEvals.filter(ev => ev.conduct).length;
@@ -3340,14 +4185,18 @@ function renderStaffLogistics() {
 
     function renderAdminKPIs() {
       checkAndDispatchDeadlineAlerts();
+      const filteredProjs = getFilteredProjectsForKpi();
+      const filteredFuel = (appData.fuelLogs || []).filter(f => matchKpiDateRange(f.date));
+      const filteredExpenses = (appData.fieldExpenses || []).filter(x => matchKpiDateRange(x.date));
+      const allEvals = (appData.kpiEvaluations || []).filter(ev => matchKpiDateRange(ev.date));
       const techStats = computeAllTechKPIStats().sort((a, b) => b.performanceScore - a.performanceScore);
-      const allEvals = Array.isArray(appData.kpiEvaluations) ? appData.kpiEvaluations : [];
-      const totalQuotedRD = appData.projects.reduce((acc, p) => acc + (p.quotation && Number(p.quotation.amount) ? Number(p.quotation.amount) : 0), 0);
-      const totalFuelDispatchedRD = (appData.fuelLogs || []).reduce((acc, f) => acc + (Number(f.cost) || 0), 0);
-      const totalFieldExpensesRD = (appData.fieldExpenses || []).reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
+
+      const totalQuotedRD = filteredProjs.reduce((acc, p) => acc + (p.quotation && Number(p.quotation.amount) ? Number(p.quotation.amount) : 0), 0);
+      const totalFuelDispatchedRD = filteredFuel.reduce((acc, f) => acc + (Number(f.cost) || 0), 0);
+      const totalFieldExpensesRD = filteredExpenses.reduce((acc, x) => acc + (Number(x.amount) || 0), 0);
       const totalInventoryValueRD = (appData.inventory || []).reduce((acc, i) => acc + ((Number(i.stock) || 0) * (Number(i.unitCost) || 0)), 0);
 
-      const allLifecycles = appData.projects.map(p => computeProjectLifecycleInfo(p));
+      const allLifecycles = filteredProjs.map(p => computeProjectLifecycleInfo(p));
       const startedLifecycles = allLifecycles.filter(lc => lc.hasStarted);
       const globalOnTimeRate = startedLifecycles.length > 0
         ? Math.round((startedLifecycles.filter(lc => lc.deviationDays <= 0).length / startedLifecycles.length) * 100)
@@ -3355,9 +4204,41 @@ function renderStaffLogistics() {
       const globalAvgDays = startedLifecycles.length > 0
         ? Number((startedLifecycles.reduce((a, b) => a + b.elapsedDays, 0) / startedLifecycles.length).toFixed(1))
         : 0;
+      const hasActiveKpiFilter = Boolean(kpiFilterStartDate || kpiFilterEndDate);
 
       return `
         <div class="space-y-6">
+          <!-- BARRA DE FILTROS DE FECHA GLOBALES PARA ANALITICAS & KPI -->
+          <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+              <div>
+                <h4 class="text-xs font-bold text-white uppercase flex items-center gap-1.5">
+                  <i class="fa-solid fa-calendar-Week text-emerald-400"></i> Filtros Globales de Periodo (Rec\u00e1lculo en Tiempo Real de KPIs, Gastos y Combustible)
+                </h4>
+                <p class="text-[11px] text-slate-400">Filtra por Inicio/Fin, Mes Actual o Trimestre sin alterar la base de datos subyacente. Las exportaciones CSV, Excel y PDF respetan este filtro.</p>
+              </div>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" onclick="applyKpiQuickPeriod('MONTH')" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition ${kpiFilterPreset==='MONTH'?'bg-emerald-700 text-white border-emerald-500':'bg-slate-800 text-emerald-300 border-slate-700 hover:bg-slate-700'}">Mes Actual</button>
+                <button type="button" onclick="applyKpiQuickPeriod('QUARTER')" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition ${kpiFilterPreset==='QUARTER'?'bg-blue-700 text-white border-blue-500':'bg-slate-800 text-blue-300 border-slate-700 hover:bg-slate-700'}">Trimestre</button>
+                <button type="button" onclick="applyKpiQuickPeriod('ALL')" class="px-3 py-1.5 rounded-xl text-xs font-bold border transition ${!hasActiveKpiFilter?'bg-rose-700 text-white border-rose-500':'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'}">Hist\u00f3rico Completo</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs items-end">
+              <div>
+                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Fecha Inicio KPI</label>
+                <input type="date" value="${kpiFilterStartDate}" onchange="handleKpiDateFilterChange('start', this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Fecha Fin KPI</label>
+                <input type="date" value="${kpiFilterEndDate}" onchange="handleKpiDateFilterChange('end', this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+              </div>
+              <div class="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 flex items-center justify-between">
+                <span class="text-slate-400 text-[11px]">Muestra Activa:</span>
+                <span class="font-mono font-bold text-emerald-400 text-xs">${filteredProjs.length} proy. \u00b7 ${filteredFuel.length} comb. \u00b7 ${filteredExpenses.length} gastos</span>
+              </div>
+            </div>
+          </div>
+
           <!-- RESUMEN EJECUTIVO DE ANALITICAS Y REPORTES -->
           <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
@@ -3368,17 +4249,17 @@ function renderStaffLogistics() {
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
               <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-file-invoice-dollar text-emerald-400 mr-1"></i>Volumen Cotizado</div>
               <div class="text-xl font-black text-white font-mono mt-1">RD$ ${totalQuotedRD.toLocaleString('es-DO')}</div>
-              <div class="text-[10px] text-slate-500 mt-0.5">${appData.projects.filter(p=>p.status==='Finalizado').length} de ${appData.projects.length} proyectos cerrados</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">${filteredProjs.filter(p=>p.status==='Finalizado').length} de ${filteredProjs.length} proyectos cerrados</div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-gas-pump text-amber-400 mr-1"></i>Combustible Despachado</div>
+              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-gas-pump text-amber-400 mr-1"></i>Combustible Periodo</div>
               <div class="text-xl font-black text-amber-300 font-mono mt-1">RD$ ${totalFuelDispatchedRD.toLocaleString('es-DO')}</div>
               <div class="text-[10px] text-slate-500 mt-0.5">${Math.round(totalFuelDispatchedRD / 500)} tickets de RD$ 500</div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow">
-              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-receipt text-rose-400 mr-1"></i>Gastos en Campo</div>
+              <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-receipt text-rose-400 mr-1"></i>Gastos Operativos</div>
               <div class="text-xl font-black text-rose-400 font-mono mt-1">RD$ ${totalFieldExpensesRD.toLocaleString('es-DO')}</div>
-              <div class="text-[10px] text-slate-500 mt-0.5">${(appData.fieldExpenses || []).length} comprobantes registrados</div>
+              <div class="text-[10px] text-slate-500 mt-0.5">${filteredExpenses.length} comprobantes en rango</div>
             </div>
             <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow col-span-2 lg:col-span-1">
               <div class="text-[11px] text-slate-400 uppercase font-bold"><i class="fa-solid fa-boxes-stacked text-blue-400 mr-1"></i>Valor Inventario OCR</div>
@@ -3391,8 +4272,8 @@ function renderStaffLogistics() {
           <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow">
             <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico, Plazos de Ejecuti\u00f3n, Combustible &amp; Penalizaciones</h3>
-                <p class="text-[11px] text-slate-400">Integra descuento autom\u00e1tico de -10 pts por proyecto vencido (OVERDUE), m\u00e1s evaluaciones manuales de conducta, exceso de presupuesto y omisi\u00f3n de equipos</p>
+                <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-ranking-star mr-2 text-amber-400"></i>Ranking T\u00e9cnico, Plazos de Ejecuci\u00f3n, Combustible &amp; Penalizaciones</h3>
+                <p class="text-[11px] text-slate-400">Integra descuento autom\u00e1tico de -10 pts por proyecto vencido (OVERDUE), gastos en campo y evaluaciones manuales en el rango seleccionado</p>
               </div>
               <div class="flex flex-wrap gap-2">
                 <button type="button" onclick="openKpiEvalModal()" class="bg-rose-700 hover:bg-rose-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
@@ -3416,7 +4297,7 @@ function renderStaffLogistics() {
                     <th class="p-3">Pos / T\u00e9cnico</th>
                     <th class="p-3">Cierres / Plazo</th>
                     <th class="p-3">Hora Llegada / Salida</th>
-                    <th class="p-3">Combustible Proyectos vs Real</th>
+                    <th class="p-3">Combustible &amp; Gastos Campo</th>
                     <th class="p-3 text-center">Cumpl. GPS</th>
                     <th class="p-3">Incidencias (Retrasos + Manuales)</th>
                     <th class="p-3 text-center">Pts Restados</th>
@@ -3454,7 +4335,7 @@ function renderStaffLogistics() {
                           <span class="text-blue-400 font-bold">${t.totalProjectsKm} KM</span> (${t.estGallonsProjects} Gal) \u2192 <span class="text-emerald-400 font-bold">Est: RD$ ${t.estCostProjectsRD.toLocaleString('es-DO')}</span>
                         </div>
                         <div class="text-[10px] text-slate-400 font-mono mt-0.5">
-                          Despachado: <strong class="text-amber-300">RD$ ${t.actualFuelCostRD.toLocaleString('es-DO')}</strong> (${t.actualTicketsCount} tkts) \u00b7 Rend: ${t.kmPerGal} KM/Gal
+                          Comb. Real: <strong class="text-amber-300">RD$ ${t.actualFuelCostRD.toLocaleString('es-DO')}</strong> (${t.actualTicketsCount} tkts) \u00b7 Gastos: <strong class="text-rose-300">RD$ ${t.myFieldExpensesRD.toLocaleString('es-DO')}</strong>
                         </div>
                       </td>
                       <td class="p-3 text-center font-bold ${t.gpsRate>=80?'text-emerald-400':'text-amber-400'}">${t.gpsRate}%</td>
@@ -3513,7 +4394,7 @@ function renderStaffLogistics() {
                 <thead class="bg-slate-950/60 text-slate-400 uppercase border-b border-slate-800">
                   <tr>
                     <th class="p-3">Proyecto / Cliente</th>
-                    <th class="p-3">T\u00e9cnico L\u00edder</th>
+                    <th class="p-3">T\u00e9cnico L\u00edder &amp; Cuadrilla</th>
                     <th class="p-3">Creaci\u00f3n</th>
                     <th class="p-3">Inicio (Aprobado)</th>
                     <th class="p-3 text-center">D\u00edas Estimados</th>
@@ -3524,7 +4405,7 @@ function renderStaffLogistics() {
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-800">
-                  ${appData.projects.map(p => {
+                  ${filteredProjs.map(p => {
                     const lc = computeProjectLifecycleInfo(p);
                     const devText = !lc.hasStarted ? '\u2014' : (lc.deviationDays > 0 ? `+${lc.deviationDays} d\u00eda(s) retraso` : `${lc.deviationDays} d\u00eda(s) (En plazo)`);
                     const devColor = !lc.hasStarted ? 'text-slate-500' : (lc.deviationDays > 0 ? 'text-rose-400 font-bold' : 'text-emerald-400 font-bold');
@@ -3632,7 +4513,7 @@ function renderStaffLogistics() {
                   <h4 class="text-xs font-bold text-white uppercase"><i class="fa-solid fa-route mr-1.5 text-blue-400"></i>Kil\u00f3metros, Consumo y Horario por Proyecto</h4>
                   <p class="text-[10px] text-slate-400">Puedes ajustar los KM (ida y vuelta) de cada proyecto directamente aqu\u00ed</p>
                 </div>
-                <span class="text-[10px] text-slate-400 font-mono">${appData.projects.length} proyecto(s)</span>
+                <span class="text-[10px] text-slate-400 font-mono">${filteredProjs.length} proyecto(s)</span>
               </div>
               <div class="overflow-x-auto max-h-80">
                 <table class="w-full text-xs text-left">
@@ -3645,7 +4526,7 @@ function renderStaffLogistics() {
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-800">
-                    ${appData.projects.map(p => {
+                    ${filteredProjs.map(p => {
                       const cIn = (p.tracking && p.tracking.checkIn) ? p.tracking.checkIn : 'Sin marcar';
                       const cOut = (p.tracking && p.tracking.checkOut) ? p.tracking.checkOut : 'Pendiente';
                       const hrs = (p.tracking && p.tracking.hoursWorked) ? p.tracking.hoursWorked : '\u2014';
@@ -3702,7 +4583,7 @@ function renderStaffLogistics() {
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-slate-800">
-                    ${allEvals.length === 0 ? `<tr><td colspan="4" class="p-6 text-center text-slate-500 italic">No se han registrado penalizaciones ni evaluaciones manuales a\u00fan.</td></tr>` : allEvals.map(ev => `
+                    ${allEvals.length === 0 ? `<tr><td colspan="4" class="p-6 text-center text-slate-500 italic">No se han registrado penalizaciones ni evaluaciones manuales en este periodo.</td></tr>` : allEvals.map(ev => `
                       <tr class="hover:bg-slate-800/40">
                         <td class="p-2.5">
                           <div class="font-bold text-white">${ev.techName}</div>
@@ -3889,7 +4770,8 @@ function renderStaffLogistics() {
       }));
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rankingSheet), "Ranking_KPI");
 
-      const cicloVidaSheet = appData.projects.map(p => {
+      const filteredProjs = getFilteredProjectsForKpi();
+      const cicloVidaSheet = filteredProjs.map(p => {
         const lc = computeProjectLifecycleInfo(p);
         return {
           Codigo_Proyecto: p.code,
@@ -3922,7 +4804,7 @@ function renderStaffLogistics() {
       }));
       XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(horariosSheet), "Llegadas_Y_Salidas");
 
-      const evalsSheet = (appData.kpiEvaluations || []).map(ev => ({
+      const evalsSheet = (appData.kpiEvaluations || []).filter(ev => matchKpiDateRange(ev.date)).map(ev => ({
         Fecha: ev.date,
         Tecnico: ev.techName,
         Proyecto: ev.projectCode || 'General',
@@ -4372,7 +5254,10 @@ function openProjectDetailModal(projId) {
               <span class="text-white font-mono font-bold ml-2">RD$ ${Number(p.quotation.amount).toLocaleString()}</span>
               <div class="text-[11px] text-slate-400">Fecha: ${p.quotation.date} | Condiciones: ${p.quotation.notes || 'N/A'}</div>
             </div>
-            ${p.quotation.fileData ? `<button type="button" onclick="downloadQuotationFile('${p.id}')" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Descargar (${p.quotation.fileName})</button>` : `<span class="text-[11px] text-slate-400 font-mono">${p.quotation.fileName || ''}</span>`}
+            <div class="flex flex-wrap gap-1.5">
+              ${p.quotation.fileData ? `<button type="button" onclick="downloadQuotationFile('${p.id}')" class="bg-emerald-900 hover:bg-emerald-800 text-emerald-200 px-3 py-1.5 rounded-lg text-xs font-bold"><i class="fa-solid fa-download mr-1"></i> Descargar (${p.quotation.fileName})</button>` : `<span class="text-[11px] text-slate-400 font-mono self-center">${p.quotation.fileName || ''}</span>`}
+              <button type="button" onclick="shareProjectViaWhatsApp('${p.id}')" class="bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow"><i class="fa-brands fa-whatsapp"></i> Compartir Cotizaci\u00f3n</button>
+            </div>
           </div>
         `;
       }
@@ -4387,6 +5272,28 @@ function openProjectDetailModal(projId) {
           ${quoteHtml}
         </div>
       `;
+
+      // Acta de Entrega Digital y Firma del Cliente
+      const sigBox = document.getElementById('detailProjectSignatureContainer');
+      if (sigBox) {
+        if (p.deliverySignature) {
+          sigBox.classList.remove('hidden');
+          sigBox.innerHTML = `
+            <div class="bg-slate-950/80 p-4 rounded-xl border border-purple-800/70 text-xs flex flex-wrap items-center justify-between gap-4 shadow-inner">
+              <div class="space-y-1 flex-1 min-w-[220px]">
+                <div class="font-bold text-purple-300 uppercase flex items-center gap-1.5"><i class="fa-solid fa-file-signature text-purple-400"></i> Acta de Entrega Digital Firmada</div>
+                <div><span class="text-slate-400">Recibido conforme por:</span> <strong class="text-white">${p.deliverySignature.clientName}</strong> (${p.deliverySignature.clientId || 'S/D'})</div>
+                <div><span class="text-slate-400">Fecha/Hora &amp; GPS:</span> <span class="font-mono text-emerald-400">${p.deliverySignature.signedAt} \u00b7 ${p.deliverySignature.gpsLabel || ''}</span></div>
+                <div class="text-slate-300 italic">"${p.deliverySignature.notes || ''}"</div>
+              </div>
+              ${p.deliverySignature.dataUrl ? `<div class="bg-white p-2 rounded-xl border border-slate-700 shadow"><img src="${p.deliverySignature.dataUrl}" alt="Firma Cliente" class="h-16 object-contain"></div>` : ''}
+            </div>
+          `;
+        } else {
+          sigBox.classList.add('hidden');
+          sigBox.innerHTML = '';
+        }
+      }
 
       // Botones de Estado
       document.getElementById('detailProjectStatusButtons').innerHTML = `
@@ -4431,6 +5338,10 @@ function downloadQuotationFile(projId) {
     }
 
     function changeProjectStatusFromDetail(projId, newStatus) {
+      if (newStatus === 'Finalizado') {
+        openDeliverySignatureModal(projId);
+        return;
+      }
       changeProjectStatus(projId, newStatus);
       openProjectDetailModal(projId);
     }
@@ -4600,24 +5511,36 @@ function handleSaveQuotation(e) {
       
       const totalServices = (p.budget && p.budget.services) ? p.budget.services.reduce((a,c)=>a+(c.subtotal||0),0) : 0;
       const totalMat = (p.budget && p.budget.materials) ? p.budget.materials.reduce((a,c)=>a+(c.subtotal||0),0) : 0;
+      const lc = computeProjectLifecycleInfo(p);
+
+      const sigPrintHtml = p.deliverySignature ? `
+        <div style="margin-top: 22px; padding: 15px; border: 2px solid #6b21a8; border-radius: 8px; background: #faf5ff;">
+          <h4 style="margin: 0 0 8px 0; color: #581c87;">ACTA DE ENTREGA DIGITAL Y CONFORMIDAD DEL CLIENTE</h4>
+          <p style="margin: 4px 0; font-size: 12px;"><strong>Recibido por:</strong> ${p.deliverySignature.clientName} &nbsp;|&nbsp; <strong>Doc/Cargo:</strong> ${p.deliverySignature.clientId || 'N/A'}</p>
+          <p style="margin: 4px 0; font-size: 12px;"><strong>Fecha y Hora de Firma:</strong> ${p.deliverySignature.signedAt} &nbsp;|&nbsp; <strong>Ubicaci\u00f3n:</strong> ${p.deliverySignature.gpsLabel || 'En Sitio'}</p>
+          <p style="margin: 4px 0; font-size: 12px;"><strong>Observaciones de Entrega:</strong> ${p.deliverySignature.notes || 'Conforme'}</p>
+          ${p.deliverySignature.dataUrl ? `<div style="margin-top: 10px; text-align: center;"><img src="${p.deliverySignature.dataUrl}" style="max-height: 95px; border-bottom: 1px solid #333;" /><div style="font-size: 11px; color: #444; margin-top: 4px;">Firma Digital del Cliente (${p.deliverySignature.clientName})</div></div>` : ''}
+        </div>
+      ` : '';
 
       const printContainer = document.getElementById('printContainer');
       printContainer.innerHTML = `
         <div style="font-family: Arial, sans-serif; color: #000; padding: 20px;">
           <h1 style="color: #8b1524; font-size: 24px; margin-bottom: 0;">CentroXpert - Ingenier\u00eda y Servicios</h1>
-          <h3 style="margin-top: 5px; color: #333;">Ficha T\u00e9cnica de Proyecto: ${p.code}</h3>
+          <h3 style="margin-top: 5px; color: #333;">Reporte T\u00e9cnico y Acta de Proyecto: ${p.code}</h3>
           <hr style="border:1px solid #ccc; margin: 15px 0;">
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px;">
             <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Proyecto:</strong> ${p.title}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Estatus:</strong> ${p.status}</td></tr>
-            <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Cliente:</strong> ${p.client}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Fecha Planificada:</strong> ${p.plannedDate}</td></tr>
-            <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>T\u00e9cnico L\u00edder:</strong> ${p.techLeader}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Cuadrilla:</strong> ${(p.techCrew||[]).join(', ')}</td></tr>
+            <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Cliente:</strong> ${p.client}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Ciclo de Vida:</strong> Creado ${lc.createdAtStr} | Inicio ${lc.startStr} | Cierre ${lc.completedStr}</td></tr>
+            <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>T\u00e9cnico L\u00edder:</strong> ${p.techLeader}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Cuadrilla (1 a N):</strong> ${(p.techCrew||[]).join(', ') || 'Sin adicionales'}</td></tr>
             <tr><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Llegada GPS:</strong> ${(p.tracking && p.tracking.checkIn) || 'N/A'}</td><td style="padding: 6px; border-bottom: 1px solid #eee;"><strong>Salida GPS:</strong> ${(p.tracking && p.tracking.checkOut) || 'N/A'}</td></tr>
           </table>
-          <p><strong>Direcci\u00f3n / Contacto:</strong> ${p.address} (${p.contact || 'N/A'})</p>
+          <p style="font-size: 12px;"><strong>Direcci\u00f3n / Contacto:</strong> ${p.address} (${p.contact || 'N/A'})</p>
           <hr style="border:1px solid #ccc; margin: 15px 0;">
-          <h4>Estimaci&#243;n de presupuesto local (revisar tarifas antes de cotizar)</h4>
-          <p>Servicios Profesionales: RD$ ${totalServices.toLocaleString()} | Equipos y Materiales: RD$ ${totalMat.toLocaleString()} | <strong>Total Base: RD$ ${(totalServices+totalMat).toLocaleString()}</strong></p>
-          ${p.quotation ? `<div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin-top: 15px;"><h4>Cotizaci\u00f3n Oficial: ${p.quotation.number}</h4><p><strong>Monto Total Cotizado:</strong> RD$ ${Number(p.quotation.amount).toLocaleString()}</p><p><strong>Condiciones:</strong> ${p.quotation.notes}</p></div>` : '<p>Sin cotizaci\u00f3n formalizada.</p>'}
+          <h4>Presupuesto y Cotizaci\u00f3n</h4>
+          <p style="font-size: 12px;">Servicios Profesionales: RD$ ${totalServices.toLocaleString()} | Equipos y Materiales: RD$ ${totalMat.toLocaleString()} | <strong>Total Base: RD$ ${(totalServices+totalMat).toLocaleString()}</strong></p>
+          ${p.quotation ? `<div style="background-color: #f9f9f9; padding: 15px; border: 1px solid #ddd; margin-top: 15px; font-size: 12px;"><h4>Cotizaci\u00f3n Oficial: ${p.quotation.number}</h4><p><strong>Monto Total Cotizado:</strong> RD$ ${Number(p.quotation.amount).toLocaleString()}</p><p><strong>Condiciones:</strong> ${p.quotation.notes}</p></div>` : '<p style="font-size: 12px;">Sin cotizaci\u00f3n formalizada.</p>'}
+          ${sigPrintHtml}
         </div>
       `;
       window.print();
@@ -4827,9 +5750,9 @@ function triggerTechSurvey() {
           updateSurveyModalFileCards();
           badge.innerText = text.trim() ? 'Word le\u00eddo; revisa los datos' : 'Word adjunto sin texto extra\u00edble';
         } else if (file.type && file.type.startsWith('image/')) {
-          badge.innerText = 'Digitalizando imagen\u2026';
-          const dataUrl = await readFileAsDataURL(file);
-          tempSurveyDoc = { name: file.name, type: file.type, data: dataUrl };
+          badge.innerText = 'Comprimiendo (max 800px) y estampando marca de agua GPS\u2026';
+          const dataUrl = await compressAndWatermarkImageFile(file, 'LEVANTAMIENTO', 800, 0.78);
+          tempSurveyDoc = { name: file.name, type: 'image/jpeg', data: dataUrl };
           updateSurveyModalFileCards();
           if (typeof Tesseract === 'undefined') throw new Error('OCR no disponible');
           const result = await Tesseract.recognize(dataUrl, 'spa');
@@ -4858,16 +5781,22 @@ function triggerTechSurvey() {
       } finally { if (e.target) e.target.value = ''; }
     }
 
-function handlePlanDocUpload(e) {
-      const file = e.target.files[0];
+async function handlePlanDocUpload(e) {
+      const file = e.target.files && e.target.files[0];
       if (!file) return;
       if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
-      const r = new FileReader();
-      r.onload = function(evt) {
-        tempPlanDoc = { name: file.name, type: file.type || 'application/octet-stream', data: evt.target.result };
+      try {
+        const dataUrl = (file.type && file.type.startsWith('image/'))
+          ? await compressAndWatermarkImageFile(file, 'PLANO TECNICO', 800, 0.80)
+          : await readFileAsDataURL(file);
+        tempPlanDoc = { name: file.name, type: (file.type && file.type.startsWith('image/')) ? 'image/jpeg' : (file.type || 'application/octet-stream'), data: dataUrl };
         updateSurveyModalFileCards();
-      };
-      r.readAsDataURL(file);
+        showToast('Plano comprimido y estampado con marca de agua.');
+      } catch (err) {
+        showToast('No se pudo cargar el plano.');
+      } finally {
+        e.target.value = '';
+      }
     }
 
 function updateSurveyModalFileCards() {
@@ -5717,6 +6646,7 @@ function openCloudSyncModal() {
       const val = inp ? inp.value.trim().toLowerCase() : '';
       if (!val) return;
       localStorage.setItem(CLOUD_ROOM_KEY, val);
+      hydrateHeavyFilesFromIDB();
       initRealtimeMqttSync();
       showToast('Sala "' + val + '" conectada. Sincronizando dispositivos...');
       pullFromCloud(true);
