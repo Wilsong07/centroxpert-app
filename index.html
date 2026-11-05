@@ -1809,18 +1809,68 @@ function render() {
 
     function exportLogisticsToExcel() {
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.vehicles), "Vehiculos");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.fuelLogs || []), "Combustible_Tickets");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.inventory || []), "Inventario_OCR");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet((appData.fieldExpenses || []).map(x => ({
+      const fuelInfo = getFilteredFuelLogsAndMetrics();
+      const hasActiveFuelFilter = Boolean(fuelFilterStartDate || fuelFilterEndDate || (fuelFilterEntity && fuelFilterEntity !== 'ALL'));
+
+      // 1. Resumen Dinamico de Combustible (Respeta filtros aplicados en vista)
+      const resumenCombustibleSheet = [{
+        Filtro_Fecha_Inicio: fuelFilterStartDate || 'Todas',
+        Filtro_Fecha_Fin: fuelFilterEndDate || 'Todas',
+        Filtro_Tecnico_O_Vehiculo: fuelInfo.entityLabel,
+        Registros_Coincidentes: fuelInfo.logs.length,
+        Total_Tickets_RD500: fuelInfo.totalTickets,
+        Gasto_Total_RD: fuelInfo.totalCostRD,
+        Galones_Consumidos: fuelInfo.totalGallons,
+        KM_Recorridos_Odometro: fuelInfo.totalKm,
+        Dias_En_Periodo: fuelInfo.periodDays,
+        Promedio_Gasto_Diario_RD: fuelInfo.avgDailyRD,
+        Proyeccion_Gasto_Mensual_RD: fuelInfo.avgMonthlyRD
+      }];
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumenCombustibleSheet), "Resumen_Combustible");
+
+      // 2. Despachos de Combustible Filtrados
+      const fuelRows = fuelInfo.logs.map(l => ({
+        Fecha: l.date,
+        Placa_Vehiculo: l.plate,
+        Tecnico_Responsable: l.driver || 'Sin asignar',
+        Recorrido_KM: l.dist == null ? 'N/D' : l.dist,
+        Tickets_RD500: l.ticketCount == null ? Math.round((Number(l.cost) || 0) / 500) : l.ticketCount,
+        Monto_Total_RD: Number(l.cost || 0),
+        Galones_Estimados: l.gallons ? Number(l.gallons) : Number(((Number(l.cost) || 0) / 290).toFixed(2)),
+        Costo_Por_KM_RD: l.costPerKm == null ? 'N/D' : Number(l.costPerKm)
+      }));
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(fuelRows), "Combustible_Filtrado");
+
+      // 3. Vehiculos, Gastos, Tecnicos, Inventario y Herramientas (filtrados si hay t\u00e9cnico/veh\u00edculo seleccionado)
+      const filteredVehicles = appData.vehicles.filter(v => matchEntityFilter(v.assignedTo, v.plate));
+      const filteredExpenses = (appData.fieldExpenses || []).filter(x => {
+        const veh = appData.vehicles.find(v => v.assignedTo && x.techName && v.assignedTo.toLowerCase() === x.techName.toLowerCase());
+        return matchDateRangeFilter(x.date) && matchEntityFilter(x.techName, veh ? veh.plate : '');
+      }).map(x => ({
         Fecha: x.date, Tecnico: x.techName, Proyecto: x.projectCode || 'General', Categoria: x.category, Monto_RD: x.amount, Estatus: x.status, Detalle: x.notes
-      }))), "Gastos_Campo");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.technicians.map(t => ({
+      }));
+      const filteredTechs = appData.technicians.filter(t => matchEntityFilter(t.name, t.vehiclePlate)).map(t => ({
         ID: t.id, Nombre: t.name, Rango: t.level, Telefono: t.phone, Direccion: t.address, Vehiculo: t.vehiclePlate
-      }))), "Tecnicos");
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(appData.tools), "Herramientas");
-      XLSX.writeFile(wb, "Logistica_Inventario_Gastos_CentroXpert.xlsx");
-      showToast("Log\u00edstica, Inventario y Gastos exportados a Excel.");
+      }));
+      const filteredTools = appData.tools.filter(tl => matchEntityFilter(tl.assignedTo, ''));
+      const filteredInventory = (appData.inventory || []).filter(item =>
+        !inventorySearchQuery ||
+        (item.sku && item.sku.toLowerCase().includes(inventorySearchQuery)) ||
+        (item.name && item.name.toLowerCase().includes(inventorySearchQuery)) ||
+        (item.category && item.category.toLowerCase().includes(inventorySearchQuery))
+      );
+
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filteredVehicles), "Vehiculos");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filteredInventory), "Inventario_OCR");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filteredExpenses), "Gastos_Campo");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filteredTechs), "Tecnicos");
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(filteredTools), "Herramientas");
+
+      const fileSuffix = hasActiveFuelFilter ? "_Filtrado" : "";
+      XLSX.writeFile(wb, `Logistica_Combustible_CentroXpert${fileSuffix}.xlsx`);
+      showToast(hasActiveFuelFilter
+        ? `Excel exportado respetando los filtros aplicados (${fuelInfo.logs.length} reg. de combustible).`
+        : "Log\u00edstica, Combustible, Inventario y Gastos exportados a Excel.");
     }
     
     function exportKPIReportToPDF() {
@@ -2705,80 +2755,328 @@ function render() {
       `;
     }
 
+    /* ===================================================================
+       FILTROS COMBINADOS DE COMBUSTIBLE & METRICAS DINAMICAS EN TIEMPO REAL
+       =================================================================== */
+    let fuelFilterStartDate = '';
+    let fuelFilterEndDate = '';
+    let fuelFilterEntity = 'ALL'; // 'ALL' | 'TECH:<name>' | 'PLATE:<plate>'
+
+    function normalizeLogDateToDayBounds(dateStr) {
+      if (!dateStr) return null;
+      const ms = parseEsDoDateToMs(String(dateStr));
+      if (!ms) return null;
+      const d = new Date(ms);
+      d.setHours(12, 0, 0, 0);
+      return d.getTime();
+    }
+
+    function matchDateRangeFilter(dateStr) {
+      if (!fuelFilterStartDate && !fuelFilterEndDate) return true;
+      const logMs = normalizeLogDateToDayBounds(dateStr);
+      if (!logMs) return false;
+      if (fuelFilterStartDate) {
+        const parts = fuelFilterStartDate.split('-');
+        const startMs = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 0, 0, 0, 0).getTime();
+        if (logMs < startMs) return false;
+      }
+      if (fuelFilterEndDate) {
+        const parts = fuelFilterEndDate.split('-');
+        const endMs = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]), 23, 59, 59, 999).getTime();
+        if (logMs > endMs) return false;
+      }
+      return true;
+    }
+
+    function matchEntityFilter(driverName, plateName) {
+      if (!fuelFilterEntity || fuelFilterEntity === 'ALL') return true;
+      const dNorm = String(driverName || '').trim().toLowerCase();
+      const pNorm = String(plateName || '').trim().toUpperCase();
+      if (fuelFilterEntity.startsWith('TECH:')) {
+        const targetTech = fuelFilterEntity.slice(5).trim();
+        const targetTechLower = targetTech.toLowerCase();
+        const techObj = appData.technicians.find(t => t.name && t.name.toLowerCase() === targetTechLower);
+        const assignedVeh = appData.vehicles.find(v => v.assignedTo && v.assignedTo.toLowerCase() === targetTechLower);
+        const techPlate = ((techObj && techObj.vehiclePlate) || (assignedVeh && assignedVeh.plate) || '').toUpperCase();
+        if (dNorm && dNorm === targetTechLower) return true;
+        if (pNorm && techPlate && pNorm === techPlate) return true;
+        return false;
+      }
+      if (fuelFilterEntity.startsWith('PLATE:')) {
+        const targetPlate = fuelFilterEntity.slice(6).trim().toUpperCase();
+        const vehObj = appData.vehicles.find(v => v.plate && v.plate.toUpperCase() === targetPlate);
+        const custLower = (vehObj && vehObj.assignedTo) ? vehObj.assignedTo.toLowerCase() : '';
+        if (pNorm && pNorm === targetPlate) return true;
+        if (!pNorm && dNorm && custLower && dNorm === custLower) return true;
+        return false;
+      }
+      return true;
+    }
+
+    function handleFuelDateFilterChange(which, val) {
+      if (which === 'start') fuelFilterStartDate = val || '';
+      if (which === 'end') fuelFilterEndDate = val || '';
+      render();
+    }
+
+    function handleFuelEntityFilterChange(val) {
+      fuelFilterEntity = val || 'ALL';
+      render();
+    }
+
+    function resetFuelFilters() {
+      fuelFilterStartDate = '';
+      fuelFilterEndDate = '';
+      fuelFilterEntity = 'ALL';
+      render();
+      showToast('Filtros de combustible restablecidos.');
+    }
+
+    function getFilteredFuelLogsAndMetrics() {
+      const allLogs = Array.isArray(appData.fuelLogs) ? appData.fuelLogs : [];
+      const filteredLogs = allLogs.filter(l => matchDateRangeFilter(l.date) && matchEntityFilter(l.driver, l.plate));
+
+      const totalCostRD = filteredLogs.reduce((acc, l) => acc + (Number(l.cost) || 0), 0);
+      const totalTickets = filteredLogs.reduce((acc, l) => {
+        const tk = (l.ticketCount !== null && l.ticketCount !== undefined && l.ticketCount !== '')
+          ? Number(l.ticketCount)
+          : Math.round((Number(l.cost) || 0) / 500);
+        return acc + (Number.isFinite(tk) ? tk : 0);
+      }, 0);
+
+      const totalGallons = Number(filteredLogs.reduce((acc, l) => {
+        if (l.gallons && Number.isFinite(Number(l.gallons))) return acc + Number(l.gallons);
+        const veh = appData.vehicles.find(v => v.plate === l.plate);
+        const priceGal = (veh && Number(veh.fuelPriceGal) > 0) ? Number(veh.fuelPriceGal) : 290;
+        return acc + ((Number(l.cost) || 0) / priceGal);
+      }, 0).toFixed(2));
+
+      const totalKm = filteredLogs.reduce((acc, l) => acc + (Number(l.dist) || 0), 0);
+
+      // C\u00e1lculo de d\u00edas del periodo para el promedio diario y proyecci\u00f3n/promedio mensual
+      let periodDays = 1;
+      if (fuelFilterStartDate && fuelFilterEndDate) {
+        const sParts = fuelFilterStartDate.split('-');
+        const eParts = fuelFilterEndDate.split('-');
+        const sMs = new Date(Number(sParts[0]), Number(sParts[1]) - 1, Number(sParts[2])).getTime();
+        const eMs = new Date(Number(eParts[0]), Number(eParts[1]) - 1, Number(eParts[2])).getTime();
+        periodDays = Math.max(1, Math.round(Math.abs(eMs - sMs) / 86400000) + 1);
+      } else if (filteredLogs.length > 1) {
+        const validTimes = filteredLogs.map(l => normalizeLogDateToDayBounds(l.date)).filter(Boolean);
+        if (validTimes.length > 1) {
+          const minMs = Math.min(...validTimes);
+          const maxMs = Math.max(...validTimes);
+          periodDays = Math.max(1, Math.round((maxMs - minMs) / 86400000) + 1);
+        }
+      }
+
+      const avgDailyRD = filteredLogs.length > 0 ? Math.round(totalCostRD / periodDays) : 0;
+      // Si el rango o historial es <= 30 d\u00edas y no hay filtro expl\u00edcito de varios meses, mostramos tanto el gasto promedio por d\u00eda activo como la proyecci\u00f3n/promedio mensual (30d)
+      const activeMonths = Math.max(1, periodDays / 30);
+      const avgMonthlyRD = filteredLogs.length > 0
+        ? (periodDays >= 30 ? Math.round(totalCostRD / activeMonths) : Math.round(avgDailyRD * 30))
+        : 0;
+      const avgPerRefillRD = filteredLogs.length > 0 ? Math.round(totalCostRD / filteredLogs.length) : 0;
+
+      let entityLabel = 'Todos los T\u00e9cnicos y Veh\u00edculos';
+      if (fuelFilterEntity && fuelFilterEntity.startsWith('TECH:')) {
+        entityLabel = 'T\u00e9cnico: ' + fuelFilterEntity.slice(5);
+      } else if (fuelFilterEntity && fuelFilterEntity.startsWith('PLATE:')) {
+        entityLabel = 'Veh\u00edculo: ' + fuelFilterEntity.slice(6);
+      }
+
+      return {
+        logs: filteredLogs,
+        totalLogsCount: allLogs.length,
+        totalTickets: Number(totalTickets.toFixed(1)),
+        totalCostRD,
+        totalGallons,
+        totalKm,
+        periodDays,
+        avgDailyRD,
+        avgMonthlyRD,
+        avgPerRefillRD,
+        entityLabel
+      };
+    }
+
+    function deleteFuelLogEntry(logId) {
+      if (!confirm('\u00bfEliminar este registro de despacho de combustible?')) return;
+      appData.fuelLogs = (appData.fuelLogs || []).filter(l => String(l.id) !== String(logId));
+      saveData();
+      showToast('Registro de combustible eliminado.');
+    }
+
     function renderFuelLogistics() {
       const firstVeh = appData.vehicles[0] || null;
       const defaultPrevKm = firstVeh ? (firstVeh.lastFuelKm || firstVeh.odo || 0) : 0;
+      const metrics = getFilteredFuelLogsAndMetrics();
+      const hasActiveFilters = Boolean(fuelFilterStartDate || fuelFilterEndDate || (fuelFilterEntity && fuelFilterEntity !== 'ALL'));
+
       return `
-        <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Llenado de Combustible (Tickets de RD$ 500)</h3>
-              <p class="text-[11px] text-slate-400">Al digitar la cantidad de tickets de RD$ 500 se calcula autom\u00e1ticamente el total en pesos RD$ y el consumo por t\u00e9cnico</p>
+        <div class="space-y-4">
+          <!-- BARRA DE FILTROS COMBINADOS (RANGO DE FECHAS + TECNICO / VEHICULO) -->
+          <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+              <div>
+                <h4 class="text-xs font-bold text-white uppercase flex items-center gap-1.5">
+                  <i class="fa-solid fa-filter text-emerald-400"></i> Filtros Combinados de Combustible &amp; Anal\u00edtica Din\u00e1mica
+                </h4>
+                <p class="text-[11px] text-slate-400">Filtra por rango de fechas (Inicio y Fin) y por T\u00e9cnico o Veh\u00edculo espec\u00edfico para recalcular indicadores y exportar a Excel</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                ${hasActiveFilters ? `
+                  <button type="button" onclick="resetFuelFilters()" class="bg-slate-800 hover:bg-rose-950 text-rose-300 border border-rose-800/70 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                    <i class="fa-solid fa-filter-circle-xmark"></i> Limpiar Filtros
+                  </button>
+                ` : ''}
+                <button type="button" onclick="exportLogisticsToExcel()" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow flex items-center gap-1.5">
+                  <i class="fa-solid fa-file-excel"></i> Exportar Vista Filtrada (Excel)
+                </button>
+              </div>
             </div>
-            <span class="text-xs font-mono bg-emerald-950 text-emerald-300 border border-emerald-800 px-2.5 py-1 rounded-lg">1 Ticket = RD$ 500.00</span>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div>
+                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1"><i class="fa-regular fa-calendar mr-1 text-emerald-400"></i>Fecha Inicio</label>
+                <input type="date" id="fuelFilterStartInput" value="${fuelFilterStartDate}" onchange="handleFuelDateFilterChange('start', this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1"><i class="fa-regular fa-calendar-check mr-1 text-emerald-400"></i>Fecha Fin</label>
+                <input type="date" id="fuelFilterEndInput" value="${fuelFilterEndDate}" onchange="handleFuelDateFilterChange('end', this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1"><i class="fa-solid fa-user-shield mr-1 text-blue-400"></i>Filtrar por T\u00e9cnico o Veh\u00edculo</label>
+                <select id="fuelFilterEntitySelect" onchange="handleFuelEntityFilterChange(this.value)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-semibold focus:border-blue-500">
+                  <option value="ALL" ${fuelFilterEntity === 'ALL' ? 'selected' : ''}>-- Todos los T\u00e9cnicos y Veh\u00edculos --</option>
+                  <optgroup label="Filtrar por T\u00e9cnico">
+                    ${appData.technicians.map(t => {
+                      const val = 'TECH:' + t.name;
+                      return `<option value="${val}" ${fuelFilterEntity === val ? 'selected' : ''}>\ud83d\udc77 ${t.name} (${t.vehiclePlate || 'Sin unidad'})</option>`;
+                    }).join('')}
+                  </optgroup>
+                  <optgroup label="Filtrar por Veh\u00edculo (Placa)">
+                    ${appData.vehicles.map(v => {
+                      const val = 'PLATE:' + v.plate;
+                      return `<option value="${val}" ${fuelFilterEntity === val ? 'selected' : ''}>\ud83d\ude9b ${v.plate} \u2014 ${v.model} (${v.assignedTo || 'Libre'})</option>`;
+                    }).join('')}
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <!-- METRICAS DINAMICAS EN TIEMPO REAL (DASHBOARDING DE COMBUSTIBLE) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+              <div class="bg-slate-950/90 border border-amber-800/50 p-3.5 rounded-xl shadow-inner">
+                <div class="text-[10px] text-amber-400 uppercase font-bold flex items-center justify-between">
+                  <span><i class="fa-solid fa-ticket mr-1"></i>Total Tickets (RD$ 500)</span>
+                  <span class="text-[9px] bg-amber-950 text-amber-300 px-1.5 py-0.5 rounded font-mono">${metrics.logs.length} desp.</span>
+                </div>
+                <div class="text-xl font-black text-amber-300 font-mono mt-1">${metrics.totalTickets} <span class="text-xs font-normal text-slate-400">tickets</span></div>
+                <div class="text-[10px] text-slate-400 mt-0.5 truncate">${metrics.entityLabel}</div>
+              </div>
+
+              <div class="bg-slate-950/90 border border-emerald-800/50 p-3.5 rounded-xl shadow-inner">
+                <div class="text-[10px] text-emerald-400 uppercase font-bold"><i class="fa-solid fa-sack-dollar mr-1"></i>Gasto Total Filtrado (RD$)</div>
+                <div class="text-xl font-black text-emerald-400 font-mono mt-1">RD$ ${metrics.totalCostRD.toLocaleString('es-DO', { minimumFractionDigits: 2 })}</div>
+                <div class="text-[10px] text-slate-400 mt-0.5 font-mono">Prom. por despacho: RD$ ${metrics.avgPerRefillRD.toLocaleString('es-DO')}</div>
+              </div>
+
+              <div class="bg-slate-950/90 border border-blue-800/50 p-3.5 rounded-xl shadow-inner">
+                <div class="text-[10px] text-blue-400 uppercase font-bold"><i class="fa-solid fa-gas-pump mr-1"></i>Galones Consumidos</div>
+                <div class="text-xl font-black text-blue-300 font-mono mt-1">${metrics.totalGallons.toFixed(2)} <span class="text-xs font-normal text-slate-400">Gal</span></div>
+                <div class="text-[10px] text-slate-400 mt-0.5 font-mono">Recorrido reg.: ${metrics.totalKm.toLocaleString('es-DO')} KM</div>
+              </div>
+
+              <div class="bg-slate-950/90 border border-rose-800/50 p-3.5 rounded-xl shadow-inner">
+                <div class="text-[10px] text-rose-400 uppercase font-bold"><i class="fa-solid fa-chart-line mr-1"></i>Promedio Gasto Diario / Mensual</div>
+                <div class="text-base font-black text-white font-mono mt-1">
+                  RD$ ${metrics.avgDailyRD.toLocaleString('es-DO')}<span class="text-[10px] text-slate-400 font-normal">/d\u00eda</span>
+                </div>
+                <div class="text-[11px] text-rose-300 font-mono font-bold mt-0.5">
+                  Mensual: RD$ ${metrics.avgMonthlyRD.toLocaleString('es-DO')}<span class="text-[10px] text-slate-400 font-normal">/mes (${metrics.periodDays}d)</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-6 gap-3">
-            <div>
-              <label class="block text-[10px] text-slate-400 mb-1">Placa / Veh\u00edculo</label>
-              <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs font-mono">
-                ${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate} (${v.assignedTo || 'Libre'})</option>`).join('')}
-              </select>
+
+          <!-- FORMULARIO DE REGISTRO Y TABLA DE DESPACHOS -->
+          <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-4 shadow">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-sm font-bold text-white uppercase"><i class="fa-solid fa-gas-pump text-rose-400 mr-1.5"></i> Llenado de Combustible (Tickets de RD$ 500)</h3>
+                <p class="text-[11px] text-slate-400">Al digitar la cantidad de tickets de RD$ 500 se calcula autom\u00e1ticamente el total en pesos RD$ y el consumo por t\u00e9cnico</p>
+              </div>
+              <span class="text-xs font-mono bg-emerald-950 text-emerald-300 border border-emerald-800 px-2.5 py-1 rounded-lg">1 Ticket = RD$ 500.00</span>
             </div>
-            <div>
-              <label class="block text-[10px] text-slate-400 mb-1">T\u00e9cnico Responsable</label>
-              <select id="fuelDriverSelect" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs">
-                ${appData.technicians.map(t=>`<option value="${t.name}" ${firstVeh && firstVeh.assignedTo === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
-              </select>
-            </div>
-            <div>
-              <label class="block text-[10px] text-slate-400 mb-1">Km Anterior</label>
-              <input type="number" id="fuelPrevKm" value="${defaultPrevKm}" readonly class="w-full bg-slate-950 border border-slate-700 text-slate-400 px-2.5 py-2 rounded-lg text-xs font-mono">
-            </div>
-            <div>
-              <label class="block text-[10px] text-slate-400 mb-1">Km Actual</label>
-              <input type="number" id="fuelCurrentKm" required placeholder="${defaultPrevKm + 180}" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs font-mono">
-            </div>
-            <div>
-              <label class="block text-[10px] text-amber-400 font-bold mb-1">Tickets de RD$ 500</label>
-              <input type="number" id="fuelTicketsCount" min="0" step="1" value="6" oninput="calculateFuelTotalMonto()" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 border border-amber-600/80 text-white px-2.5 py-2 rounded-lg text-xs font-mono font-bold">
-            </div>
-            <div>
-              <label class="block text-[10px] text-emerald-400 font-bold mb-1">Total Autom\u00e1tico (RD$)</label>
-              <input type="number" id="fuelCost" min="0" step="0.01" value="3000" required class="w-full bg-slate-950 border border-emerald-700 text-emerald-400 px-2.5 py-2 rounded-lg text-xs font-mono font-bold">
-            </div>
-            <div class="col-span-2 md:col-span-6 flex justify-end mt-1">
-              <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-1.5">
-                <i class="fa-solid fa-gas-pump"></i> Registrar Llenado de Combustible
-              </button>
-            </div>
-          </form>
-          <div class="overflow-x-auto">
-            <table class="w-full text-xs text-left">
-              <thead class="bg-slate-950 text-slate-400 uppercase border-b border-slate-800">
-                <tr>
-                  <th class="p-2.5">Fecha</th>
-                  <th class="p-2.5">Placa / T\u00e9cnico</th>
-                  <th class="p-2.5">Recorrido Od\u00f3metro</th>
-                  <th class="p-2.5">Tickets (RD$ 500)</th>
-                  <th class="p-2.5">Total RD$</th>
-                  <th class="p-2.5">Galones Est.</th>
-                  <th class="p-2.5">Rendimiento Real</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-slate-800">
-                ${appData.fuelLogs.length === 0 ? `<tr><td colspan="7" class="p-4 text-center text-slate-500 italic">No hay despachos de combustible registrados todav\u00eda.</td></tr>` : appData.fuelLogs.map(l => `
-                  <tr class="hover:bg-slate-800/40">
-                    <td class="p-2.5 font-mono text-[11px]">${l.date}</td>
-                    <td class="p-2.5"><strong class="text-white font-mono">${l.plate}</strong><div class="text-[10px] text-blue-400">${l.driver || 'Sin t\u00e9cnico'}</div></td>
-                    <td class="p-2.5 text-emerald-400 font-mono">${l.dist == null ? 'N/D' : l.dist + ' KM'}</td>
-                    <td class="p-2.5 font-mono font-bold text-amber-300">${l.ticketCount == null ? '\u2014' : l.ticketCount + ' tkts'}</td>
-                    <td class="p-2.5 font-mono font-bold text-emerald-400">RD$ ${Number(l.cost || 0).toLocaleString('es-DO')}</td>
-                    <td class="p-2.5 font-mono text-slate-300">${l.gallons ? Number(l.gallons).toFixed(2) + ' Gal' : '\u2014'}</td>
-                    <td class="p-2.5 font-mono font-bold ${l.costPerKm == null ? 'text-slate-500' : 'text-white'}">${l.costPerKm == null ? 'Sin datos' : 'RD$ ' + Number(l.costPerKm).toFixed(2) + '/KM'}</td>
+            <form onsubmit="handleFuelSubmit(event)" class="grid grid-cols-2 md:grid-cols-6 gap-3">
+              <div>
+                <label class="block text-[10px] text-slate-400 mb-1">Placa / Veh\u00edculo</label>
+                <select id="fuelPlateSelect" onchange="updateFuelPlateHelper()" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs font-mono">
+                  ${appData.vehicles.map(v=>`<option value="${v.plate}">${v.plate} (${v.assignedTo || 'Libre'})</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 mb-1">T\u00e9cnico Responsable</label>
+                <select id="fuelDriverSelect" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs">
+                  ${appData.technicians.map(t=>`<option value="${t.name}" ${firstVeh && firstVeh.assignedTo === t.name ? 'selected' : ''}>${t.name}</option>`).join('')}
+                </select>
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 mb-1">Km Anterior</label>
+                <input type="number" id="fuelPrevKm" value="${defaultPrevKm}" readonly class="w-full bg-slate-950 border border-slate-700 text-slate-400 px-2.5 py-2 rounded-lg text-xs font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 mb-1">Km Actual</label>
+                <input type="number" id="fuelCurrentKm" required placeholder="${defaultPrevKm + 180}" class="w-full bg-slate-800 border border-slate-700 text-white px-2.5 py-2 rounded-lg text-xs font-mono">
+              </div>
+              <div>
+                <label class="block text-[10px] text-amber-400 font-bold mb-1">Tickets de RD$ 500</label>
+                <input type="number" id="fuelTicketsCount" min="0" step="1" value="6" oninput="calculateFuelTotalMonto()" onchange="calculateFuelTotalMonto()" class="w-full bg-slate-800 border border-amber-600/80 text-white px-2.5 py-2 rounded-lg text-xs font-mono font-bold">
+              </div>
+              <div>
+                <label class="block text-[10px] text-emerald-400 font-bold mb-1">Total Autom\u00e1tico (RD$)</label>
+                <input type="number" id="fuelCost" min="0" step="0.01" value="3000" required class="w-full bg-slate-950 border border-emerald-700 text-emerald-400 px-2.5 py-2 rounded-lg text-xs font-mono font-bold">
+              </div>
+              <div class="col-span-2 md:col-span-6 flex justify-end mt-1">
+                <button type="submit" class="bg-rose-700 hover:bg-rose-600 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-1.5">
+                  <i class="fa-solid fa-gas-pump"></i> Registrar Llenado de Combustible
+                </button>
+              </div>
+            </form>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left">
+                <thead class="bg-slate-950 text-slate-400 uppercase border-b border-slate-800">
+                  <tr>
+                    <th class="p-2.5">Fecha</th>
+                    <th class="p-2.5">Placa / T\u00e9cnico</th>
+                    <th class="p-2.5">Recorrido Od\u00f3metro</th>
+                    <th class="p-2.5">Tickets (RD$ 500)</th>
+                    <th class="p-2.5">Total RD$</th>
+                    <th class="p-2.5">Galones Est.</th>
+                    <th class="p-2.5">Rendimiento Real</th>
+                    <th class="p-2.5 text-right">Acci\u00f3n</th>
                   </tr>
-                `).join('')}
-              </tbody>
-            </table>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                  ${metrics.logs.length === 0 ? `<tr><td colspan="8" class="p-5 text-center text-slate-500 italic">${hasActiveFilters ? 'No hay registros de combustible que coincidan con el rango de fechas o t\u00e9cnico/veh\u00edculo seleccionado.' : 'No hay despachos de combustible registrados todav\u00eda.'}</td></tr>` : metrics.logs.map(l => `
+                    <tr class="hover:bg-slate-800/40">
+                      <td class="p-2.5 font-mono text-[11px]">${l.date}</td>
+                      <td class="p-2.5"><strong class="text-white font-mono">${l.plate}</strong><div class="text-[10px] text-blue-400">${l.driver || 'Sin t\u00e9cnico'}</div></td>
+                      <td class="p-2.5 text-emerald-400 font-mono">${l.dist == null ? 'N/D' : l.dist + ' KM'}</td>
+                      <td class="p-2.5 font-mono font-bold text-amber-300">${l.ticketCount == null ? Math.round((Number(l.cost) || 0) / 500) + ' tkts' : l.ticketCount + ' tkts'}</td>
+                      <td class="p-2.5 font-mono font-bold text-emerald-400">RD$ ${Number(l.cost || 0).toLocaleString('es-DO')}</td>
+                      <td class="p-2.5 font-mono text-slate-300">${l.gallons ? Number(l.gallons).toFixed(2) + ' Gal' : ((Number(l.cost) || 0) / 290).toFixed(2) + ' Gal'}</td>
+                      <td class="p-2.5 font-mono font-bold ${l.costPerKm == null ? 'text-slate-500' : 'text-white'}">${l.costPerKm == null ? 'Sin datos' : 'RD$ ' + Number(l.costPerKm).toFixed(2) + '/KM'}</td>
+                      <td class="p-2.5 text-right">
+                        <button type="button" onclick="deleteFuelLogEntry('${l.id}')" class="text-slate-400 hover:text-rose-400 p-1" title="Eliminar registro"><i class="fa-solid fa-trash-can"></i></button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       `;
