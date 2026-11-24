@@ -121,187 +121,196 @@
     </div>
   </div>
 
-  <div id="projectDetailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[105] flex items-center justify-center p-4 hidden overflow-y-auto" onclick="closeModal('projectDetailModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-8 space-y-5 relative" onclick="event.stopPropagation();">
-      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800">
+  <div id="projectDetailModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[105] flex items-start md:items-center justify-center p-2 sm:p-4 hidden overflow-y-auto" onclick="closeModal('projectDetailModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-5xl w-full max-h-[92dvh] flex flex-col shadow-2xl my-auto overflow-hidden relative" onclick="event.stopPropagation();">
+      <!-- HEADER FIJO SIEMPRE VISIBLE ARRIBA -->
+      <div class="shrink-0 flex flex-wrap items-center justify-between gap-3 p-4 sm:px-6 sm:py-4 bg-slate-900 border-b border-slate-800 z-10">
         <div>
-          <button type="button" onclick="closeModal('projectDetailModal')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-3 inline-flex items-center gap-1.5">
+          <button type="button" onclick="closeModal('projectDetailModal')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5 min-h-[36px]">
             <i class="fa-solid fa-arrow-left"></i> Volver al panel
           </button>
-          <div class="flex items-center gap-2">
+          <div class="flex flex-wrap items-center gap-2">
             <span id="detailProjectCode" class="text-xs font-mono font-bold text-rose-400 bg-rose-950/60 px-2 py-0.5 rounded border border-rose-900/50">CX</span>
             <span id="detailProjectStatusBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full"></span>
             <span id="detailProjectGpsBadge" class="hidden text-xs font-bold px-2 py-0.5 rounded-full"></span>
           </div>
-          <h2 id="detailProjectTitle" class="text-xl font-bold text-white mt-1">T&#237;tulo</h2>
+          <h2 id="detailProjectTitle" class="text-lg sm:text-xl font-bold text-white mt-1 leading-snug">T&#237;tulo</h2>
           <div id="detailProjectClient" class="text-xs text-slate-400 mt-0.5">Cliente</div>
         </div>
-        <button type="button" onclick="closeModal('projectDetailModal')" class="text-slate-400 hover:text-white text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" onclick="closeModal('projectDetailModal')" class="text-slate-400 hover:text-white text-xl p-2 rounded-xl bg-slate-800/70 hover:bg-slate-800 min-w-[40px] min-h-[40px] flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
-          <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Ubicaci&#243;n & Contacto</span>
-          <p id="detailProjectAddress" class="text-white font-medium">Dir</p>
-          <p id="detailProjectContact" class="text-slate-400 mt-1">Cont</p>
-          <div class="mt-2.5"><a id="detailProjectMapBtn" href="#" target="_blank" class="bg-emerald-800/80 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 shadow"><i class="fa-solid fa-diamond-turn-right"></i> Mapa GPS</a></div>
-        </div>
-        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-slate-400 font-semibold uppercase text-[10px]">Equipo T&#233;cnico M&#250;ltiple</span>
-              <span id="detailCrewCountBadge" class="text-[10px] bg-rose-950 text-rose-300 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">0 asig.</span>
-            </div>
-            <div class="mt-1"><span class="text-slate-400">L&#237;der:</span> <span id="detailProjectLeader" class="text-rose-400 font-bold text-xs ml-1"></span></div>
-            <div class="mt-1.5">
-              <span class="text-slate-400 block mb-1">Cuadrilla Asignada (1 a N):</span>
-              <div id="detailProjectCrew" class="flex flex-wrap gap-1"></div>
-            </div>
+      <!-- CUERPO CON DESPLAZAMIENTO INTERNO -->
+      <div class="flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 space-y-5">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 text-xs">
+          <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800">
+            <span class="text-slate-400 font-semibold uppercase text-[10px] block mb-1">Ubicaci&#243;n &amp; Contacto</span>
+            <p id="detailProjectAddress" class="text-white font-medium">Dir</p>
+            <p id="detailProjectContact" class="text-slate-400 mt-1">Cont</p>
+            <p id="detailProjectScheduleInfo" class="text-[11px] text-amber-300 font-mono mt-1 hidden"></p>
+            <div class="mt-2.5"><a id="detailProjectMapBtn" href="#" target="_blank" class="bg-emerald-800/80 hover:bg-emerald-700 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 shadow"><i class="fa-solid fa-diamond-turn-right"></i> Mapa GPS</a></div>
           </div>
-          <div id="detailQuickAddTechBar" class="mt-2.5 pt-2 border-t border-slate-800/80 flex gap-1.5">
-            <select id="detailQuickAddTechSelect" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-[11px] text-white"></select>
-            <button type="button" onclick="quickAddTechToDetailProject()" class="bg-rose-800 hover:bg-rose-700 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold whitespace-nowrap">+ Agregar</button>
-          </div>
-        </div>
-        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <span class="text-slate-400 font-semibold uppercase text-[10px]">Monitoreo GPS Individual en Sitio</span>
-              <select id="detailActiveTechGpsSelect" onchange="refreshDetailGpsForSelectedTech()" class="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-[10px] text-emerald-300 font-bold"></select>
-            </div>
-            <div class="space-y-1 mt-1">
-              <div><span class="text-slate-400">Llegada:</span> <span id="detailProjectCheckIn" class="text-white font-bold font-mono"></span></div>
-              <div><span class="text-slate-400">Salida:</span> <span id="detailProjectCheckOut" class="text-white font-bold font-mono"></span></div>
-              <div id="detailProjectDuration" class="text-emerald-400 font-bold text-[11px]"></div>
-              <div id="detailProjectDistance" class="text-slate-400 font-mono text-[10px]"></div>
-            </div>
-          </div>
-          <div id="detailPerTechGpsSummaryList" class="mt-2 pt-2 border-t border-slate-800/80 space-y-1 max-h-24 overflow-y-auto"></div>
-        </div>
-      </div>
-
-      <!-- CICLO DE VIDA DEL PROYECTO, FECHAS Y ALERTAS EN TIEMPO REAL -->
-      <div id="detailProjectLifecycleCard" class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3 text-xs">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
-          <div class="font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-            <i class="fa-solid fa-calendar-check text-emerald-400"></i> Ciclo de Vida del Proyecto &amp; Control de Plazos
-          </div>
-          <div id="detailLifecycleAlertBadge" class="px-2.5 py-1 rounded-full text-[11px] font-bold"></div>
-        </div>
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
-            <span class="text-[10px] uppercase text-slate-400 block">1. Fecha Creaci&#243;n</span>
-            <span id="detailCreatedAt" class="text-white font-mono font-bold text-xs mt-0.5 block">--/--/----</span>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
-            <span class="text-[10px] uppercase text-emerald-400 font-semibold block">2. Inicio (Aprobado)</span>
-            <span id="detailStartDate" class="text-emerald-300 font-mono font-bold text-xs mt-0.5 block">Pendiente</span>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
-            <span class="text-[10px] uppercase text-amber-400 font-semibold block">3. D&#237;as Estimados</span>
-            <div class="flex items-center gap-1 mt-0.5">
-              <input type="number" id="detailEstDaysInput" min="1" max="365" onchange="updateEstimatedDaysFromDetail(this.value)" class="w-14 bg-slate-800 border border-amber-700/70 rounded px-1.5 py-0.5 text-white font-mono font-bold text-xs">
-              <span class="text-[10px] text-slate-400">d&#237;as</span>
-            </div>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
-            <span class="text-[10px] uppercase text-blue-400 font-semibold block">4. Transcurridos / L&#237;mite</span>
-            <span id="detailElapsedDays" class="text-white font-mono font-bold text-xs mt-0.5 block">0 d&#237;as</span>
-            <span id="detailDeadlineDate" class="text-[10px] text-slate-400 font-mono block">L&#237;mite: --</span>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg col-span-2 sm:col-span-1">
-            <span class="text-[10px] uppercase text-purple-400 font-semibold block">5. Fecha Cierre</span>
-            <span id="detailCompletedAt" class="text-purple-300 font-mono font-bold text-xs mt-0.5 block">En ejecuci&#243;n</span>
-          </div>
-        </div>
-        <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
-          <div id="detailLifecycleProgressBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
-        </div>
-      </div>
-
-      <!-- BOTONES T&#201;CNICOS EN EL DETALLE -->
-      <div id="techActionButtonsContainer" class="bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-lg my-2">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-3"><i class="fa-solid fa-helmet-safety mr-1.5"></i> Panel de Acci&#243;n (GPS / Levantamiento &amp; Plano)</h3>
-        <div class="flex flex-wrap gap-2">
-          <button type="button" onclick="triggerTechArrival()" class="flex-1 min-w-[140px] bg-blue-800/90 hover:bg-blue-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-blue-600/50 shadow"><i class="fa-solid fa-location-crosshairs text-base"></i> Registrar Llegada</button>
-          <button type="button" onclick="triggerTechDeparture()" class="flex-1 min-w-[140px] bg-amber-800/90 hover:bg-amber-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-amber-600/50 shadow"><i class="fa-solid fa-flag-checkered text-base"></i> Registrar Salida</button>
-          <button type="button" onclick="triggerTechSurvey()" class="flex-1 min-w-[140px] bg-rose-700 hover:bg-rose-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-rose-500/50 shadow shadow-rose-900/40"><i class="fa-solid fa-file-pen text-base"></i> Cargar Levantamiento & Plano</button>
-          <button type="button" onclick="openExpenseModalFromProject()" class="flex-1 min-w-[140px] bg-emerald-800/90 hover:bg-emerald-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-emerald-600/50 shadow"><i class="fa-solid fa-receipt text-base"></i> Registrar Gasto Campo</button>
-          <button type="button" onclick="openQrScannerModal('project')" class="flex-1 min-w-[140px] bg-teal-800/90 hover:bg-teal-700 text-white font-semibold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-teal-600/50 shadow"><i class="fa-solid fa-qrcode text-base"></i> Escanear QR Equipo</button>
-          <button type="button" onclick="openDeliverySignatureModal(currentDetailProjectId)" class="flex-1 min-w-[140px] bg-purple-800/90 hover:bg-purple-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-purple-500/50 shadow"><i class="fa-solid fa-file-signature text-base"></i> Acta &amp; Firma Entrega</button>
-          <button type="button" onclick="shareProjectViaWhatsApp(currentDetailProjectId)" class="flex-1 min-w-[140px] bg-green-700 hover:bg-green-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-green-500/50 shadow"><i class="fa-brands fa-whatsapp text-base"></i> Compartir WhatsApp</button>
-        </div>
-      </div>
-
-      <!-- DATOS DEL LEVANTAMIENTO REALIZADO -->
-      <div id="detailProjectSurveyContainer" class="space-y-3 hidden"></div>
-
-      <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-folder-open text-rose-400 mr-1.5"></i> Documentaci&#243;n Adjunta</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
+          <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
             <div>
-              <div class="flex items-center gap-2 text-rose-400 mb-1"><i class="fa-solid fa-file-pdf"></i> <span class="font-bold text-xs">Orden Oficial</span></div>
-              <p id="detailProjectOrderFileName" class="text-[11px] text-slate-300 truncate font-mono"></p>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-slate-400 font-semibold uppercase text-[10px]">Equipo T&#233;cnico M&#250;ltiple</span>
+                <span id="detailCrewCountBadge" class="text-[10px] bg-rose-950 text-rose-300 border border-rose-800 px-1.5 py-0.5 rounded font-mono font-bold">0 asig.</span>
+              </div>
+              <div class="mt-1"><span class="text-slate-400">L&#237;der:</span> <span id="detailProjectLeader" class="text-rose-400 font-bold text-xs ml-1"></span></div>
+              <div class="mt-1.5">
+                <span class="text-slate-400 block mb-1">Cuadrilla Asignada (1 a N):</span>
+                <div id="detailProjectCrew" class="flex flex-wrap gap-1"></div>
+              </div>
             </div>
-            <button type="button" onclick="downloadOrderServicePDF()" class="mt-2 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 py-1.5 px-2 rounded-lg font-semibold flex items-center justify-center gap-1"><i class="fa-solid fa-download"></i> Descargar</button>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-2 text-amber-400 mb-1"><i class="fa-solid fa-camera"></i> <span class="font-bold text-xs">Levantamiento</span></div>
-              <p id="detailProjectSurveyDocName" class="text-[11px] text-slate-300 truncate font-mono">Sin adjunto</p>
-            </div>
-            <div id="detailProjectSurveyDocActions" class="mt-2 flex gap-1.5 hidden">
-              <button type="button" onclick="viewSurveyDocFromDetail()" class="flex-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-blue-400 py-1.5 rounded-lg font-semibold border border-slate-700">Ver</button>
-              <button type="button" onclick="downloadSurveyDocFromDetail()" class="flex-1 text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 py-1.5 rounded-lg font-semibold">Descargar</button>
-            </div>
-          </div>
-          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
-            <div>
-              <div class="flex items-center gap-2 text-blue-400 mb-1"><i class="fa-solid fa-map-location-dot"></i> <span class="font-bold text-xs">Plano T&#233;cnico</span></div>
-              <p id="detailProjectPlanDocName" class="text-[11px] text-slate-300 truncate font-mono">Sin plano</p>
-            </div>
-            <div id="detailProjectPlanDocActions" class="mt-2 flex gap-1.5 hidden">
-              <button type="button" onclick="viewPlanDocFromDetail()" class="flex-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-blue-400 py-1.5 rounded-lg font-semibold border border-slate-700">Ver Plano</button>
-              <button type="button" onclick="downloadPlanDocFromDetail()" class="flex-1 text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 py-1.5 rounded-lg font-semibold">Descargar</button>
+            <div id="detailQuickAddTechBar" class="mt-2.5 pt-2 border-t border-slate-800/80 flex gap-1.5">
+              <select id="detailQuickAddTechSelect" class="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] text-white"></select>
+              <button type="button" onclick="quickAddTechToDetailProject()" class="bg-rose-800 hover:bg-rose-700 text-white px-2.5 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap">+ Agregar</button>
             </div>
           </div>
-          <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
+          <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 flex flex-col justify-between">
             <div>
-              <div class="flex items-center gap-2 text-teal-400 mb-1"><i class="fa-solid fa-money-check-dollar"></i> <span class="font-bold text-xs">Pago 50% (Anticipo)</span></div>
-              <p id="detailProjectPaymentDocName" class="text-[11px] text-slate-300 truncate font-mono">Sin comprobante</p>
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-slate-400 font-semibold uppercase text-[10px]">Monitoreo GPS Individual en Sitio</span>
+                <select id="detailActiveTechGpsSelect" onchange="refreshDetailGpsForSelectedTech()" class="bg-slate-900 border border-slate-700 rounded px-1.5 py-0.5 text-[10px] text-emerald-300 font-bold"></select>
+              </div>
+              <div class="space-y-1 mt-1">
+                <div><span class="text-slate-400">Llegada:</span> <span id="detailProjectCheckIn" class="text-white font-bold font-mono"></span></div>
+                <div><span class="text-slate-400">Salida:</span> <span id="detailProjectCheckOut" class="text-white font-bold font-mono"></span></div>
+                <div id="detailProjectDuration" class="text-emerald-400 font-bold text-[11px]"></div>
+                <div id="detailProjectDistance" class="text-slate-400 font-mono text-[10px]"></div>
+              </div>
             </div>
-            <div id="detailProjectPaymentDocActions" class="mt-2 flex gap-1.5 hidden">
-              <button type="button" onclick="viewPaymentDocFromDetail()" class="flex-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-blue-400 py-1.5 rounded-lg font-semibold border border-slate-700">Ver</button>
-              <button type="button" onclick="downloadPaymentDocFromDetail()" class="flex-1 text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 py-1.5 rounded-lg font-semibold">Descargar</button>
+            <div id="detailPerTechGpsSummaryList" class="mt-2 pt-2 border-t border-slate-800/80 space-y-1 max-h-24 overflow-y-auto"></div>
+          </div>
+        </div>
+
+        <!-- CICLO DE VIDA DEL PROYECTO, FECHAS Y ALERTAS EN TIEMPO REAL -->
+        <div id="detailProjectLifecycleCard" class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3 text-xs">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-2.5">
+            <div class="font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-check text-emerald-400"></i> Ciclo de Vida del Proyecto &amp; Control de Plazos
+            </div>
+            <div id="detailLifecycleAlertBadge" class="px-2.5 py-1 rounded-full text-[11px] font-bold"></div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+            <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+              <span class="text-[10px] uppercase text-slate-400 block">1. Fecha Creaci&#243;n</span>
+              <span id="detailCreatedAt" class="text-white font-mono font-bold text-xs mt-0.5 block">--/--/----</span>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+              <span class="text-[10px] uppercase text-emerald-400 font-semibold block">2. Inicio (Aprobado)</span>
+              <span id="detailStartDate" class="text-emerald-300 font-mono font-bold text-xs mt-0.5 block">Pendiente</span>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+              <span class="text-[10px] uppercase text-amber-400 font-semibold block">3. D&#237;as Estimados</span>
+              <div class="flex items-center gap-1 mt-0.5">
+                <input type="number" id="detailEstDaysInput" min="1" max="365" onchange="updateEstimatedDaysFromDetail(this.value)" class="w-14 bg-slate-800 border border-amber-700/70 rounded px-1.5 py-0.5 text-white font-mono font-bold text-xs">
+                <span class="text-[10px] text-slate-400">d&#237;as</span>
+              </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg">
+              <span class="text-[10px] uppercase text-blue-400 font-semibold block">4. Transcurridos / L&#237;mite</span>
+              <span id="detailElapsedDays" class="text-white font-mono font-bold text-xs mt-0.5 block">0 d&#237;as</span>
+              <span id="detailDeadlineDate" class="text-[10px] text-slate-400 font-mono block">L&#237;mite: --</span>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-2.5 rounded-lg col-span-2 sm:col-span-1">
+              <span class="text-[10px] uppercase text-purple-400 font-semibold block">5. Fecha Cierre</span>
+              <span id="detailCompletedAt" class="text-purple-300 font-mono font-bold text-xs mt-0.5 block">En ejecuci&#243;n</span>
+            </div>
+          </div>
+          <div class="w-full bg-slate-900 h-2 rounded-full overflow-hidden border border-slate-800">
+            <div id="detailLifecycleProgressBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- BOTONES TECNICOS EN EL DETALLE -->
+        <div id="techActionButtonsContainer" class="bg-slate-900 border border-slate-700 rounded-xl p-3 shadow-lg">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-3"><i class="fa-solid fa-helmet-safety mr-1.5"></i> Panel de Acci&#243;n (GPS / Levantamiento &amp; Plano)</h3>
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="triggerTechArrival()" class="flex-1 min-w-[140px] min-h-[40px] bg-blue-800/90 hover:bg-blue-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-blue-600/50 shadow"><i class="fa-solid fa-location-crosshairs text-base"></i> Registrar Llegada</button>
+            <button type="button" onclick="triggerTechDeparture()" class="flex-1 min-w-[140px] min-h-[40px] bg-amber-800/90 hover:bg-amber-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-amber-600/50 shadow"><i class="fa-solid fa-flag-checkered text-base"></i> Registrar Salida</button>
+            <button type="button" onclick="triggerTechSurvey()" class="flex-1 min-w-[140px] min-h-[40px] bg-rose-700 hover:bg-rose-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-rose-500/50 shadow shadow-rose-900/40"><i class="fa-solid fa-file-pen text-base"></i> Cargar Levantamiento &amp; Plano</button>
+            <button type="button" onclick="openExpenseModalFromProject()" class="flex-1 min-w-[140px] min-h-[40px] bg-emerald-800/90 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-emerald-600/50 shadow"><i class="fa-solid fa-receipt text-base"></i> Registrar Gasto Campo</button>
+            <button type="button" onclick="openQrScannerModal('project')" class="flex-1 min-w-[140px] min-h-[40px] bg-teal-800/90 hover:bg-teal-700 text-white font-semibold py-2 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-teal-600/50 shadow"><i class="fa-solid fa-qrcode text-base"></i> Escanear QR Equipo</button>
+            <button type="button" onclick="openDeliverySignatureModal(currentDetailProjectId)" class="flex-1 min-w-[140px] min-h-[40px] bg-purple-800/90 hover:bg-purple-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-purple-500/50 shadow"><i class="fa-solid fa-file-signature text-base"></i> Acta &amp; Firma Entrega</button>
+            <button type="button" onclick="openProjectChatFromDetail()" class="flex-1 min-w-[140px] min-h-[40px] bg-sky-800/90 hover:bg-sky-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-sky-500/50 shadow"><i class="fa-solid fa-comments text-base"></i> Chat Proyecto</button>
+            <button type="button" onclick="shareProjectViaWhatsApp(currentDetailProjectId)" class="flex-1 min-w-[140px] min-h-[40px] bg-green-700 hover:bg-green-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 border border-green-500/50 shadow"><i class="fa-brands fa-whatsapp text-base"></i> Compartir WhatsApp</button>
+          </div>
+        </div>
+
+        <div id="detailProjectSurveyContainer" class="space-y-3 hidden"></div>
+
+        <!-- DOCUMENTACION ADJUNTA -->
+        <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-folder-open text-rose-400 mr-1.5"></i> Documentaci&#243;n Adjunta</h3>
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-rose-400 mb-1"><i class="fa-solid fa-file-pdf"></i> <span class="font-bold text-xs">Orden Oficial</span></div>
+                <p id="detailProjectOrderFileName" class="text-[11px] text-slate-300 truncate font-mono"></p>
+              </div>
+              <div class="mt-2 flex gap-1.5">
+                <button type="button" onclick="viewOrderServicePDF()" class="flex-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-blue-400 py-1.5 px-2 rounded-lg font-semibold border border-slate-700">Ver PDF</button>
+                <button type="button" onclick="downloadOrderServicePDF()" class="flex-1 text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 py-1.5 px-2 rounded-lg font-semibold flex items-center justify-center gap-1"><i class="fa-solid fa-download"></i> Bajar</button>
+              </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-amber-400 mb-1"><i class="fa-solid fa-camera"></i> <span class="font-bold text-xs">Levantamiento</span></div>
+                <p id="detailProjectSurveyDocName" class="text-[11px] text-slate-300 truncate font-mono">Sin adjunto</p>
+              </div>
+              <div id="detailProjectSurveyDocActions" class="mt-2 flex gap-1.5 hidden">
+                <button type="button" onclick="viewSurveyDocFromDetail()" class="flex-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-blue-400 py-1.5 rounded-lg font-semibold border border-slate-700">Ver</button>
+                <button type="button" onclick="downloadSurveyDocFromDetail()" class="flex-1 text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 py-1.5 rounded-lg font-semibold">Descargar</button>
+              </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-blue-400 mb-1"><i class="fa-solid fa-map-location-dot"></i> <span class="font-bold text-xs">Plano T&#233;cnico</span></div>
+                <p id="detailProjectPlanDocName" class="text-[11px] text-slate-300 truncate font-mono">Sin plano</p>
+              </div>
+              <div id="detailProjectPlanDocActions" class="mt-2 flex gap-1.5 hidden">
+                <button type="button" onclick="viewPlanDocFromDetail()" class="flex-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-blue-400 py-1.5 rounded-lg font-semibold border border-slate-700">Ver Plano</button>
+                <button type="button" onclick="downloadPlanDocFromDetail()" class="flex-1 text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 py-1.5 rounded-lg font-semibold">Descargar</button>
+              </div>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl flex flex-col justify-between">
+              <div>
+                <div class="flex items-center gap-2 text-teal-400 mb-1"><i class="fa-solid fa-money-check-dollar"></i> <span class="font-bold text-xs">Pago 50% (Anticipo)</span></div>
+                <p id="detailProjectPaymentDocName" class="text-[11px] text-slate-300 truncate font-mono">Sin comprobante</p>
+              </div>
+              <div id="detailProjectPaymentDocActions" class="mt-2 flex gap-1.5 hidden">
+                <button type="button" onclick="viewPaymentDocFromDetail()" class="flex-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-blue-400 py-1.5 rounded-lg font-semibold border border-slate-700">Ver</button>
+                <button type="button" onclick="downloadPaymentDocFromDetail()" class="flex-1 text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 py-1.5 rounded-lg font-semibold">Descargar</button>
+              </div>
             </div>
           </div>
         </div>
+
+        <div id="detailProjectBudgetContainer" class="space-y-3"></div>
+        <div id="detailProjectSignatureContainer" class="hidden"></div>
       </div>
 
-      <div id="detailProjectBudgetContainer" class="space-y-3"></div>
-      <div id="detailProjectSignatureContainer" class="hidden"></div>
-
-      <!-- BOTONERA ACCIONES DEL COORDINADOR -->
-      <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-800" id="adminButtonsSection">
+      <!-- FOOTER FIJO DE ACCIONES DEL COORDINADOR -->
+      <div class="shrink-0 flex flex-wrap items-center justify-between gap-2 p-3 sm:px-6 bg-slate-950/90 border-t border-slate-800 z-10" id="adminButtonsSection">
         <div class="flex flex-wrap gap-1.5" id="detailProjectStatusButtons"></div>
         <div class="flex flex-wrap gap-2">
-          <button type="button" id="detailProjectEditBtn" onclick="editCurrentDetailProject()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1 font-semibold"><i class="fa-solid fa-user-pen"></i> Editar / Reasignar</button>
-          <button type="button" onclick="triggerTechSurvey()" class="text-xs bg-amber-800 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-file-pen"></i> Levantamiento &amp; Plano</button>
-          <button type="button" id="detailProjectQuoteBtn" onclick="quoteCurrentDetailProject()" class="text-xs bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-file-invoice-dollar"></i> Cargar Cotizaci&#243;n</button>
-          <button type="button" id="detailProjectPaymentBtn" onclick="document.getElementById('payment50Input').click()" class="text-xs bg-teal-700 hover:bg-teal-600 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow border border-teal-500/50"><i class="fa-solid fa-money-check-dollar"></i> Adjuntar Pago 50%</button>
+          <button type="button" id="detailProjectEditBtn" onclick="editCurrentDetailProject()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-xl border border-slate-700 flex items-center gap-1 font-semibold min-h-[38px]"><i class="fa-solid fa-user-pen"></i> Editar / Reasignar</button>
+          <button type="button" onclick="triggerTechSurvey()" class="text-xs bg-amber-800 hover:bg-amber-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow min-h-[38px]"><i class="fa-solid fa-file-pen"></i> Levantamiento &amp; Plano</button>
+          <button type="button" id="detailProjectQuoteBtn" onclick="quoteCurrentDetailProject()" class="text-xs bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow min-h-[38px]"><i class="fa-solid fa-file-invoice-dollar"></i> Cargar Cotizaci&#243;n</button>
+          <button type="button" id="detailProjectPaymentBtn" onclick="document.getElementById('payment50Input').click()" class="text-xs bg-teal-700 hover:bg-teal-600 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow border border-teal-500/50 min-h-[38px]"><i class="fa-solid fa-money-check-dollar"></i> Adjuntar Pago 50%</button>
           <input type="file" id="payment50Input" accept="image/*,application/pdf,.docx,.xlsx" class="hidden" onchange="handlePayment50Upload(event)">
-          <button type="button" onclick="openDeliverySignatureModal(currentDetailProjectId)" class="text-xs bg-purple-800 hover:bg-purple-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-file-signature"></i> Firma Cliente</button>
-          <button type="button" onclick="shareProjectViaWhatsApp(currentDetailProjectId)" class="text-xs bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
-          <button type="button" onclick="printCurrentDetailProjectPDF()" class="text-xs bg-rose-900 hover:bg-rose-800 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow"><i class="fa-solid fa-print"></i> Imprimir Ficha</button>
+          <button type="button" onclick="openDeliverySignatureModal(currentDetailProjectId)" class="text-xs bg-purple-800 hover:bg-purple-700 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow min-h-[38px]"><i class="fa-solid fa-file-signature"></i> Firma Cliente</button>
+          <button type="button" onclick="shareProjectViaWhatsApp(currentDetailProjectId)" class="text-xs bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow min-h-[38px]"><i class="fa-brands fa-whatsapp"></i> WhatsApp</button>
+          <button type="button" onclick="printCurrentDetailProjectPDF()" class="text-xs bg-rose-900 hover:bg-rose-800 text-white px-3 py-1.5 rounded-xl font-bold flex items-center gap-1 shadow min-h-[38px]"><i class="fa-solid fa-print"></i> Imprimir Ficha</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Modal Editar Proyecto (Coordinador) -->
-  <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden overflow-y-auto" onclick="closeModal('editProjectModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 relative" onclick="event.stopPropagation();">
+  <div id="editProjectModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-start md:items-center justify-center p-2 sm:p-4 hidden overflow-y-auto" onclick="closeModal('editProjectModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[92dvh] overflow-y-auto p-4 sm:p-6 shadow-2xl my-auto relative" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
         <div>
           <button type="button" onclick="closeModal('editProjectModal'); openProjectDetailModal(editingProjectId);" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5">
@@ -386,8 +395,8 @@
   </div>
 
   <!-- Modal LEVANTAMIENTO Y PLANOS SEPARADOS -->
-  <div id="surveyModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('surveyModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full p-6 shadow-2xl my-6 relative" onclick="event.stopPropagation();">
+  <div id="surveyModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-sm z-[110] flex items-start md:items-center justify-center p-2 sm:p-4 hidden overflow-y-auto no-print" onclick="closeModal('surveyModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-4xl w-full max-h-[92dvh] overflow-y-auto p-4 sm:p-6 shadow-2xl my-auto relative" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-4">
         <div>
           <button type="button" onclick="closeModal('surveyModal'); openProjectDetailModal(currentSurveyProjectId);" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg mb-2 inline-flex items-center gap-1.5">
@@ -612,18 +621,18 @@
     </div>
   </div>
 
-  <!-- Importar Orden PDF (Global) -->
-  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 hidden no-print" onclick="closeModal('pdfModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 relative" onclick="event.stopPropagation();">
+  <!-- Importar Orden PDF (Global - Soporta Lotes Multiples) -->
+  <div id="pdfModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[110] flex items-start md:items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('pdfModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 relative my-auto" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden PDF</h3>
-        <button type="button" onclick="closeModal('pdfModal')" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+        <h3 class="text-lg font-bold text-white"><i class="fa-solid fa-file-pdf mr-2 text-rose-400"></i>Importar Orden(es) de Servicio PDF</h3>
+        <button type="button" onclick="closeModal('pdfModal')" class="text-slate-400 hover:text-white text-lg p-1"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="border-2 border-dashed border-slate-700 hover:border-rose-500 bg-slate-950/50 rounded-2xl p-6 text-center cursor-pointer mb-4" onclick="document.getElementById('pdfInput').click()">
         <i class="fa-solid fa-cloud-arrow-up text-3xl text-rose-400 mb-2"></i>
-        <div class="text-sm font-semibold text-white">Subir Orden PDF</div>
-        <p class="text-[10px] text-slate-400 mt-1">Extrae c&#243;digo y cliente autom&#225;ticamente</p>
-        <input type="file" id="pdfInput" accept="application/pdf" class="hidden" onchange="handlePDFUpload(event)">
+        <div class="text-sm font-semibold text-white">Subir una o varias &#211;rdenes PDF</div>
+        <p class="text-[11px] text-slate-400 mt-1">Extrae proyecto, c&#243;digo CX, cliente, direcci&#243;n, contacto, horario y cuadrilla autom&#225;ticamente</p>
+        <input type="file" id="pdfInput" accept="application/pdf" multiple class="hidden" onchange="handlePDFUpload(event)">
       </div>
       <div class="text-center border-t border-slate-800 pt-3">
         <button type="button" onclick="loadSampleTorreWashington()" class="bg-slate-800 hover:bg-slate-700 text-rose-300 px-4 py-2 rounded-xl text-xs font-semibold">Cargar Muestra: TORRE WASHINGTON</button>
@@ -775,8 +784,8 @@
 
 
   <!-- Modal Evaluacion Manual y Penalizaciones KPI del Tecnico -->
-  <div id="kpiEvalModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('kpiEvalModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 relative space-y-4" onclick="event.stopPropagation();">
+  <div id="kpiEvalModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-start md:items-center justify-center p-2 sm:p-4 hidden overflow-y-auto no-print" onclick="closeModal('kpiEvalModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[92dvh] overflow-y-auto p-4 sm:p-6 shadow-2xl my-auto relative space-y-4" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
         <div>
           <h3 class="text-base font-bold text-white"><i class="fa-solid fa-user-check mr-2 text-rose-400"></i>Evaluaci&#243;n Manual &amp; Penalizaciones de KPI</h3>
@@ -874,8 +883,8 @@
 
 
   <!-- Modal Registrar Gasto Operativo en Campo (con OCR) -->
-  <div id="expenseModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('expenseModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl my-8 relative space-y-4" onclick="event.stopPropagation();">
+  <div id="expenseModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-start md:items-center justify-center p-2 sm:p-4 hidden overflow-y-auto no-print" onclick="closeModal('expenseModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full max-h-[92dvh] overflow-y-auto p-4 sm:p-6 shadow-2xl my-auto relative space-y-4" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
         <div>
           <h3 class="text-base font-bold text-white"><i class="fa-solid fa-receipt mr-2 text-emerald-400"></i>Registrar Gasto Operativo en Campo</h3>
@@ -987,8 +996,8 @@
   </div>
 
   <!-- Modal Acta de Entrega Digital y Firma del Cliente -->
-  <div id="deliverySignatureModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[145] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('deliverySignatureModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-4 relative my-8" onclick="event.stopPropagation();">
+  <div id="deliverySignatureModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[145] flex items-start md:items-center justify-center p-2 sm:p-4 hidden overflow-y-auto no-print" onclick="closeModal('deliverySignatureModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full max-h-[92dvh] overflow-y-auto p-4 sm:p-6 shadow-2xl space-y-4 relative my-auto" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
         <div>
           <h3 class="text-base font-bold text-white"><i class="fa-solid fa-file-signature mr-2 text-purple-400"></i>Acta de Entrega Digital &amp; Firma de Conformidad</h3>
@@ -1034,8 +1043,8 @@
   </div>
 
   <!-- Modal Gestion de Inventario con OCR -->
-  <div id="inventoryModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-center justify-center p-4 hidden overflow-y-auto no-print" onclick="closeModal('inventoryModal')">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full p-6 shadow-2xl my-8 relative space-y-4" onclick="event.stopPropagation();">
+  <div id="inventoryModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[115] flex items-start md:items-center justify-center p-2 sm:p-4 hidden overflow-y-auto no-print" onclick="closeModal('inventoryModal')">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xl w-full max-h-[92dvh] overflow-y-auto p-4 sm:p-6 shadow-2xl my-auto relative space-y-4" onclick="event.stopPropagation();">
       <div class="flex justify-between items-center pb-3 border-b border-slate-800">
         <div>
           <h3 class="text-base font-bold text-white" id="inventoryModalTitle"><i class="fa-solid fa-boxes-stacked mr-2 text-blue-400"></i>Gesti&#243;n de Inventario &amp; Escaneo OCR</h3>
@@ -1121,6 +1130,70 @@
     </div>
   </div>
 
+
+  <!-- Modal Sala de Chat Operativo en Tiempo Real -->
+  <div id="chatRoomModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-[120] flex items-start md:items-center justify-center p-2 sm:p-4 hidden overflow-y-auto no-print" onclick="closeChatModal()">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full h-[88dvh] max-h-[88dvh] flex flex-col shadow-2xl my-auto overflow-hidden relative" onclick="event.stopPropagation();">
+      
+      <!-- Header Fijo del Chat -->
+      <div class="shrink-0 p-4 bg-slate-950/90 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-sky-950 border border-sky-700/70 text-sky-400 flex items-center justify-center text-base shadow">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+              Sala de Chat Operativo
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 live-pulse"></span>EN VIVO
+              </span>
+            </h3>
+            <p class="text-[11px] text-slate-400" id="chatRoomSubtitle">Comunicaci&#243;n directa entre Coordinaci&#243;n y Cuadrillas en Campo</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="chatClearAllBtn" onclick="clearChatHistoryPrompt()" class="hidden text-[11px] bg-slate-800 hover:bg-red-950 text-slate-300 hover:text-red-300 px-2.5 py-1.5 rounded-lg border border-slate-700 font-semibold" title="Limpiar historial">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+          <button type="button" onclick="closeChatModal()" class="text-slate-400 hover:text-white text-xl p-1.5 rounded-xl bg-slate-800/70 hover:bg-slate-800 min-w-[36px] min-h-[36px] flex items-center justify-center">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Selector de Canal (General o Proyecto Especifico) -->
+      <div class="shrink-0 px-4 py-2.5 bg-slate-900/95 border-b border-slate-800 flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-slate-400 font-semibold text-[11px]"><i class="fa-solid fa-hashtag text-sky-400 mr-1"></i>Canal:</span>
+        <select id="chatChannelSelect" onchange="switchChatChannel(this.value)" class="flex-1 min-w-[200px] bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white font-semibold focus:outline-none focus:border-sky-500">
+          <option value="GENERAL">&#127760; Canal General (Todo el Equipo)</option>
+        </select>
+        <span id="chatMsgCountBadge" class="text-[10px] font-mono bg-slate-800 text-slate-300 px-2 py-1 rounded-lg border border-slate-700">0 msgs</span>
+      </div>
+
+      <!-- Area de Mensajes con Scroll -->
+      <div id="chatMessagesContainer" class="flex-1 overflow-y-auto overscroll-contain p-4 space-y-3 bg-slate-950/60"></div>
+
+      <!-- Barra de Respuestas Rapidas Operativas -->
+      <div class="shrink-0 px-3 py-2 bg-slate-900 border-t border-slate-800/80 flex gap-1.5 overflow-x-auto text-[11px]">
+        <button type="button" onclick="sendQuickChatPreset('En camino al sitio &#128663;')" class="whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg border border-slate-700">En camino &#128663;</button>
+        <button type="button" onclick="sendQuickChatPreset('Ya en obra, iniciando trabajos &#128736;&#65039;')" class="whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-emerald-300 px-2.5 py-1 rounded-lg border border-slate-700">En obra &#128736;&#65039;</button>
+        <button type="button" onclick="sendQuickChatPreset('Necesito apoyo / material adicional &#9888;&#65039;')" class="whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-amber-300 px-2.5 py-1 rounded-lg border border-slate-700">Apoyo / Material &#9888;&#65039;</button>
+        <button type="button" onclick="sendQuickChatPreset('Instalaci&#243;n completada y probada &#9989;')" class="whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-sky-300 px-2.5 py-1 rounded-lg border border-slate-700">Completado &#9989;</button>
+      </div>
+
+      <!-- Caja de Envio de Mensaje -->
+      <form onsubmit="handleSendChatMessage(event)" class="shrink-0 p-3 bg-slate-950 border-t border-slate-800 flex items-center gap-2">
+        <button type="button" onclick="shareGpsLocationInChat()" title="Enviar mi ubicaci&#243;n GPS actual al chat" class="bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 p-2.5 rounded-xl text-xs font-bold shrink-0">
+          <i class="fa-solid fa-location-dot"></i>
+        </button>
+        <input type="text" id="chatMessageInput" autocomplete="off" placeholder="Escribe un mensaje para el equipo..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-sky-500">
+        <button type="submit" class="bg-sky-600 hover:bg-sky-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shrink-0">
+          <span>Enviar</span> <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
 </div>
 
   <script>
@@ -1128,7 +1201,8 @@
 
     const defaultData = {
       currentUser: null,
-      notifications: [], 
+      notifications: [],
+      chatMessages: [],
       adminPass: '',
       _localAuthVersion: 1,
       lastUpdated: 1730320000000,
@@ -1255,7 +1329,7 @@
           if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed) || !Array.isArray(parsed.projects) || !Array.isArray(parsed.technicians)) continue;
           if (!parsed.projects.every(project => project && typeof project === 'object' && !Array.isArray(project)) || !parsed.technicians.every(tech => tech && typeof tech === 'object' && !Array.isArray(tech))) continue;
           const data = Object.assign({}, defaults, parsed);
-          for (const key of ['projects', 'technicians', 'vehicles', 'tools', 'fuelLogs', 'notifications', 'kpiEvaluations', 'fieldExpenses', 'inventory']) {
+          for (const key of ['projects', 'technicians', 'vehicles', 'tools', 'fuelLogs', 'notifications', 'chatMessages', 'kpiEvaluations', 'fieldExpenses', 'inventory']) {
             if (!Array.isArray(data[key])) data[key] = Array.isArray(defaults[key]) ? defaults[key] : [];
           }
           const needsAuthAndGpsMigration = parsed._localAuthVersion !== 1;
@@ -1776,10 +1850,15 @@ function render() {
 
       const isTech = currentAuthUser.role === 'tech';
       const unreadCount = appData.notifications.filter(n => ((isTech && n.to === currentAuthUser.name) || (!isTech && n.to === 'admin')) && !n.read).length;
+      const unreadChatCount = getUnreadChatCount();
 
       actions.innerHTML = `
         <button type="button" onclick="openCloudSyncModal()" title="Sincronizar PC y M\u00f3vil en la Nube" class="bg-emerald-950/90 hover:bg-emerald-900 text-emerald-300 px-2.5 py-1.5 rounded-xl border border-emerald-800 text-xs font-bold flex items-center gap-1.5 shadow">
           <i class="fa-solid fa-cloud-arrow-up" id="cloudHeaderIcon"></i> <span class="hidden md:inline" id="cloudHeaderText">Sincronizar</span>
+        </button>
+        <button type="button" onclick="openChatModal()" title="Sala de Chat Operativo en Tiempo Real" class="relative bg-slate-800/90 hover:bg-slate-700 text-sky-300 px-2.5 py-1.5 rounded-xl border border-slate-700 text-xs font-bold flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-comments text-sky-400"></i> <span class="hidden sm:inline">Chat</span>
+          ${unreadChatCount > 0 ? `<span class="absolute -top-1.5 -right-1.5 bg-sky-500 text-slate-950 text-[9px] font-black px-1.5 py-0.5 rounded-full live-pulse">${unreadChatCount}</span>` : ''}
         </button>
         <div class="relative cursor-pointer mx-1" onclick="openNotifModal()">
           <i class="fa-solid fa-bell text-slate-300 hover:text-white text-lg transition"></i>
@@ -5042,9 +5121,155 @@ function openQuotationModal(projId) {
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
         const page = await pdf.getPage(pageNumber);
         const content = await page.getTextContent();
-        pages.push(content.items.map(item => item.str).join(' '));
+        const sortedItems = (content.items || []).slice().sort((a, b) => {
+          const ay = a.transform ? a.transform[5] : 0;
+          const by = b.transform ? b.transform[5] : 0;
+          if (Math.abs(ay - by) > 4) return by - ay;
+          const ax = a.transform ? a.transform[4] : 0;
+          const bx = b.transform ? b.transform[4] : 0;
+          return ax - bx;
+        });
+
+        let lastY = null;
+        let lineBuf = [];
+        const lines = [];
+        sortedItems.forEach(item => {
+          const str = (item.str || '').trim();
+          if (!str) return;
+          const y = item.transform ? item.transform[5] : 0;
+          if (lastY !== null && Math.abs(y - lastY) > 6) {
+            lines.push(lineBuf.join(' '));
+            lineBuf = [];
+          }
+          lineBuf.push(str);
+          lastY = y;
+        });
+        if (lineBuf.length) lines.push(lineBuf.join(' '));
+        pages.push(lines.join('\n'));
       }
       return { text: pages.join('\n'), pageCount: pdf.numPages };
+    }
+
+    function detectSantoDomingoSectorCoords(addressText) {
+      const addr = (addressText || '').toLowerCase();
+      const sectors = [
+        { rx: /galeria\s*360|john\s*f\.?\s*kennedy/i, lat: 18.484700, lng: -69.936200, km: 14, label: 'Galer\u00eda 360 / Av. Kennedy' },
+        { rx: /malecon|malecom|george\s*washington|torre\s*washington/i, lat: 18.463200, lng: -69.905600, km: 22, label: 'Av. George Washington (Malec\u00f3n)' },
+        { rx: /maximo\s*gomez/i, lat: 18.481500, lng: -69.914800, km: 16, label: 'Av. M\u00e1ximo G\u00f3mez' },
+        { rx: /abraham\s*lincoln|la\s*julia|dominico\s*americano|icda/i, lat: 18.468900, lng: -69.936800, km: 15, label: 'Av. Abraham Lincoln / La Julia' },
+        { rx: /los\s*mameyes|jacinto\s*de\s*los\s*santos|santo\s*domingo\s*este/i, lat: 18.476500, lng: -69.858200, km: 28, label: 'Los Mameyes, Santo Domingo Este' },
+        { rx: /bella\s*vista|romulo\s*betancourt|sarasota/i, lat: 18.455200, lng: -69.948500, km: 18, label: 'Bella Vista / DN' },
+        { rx: /herrera|luperon|zona\s*industrial/i, lat: 18.481000, lng: -69.976000, km: 10, label: 'Herrera / Av. Luper\u00f3n' }
+      ];
+      return sectors.find(s => s.rx.test(addr)) || null;
+    }
+
+    function parseCentroXpertServiceOrderText(rawText) {
+      const cleanSpaces = (s) => (s || '').replace(/\s+/g, ' ').trim();
+      let t = (rawText || '')
+        .replace(/\+\s*1\s*\(\s*(\d{3})\s*\)\s*(\d{3}-\d{4})/g, '+1 ($1) $2')
+        .replace(/\(\s*(\d{3})\s*\)\s*(\d{3}-\d{4})/g, '($1) $2')
+        .replace(/\s*#\s*(\d+)/g, ' #$1');
+
+      const extractBetween = (startRx, endRx) => {
+        const rx = new RegExp(startRx + '\\s*([\\s\\S]*?)\\s*(?=' + endRx + ')', 'i');
+        const m = t.match(rx);
+        return m ? cleanSpaces(m[1]) : '';
+      };
+
+      const title = extractBetween('Proyecto:', 'C[o\u00f3]digo\\s+del\\s+Proyecto:');
+      let code = extractBetween('C[o\u00f3]digo\\s+del\\s+Proyecto:', 'Tipo\\s+de\\s+Servicio:');
+      if (!code) {
+        const mc = t.match(/\bCX-[A-Z0-9]+-\d{4}-\d+\b/i);
+        code = mc ? mc[0].toUpperCase() : '';
+      }
+
+      const serviceBase = extractBetween('Tipo\\s+de\\s+Servicio:', 'C[o\u00f3]digo\\s+del\\s+servicio:');
+      const serviceCode = extractBetween('C[o\u00f3]digo\\s+del\\s+servicio:', 'Observaciones:');
+      const serviceType = (serviceBase && serviceCode)
+        ? `${serviceBase} (${serviceCode})`
+        : (serviceBase || serviceCode || 'INSTALACI\u00d3N');
+
+      const obs = extractBetween('Observaciones:', 'Cliente:');
+      const client = extractBetween('Cliente:', 'C[o\u00f3]digo\\s+interno:|Direcci[o\u00f3]n\\s+del\\s+Servicio');
+
+      const dirBlockMatch = t.match(/Direcci[o\u00f3]n\s+del\s+Servicio\s*\/?\s*Persona\s+Contacto:\s*([\s\S]*?)(?=Fecha\s+Planificada:)/i);
+      const dirBlock = dirBlockMatch ? dirBlockMatch[1].trim() : '';
+
+      const rawLines = dirBlock.split('\n').map(cleanSpaces).filter(Boolean);
+      const contactParts = [];
+      const addrParts = [];
+
+      for (let i = 0; i < rawLines.length; i++) {
+        const ln = rawLines[i];
+        if (/^(?:CONTACTO|Cliente\s+De)\s*:?/i.test(ln)) {
+          let cStr = ln.replace(/^CONTACTO\s*:\s*/i, '');
+          if (i + 1 < rawLines.length && /\d{3}[\s.-]*\d{4}/.test(rawLines[i + 1]) && !/[A-Za-z]{4,}/.test(rawLines[i + 1])) {
+            cStr += ' ' + rawLines[i + 1];
+            i++;
+          }
+          contactParts.push(cleanSpaces(cStr));
+        } else if (/\d{3}[\s.-]*\d{4}/.test(ln)) {
+          if (addrParts.length > 0 && !/(?:galeria|maximo|gomez|santo|domingo|av\.|calle|c\/|sector|torre|malecon|malecom|plaza|edif|km|autopista|#)/i.test(addrParts[addrParts.length - 1])) {
+            const personName = addrParts.pop();
+            contactParts.push(cleanSpaces(`${personName} ${ln}`));
+          } else {
+            contactParts.push(ln);
+          }
+        } else {
+          addrParts.push(ln);
+        }
+      }
+
+      const address = cleanSpaces(addrParts.join(', ')).replace(/,\s*,/g, ',').replace(/\.,/g, '.');
+      const contact = cleanSpaces(contactParts.join(' / '));
+
+      const plannedDate = extractBetween('Fecha\\s+Planificada:', 'Hora\\s+Salida:');
+      const horaSalida = extractBetween('Hora\\s+Salida:', 'Hora\\s+Fin\\s+Estimada:');
+      const horaFin = extractBetween('Hora\\s+Fin\\s+Estimada:', 'INFORMACI[O\u00d3]N\\s+DEL\\s+PERSONAL|T[e\u00e9]cnicos\\s+Responsables:');
+      const schedule = (horaSalida || horaFin) ? `${horaSalida || '--:--'} a ${horaFin || '--:--'}` : '';
+
+      const respRaw = extractBetween('T[e\u00e9]cnicos\\s+Responsables:', 'T[e\u00e9]cnicos\\s+Adicionales:');
+      const adicRaw = extractBetween('T[e\u00e9]cnicos\\s+Adicionales:', 'Cantidad\\s+Total\\s+de\\s+T[e\u00e9]cnicos:|Observaciones\\s+del\\s+T[e\u00e9]cnico|EVALUACI[O\u00d3]N');
+
+      const respList = respRaw ? respRaw.split(',').map(cleanSpaces).filter(Boolean) : [];
+      const adicList = adicRaw ? adicRaw.split(',').map(cleanSpaces).filter(Boolean) : [];
+      const allTechs = [];
+      [...respList, ...adicList].forEach(name => {
+        if (name && !allTechs.some(x => x.toLowerCase() === name.toLowerCase())) {
+          allTechs.push(name);
+        }
+      });
+
+      const resolvedTechNames = allTechs.map(rawName => {
+        const existingTech = (appData.technicians || []).find(tech => tech.name && tech.name.trim().toLowerCase() === rawName.toLowerCase());
+        if (existingTech) return existingTech.name;
+        const newTech = {
+          id: 'T_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
+          name: rawName,
+          level: 'Especialista B',
+          phone: '809-555-0000',
+          address: 'Santo Domingo',
+          vehiclePlate: '',
+          pin: ''
+        };
+        appData.technicians.push(newTech);
+        return newTech.name;
+      });
+
+      return {
+        code,
+        title: title || client,
+        client: client || title,
+        serviceType,
+        address,
+        contact,
+        plannedDate,
+        schedule,
+        observations: schedule ? `${obs} [Horario: ${schedule}]`.trim() : obs,
+        techLeader: resolvedTechNames[0] || '',
+        techCrew: resolvedTechNames.slice(1)
+      };
     }
 
     async function handleEditPDFUpload(e) {
@@ -5054,25 +5279,47 @@ function openQuotationModal(projId) {
       try {
         const result = await extractPdfTextFromAllPages(file);
         const fullText = result.text || '';
-        if (!fullText.trim()) { alert('No se encontr\u00f3 texto extra\u00edble en el PDF. No se rellenaron campos.'); return; }
-        const codeMatch = fullText.match(/C\u00f3digo\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i) || fullText.match(/CX-[A-Z0-9-]+/i);
-        const clientMatch = fullText.match(/Cliente:\s*([^:]+?)\s+C\u00f3digo\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
-        const addrMatch = fullText.match(/Direcci\u00f3n\s+del\s+Servicio:\s*([\s\S]*?)(?:Persona\s+Contacto|Fecha\s+Planificada)/i);
-        const obsMatch = fullText.match(/Observaciones:\s*([\s\S]*?)(?:Cliente:|T\u00e9cnicos|$)/i);
-        let found = false;
-        const codeField = document.getElementById('editProjectCode');
-        const clientField = document.getElementById('editProjectClient');
-        const addressField = document.getElementById('editProjectAddress');
-        const titleField = document.getElementById('editProjectTitle');
-        if (codeMatch && codeField) { codeField.value = (codeMatch[1] || codeMatch[0]).trim(); found = true; }
-        if (clientMatch && clientField) { clientField.value = clientMatch[1].trim(); found = true; }
-        if (addrMatch && addressField) { addressField.value = addrMatch[1].trim().slice(0, 120); found = true; }
-        if (titleMatch && titleField) { titleField.value = titleMatch[1].trim(); found = true; }
-        alert(found ? 'Se revisaron ' + result.pageCount + ' p\u00e1ginas. Verifica cada campo antes de guardar; los campos no reconocidos quedaron intactos.' : 'No se reconocieron campos compatibles. No se modific\u00f3 el formulario.');
+        if (!fullText.trim()) { alert('No se encontr\u00f3 texto extra\u00edble en el PDF.'); return; }
+
+        const parsed = parseCentroXpertServiceOrderText(fullText);
+        if (!parsed.code && !parsed.client && !parsed.title) {
+          alert('No se reconocieron campos compatibles con el formato de Orden de Servicio.');
+          return;
+        }
+
+        if (parsed.code) document.getElementById('editProjectCode').value = parsed.code;
+        if (parsed.title) document.getElementById('editProjectTitle').value = parsed.title;
+        if (parsed.client) document.getElementById('editProjectClient').value = parsed.client;
+        if (parsed.serviceType) document.getElementById('editProjectServiceType').value = parsed.serviceType;
+        if (parsed.contact) document.getElementById('editProjectContact').value = parsed.contact;
+        if (parsed.plannedDate) document.getElementById('editProjectPlannedDate').value = parsed.plannedDate;
+        if (parsed.address) {
+          document.getElementById('editProjectAddress').value = parsed.address;
+          const sector = detectSantoDomingoSectorCoords(parsed.address);
+          if (sector) {
+            document.getElementById('editProjectLat').value = sector.lat.toFixed(6);
+            document.getElementById('editProjectLng').value = sector.lng.toFixed(6);
+            const kmEl = document.getElementById('editProjectKm');
+            if (kmEl) kmEl.value = sector.km;
+          }
+        }
+
+        const techSelect = document.getElementById('editProjectTechLeader');
+        const crewSelect = document.getElementById('editProjectTechCrew');
+        techSelect.innerHTML = '<option value="">Sin Asignar</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name}</option>`).join('');
+        crewSelect.innerHTML = '<option value="">-- Seleccionar t\u00e9cnico --</option>' + appData.technicians.map(t => `<option value="${t.name}">${t.name} (${t.level})</option>`).join('');
+
+        if (parsed.techLeader) techSelect.value = parsed.techLeader;
+        tempEditCrewList = Array.isArray(parsed.techCrew) ? [...parsed.techCrew] : [];
+        renderEditCrewChips();
+
+        showToast(`Datos extra\u00eddos de ${file.name} (${parsed.code || 'Orden'}). Revisa y guarda.`);
       } catch (err) {
-        alert('No se pudo procesar el PDF. No se guardaron datos inventados.');
-        console.error('PDF edit extraction failed:', err && err.name ? err.name : 'error');
-      } finally { if (e.target) e.target.value = ''; }
+        alert('No se pudo procesar el archivo PDF.');
+        console.error('PDF edit extraction failed:', err);
+      } finally {
+        if (e.target) e.target.value = '';
+      }
     }
 
 function openProjectDetailModal(projId) {
@@ -5102,6 +5349,15 @@ function openProjectDetailModal(projId) {
 
       document.getElementById('detailProjectAddress').innerText = p.address || 'Sin direcci\u00f3n';
       document.getElementById('detailProjectContact').innerText = p.contact || 'Sin contacto directo';
+      const schedEl = document.getElementById('detailProjectScheduleInfo');
+      if (schedEl) {
+        if (p.schedule) {
+          schedEl.innerText = 'Horario Planificado: ' + p.schedule;
+          schedEl.classList.remove('hidden');
+        } else {
+          schedEl.classList.add('hidden');
+        }
+      }
       
       const mapBtn = document.getElementById('detailProjectMapBtn');
       if (mapBtn) {
@@ -5544,6 +5800,16 @@ function handleSaveQuotation(e) {
         </div>
       `;
       window.print();
+    }
+
+    function viewOrderServicePDF() {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      if (p && p.serviceOrderFile && p.serviceOrderFile.data) {
+        showFileViewerModal(p.serviceOrderFile, `${p.code} - Orden de Servicio Oficial`);
+      } else {
+        printCurrentDetailProjectPDF();
+      }
     }
 
     function downloadOrderServicePDF() {
@@ -6305,70 +6571,115 @@ const OMEGA_VERIFIED_CATALOG = [
        IMPORTACI\u00d3N AUTOM\u00c1TICA DE ORDEN PDF (FORMATO TORRE WASHINGTON)
        ----------------------------------------------------------------- */
     async function handlePDFUpload(e) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-      if (!validateLocalAttachment(file)) { e.target.value = ''; return; }
-      try {
-        const result = await extractPdfTextFromAllPages(file);
-        const fullText = result.text || '';
-        if (!fullText.trim()) { alert('El PDF no contiene texto extra\u00edble. No se cre\u00f3 ning\u00fan proyecto.'); return; }
-        const codeMatch = fullText.match(/CX-[A-Z0-9-]+/i) || fullText.match(/C\u00f3digo\s+del\s+Proyecto:\s*([A-Z0-9-]+)/i);
-        const projMatch = fullText.match(/Proyecto:\s*(.+?)\s*C\u00f3digo\s+del\s+Proyecto/i);
-        const clientMatch = fullText.match(/Cliente:\s*(.+?)\s*C\u00f3digo\s+interno/i) || fullText.match(/Cliente:\s*([^|]+)/i);
-        const addressMatch = fullText.match(/Direcci\u00f3n\s+del\s+Servicio:\s*([\s\S]*?)(?:Persona\s+Contacto|Fecha\s+Planificada)/i);
-        const contactMatch = fullText.match(/Persona\s+Contacto:\s*(.+?)\s*Fecha\s+Planificada/i);
-        const obsMatch = fullText.match(/Observaciones:\s*(.+?)\s*Cliente:/i);
-        const dateMatch = fullText.match(/Fecha\s+Planificada:\s*(\d{2}\/\d{2}\/\d{4})/i);
-        const leaderMatch = fullText.match(/T\u00e9cnicos\s+Responsables:\s*(.*?)\s*T\u00e9cnicos\s+Adicionales:/i);
-        const crewMatch = fullText.match(/T\u00e9cnicos\s+Adicionales:\s*(.+?)\s*Cantidad\s+Total/i);
-        const code = codeMatch ? (codeMatch[1] || codeMatch[0]).trim() : '';
-        const title = projMatch && projMatch[1] ? projMatch[1].trim() : '';
-        const client = clientMatch && clientMatch[1] ? clientMatch[1].trim() : '';
-        if (!code || !title || !client) { alert('Faltan c\u00f3digo, proyecto o cliente reconocibles. No se cre\u00f3 ning\u00fan proyecto; revisa el formato o completa el formulario manualmente.'); return; }
-        const existing = appData.projects.find(p => p.code && p.code.trim().toUpperCase() === code.toUpperCase());
-        const leaderName = leaderMatch && leaderMatch[1] ? leaderMatch[1].trim() : '';
-        const leader = appData.technicians.find(t => t.name.toLowerCase() === leaderName.toLowerCase());
-        const crewNames = crewMatch && crewMatch[1] ? crewMatch[1].split(',').map(name => name.trim()).filter(Boolean) : [];
-        const crew = crewNames.map(name => appData.technicians.find(t => t.name.toLowerCase() === name.toLowerCase())).filter(Boolean).map(t => t.name);
-        const extracted = {
-          code: code, title: title, client: client,
-          serviceType: '',
-          contact: contactMatch && contactMatch[1] ? contactMatch[1].trim() : '',
-          address: addressMatch && addressMatch[1] ? addressMatch[1].trim() : '',
-          plannedDate: dateMatch ? dateMatch[1] : '',
-          techLeader: leader ? leader.name : '',
-          techCrew: crew,
-          observations: obsMatch && obsMatch[1] ? obsMatch[1].trim() : '',
-          serviceOrderFile: { name: file.name, type: 'application/pdf' }
-        };
-        let projectId;
-        if (existing) {
-          Object.keys(extracted).forEach(key => {
-            const value = extracted[key];
-            if (key === 'techCrew') { if (value.length) existing[key] = value; }
-            else if (value && typeof value === 'object') existing[key] = value;
-            else if (typeof value === 'string' && value.trim()) existing[key] = value;
-          });
-          projectId = existing.id;
-        } else {
-          const nowMs = Date.now();
-          const newProject = Object.assign({
-            id: 'P' + nowMs, createdAt: new Date(nowMs).toLocaleDateString('es-DO'), createdAtMs: nowMs, startDate: '', startDateMs: null, completedAt: '', completedAtMs: null, estimatedDays: 5, projectKm: 25, targetLat: null, targetLng: null, geofenceRadiusMeters: 300,
-            status: 'Levantamiento', survey: { meters: 0, structure: '', power: '', notes: '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
-            quotation: null, budget: { approved: false, services: [], materials: [], isEstimate: true },
-            tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', checkOutCoords: null, hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
-          }, extracted);
-          appData.projects.unshift(newProject);
-          projectId = newProject.id;
+      const files = Array.from((e.target && e.target.files) || []);
+      if (!files.length) return;
+
+      let importedCount = 0;
+      let updatedCount = 0;
+      let lastProjectId = null;
+
+      for (const file of files) {
+        if (!validateLocalAttachment(file)) continue;
+        try {
+          const result = await extractPdfTextFromAllPages(file);
+          const fullText = result.text || '';
+          if (!fullText.trim()) {
+            showToast(`El archivo ${file.name} no contiene texto extra\u00edble.`);
+            continue;
+          }
+
+          const parsed = parseCentroXpertServiceOrderText(fullText);
+          if (!parsed.code || (!parsed.title && !parsed.client)) {
+            showToast(`No se pudo identificar el c\u00f3digo CX o cliente en ${file.name}.`);
+            continue;
+          }
+
+          const pdfDataUrl = await readFileAsDataURL(file);
+          const sectorInfo = detectSantoDomingoSectorCoords(parsed.address);
+          const serviceOrderObj = {
+            name: file.name,
+            type: 'application/pdf',
+            data: pdfDataUrl
+          };
+
+          const existing = appData.projects.find(p => p.code && p.code.trim().toUpperCase() === parsed.code.toUpperCase());
+          if (existing) {
+            const shouldUpdate = files.length > 1 || confirm(`El proyecto ${parsed.code} (${existing.client}) ya existe.\n\n\u00bfDeseas actualizar sus datos, cuadrilla y adjuntar esta Orden PDF?`);
+            if (!shouldUpdate) continue;
+
+            existing.title = parsed.title || existing.title;
+            existing.client = parsed.client || existing.client;
+            existing.serviceType = parsed.serviceType || existing.serviceType;
+            if (parsed.contact) existing.contact = parsed.contact;
+            if (parsed.address) existing.address = parsed.address;
+            if (parsed.plannedDate) existing.plannedDate = parsed.plannedDate;
+            if (parsed.schedule) existing.schedule = parsed.schedule;
+            if (parsed.observations) existing.observations = parsed.observations;
+            if (parsed.techLeader) existing.techLeader = parsed.techLeader;
+            if (parsed.techCrew && parsed.techCrew.length) existing.techCrew = parsed.techCrew;
+            if (sectorInfo && (!existing.targetLat || !existing.targetLng)) {
+              existing.targetLat = sectorInfo.lat;
+              existing.targetLng = sectorInfo.lng;
+              existing.projectKm = sectorInfo.km;
+            }
+            existing.serviceOrderFile = serviceOrderObj;
+            lastProjectId = existing.id;
+            updatedCount++;
+          } else {
+            const nowMs = Date.now() + importedCount;
+            const newProject = {
+              id: 'P_' + nowMs,
+              code: parsed.code,
+              title: parsed.title,
+              serviceType: parsed.serviceType,
+              client: parsed.client,
+              contact: parsed.contact || 'Sin contacto directo',
+              address: parsed.address || 'Santo Domingo',
+              targetLat: sectorInfo ? sectorInfo.lat : 18.472000,
+              targetLng: sectorInfo ? sectorInfo.lng : -69.939000,
+              projectKm: sectorInfo ? sectorInfo.km : 25,
+              geofenceRadiusMeters: 300,
+              plannedDate: parsed.plannedDate || new Date().toLocaleDateString('es-DO'),
+              schedule: parsed.schedule || '',
+              estimatedDays: 5,
+              createdAt: new Date().toLocaleDateString('es-DO'),
+              createdAtMs: nowMs,
+              startDate: '',
+              startDateMs: null,
+              completedAt: '',
+              completedAtMs: null,
+              techLeader: parsed.techLeader,
+              techCrew: parsed.techCrew,
+              status: 'Levantamiento',
+              observations: parsed.observations,
+              survey: { meters: 0, structure: 'Ducter\u00eda EMT Existente', power: '110V Regulada con UPS', notes: parsed.observations || '', itemsEquip: [], itemsMat: [], surveyDoc: null, planDoc: null },
+              serviceOrderFile: serviceOrderObj,
+              quotation: null,
+              budget: { approved: false, services: [], materials: [] },
+              tracking: { checkIn: '', checkInCoords: null, checkInRaw: null, checkOut: '', hoursWorked: '', isVerifiedOnSite: false, distanceFromTargetMeters: null }
+            };
+            appData.projects.unshift(newProject);
+            lastProjectId = newProject.id;
+            importedCount++;
+
+            if (parsed.techLeader) {
+              addNotification(parsed.techLeader, `\ud83d\udccb Nueva orden asignada: ${parsed.code} - ${parsed.title} (${parsed.plannedDate || 'Hoy'}).`);
+            }
+          }
+        } catch (err) {
+          console.error('Error procesando PDF:', file.name, err);
+          showToast(`Error al leer ${file.name}.`);
         }
-        if (!saveData()) return;
+      }
+
+      if (e.target) e.target.value = '';
+      if (importedCount > 0 || updatedCount > 0) {
+        populateTechSelect();
+        saveData();
         closeModal('pdfModal');
-        showToast('Se importaron campos detectados en ' + result.pageCount + ' p\u00e1ginas. Revisa los datos y asigna t\u00e9cnicos que no se reconocieron.');
-        openProjectDetailModal(projectId);
-      } catch (err) {
-        alert('No se pudo leer el PDF. No se cre\u00f3 un proyecto con datos de ejemplo.');
-        console.error('PDF project import failed:', err && err.name ? err.name : 'error');
-      } finally { if (e.target) e.target.value = ''; }
+        showToast(`\u2705 Proceso completado: ${importedCount} orden(es) creada(s), ${updatedCount} actualizada(s).`);
+        if (lastProjectId) openProjectDetailModal(lastProjectId);
+      }
     }
 
 function loadSampleTorreWashington() {
@@ -6506,7 +6817,13 @@ function loadSampleTorreWashington() {
           return Object.assign({}, rt, { pin: savedPin });
         });
 
+        const mergedChatMap = new Map();
+        (appData.chatMessages || []).forEach(m => { if (m && m.id) mergedChatMap.set(m.id, m); });
+        (remoteData.chatMessages || []).forEach(m => { if (m && m.id) mergedChatMap.set(m.id, m); });
+        const mergedChatList = Array.from(mergedChatMap.values()).sort((a, b) => Number(a.ts || 0) - Number(b.ts || 0)).slice(-250);
+
         appData = Object.assign({}, appData, remoteData);
+        appData.chatMessages = mergedChatList;
         appData.adminPass = localAdminPass;
         appData._localAuthVersion = 1;
 
@@ -6547,12 +6864,36 @@ function loadSampleTorreWashington() {
         mqttClient.on('connect', () => {
           updateCloudVisualStatus('Conectado en Tiempo Real', true);
           mqttClient.subscribe(topic, { qos: 1 });
+          mqttClient.subscribe(getChatMqttTopic(), { qos: 1 });
         });
 
         mqttClient.on('message', (recvTopic, message) => {
           try {
             const text = message.toString();
-            if (text && text.trim().startsWith('{')) {
+            if (!text || !text.trim().startsWith('{')) return;
+            if (recvTopic === getChatMqttTopic()) {
+              const incomingMsg = JSON.parse(text);
+              if (incomingMsg && incomingMsg.id && incomingMsg.text) {
+                if (!Array.isArray(appData.chatMessages)) appData.chatMessages = [];
+                if (!appData.chatMessages.some(x => x.id === incomingMsg.id)) {
+                  appData.chatMessages.push(incomingMsg);
+                  if (appData.chatMessages.length > 250) appData.chatMessages = appData.chatMessages.slice(-250);
+                  try {
+                    const lightClone = buildLightweightStorageClone(appData);
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(lightClone));
+                  } catch (e) {}
+                  const chatModal = document.getElementById('chatRoomModal');
+                  if (chatModal && !chatModal.classList.contains('hidden')) {
+                    renderChatMessages();
+                  } else if (currentAuthUser && incomingMsg.sender !== currentAuthUser.name) {
+                    renderHeader();
+                    showToast(`\ud83d\udcac ${incomingMsg.sender} (${incomingMsg.channel || 'General'}): ${incomingMsg.text.slice(0, 65)}`);
+                  }
+                }
+              }
+              return;
+            }
+            if (true) {
               const remoteData = JSON.parse(text);
               const updated = applyIncomingCloudData(remoteData, 'Tiempo Real', false);
               if (updated) {
@@ -6855,6 +7196,231 @@ function validateDatabaseImport(data) {
       reader.onerror = function() { alert('No se pudo leer el archivo. Los datos actuales no se modificaron.'); if (e.target) e.target.value = ''; };
       reader.readAsText(file);
     }
+
+
+    /* ===================================================================
+       SALA DE CHAT OPERATIVO EN TIEMPO REAL (MQTT + SINCRONIZACION LOCAL)
+       =================================================================== */
+    let activeChatChannel = 'GENERAL';
+    let lastSeenChatTimestamp = Number(localStorage.getItem('centroxpert_chat_last_seen') || 0);
+
+    function getChatMqttTopic() {
+      const cleanRoom = getCloudRoom().replace(/[^a-z0-9_-]/g, '_');
+      return `centroxpert/sync/v2/${cleanRoom}/chat`;
+    }
+
+    function getUnreadChatCount() {
+      if (!currentAuthUser || !Array.isArray(appData.chatMessages)) return 0;
+      return appData.chatMessages.filter(m =>
+        m && Number(m.ts || 0) > lastSeenChatTimestamp && m.sender !== currentAuthUser.name
+      ).length;
+    }
+
+    function markAllChatAsRead() {
+      lastSeenChatTimestamp = Date.now();
+      try { localStorage.setItem('centroxpert_chat_last_seen', String(lastSeenChatTimestamp)); } catch (e) {}
+    }
+
+    function escapeChatHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function openChatModal(initialChannel = null) {
+      if (!currentAuthUser) { openModal('loginModal'); return; }
+      if (!Array.isArray(appData.chatMessages)) appData.chatMessages = [];
+      if (initialChannel) activeChatChannel = initialChannel;
+
+      const sel = document.getElementById('chatChannelSelect');
+      if (sel) {
+        const projOptions = (appData.projects || []).map(p =>
+          `<option value="${p.code}" ${activeChatChannel === p.code ? 'selected' : ''}>&#128193; ${p.code} \u2014 ${p.client}</option>`
+        ).join('');
+        sel.innerHTML = `<option value="GENERAL" ${activeChatChannel === 'GENERAL' ? 'selected' : ''}>&#127760; Canal General (Todo el Equipo)</option>` + projOptions;
+        sel.value = activeChatChannel;
+      }
+
+      const clearBtn = document.getElementById('chatClearAllBtn');
+      if (clearBtn) {
+        if (currentAuthUser.role === 'admin') clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+      }
+
+      markAllChatAsRead();
+      openModal('chatRoomModal');
+      renderChatMessages();
+      renderHeader();
+      setTimeout(() => {
+        const inp = document.getElementById('chatMessageInput');
+        if (inp) inp.focus();
+      }, 100);
+    }
+
+    function openProjectChatFromDetail() {
+      if (!currentDetailProjectId) return;
+      const p = appData.projects.find(x => x.id === currentDetailProjectId);
+      openChatModal(p && p.code ? p.code : 'GENERAL');
+    }
+
+    function closeChatModal() {
+      markAllChatAsRead();
+      closeModal('chatRoomModal');
+      renderHeader();
+    }
+
+    function switchChatChannel(channelCode) {
+      activeChatChannel = channelCode || 'GENERAL';
+      renderChatMessages();
+    }
+
+    function renderChatMessages() {
+      const box = document.getElementById('chatMessagesContainer');
+      const countBadge = document.getElementById('chatMsgCountBadge');
+      if (!box) return;
+      if (!Array.isArray(appData.chatMessages)) appData.chatMessages = [];
+
+      const filtered = appData.chatMessages.filter(m => (m.channel || 'GENERAL') === activeChatChannel);
+      if (countBadge) countBadge.innerText = `${filtered.length} msg(s)`;
+
+      if (filtered.length === 0) {
+        box.innerHTML = `
+          <div class="h-full flex flex-col items-center justify-center text-center text-slate-500 py-10">
+            <i class="fa-regular fa-comments text-3xl text-slate-700 mb-2"></i>
+            <p class="text-xs font-semibold text-slate-400">No hay mensajes en este canal todav\u00eda.</p>
+            <p class="text-[11px] text-slate-500 mt-1">Escribe abajo o usa los botones r\u00e1pidos para coordinar con el equipo.</p>
+          </div>
+        `;
+        return;
+      }
+
+      box.innerHTML = filtered.map(m => {
+        const isMine = currentAuthUser && m.sender === currentAuthUser.name;
+        const isAdminMsg = m.role === 'admin';
+        const roleTag = isAdminMsg
+          ? '<span class="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-1.5 py-0.2 rounded font-bold uppercase">Coordinador</span>'
+          : '<span class="text-[9px] bg-rose-950 text-rose-300 border border-rose-800 px-1.5 py-0.2 rounded font-bold uppercase">T\u00e9cnico</span>';
+
+        const mapLinkHtml = m.mapUrl
+          ? `<a href="${m.mapUrl}" target="_blank" rel="noopener noreferrer" class="mt-1.5 inline-flex items-center gap-1 bg-emerald-900/90 hover:bg-emerald-800 text-emerald-200 border border-emerald-700 px-2.5 py-1 rounded-lg text-[11px] font-bold"><i class="fa-solid fa-map-location-dot"></i> Abrir Ubicaci\u00f3n en Google Maps</a>`
+          : '';
+
+        return `
+          <div class="flex flex-col ${isMine ? 'items-end' : 'items-start'}">
+            <div class="flex items-center gap-1.5 mb-1 px-1">
+              <span class="text-[11px] font-bold ${isMine ? 'text-sky-300' : 'text-slate-300'}">${escapeChatHtml(m.sender)}</span>
+              ${roleTag}
+              <span class="text-[10px] text-slate-500 font-mono">${escapeChatHtml(m.time || '')}</span>
+            </div>
+            <div class="max-w-[82%] rounded-2xl px-3.5 py-2.5 text-xs leading-relaxed shadow ${isMine ? 'bg-sky-700 text-white rounded-tr-sm' : 'bg-slate-800 border border-slate-700 text-slate-100 rounded-tl-sm'}">
+              <div class="whitespace-pre-wrap break-words">${escapeChatHtml(m.text)}</div>
+              ${mapLinkHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      box.scrollTop = box.scrollHeight;
+      markAllChatAsRead();
+    }
+
+    function appendAndBroadcastChatMessage(msgObj) {
+      if (!Array.isArray(appData.chatMessages)) appData.chatMessages = [];
+      if (appData.chatMessages.some(x => x.id === msgObj.id)) return;
+      appData.chatMessages.push(msgObj);
+      if (appData.chatMessages.length > 250) {
+        appData.chatMessages = appData.chatMessages.slice(-250);
+      }
+      markAllChatAsRead();
+      saveData();
+
+      if (typeof mqttClient !== 'undefined' && mqttClient && mqttClient.connected) {
+        try {
+          mqttClient.publish(getChatMqttTopic(), JSON.stringify(msgObj), { qos: 1 });
+        } catch (err) {}
+      }
+
+      const chatModal = document.getElementById('chatRoomModal');
+      if (chatModal && !chatModal.classList.contains('hidden')) {
+        renderChatMessages();
+      }
+    }
+
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      if (!currentAuthUser) return;
+      const inp = document.getElementById('chatMessageInput');
+      const text = inp ? inp.value.trim() : '';
+      if (!text) return;
+
+      const now = new Date();
+      const msgObj = {
+        id: 'MSG_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        channel: activeChatChannel || 'GENERAL',
+        sender: currentAuthUser.name,
+        role: currentAuthUser.role,
+        text: text,
+        time: now.toLocaleDateString('es-DO', { day: '2-digit', month: '2-digit' }) + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        ts: Date.now()
+      };
+
+      inp.value = '';
+      appendAndBroadcastChatMessage(msgObj);
+    }
+
+    function sendQuickChatPreset(presetText) {
+      if (!currentAuthUser) return;
+      const now = new Date();
+      const msgObj = {
+        id: 'MSG_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        channel: activeChatChannel || 'GENERAL',
+        sender: currentAuthUser.name,
+        role: currentAuthUser.role,
+        text: presetText,
+        time: now.toLocaleDateString('es-DO', { day: '2-digit', month: '2-digit' }) + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        ts: Date.now()
+      };
+      appendAndBroadcastChatMessage(msgObj);
+    }
+
+    function shareGpsLocationInChat() {
+      if (!currentAuthUser) return;
+      if (!navigator.geolocation) {
+        showToast('Este dispositivo no soporta GPS.');
+        return;
+      }
+      showToast('Obteniendo ubicaci\u00f3n GPS para compartir en el chat...');
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = Number(pos.coords.latitude).toFixed(6);
+        const lng = Number(pos.coords.longitude).toFixed(6);
+        const now = new Date();
+        const msgObj = {
+          id: 'MSG_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          channel: activeChatChannel || 'GENERAL',
+          sender: currentAuthUser.name,
+          role: currentAuthUser.role,
+          text: `\ud83d\udccd Ubicaci\u00f3n GPS compartida en tiempo real (${lat}, ${lng})`,
+          mapUrl: `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+          time: now.toLocaleDateString('es-DO', { day: '2-digit', month: '2-digit' }) + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          ts: Date.now()
+        };
+        appendAndBroadcastChatMessage(msgObj);
+      }, () => {
+        showToast('No se pudo obtener la ubicaci\u00f3n GPS.');
+      }, { enableHighAccuracy: true, timeout: 10000 });
+    }
+
+    function clearChatHistoryPrompt() {
+      if (!currentAuthUser || currentAuthUser.role !== 'admin') return;
+      if (!confirm('\u00bfVaciar los mensajes de este canal de chat?')) return;
+      appData.chatMessages = (appData.chatMessages || []).filter(m => (m.channel || 'GENERAL') !== activeChatChannel);
+      saveData();
+      renderChatMessages();
+      showToast('Historial del canal limpiado.');
+    }
+
 
     window.addEventListener('DOMContentLoaded', () => {
       try {
