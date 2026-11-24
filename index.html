@@ -347,14 +347,17 @@
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div><label class="block text-xs text-slate-300 mb-1">Contacto / Tel</label><input type="text" id="editProjectContact" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
           <div><label class="block text-xs text-slate-300 mb-1">Fecha Planificada</label><input type="text" id="editProjectPlannedDate" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono"></div>
-          <div><label class="block text-xs text-amber-400 font-bold mb-1">D&#237;as Estimados Ejec.</label><input type="number" id="editProjectEstimatedDays" min="1" max="365" value="5" class="w-full bg-slate-800 border border-amber-600/80 rounded-xl px-3 py-2 text-sm text-white font-mono font-bold"></div>
+          <div><label class="block text-xs text-amber-400 font-bold mb-1 flex items-center justify-between"><span>D&#237;as Estimados</span><span id="editEstDaysSyncTag" class="text-[9px] font-normal text-slate-400">Manual</span></label><input type="number" id="editProjectEstimatedDays" min="1" max="365" value="5" oninput="markEstDaysAsManual()" class="w-full bg-slate-800 border border-amber-600/80 rounded-xl px-3 py-2 text-sm text-white font-mono font-bold"></div>
         </div>
-        <div><label class="block text-xs text-slate-300 mb-1">Direcci&#243;n</label><input type="text" id="editProjectAddress" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
+        <div><label class="block text-xs text-slate-300 mb-1 flex justify-between"><span>Direcci&#243;n del Servicio</span><span id="editAddressGpsSyncStatus" class="text-[10px] text-emerald-400 font-mono"></span></label><input type="text" id="editProjectAddress" onchange="syncCoordsFromAddressField(false)" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></div>
 
         <div class="bg-slate-950/70 border border-slate-800 p-3 rounded-xl space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold text-emerald-400 uppercase flex items-center gap-1.5"><i class="fa-solid fa-satellite"></i> GPS Destino (Geocerca)</span>
-            <button type="button" onclick="captureProjectGPSCurrentLocation()" class="text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 px-2 py-0.5 rounded font-bold">Fijar GPS actual</button>
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs font-bold text-emerald-400 uppercase flex items-center gap-1.5"><i class="fa-solid fa-satellite"></i> GPS Destino (Geocerca Sincronizada)</span>
+            <div class="flex flex-wrap gap-1.5">
+              <button type="button" onclick="syncCoordsFromAddressField(true)" class="text-[11px] bg-blue-950 hover:bg-blue-900 text-blue-300 border border-blue-800 px-2.5 py-0.5 rounded font-bold"><i class="fa-solid fa-magnifying-glass-location mr-1"></i>Ubicar Direcci&#243;n</button>
+              <button type="button" onclick="captureProjectGPSCurrentLocation()" class="text-[11px] bg-emerald-950 hover:bg-emerald-900 text-emerald-300 border border-emerald-800 px-2.5 py-0.5 rounded font-bold">Fijar GPS actual</button>
+            </div>
           </div>
           <div class="grid grid-cols-3 gap-3">
             <div><label class="block text-[11px] text-slate-400">Latitud</label><input type="number" step="0.000001" id="editProjectLat" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white font-mono"></div>
@@ -5039,7 +5042,23 @@ function handleSaveTechnician(e) {
       const kmInput = document.getElementById('editProjectKm');
       if (kmInput) kmInput.value = p.projectKm || 25;
       const estDaysField = document.getElementById('editProjectEstimatedDays');
-      if (estDaysField) estDaysField.value = p.estimatedDays || (p.survey && p.survey.estimatedDays) || 5;
+      const syncTag = document.getElementById('editEstDaysSyncTag');
+      const hasSurveyDays = Boolean(p.survey && Number(p.survey.estimatedDays) > 0);
+      const resolvedDays = hasSurveyDays ? Number(p.survey.estimatedDays) : (Number(p.estimatedDays) > 0 ? Number(p.estimatedDays) : 5);
+      if (estDaysField) estDaysField.value = resolvedDays;
+      if (syncTag) {
+        if (hasSurveyDays) {
+          syncTag.innerText = 'Sincronizado (Levantamiento)';
+          syncTag.className = 'text-[9px] font-bold text-emerald-400';
+        } else {
+          syncTag.innerText = 'Manual (Sin levantamiento)';
+          syncTag.className = 'text-[9px] font-semibold text-amber-300';
+        }
+      }
+      const addrStatus = document.getElementById('editAddressGpsSyncStatus');
+      if (addrStatus) {
+        addrStatus.innerText = (p.targetLat && p.targetLng) ? `GPS: ${Number(p.targetLat).toFixed(4)}, ${Number(p.targetLng).toFixed(4)}` : '';
+      }
 
       const techSelect = document.getElementById('editProjectTechLeader');
       const crewSelect = document.getElementById('editProjectTechCrew');
@@ -5118,85 +5137,199 @@ function openQuotationModal(projId) {
       const buffer = await readFileAsArrayBuffer(file);
       const pdf = await pdfjsLib.getDocument(new Uint8Array(buffer)).promise;
       const pages = [];
+      const leftPages = [];
+      const rightPages = [];
+
       for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
         const page = await pdf.getPage(pageNumber);
         const content = await page.getTextContent();
-        const sortedItems = (content.items || []).slice().sort((a, b) => {
-          const ay = a.transform ? a.transform[5] : 0;
-          const by = b.transform ? b.transform[5] : 0;
-          if (Math.abs(ay - by) > 4) return by - ay;
-          const ax = a.transform ? a.transform[4] : 0;
-          const bx = b.transform ? b.transform[4] : 0;
-          return ax - bx;
+        const rawItems = (content.items || []).map(item => ({
+          str: (item.str || '').trim(),
+          x: item.transform ? Number(item.transform[4]) : 0,
+          y: item.transform ? Number(item.transform[5]) : 0
+        })).filter(it => it.str.length > 0);
+
+        // Ordenar de arriba hacia abajo (Y descendente) y de izquierda a derecha (X ascendente)
+        rawItems.sort((a, b) => {
+          if (Math.abs(a.y - b.y) > 3.5) return b.y - a.y;
+          return a.x - b.x;
         });
 
-        let lastY = null;
-        let lineBuf = [];
-        const lines = [];
-        sortedItems.forEach(item => {
-          const str = (item.str || '').trim();
-          if (!str) return;
-          const y = item.transform ? item.transform[5] : 0;
-          if (lastY !== null && Math.abs(y - lastY) > 6) {
-            lines.push(lineBuf.join(' '));
-            lineBuf = [];
+        // Agrupar por filas visuales y separar columna izquierda (X < 345) de columna derecha (X >= 345)
+        const rows = [];
+        rawItems.forEach(it => {
+          if (!rows.length || Math.abs(rows[rows.length - 1].y - it.y) > 3.5) {
+            rows.push({ y: it.y, items: [it] });
+          } else {
+            rows[rows.length - 1].items.push(it);
           }
-          lineBuf.push(str);
-          lastY = y;
         });
-        if (lineBuf.length) lines.push(lineBuf.join(' '));
-        pages.push(lines.join('\n'));
+
+        const pageLines = [];
+        const lLines = [];
+        const rLines = [];
+
+        rows.forEach(r => {
+          const sortedRow = r.items.slice().sort((a, b) => a.x - b.x);
+          pageLines.push(sortedRow.map(i => i.str).join(' '));
+
+          const leftIts = sortedRow.filter(i => i.x < 345);
+          const rightIts = sortedRow.filter(i => i.x >= 345);
+          if (leftIts.length) lLines.push(leftIts.map(i => i.str).join(' '));
+          if (rightIts.length) rLines.push(rightIts.map(i => i.str).join(' '));
+        });
+
+        pages.push(pageLines.join('\n'));
+        leftPages.push(lLines.join('\n'));
+        rightPages.push(rLines.join('\n'));
       }
-      return { text: pages.join('\n'), pageCount: pdf.numPages };
+
+      return {
+        text: pages.join('\n'),
+        leftText: leftPages.join('\n'),
+        rightText: rightPages.join('\n'),
+        pageCount: pdf.numPages
+      };
     }
 
-    function detectSantoDomingoSectorCoords(addressText) {
-      const addr = (addressText || '').toLowerCase();
+    function detectSantoDomingoSectorCoords(addressText, clientText = '') {
+      const combined = ((addressText || '') + ' ' + (clientText || '')).toLowerCase();
       const sectors = [
         { rx: /galeria\s*360|john\s*f\.?\s*kennedy/i, lat: 18.484700, lng: -69.936200, km: 14, label: 'Galer\u00eda 360 / Av. Kennedy' },
         { rx: /malecon|malecom|george\s*washington|torre\s*washington/i, lat: 18.463200, lng: -69.905600, km: 22, label: 'Av. George Washington (Malec\u00f3n)' },
-        { rx: /maximo\s*gomez/i, lat: 18.481500, lng: -69.914800, km: 16, label: 'Av. M\u00e1ximo G\u00f3mez' },
+        { rx: /maximo\s*gomez|faisan/i, lat: 18.481500, lng: -69.914800, km: 16, label: 'Av. M\u00e1ximo G\u00f3mez' },
         { rx: /abraham\s*lincoln|la\s*julia|dominico\s*americano|icda/i, lat: 18.468900, lng: -69.936800, km: 15, label: 'Av. Abraham Lincoln / La Julia' },
-        { rx: /los\s*mameyes|jacinto\s*de\s*los\s*santos|santo\s*domingo\s*este/i, lat: 18.476500, lng: -69.858200, km: 28, label: 'Los Mameyes, Santo Domingo Este' },
+        { rx: /los\s*mameyes|jacinto\s*de\s*los\s*santos|santo\s*domingo\s*este|ingraficos/i, lat: 18.476500, lng: -69.858200, km: 28, label: 'Los Mameyes, Santo Domingo Este' },
         { rx: /bella\s*vista|romulo\s*betancourt|sarasota/i, lat: 18.455200, lng: -69.948500, km: 18, label: 'Bella Vista / DN' },
-        { rx: /herrera|luperon|zona\s*industrial/i, lat: 18.481000, lng: -69.976000, km: 10, label: 'Herrera / Av. Luper\u00f3n' }
+        { rx: /herrera|luperon|zona\s*industrial/i, lat: 18.481000, lng: -69.976000, km: 10, label: 'Herrera / Av. Luper\u00f3n' },
+        { rx: /naco|piantini|tiradentes|lop[e\u00e9]z\s*de\s*vega|churchill/i, lat: 18.473500, lng: -69.931500, km: 14, label: 'Pol\u00edgono Central (Naco/Piantini)' },
+        { rx: /gazcue|independencia|zona\s*colonial/i, lat: 18.471200, lng: -69.896500, km: 20, label: 'Gazcue / Zona Colonial' },
+        { rx: /villa\s*mella|hermanas\s*mirabal|santo\s*domingo\s*norte/i, lat: 18.544000, lng: -69.908000, km: 32, label: 'Santo Domingo Norte' },
+        { rx: /santiago/i, lat: 19.451700, lng: -70.697000, km: 310, label: 'Santiago de los Caballeros' },
+        { rx: /bavaro|punta\s*cana|la\s*altagracia/i, lat: 18.681300, lng: -68.454000, km: 390, label: 'B\u00e1varo / Punta Cana' },
+        { rx: /la\s*romana/i, lat: 18.427300, lng: -68.972800, km: 230, label: 'La Romana' },
+        { rx: /samana|las\s*terrenas/i, lat: 19.311000, lng: -69.542800, km: 320, label: 'Las Terrenas / Saman\u00e1' }
       ];
-      return sectors.find(s => s.rx.test(addr)) || null;
+      return sectors.find(s => s.rx.test(combined)) || null;
     }
 
-    function parseCentroXpertServiceOrderText(rawText) {
+    async function geocodeAddressOnlineFallback(addressText) {
+      const q = (addressText || '').trim();
+      if (!q || q.length < 4) return null;
+      try {
+        const searchQuery = /dominican|rep[u\u00fa]blica\s*dominicana|\brd\b/i.test(q) ? q : `${q}, Santo Domingo, Dominican Republic`;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(searchQuery)}`;
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 4500);
+        const resp = await fetch(url, { signal: controller.signal, headers: { 'Accept-Language': 'es' } });
+        clearTimeout(timer);
+        if (!resp.ok) return null;
+        const arr = await resp.json();
+        if (Array.isArray(arr) && arr.length > 0 && arr[0].lat && arr[0].lon) {
+          return {
+            lat: Number(parseFloat(arr[0].lat).toFixed(6)),
+            lng: Number(parseFloat(arr[0].lon).toFixed(6)),
+            km: 22,
+            label: (arr[0].display_name || q).split(',').slice(0, 2).join(', ')
+          };
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    async function resolveCoordinatesForAddress(addressText, clientText = '') {
+      const localSector = detectSantoDomingoSectorCoords(addressText, clientText);
+      if (localSector) return localSector;
+      const onlineCoords = await geocodeAddressOnlineFallback(addressText);
+      if (onlineCoords) return onlineCoords;
+      return null;
+    }
+
+    async function syncCoordsFromAddressField(showFeedback = true) {
+      const addrVal = document.getElementById('editProjectAddress')?.value.trim() || '';
+      const clientVal = document.getElementById('editProjectClient')?.value.trim() || '';
+      const statusBadge = document.getElementById('editAddressGpsSyncStatus');
+      if (!addrVal) {
+        if (showFeedback) showToast('Escribe primero la direcci\u00f3n del servicio.');
+        return;
+      }
+      if (statusBadge) statusBadge.innerText = 'Sincronizando GPS...';
+      const coords = await resolveCoordinatesForAddress(addrVal, clientVal);
+      if (coords) {
+        document.getElementById('editProjectLat').value = coords.lat.toFixed(6);
+        document.getElementById('editProjectLng').value = coords.lng.toFixed(6);
+        const kmEl = document.getElementById('editProjectKm');
+        if (kmEl && (!kmEl.value || Number(kmEl.value) === 25)) kmEl.value = coords.km;
+        if (statusBadge) statusBadge.innerText = `GPS: ${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`;
+        if (showFeedback) showToast(`\ud83d\udccd Coordenadas sincronizadas: ${coords.label}`);
+      } else {
+        if (statusBadge) statusBadge.innerText = 'Ajuste manual';
+        if (showFeedback) showToast('No se hallaron coordenadas exactas; puedes fijar GPS actual o editar Lat/Lng.');
+      }
+    }
+
+    function markEstDaysAsManual() {
+      const tag = document.getElementById('editEstDaysSyncTag');
+      if (tag) {
+        tag.innerText = 'Manual';
+        tag.className = 'text-[9px] font-semibold text-amber-300';
+      }
+    }
+
+    function parseCentroXpertServiceOrderText(rawText, leftColText = '', rightColText = '') {
       const cleanSpaces = (s) => (s || '').replace(/\s+/g, ' ').trim();
-      let t = (rawText || '')
+      const normalizeText = (s) => (s || '')
         .replace(/\+\s*1\s*\(\s*(\d{3})\s*\)\s*(\d{3}-\d{4})/g, '+1 ($1) $2')
         .replace(/\(\s*(\d{3})\s*\)\s*(\d{3}-\d{4})/g, '($1) $2')
         .replace(/\s*#\s*(\d+)/g, ' #$1');
 
-      const extractBetween = (startRx, endRx) => {
+      const fullT = normalizeText(rawText);
+      const leftT = normalizeText(leftColText || rawText);
+      const rightT = normalizeText(rightColText || rawText);
+
+      const extractBetween = (sourceStr, startRx, endRx) => {
         const rx = new RegExp(startRx + '\\s*([\\s\\S]*?)\\s*(?=' + endRx + ')', 'i');
-        const m = t.match(rx);
+        const m = sourceStr.match(rx);
         return m ? cleanSpaces(m[1]) : '';
       };
 
-      const title = extractBetween('Proyecto:', 'C[o\u00f3]digo\\s+del\\s+Proyecto:');
-      let code = extractBetween('C[o\u00f3]digo\\s+del\\s+Proyecto:', 'Tipo\\s+de\\s+Servicio:');
-      if (!code) {
-        const mc = t.match(/\bCX-[A-Z0-9]+-\d{4}-\d+\b/i);
-        code = mc ? mc[0].toUpperCase() : '';
+      // 1. Proyecto / Titulo (en columna izquierda va desde Proyecto: hasta Tipo de Servicio:)
+      let title = extractBetween(leftT, 'Proyecto:', 'Tipo\\s+de\\s+Servicio:|C[o\u00f3]digo\\s+del\\s+Proyecto:');
+      if (!title) title = extractBetween(fullT, 'Proyecto:', 'C[o\u00f3]digo\\s+del\\s+Proyecto:|Tipo\\s+de\\s+Servicio:');
+
+      // 2. Codigo del Proyecto (ej. CX-SGE-2026-063)
+      let code = '';
+      const codeStrictMatch = (rightT + '\n' + fullT).match(/\b(CX-[A-Z0-9]+-\d{4}-\d+)\b/i);
+      if (codeStrictMatch) {
+        code = codeStrictMatch[1].toUpperCase();
+      } else {
+        code = extractBetween(rightT, 'C[o\u00f3]digo\\s+del\\s+Proyecto:', 'C[o\u00f3]digo\\s+del\\s+servicio:|Tipo\\s+de\\s+Servicio:');
       }
 
-      const serviceBase = extractBetween('Tipo\\s+de\\s+Servicio:', 'C[o\u00f3]digo\\s+del\\s+servicio:');
-      const serviceCode = extractBetween('C[o\u00f3]digo\\s+del\\s+servicio:', 'Observaciones:');
+      // 3. Tipo y Codigo de Servicio
+      const serviceBase = extractBetween(leftT, 'Tipo\\s+de\\s+Servicio:', 'Observaciones:|C[o\u00f3]digo\\s+del\\s+servicio:')
+        || extractBetween(fullT, 'Tipo\\s+de\\s+Servicio:', 'C[o\u00f3]digo\\s+del\\s+servicio:');
+      const serviceCode = extractBetween(rightT, 'C[o\u00f3]digo\\s+del\\s+servicio:', 'C[o\u00f3]digo\\s+interno:|Hora\\s+Fin|Observaciones:')
+        || extractBetween(fullT, 'C[o\u00f3]digo\\s+del\\s+servicio:', 'Observaciones:');
       const serviceType = (serviceBase && serviceCode)
         ? `${serviceBase} (${serviceCode})`
         : (serviceBase || serviceCode || 'INSTALACI\u00d3N');
 
-      const obs = extractBetween('Observaciones:', 'Cliente:');
-      const client = extractBetween('Cliente:', 'C[o\u00f3]digo\\s+interno:|Direcci[o\u00f3]n\\s+del\\s+Servicio');
+      // 4. Observaciones y Cliente
+      const obs = extractBetween(leftT, 'Observaciones:', 'Cliente:') || extractBetween(fullT, 'Observaciones:', 'Cliente:');
+      const client = extractBetween(leftT, 'Cliente:', 'Direcci[o\u00f3]n\\s+del\\s+Servicio')
+        || extractBetween(fullT, 'Cliente:', 'C[o\u00f3]digo\\s+interno:|Direcci[o\u00f3]n\\s+del\\s+Servicio');
 
-      const dirBlockMatch = t.match(/Direcci[o\u00f3]n\s+del\s+Servicio\s*\/?\s*Persona\s+Contacto:\s*([\s\S]*?)(?=Fecha\s+Planificada:)/i);
+      // 5. Direccion del Servicio y Persona Contacto / Telefonos
+      const dirBlockMatch = leftT.match(/Direcci[o\u00f3]n\s+del\s+Servicio\s*\/?\s*([\s\S]*?)(?=Fecha\s+Planificada:)/i)
+        || fullT.match(/Direcci[o\u00f3]n\s+del\s+Servicio\s*\/?\s*Persona\s+Contacto:\s*([\s\S]*?)(?=Fecha\s+Planificada:)/i);
       const dirBlock = dirBlockMatch ? dirBlockMatch[1].trim() : '';
 
-      const rawLines = dirBlock.split('\n').map(cleanSpaces).filter(Boolean);
+      const rawLines = dirBlock
+        .split('\n')
+        .map(x => cleanSpaces(x.replace(/^Persona\s+Contacto\s*:?\s*/i, '')))
+        .filter(Boolean);
+
       const contactParts = [];
       const addrParts = [];
 
@@ -5210,6 +5343,7 @@ function openQuotationModal(projId) {
           }
           contactParts.push(cleanSpaces(cStr));
         } else if (/\d{3}[\s.-]*\d{4}/.test(ln)) {
+          // Linea con numero telefonico (ej. +1 (809) 613-5278 o (809) 781-1045)
           if (addrParts.length > 0 && !/(?:galeria|maximo|gomez|santo|domingo|av\.|calle|c\/|sector|torre|malecon|malecom|plaza|edif|km|autopista|#)/i.test(addrParts[addrParts.length - 1])) {
             const personName = addrParts.pop();
             contactParts.push(cleanSpaces(`${personName} ${ln}`));
@@ -5222,15 +5356,21 @@ function openQuotationModal(projId) {
       }
 
       const address = cleanSpaces(addrParts.join(', ')).replace(/,\s*,/g, ',').replace(/\.,/g, '.');
-      const contact = cleanSpaces(contactParts.join(' / '));
+      // Unificar nombre de contacto y telefono en una sola cadena clara (ej. "Cliente De Carlos Polanco +1 (809) 613-5278")
+      const contact = cleanSpaces(contactParts.join(' ')).replace(/\s+\/\s+/g, ' / ');
 
-      const plannedDate = extractBetween('Fecha\\s+Planificada:', 'Hora\\s+Salida:');
-      const horaSalida = extractBetween('Hora\\s+Salida:', 'Hora\\s+Fin\\s+Estimada:');
-      const horaFin = extractBetween('Hora\\s+Fin\\s+Estimada:', 'INFORMACI[O\u00d3]N\\s+DEL\\s+PERSONAL|T[e\u00e9]cnicos\\s+Responsables:');
+      // 6. Fecha Planificada y Horario
+      const plannedDateMatch = (leftT + '\n' + fullT).match(/Fecha\s+Planificada:\s*(\d{2}\/\d{2}\/\d{4})/i);
+      const plannedDate = plannedDateMatch ? plannedDateMatch[1] : '';
+      const horaSalidaMatch = (leftT + '\n' + fullT).match(/Hora\s+Salida:\s*(\d{1,2}:\d{2}(?::\d{2})?)/i);
+      const horaFinMatch = (rightT + '\n' + fullT).match(/Hora\s+Fin\s+Estimada:\s*(\d{1,2}:\d{2}(?::\d{2})?)/i);
+      const horaSalida = horaSalidaMatch ? horaSalidaMatch[1] : '';
+      const horaFin = horaFinMatch ? horaFinMatch[1] : '';
       const schedule = (horaSalida || horaFin) ? `${horaSalida || '--:--'} a ${horaFin || '--:--'}` : '';
 
-      const respRaw = extractBetween('T[e\u00e9]cnicos\\s+Responsables:', 'T[e\u00e9]cnicos\\s+Adicionales:');
-      const adicRaw = extractBetween('T[e\u00e9]cnicos\\s+Adicionales:', 'Cantidad\\s+Total\\s+de\\s+T[e\u00e9]cnicos:|Observaciones\\s+del\\s+T[e\u00e9]cnico|EVALUACI[O\u00d3]N');
+      // 7. Tecnicos Responsables y Adicionales
+      const respRaw = extractBetween(leftT, 'T[e\u00e9]cnicos\\s+Responsables:', 'T[e\u00e9]cnicos\\s+Adicionales:');
+      const adicRaw = extractBetween(leftT, 'T[e\u00e9]cnicos\\s+Adicionales:', 'Cantidad\\s+Total|Observaciones|EVALUACI[O\u00d3]N');
 
       const respList = respRaw ? respRaw.split(',').map(cleanSpaces).filter(Boolean) : [];
       const adicList = adicRaw ? adicRaw.split(',').map(cleanSpaces).filter(Boolean) : [];
@@ -5281,7 +5421,7 @@ function openQuotationModal(projId) {
         const fullText = result.text || '';
         if (!fullText.trim()) { alert('No se encontr\u00f3 texto extra\u00edble en el PDF.'); return; }
 
-        const parsed = parseCentroXpertServiceOrderText(fullText);
+        const parsed = parseCentroXpertServiceOrderText(fullText, result.leftText, result.rightText);
         if (!parsed.code && !parsed.client && !parsed.title) {
           alert('No se reconocieron campos compatibles con el formato de Orden de Servicio.');
           return;
@@ -5293,14 +5433,39 @@ function openQuotationModal(projId) {
         if (parsed.serviceType) document.getElementById('editProjectServiceType').value = parsed.serviceType;
         if (parsed.contact) document.getElementById('editProjectContact').value = parsed.contact;
         if (parsed.plannedDate) document.getElementById('editProjectPlannedDate').value = parsed.plannedDate;
+
+        // Sincronizar Direccion y Coordenadas GPS del destino
         if (parsed.address) {
           document.getElementById('editProjectAddress').value = parsed.address;
-          const sector = detectSantoDomingoSectorCoords(parsed.address);
-          if (sector) {
-            document.getElementById('editProjectLat').value = sector.lat.toFixed(6);
-            document.getElementById('editProjectLng').value = sector.lng.toFixed(6);
+          const coords = await resolveCoordinatesForAddress(parsed.address, parsed.client);
+          if (coords) {
+            document.getElementById('editProjectLat').value = coords.lat.toFixed(6);
+            document.getElementById('editProjectLng').value = coords.lng.toFixed(6);
             const kmEl = document.getElementById('editProjectKm');
-            if (kmEl) kmEl.value = sector.km;
+            if (kmEl) kmEl.value = coords.km;
+            const statusBadge = document.getElementById('editAddressGpsSyncStatus');
+            if (statusBadge) statusBadge.innerText = `GPS: ${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`;
+          }
+        }
+
+        // Sincronizar Dias Estimados con el Levantamiento del proyecto si ya existe en la base de datos
+        const matchedProj = appData.projects.find(p =>
+          (editingProjectId && p.id === editingProjectId) ||
+          (parsed.code && p.code && p.code.trim().toUpperCase() === parsed.code.toUpperCase())
+        );
+        const estDaysField = document.getElementById('editProjectEstimatedDays');
+        const syncTag = document.getElementById('editEstDaysSyncTag');
+        if (matchedProj && matchedProj.survey && Number(matchedProj.survey.estimatedDays) > 0) {
+          if (estDaysField) estDaysField.value = Number(matchedProj.survey.estimatedDays);
+          if (syncTag) {
+            syncTag.innerText = 'Sincronizado (Levantamiento)';
+            syncTag.className = 'text-[9px] font-bold text-emerald-400';
+          }
+        } else if (matchedProj && Number(matchedProj.estimatedDays) > 0) {
+          if (estDaysField) estDaysField.value = Number(matchedProj.estimatedDays);
+          if (syncTag) {
+            syncTag.innerText = 'Del Proyecto';
+            syncTag.className = 'text-[9px] font-semibold text-blue-300';
           }
         }
 
@@ -5313,7 +5478,7 @@ function openQuotationModal(projId) {
         tempEditCrewList = Array.isArray(parsed.techCrew) ? [...parsed.techCrew] : [];
         renderEditCrewChips();
 
-        showToast(`Datos extra\u00eddos de ${file.name} (${parsed.code || 'Orden'}). Revisa y guarda.`);
+        showToast(`\u2705 Orden ${parsed.code || ''} extra\u00edda: direcci\u00f3n, tel\u00e9fono, GPS y cuadrilla sincronizados.`);
       } catch (err) {
         alert('No se pudo procesar el archivo PDF.');
         console.error('PDF edit extraction failed:', err);
@@ -6588,14 +6753,14 @@ const OMEGA_VERIFIED_CATALOG = [
             continue;
           }
 
-          const parsed = parseCentroXpertServiceOrderText(fullText);
+          const parsed = parseCentroXpertServiceOrderText(fullText, result.leftText, result.rightText);
           if (!parsed.code || (!parsed.title && !parsed.client)) {
             showToast(`No se pudo identificar el c\u00f3digo CX o cliente en ${file.name}.`);
             continue;
           }
 
           const pdfDataUrl = await readFileAsDataURL(file);
-          const sectorInfo = detectSantoDomingoSectorCoords(parsed.address);
+          const sectorInfo = await resolveCoordinatesForAddress(parsed.address, parsed.client);
           const serviceOrderObj = {
             name: file.name,
             type: 'application/pdf',
@@ -6604,7 +6769,7 @@ const OMEGA_VERIFIED_CATALOG = [
 
           const existing = appData.projects.find(p => p.code && p.code.trim().toUpperCase() === parsed.code.toUpperCase());
           if (existing) {
-            const shouldUpdate = files.length > 1 || confirm(`El proyecto ${parsed.code} (${existing.client}) ya existe.\n\n\u00bfDeseas actualizar sus datos, cuadrilla y adjuntar esta Orden PDF?`);
+            const shouldUpdate = files.length > 1 || confirm(`El proyecto ${parsed.code} (${existing.client}) ya existe.\n\n\u00bfDeseas actualizar sus datos, direcci\u00f3n, contacto, coordenadas GPS y cuadrilla?`);
             if (!shouldUpdate) continue;
 
             existing.title = parsed.title || existing.title;
@@ -6617,10 +6782,13 @@ const OMEGA_VERIFIED_CATALOG = [
             if (parsed.observations) existing.observations = parsed.observations;
             if (parsed.techLeader) existing.techLeader = parsed.techLeader;
             if (parsed.techCrew && parsed.techCrew.length) existing.techCrew = parsed.techCrew;
-            if (sectorInfo && (!existing.targetLat || !existing.targetLng)) {
+            if (sectorInfo) {
               existing.targetLat = sectorInfo.lat;
               existing.targetLng = sectorInfo.lng;
               existing.projectKm = sectorInfo.km;
+            }
+            if (existing.survey && Number(existing.survey.estimatedDays) > 0) {
+              existing.estimatedDays = Number(existing.survey.estimatedDays);
             }
             existing.serviceOrderFile = serviceOrderObj;
             lastProjectId = existing.id;
